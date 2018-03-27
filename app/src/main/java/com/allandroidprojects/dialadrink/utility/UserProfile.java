@@ -1,7 +1,6 @@
 package com.allandroidprojects.dialadrink.utility;
-
-import com.allandroidprojects.dialadrink.startup.Application;
 import com.allandroidprojects.dialadrink.log.LogManager;
+import com.allandroidprojects.dialadrink.startup.DialADrink;
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -43,7 +42,7 @@ public class UserProfile {
                         // Delete guest database:
                         guestDb.delete();
                     } catch (CouchbaseLiteException e) {
-                        LogManager.getLogger().e(Application.TAG, "Error when migrating guest data to user", e);
+                        LogManager.getLogger().e(DialADrink.TAG, "Error when migrating guest data to user", e);
                         return false;
                     }
                     return true;

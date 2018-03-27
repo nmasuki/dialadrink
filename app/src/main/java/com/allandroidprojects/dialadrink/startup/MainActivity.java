@@ -1,6 +1,9 @@
 package com.allandroidprojects.dialadrink.startup;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,16 +16,24 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
 import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.fragments.ImageListFragment;
 import com.allandroidprojects.dialadrink.miscellaneous.EmptyActivity;
+import com.allandroidprojects.dialadrink.model.ProductType;
 import com.allandroidprojects.dialadrink.notification.NotificationCountSetClass;
 import com.allandroidprojects.dialadrink.options.CartListActivity;
 import com.allandroidprojects.dialadrink.options.SearchResultActivity;
 import com.allandroidprojects.dialadrink.options.WishlistActivity;
+import com.allandroidprojects.dialadrink.utility.ProductUtil;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -40,16 +51,18 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle =
+                new ActionBarDrawerToggle(this, drawer, toolbar,
+                    R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-         viewPager = (ViewPager) findViewById(R.id.viewpager);
-         tabLayout = (TabLayout) findViewById(R.id.tabs);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         if (viewPager != null) {
             setupViewPager(viewPager);
@@ -57,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-      /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,8 +107,21 @@ public class MainActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Get the notifications MenuItem and
         // its LayerDrawable (layer-list)
-        MenuItem item = menu.findItem(R.id.action_cart);
-        NotificationCountSetClass.setAddToCart(MainActivity.this, item,notificationCountCart);
+        final MenuItem item = menu.findItem(R.id.action_cart);
+        if (item != null)
+        {
+            NotificationCountSetClass.setAddToCart(MainActivity.this, item, notificationCountCart);
+            BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    //get the type of message from MyGcmListenerService 1 - lock or 0 -Unlock
+                    notificationCountCart = intent.getIntExtra("cartItemCount", 0);
+                    if (item != null)
+                        NotificationCountSetClass.setAddToCart(MainActivity.this, item, notificationCountCart);
+                }
+            };
+        }
+
         // force the ActionBar to relayout its MenuItems.
         // onCreateOptionsMenu(Menu) will be called again.
         invalidateOptionsMenu();
@@ -113,16 +139,16 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_search) {
             startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
             return true;
-        }else if (id == R.id.action_cart) {
-
-           /* NotificationCountSetClass.setAddToCart(MainActivity.this, item, notificationCount);
-            invalidateOptionsMenu();*/
+        } else if (id == R.id.action_cart) {
             startActivity(new Intent(MainActivity.this, CartListActivity.class));
 
-           /* notificationCount=0;//clear notification count
-            invalidateOptionsMenu();*/
+            NotificationCountSetClass.setAddToCart(MainActivity.this, item, 0);
+            invalidateOptionsMenu();
+            //notificationCount=0; //clear notification count
+            //invalidateOptionsMenu();
+
             return true;
-        }else {
+        } else {
             startActivity(new Intent(MainActivity.this, EmptyActivity.class));
 
         }
@@ -132,39 +158,36 @@ public class MainActivity extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         ImageListFragment fragment = new ImageListFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("type", 1);
-        fragment.setArguments(bundle);
-        adapter.addFragment(fragment, getString(R.string.item_1));
-        fragment = new ImageListFragment();
-        bundle = new Bundle();
-        bundle.putInt("type", 2);
-        fragment.setArguments(bundle);
-        adapter.addFragment(fragment, getString(R.string.item_2));
-        fragment = new ImageListFragment();
-        bundle = new Bundle();
-        bundle.putInt("type", 3);
-        fragment.setArguments(bundle);
-        adapter.addFragment(fragment, getString(R.string.item_3));
-        fragment = new ImageListFragment();
-        bundle = new Bundle();
-        bundle.putInt("type", 4);
-        fragment.setArguments(bundle);
-        adapter.addFragment(fragment, getString(R.string.item_4));
-        fragment = new ImageListFragment();
-        bundle = new Bundle();
-        bundle.putInt("type", 5);
-        fragment.setArguments(bundle);
-        adapter.addFragment(fragment, getString(R.string.item_5));
-        fragment = new ImageListFragment();
-        bundle = new Bundle();
-        bundle.putInt("type", 6);
-        fragment.setArguments(bundle);
-        adapter.addFragment(fragment, getString(R.string.item_6));
+        ArrayList<ProductType> productTypes = ProductUtil.getProductTypes(getApplication());
+
+        Collections.sort(productTypes, new Comparator<ProductType>() {
+            @Override
+            public int compare(ProductType a, ProductType b) {
+                if(a.getName().startsWith("offer"))
+                    return -1;
+                else  if(b.getName().startsWith("offer"))
+                    return 1;
+                else if(a.getName().startsWith("other"))
+                    return 1;
+                else  if(b.getName().startsWith("other"))
+                    return -1;
+                else
+                    return a.getName().compareTo(b.getName());
+            }
+        });
+
+        for (ProductType type: productTypes){
+            if(type==null)continue;
+            fragment = new ImageListFragment();
+            Bundle bundle  = new Bundle();
+            bundle.putInt("type", type.getId());
+            fragment.setArguments(bundle);
+            adapter.addFragment(fragment, type.getName());
+        }
+
         viewPager.setAdapter(adapter);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -173,20 +196,21 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_item1) {
             viewPager.setCurrentItem(0);
         } else if (id == R.id.nav_item2) {
-            viewPager.setCurrentItem(1);
-        } else if (id == R.id.nav_item3) {
-            viewPager.setCurrentItem(2);
-        } else if (id == R.id.nav_item4) {
-            viewPager.setCurrentItem(3);
-        } else if (id == R.id.nav_item5) {
-            viewPager.setCurrentItem(4);
-        }else if (id == R.id.nav_item6) {
-            viewPager.setCurrentItem(5);
-        }else if (id == R.id.my_wishlist) {
+            int lastIndex = viewPager.getAdapter().getCount() - 1;
+            viewPager.setCurrentItem(lastIndex);
+//        } else if (id == R.id.nav_item3) {
+//            viewPager.setCurrentItem(2);
+//        } else if (id == R.id.nav_item4) {
+//            viewPager.setCurrentItem(3);
+//        } else if (id == R.id.nav_item5) {
+//            viewPager.setCurrentItem(4);
+//        } else if (id == R.id.nav_item6) {
+//            viewPager.setCurrentItem(5);
+        } else if (id == R.id.my_wishlist) {
             startActivity(new Intent(MainActivity.this, WishlistActivity.class));
-        }else if (id == R.id.my_cart) {
+        } else if (id == R.id.my_cart) {
             startActivity(new Intent(MainActivity.this, CartListActivity.class));
-        }else {
+        } else {
             startActivity(new Intent(MainActivity.this, EmptyActivity.class));
         }
 

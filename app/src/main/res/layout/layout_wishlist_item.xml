@@ -24,16 +24,19 @@
                       android:layout_height="wrap_content"
                       android:text="Denim Shirt"
                       android:textSize="10dp"
-                      android:textStyle="bold"/>
+                      android:textStyle="bold"
+                android:id="@+id/name_wishlist" />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:text="Slim fit, cotton"
-                      android:textSize="10dp"/>
+                      android:textSize="10dp"
+                android:id="@+id/description_wishlist" />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:text="Rs. 8,999"
                       android:textSize="12dp"
-                      android:textColor="#4CAF50"/>
+                      android:textColor="#4CAF50"
+                android:id="@+id/price_wishlist" />
         </LinearLayout>
         <ImageView android:id="@+id/ic_wishlist"
                    android:layout_width="wrap_content"

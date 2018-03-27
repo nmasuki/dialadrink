@@ -28,8 +28,11 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
 import com.allandroidprojects.dialadrink.R;
+import com.allandroidprojects.dialadrink.model.Product;
 import com.allandroidprojects.dialadrink.photoview.view.PhotoView;
-import com.allandroidprojects.dialadrink.utility.ImageUrlUtils;
+import com.allandroidprojects.dialadrink.utility.ProductUtil;
+
+import java.util.List;
 
 /**
  * Lock/Unlock button is added to the ActionBar.
@@ -73,17 +76,17 @@ public class ViewPagerActivity extends Activity {
     static class SamplePagerAdapter extends PagerAdapter {
        /* Here I'm adding the demo pics, but you can add your Item related pics , just get your pics based on itemID (use asynctask) and
         fill the urls in arraylist*/
-        private static final String[] sDrawables = ImageUrlUtils.getImageUrls();
+        private static final List<Product> sDrawables = ProductUtil.getProductsByCategory(0, null);
 
         @Override
         public int getCount() {
-            return sDrawables.length;
+            return sDrawables.size();
         }
 
         @Override
         public View instantiateItem(ViewGroup container, int position) {
             PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setImageUri(sDrawables[position]);
+            photoView.setImageUri(sDrawables.get(position).getImageUrl());
 
             // Now just add PhotoView to ViewPager and return it
             container.addView(photoView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);

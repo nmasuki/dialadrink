@@ -11,4 +11,5 @@
            android:layout_height="wrap_content"
            android:src="@drawable/ic_apps_black_48dp"
            android:layout_gravity="center"/>
+
 </LinearLayout>

@@ -11,9 +11,9 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
-        android:name=".startup.Application"
+        android:name=".startup.DialADrink"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_bag"
+        android:icon="@mipmap/ic_choppers_clipart"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -29,19 +29,37 @@
         </activity>
         <activity
             android:name=".startup.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+
+        <activity
+            android:name=".miscellaneous.EmptyActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
         <activity
             android:name=".startup.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".fragments.ViewPagerActivity" />
-        <activity android:name=".product.ItemDetailsActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".fragments.ViewPagerActivity" />
+        <activity
+            android:name=".product.ProductActivity">
+
+        </activity>
         <activity
             android:name=".options.WishlistActivity"
-            android:label="@string/my_wishlist"></activity>
+            android:label="@string/my_wishlist">
+
+        </activity>
         <activity
             android:name=".options.CartListActivity"
-            android:label="@string/my_cart"></activity>
+            android:label="@string/my_cart">
+
+        </activity>
         <activity android:name=".options.SearchResultActivity">
 
             <!-- to identify this activity as "searchable.xml" -->
@@ -58,6 +76,12 @@
         <activity
             android:name=".startup.LoginActivity"
             android:label="@string/title_activity_login">
+
+        </activity>
+
+        <activity
+            android:name="android.app.ListActivity"
+            android:label="@string/my_orders">
 
         </activity>
 

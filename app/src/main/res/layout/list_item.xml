@@ -15,6 +15,7 @@
   -->
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -29,7 +30,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                                               android:id="@+id/image1"
+                                               android:id="@+id/image_list_item"
                                                android:layout_width="match_parent"
                                                android:layout_height="200.0dp"
                                                fresco:placeholderImage="@color/stay_color" />
@@ -44,28 +45,48 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="1.8">
-            <TextView android:layout_width="wrap_content"
+            android:layout_weight="1.69">
+            <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:text="Item Name "
                       android:textSize="10dp"
-                      android:textStyle="bold"/>
-            <TextView android:layout_width="wrap_content"
+                      android:textStyle="bold"
+                android:id="@+id/name_list_item" />
+            <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:text="Item descriptions"
-                      android:textSize="10dp"/>
+                      android:textSize="10dp"
+                android:id="@+id/description_list_item" />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:text="Rs. 8,999"
                       android:textSize="12dp"
-                      android:textColor="#4CAF50"/>
+                      android:textColor="#4CAF50"
+                android:id="@+id/price_list_item" />
         </LinearLayout>
-        <ImageView android:id="@+id/ic_wishlist"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_weight="0.3"
-                   android:layout_gravity="center_vertical"
-                   android:src="@drawable/ic_favorite_border_black_18dp"/>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1.8"
+            android:layout_width="10dp">
+
+            <ImageView android:id="@+id/ic_cartlist"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:src="@drawable/ic_shopping_cart_empty"
+                android:layout_width="wrap_content"
+                android:scaleType="fitStart"
+                android:layout_gravity="center_vertical" />
+
+            <ImageView android:id="@+id/ic_wishlist"
+                android:layout_width="28dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_favorite_border_black_18dp"
+                android:paddingHorizontal="5dp" />
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>
 

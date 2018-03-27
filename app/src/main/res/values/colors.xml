@@ -7,6 +7,7 @@
     <color name="gen_black">#000000</color>
     <color name="gen_white">#FFFFFF</color>
     <color name="green_light">#43A047</color>
+    <color name="blue_light">#1896d3</color>
     <color name="grey_light">#E0E0E0</color>
 
     <!-- Screens background color-->

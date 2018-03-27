@@ -10,19 +10,22 @@ import android.view.MenuItem;
  */
 public class NotificationCountSetClass extends Activity {
     private static LayerDrawable icon;
+    private static Context _context;
     public NotificationCountSetClass() {
         //constructor
     }
 
     public static void setAddToCart(Context context, MenuItem item, int numMessages) {
-        icon = (LayerDrawable) item.getIcon();
-        SetNotificationCount.setBadgeCount(context, icon, NotificationCountSetClass.setNotifyCount(numMessages));
-
+        if (item != null) {
+            icon = (LayerDrawable) item.getIcon();
+            SetNotificationCount.setBadgeCount(context, icon, numMessages);
+        }
     }
 
     public static int setNotifyCount(int numMessages) {
-        int count=numMessages;
-        return count;
+        if(_context!=null && icon!= null)
+            SetNotificationCount.setBadgeCount(_context, icon, numMessages);
+        return numMessages;
 
     }
 

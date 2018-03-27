@@ -28,8 +28,11 @@ import com.couchbase.lite.auth.Authenticator;
 import com.couchbase.lite.auth.AuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
 import com.couchbase.lite.util.Log;
+import com.couchbase.lite.util.ZipUtils;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,10 +40,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Application extends android.app.Application implements Replication.ChangeListener {
+public class DialADrink extends android.app.Application implements Replication.ChangeListener {
     public static final String TAG = "DialADrink";
 
-    private static final String SYNC_URL_HTTP = "https://3b8f30a1-1cd7-4394-af19-0340def1e12a-bluemix.cloudant.com/dialadrink";
+    private static final String SYNC_URL_HTTP = "http://ec2-18-217-219-161.us-east-2.compute.amazonaws.com:4984/dialadrink";
 
     // Storage Type: .SQLITE_STORAGE or .FORESTDB_STORAGE
     private static final String STORAGE_TYPE = Manager.SQLITE_STORAGE;
@@ -94,6 +97,9 @@ public class Application extends android.app.Application implements Replication.
     }
 
     public Database getDatabase() {
+        if(mDatabase == null)
+            setDatabase(getUserDatabase(GUEST_DATABASE_NAME));
+
         return mDatabase;
     }
 
@@ -101,21 +107,55 @@ public class Application extends android.app.Application implements Replication.
         this.mDatabase = database;
     }
 
-    private Database getUserDatabase(String name) {
+    private Database touchDatabase(String dbName){
+        // 1
+        Manager manager = getManager();
+        Database database = null;
         try {
-            String dbName = "db" + StringUtil.MD5(name);
-            DatabaseOptions options = new DatabaseOptions();
-            options.setCreate(true);
-            options.setStorageType(STORAGE_TYPE);
-            options.setEncryptionKey(ENCRYPTION_ENABLED ? ENCRYPTION_KEY : null);
-            return getManager().openDatabase(dbName, options);
+            // 2
+            database = manager.getExistingDatabase(dbName);
         } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Cannot create database for name: " + name, e);
+            e.printStackTrace();
         }
-        return null;
+
+        // 3
+        if (database == null) {
+            File directory = manager.getContext().getFilesDir();
+            try {
+                ZipUtils.unzip(this.getAssets().open("dialadrink.cblite2.zip"), directory);
+            } catch (IOException e) {
+                Log.e(TAG, "Cannot extract db from 'assets/dialadrink.cblite2.zip': ");
+            }
+
+            try{
+                // 4
+                File from = new File(directory, "dialadrink.cblite2");
+                if(from.exists()) {
+                    File to = new File(directory, dbName + ".cblite2");
+                    from.renameTo(to);
+                }
+
+                // 5
+                DatabaseOptions options = new DatabaseOptions();
+                options.setCreate(true);
+                options.setStorageType(STORAGE_TYPE);
+                options.setEncryptionKey(ENCRYPTION_ENABLED ? ENCRYPTION_KEY : null);
+                return manager.openDatabase(dbName, options);
+            }
+            catch (CouchbaseLiteException e) {
+                Log.e(TAG, "Cannot create database for name: " + dbName, e);
+            }
+        }
+
+        return database;
     }
 
-    public void loginAsFacebookUser(Activity activity, String token, String userId, String name) {
+    private Database getUserDatabase(String name) {
+        String dbName = "db" + StringUtil.MD5(name);
+        return touchDatabase(dbName);
+    }
+
+    public void loginAsFacebookUser(Activity activity, String token, String userId, String name, Class<?> cls) {
         setCurrentUserId(userId);
         setDatabase(getUserDatabase(userId));
 
@@ -139,20 +179,32 @@ public class Application extends android.app.Application implements Replication.
         }
 
         startReplication(AuthenticatorFactory.createFacebookAuthenticator(token));
-        login(activity);
+        login(activity, cls);
     }
 
-    public void loginAsGuest(Activity activity) {
+    public void loginAsGuest(Activity activity, Class<?> cls) {
         setDatabase(getUserDatabase(GUEST_DATABASE_NAME));
         setCurrentUserId(null);
-        login(activity);
+        login(activity, cls);
     }
 
-    private void login(Activity activity) {
-        Intent intent = new Intent(activity, ListActivity.class);
+    private void login(Activity activity, Class<?> cls) {
+        Intent intent = new Intent(activity, cls);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
         activity.finish();
+    }
+
+    public void loginAsFacebookUser(Activity activity, String token, String userId, String name){
+        loginAsFacebookUser(activity, token, userId, name, WelcomeActivity.class);
+    }
+
+    public void loginAsGuest(Activity activity) {
+        loginAsGuest(activity, WelcomeActivity.class);
+    }
+
+    private void login(Activity activity) {
+        login(activity, WelcomeActivity.class);
     }
 
     public void logout() {
@@ -174,8 +226,9 @@ public class Application extends android.app.Application implements Replication.
         return this.mCurrentUserId;
     }
 
-    /** Replicator */
-
+    /**
+     * Replicator
+     */
     private URL getSyncUrl() {
         URL url = null;
         try {
@@ -240,13 +293,15 @@ public class Application extends android.app.Application implements Replication.
         }
     }
 
-    /** Database View */
+    /**
+     * Database View
+     */
     public View getListsView() {
         View view = mDatabase.getView("lists");
         if (view.getMap() == null) {
             Mapper mapper = new Mapper() {
                 public void map(Map<String, Object> document, Emitter emitter) {
-                    String type = (String)document.get("type");
+                    String type = (String) document.get("type");
                     if ("list".equals(type))
                         emitter.emit(document.get("title"), null);
                 }
@@ -290,7 +345,9 @@ public class Application extends android.app.Application implements Replication.
         return view;
     }
 
-    /** Display error message */
+    /**
+     * Display error message
+     */
 
     public void showErrorMessage(final String errorMessage, final Throwable throwable) {
         runOnUiThread(new Runnable() {

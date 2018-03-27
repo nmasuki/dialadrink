@@ -14,15 +14,17 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.allandroidprojects.dialadrink.R;
-import com.allandroidprojects.dialadrink.product.ItemDetailsActivity;
+import com.allandroidprojects.dialadrink.model.Product;
+import com.allandroidprojects.dialadrink.product.ProductActivity;
 import com.allandroidprojects.dialadrink.startup.MainActivity;
-import com.allandroidprojects.dialadrink.utility.ImageUrlUtils;
+import com.allandroidprojects.dialadrink.utility.ProductUtil;
+import com.allandroidprojects.dialadrink.utility.ShoppingUtil;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 
-import static com.allandroidprojects.dialadrink.fragments.ImageListFragment.STRING_IMAGE_POSITION;
-import static com.allandroidprojects.dialadrink.fragments.ImageListFragment.STRING_IMAGE_URI;
+import static com.allandroidprojects.dialadrink.fragments.ImageListFragment.ITEM_POSITION;
+import static com.allandroidprojects.dialadrink.fragments.ImageListFragment.ITEM_JSON_DATA;
 
 public class CartListActivity extends AppCompatActivity {
     private static Context mContext;
@@ -32,8 +34,7 @@ public class CartListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart_list);
         mContext = CartListActivity.this;
 
-        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-        ArrayList<String> cartlistImageUri =imageUrlUtils.getCartListImageUri();
+        ArrayList<Product> cartlistImageUri = ShoppingUtil.getCartListItems();
         //Show cart layout based on items
         setCartLayout();
 
@@ -47,7 +48,7 @@ public class CartListActivity extends AppCompatActivity {
     public static class SimpleStringRecyclerViewAdapter
             extends RecyclerView.Adapter<CartListActivity.SimpleStringRecyclerViewAdapter.ViewHolder> {
 
-        private ArrayList<String> mCartlistImageUri;
+        private ArrayList<Product> mCartlistImageUri;
         private RecyclerView mRecyclerView;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -65,7 +66,7 @@ public class CartListActivity extends AppCompatActivity {
             }
         }
 
-        public SimpleStringRecyclerViewAdapter(RecyclerView recyclerView, ArrayList<String> wishlistImageUri) {
+        public SimpleStringRecyclerViewAdapter(RecyclerView recyclerView, ArrayList<Product> wishlistImageUri) {
             mCartlistImageUri = wishlistImageUri;
             mRecyclerView = recyclerView;
         }
@@ -89,14 +90,14 @@ public class CartListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final CartListActivity.SimpleStringRecyclerViewAdapter.ViewHolder holder, final int position) {
-            final Uri uri = Uri.parse(mCartlistImageUri.get(position));
+            final Uri uri = Uri.parse(mCartlistImageUri.get(position).getImageUrl());
             holder.mImageView.setImageURI(uri);
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-                    intent.putExtra(STRING_IMAGE_URI,mCartlistImageUri.get(position));
-                    intent.putExtra(STRING_IMAGE_POSITION, position);
+                    Intent intent = new Intent(mContext, ProductActivity.class);
+                    intent.putExtra(ITEM_JSON_DATA, ProductUtil.getJson(mCartlistImageUri.get(position)));
+                    intent.putExtra(ITEM_POSITION, position);
                     mContext.startActivity(intent);
                 }
             });
@@ -105,8 +106,7 @@ public class CartListActivity extends AppCompatActivity {
             holder.mLayoutRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-                    imageUrlUtils.removeCartListImageUri(position);
+                    ShoppingUtil.removeFromCart(mCartlistImageUri.get(position));
                     notifyDataSetChanged();
                     //Decrease notification count
                     MainActivity.notificationCountCart--;

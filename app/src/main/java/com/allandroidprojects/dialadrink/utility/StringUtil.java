@@ -24,4 +24,10 @@ public class StringUtil {
             sb.append(String.format("%02x", b & 0xff));
         return sb.toString();
     }
+
+    public static String toUnderScore(String camelCase){
+        String regex = "([a-z])([A-Z]+)";
+        String replacement = "$1_$2";
+        return camelCase.replaceAll(regex, replacement).toLowerCase();
+    }
 }
