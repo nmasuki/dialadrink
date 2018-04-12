@@ -90,7 +90,7 @@
             android:layout_marginTop="8dp"
             android:weightSum="3">
 
-            <LinearLayout android:id="@+id/layout_action1"
+            <LinearLayout android:id="@+id/remove_layout_cartlist_item"
                           android:layout_width="0dp"
                           android:layout_height="match_parent"
                           android:layout_weight="1"
@@ -115,7 +115,7 @@
                   android:layout_height="match_parent"
                   android:background="@color/grey_light"/>
 
-            <LinearLayout android:id="@+id/layout_action2"
+            <LinearLayout android:id="@+id/edit_layout_cartlist_item"
                           android:layout_width="0dp"
                           android:layout_height="match_parent"
                           android:layout_weight="1"
@@ -226,10 +226,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/blue_light"
+            android:background="@drawable/border_shape"
             android:text="@string/call_us"
             android:textSize="14dp"
-            android:textColor="@color/gen_black"
+            android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             android:gravity="center"/>
 
@@ -238,7 +238,7 @@
                   android:layout_height="match_parent"
                   android:layout_weight="1"
                   android:background="@color/colorPrimary"
-                  android:text="BUY NOW"
+                  android:text="@string/buy_now"
                   android:textSize="14dp"
                   android:textColor="@color/gen_white"
                   android:textStyle="bold"

@@ -39,7 +39,7 @@ import com.allandroidprojects.dialadrink.product.ProductActivity;
 import com.allandroidprojects.dialadrink.startup.DialADrink;
 import com.allandroidprojects.dialadrink.startup.MainActivity;
 import com.allandroidprojects.dialadrink.utility.DataUtil;
-import com.allandroidprojects.dialadrink.utility.LiveQueryRecyclerAdapter;
+import com.allandroidprojects.dialadrink.adapters.LiveQueryRecyclerAdapter;
 import com.allandroidprojects.dialadrink.utility.ProductUtil;
 import com.allandroidprojects.dialadrink.utility.ShoppingUtil;
 import com.couchbase.lite.Document;
@@ -69,21 +69,19 @@ public class ImageListFragment extends Fragment {
 
     private Query getQuery(final int categoryId){
         DialADrink app = (DialADrink)getActivity().getApplication();
-        ProductType productCategory = Linq.stream(ProductUtil.getProductTypes(app)).where(new Predicate<ProductType>() {
-            @Override
-            public boolean apply(ProductType value) {
-                return value.getId() == categoryId;
-            }
-        }).firstOrDefault(new ProductType(){{
-            setId(0);
-            setName("offer");
-        }});
+        ProductType productCategory = Linq.stream(ProductUtil.getProductTypes())
+                .where(new Predicate<ProductType>() {
+                    @Override
+                    public boolean apply(ProductType value) {
+                        return value.getId() == categoryId;
+                    }
+                }).firstOrDefault(new ProductType() {{
+                    setId(0);
+                    setName("offer");
+                }});
 
         String category = productCategory.getName();
-        Query query = DataUtil.getView(
-                "product_by_categoryId", Product.Mappers.by_category,
-                (DialADrink)getActivity().getApplication()
-        ).createQuery();
+        Query query = DataUtil.getView("product_by_categoryId", Product.Mappers.by_category).createQuery();
 
         query.setDescending(true);
         List<Object> startKeys = new ArrayList<Object>();
@@ -111,116 +109,14 @@ public class ImageListFragment extends Fragment {
             int categoryId = 0;
             if(!recyclerView.isInEditMode())
                 categoryId  = ImageListFragment.this.getArguments().getInt("type");
+
             StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManager);
 
-            if(false) {
-                ArrayList<Product> items = ProductUtil.getProductsByCategory(categoryId, getActivity().getApplication());
-                recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(recyclerView, items));
-            }else{
-                Query query = getQuery(categoryId);
-                recyclerView.setAdapter(new SimpleProductRecyclerViewAdapter(getContext(), query.toLiveQuery()));
-            }
+            recyclerView.setAdapter(new SimpleProductRecyclerViewAdapter(getContext(), getQuery(categoryId).toLiveQuery()));
         }catch (Exception e){
             LogManager.getLogger().d("ImageFragment",  e.getMessage());
         }
-    }
-
-    public static class SimpleStringRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder> {
-
-        private ArrayList<Product> mValues;
-        private RecyclerView mRecyclerView;
-
-        public Product getItem(int position){
-            long index = getItemId(position);
-            return mValues.get((int)index);
-        }
-
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final SimpleDraweeView mImageView;
-            public final LinearLayout mLayoutItem;
-            public final ImageView mImageViewWishlist;
-            public final TextView mNameTextView;
-            public final TextView mDescriptionTextView;
-            public final TextView mPriceTextView;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-
-                mImageView = (SimpleDraweeView) view.findViewById(R.id.image_list_item);
-                mNameTextView = (TextView)view.findViewById(R.id.name_list_item);
-                mDescriptionTextView = (TextView)view.findViewById(R.id.description_list_item);
-                mPriceTextView = (TextView)view.findViewById(R.id.price_list_item);
-
-                mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
-                mImageViewWishlist = (ImageView) view.findViewById(R.id.ic_wishlist);
-            }
-        }
-
-        public SimpleStringRecyclerViewAdapter(RecyclerView recyclerView, ArrayList<Product> items) {
-            mValues = items;
-            mRecyclerView = recyclerView;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-            ViewHolder holder = new ViewHolder(view);
-            return holder;
-        }
-
-        @Override
-        public void onViewRecycled(ViewHolder holder) {
-            if (holder.mImageView.getController() != null) {
-                holder.mImageView.getController().onDetach();
-            }
-            if (holder.mImageView.getTopLevelDrawable() != null) {
-                holder.mImageView.getTopLevelDrawable().setCallback(null);
-//                ((BitmapDrawable) holder.mImageView.getTopLevelDrawable()).getBitmap().recycle();
-            }
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
-            final Product item = getItem(position);
-            Uri uri = Uri.parse(item.getImageUrl());
-
-            holder.mImageView.setImageURI(uri);
-            holder.mNameTextView.setText(item.getName());
-            holder.mDescriptionTextView.setText(item.getDescription());
-            holder.mPriceTextView.setText(item.getPriceLabel());
-
-            if(ShoppingUtil.isInWishList(item))
-                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
-
-
-            holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mActivity, ProductActivity.class);
-                    intent.putExtra(ITEM_JSON_DATA, ProductUtil.getJson(item));
-                    intent.putExtra(ITEM_POSITION, position);
-                    mActivity.startActivity(intent);
-                }
-            });
-
-            //Set click action for wishlist
-            holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ShoppingUtil.addToWishlist(item);
-                    notifyDataSetChanged();
-
-                    Toast.makeText(mActivity, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() { return mValues.size(); }
     }
 
     public class SimpleProductRecyclerViewAdapter
@@ -311,7 +207,7 @@ public class ImageListFragment extends Fragment {
                 mImageViewCartlist.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ShoppingUtil.addToCart(getItem(), getActivity().getApplication());
+                        ShoppingUtil.addToCart(getItem());
                         notifyDataSetChanged();
 
                         Toast.makeText(mActivity, "Item added to cart!", Toast.LENGTH_SHORT).show();

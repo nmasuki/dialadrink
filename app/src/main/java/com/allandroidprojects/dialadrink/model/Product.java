@@ -20,6 +20,7 @@ public class Product {
     private double price;
     private String currency;
     private String category;
+    private String subCategory;
     private String type = "Product";
 
     public String getType() {
@@ -30,16 +31,16 @@ public class Product {
         this.type = type;
     }
 
-    public String getSubcategory() {
-        return subcategory;
+    public String getSubCategory() {
+        return subCategory;
     }
 
-    public void setSubcategory(String subcategory) {
-        this.subcategory = subcategory;
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
     }
 
     public String getCategory() {
-        return category == null?"offers":category;
+        return category;
     }
 
     public void setCategory(String category) {
@@ -53,8 +54,6 @@ public class Product {
     public void set_id(String _id) {
         this._id = _id;
     }
-
-    private String subcategory;
 
     public String getName() {
         return name;

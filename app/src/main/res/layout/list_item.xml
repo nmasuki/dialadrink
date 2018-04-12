@@ -56,7 +56,8 @@
                       android:layout_height="wrap_content"
                       android:text="Item descriptions"
                       android:textSize="10dp"
-                android:id="@+id/description_list_item" />
+                android:id="@+id/description_list_item"
+                android:minHeight="24dp" />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:text="Rs. 8,999"

@@ -18,6 +18,7 @@
 package com.allandroidprojects.dialadrink.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,11 +29,22 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
 import com.allandroidprojects.dialadrink.R;
+import com.allandroidprojects.dialadrink.adapters.LiveQueryPagerAdapter;
 import com.allandroidprojects.dialadrink.model.Product;
+import com.allandroidprojects.dialadrink.model.ProductType;
 import com.allandroidprojects.dialadrink.photoview.view.PhotoView;
+import com.allandroidprojects.dialadrink.startup.DialADrink;
+import com.allandroidprojects.dialadrink.utility.DataUtil;
 import com.allandroidprojects.dialadrink.utility.ProductUtil;
+import com.couchbase.lite.LiveQuery;
+import com.couchbase.lite.Query;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import br.com.zbra.androidlinq.Linq;
+import br.com.zbra.androidlinq.delegate.Predicate;
 
 /**
  * Lock/Unlock button is added to the ActionBar.
@@ -55,7 +67,8 @@ public class ViewPagerActivity extends Activity {
         mViewPager = (HackyViewPager) findViewById(R.id.view_pager);
         setContentView(mViewPager);
 
-        mViewPager.setAdapter(new SamplePagerAdapter());
+        Query query = DataUtil.getView("product_by_categoryId").createQuery();
+        mViewPager.setAdapter(new SamplePagerAdapter(this, query.toLiveQuery()));
         if (getIntent() != null) {
             position = getIntent().getIntExtra("position", 0);
             mViewPager.setCurrentItem(position);
@@ -73,20 +86,45 @@ public class ViewPagerActivity extends Activity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    static class SamplePagerAdapter extends PagerAdapter {
-       /* Here I'm adding the demo pics, but you can add your Item related pics , just get your pics based on itemID (use asynctask) and
-        fill the urls in arraylist*/
-        private static final List<Product> sDrawables = ProductUtil.getProductsByCategory(0, null);
+    private Query getQuery(final int categoryId){
+        ProductType productCategory = Linq.stream(ProductUtil.getProductTypes())
+                .where(new Predicate<ProductType>() {
+                    @Override
+                    public boolean apply(ProductType value) {
+                        return value.getId() == categoryId;
+                    }
+                }).firstOrDefault(new ProductType() {{
+                    setId(0);
+                    setName("offer");
+                }});
 
-        @Override
-        public int getCount() {
-            return sDrawables.size();
+        String category = productCategory.getName();
+        Query query = DataUtil.getView("product_by_categoryId", Product.Mappers.by_category).createQuery();
+
+        query.setDescending(true);
+        List<Object> startKeys = new ArrayList<Object>();
+        startKeys.add(category); // [category, {}]
+        startKeys.add(new HashMap<String, Object>());
+
+        List<Object> endKeys = new ArrayList<Object>();
+        endKeys.add(category);
+
+        query.setStartKey(startKeys); //[category, null]
+        query.setEndKey(endKeys);
+
+        return query;
+    }
+
+    class SamplePagerAdapter  extends LiveQueryPagerAdapter<Product> {
+
+        public SamplePagerAdapter(Context context, LiveQuery query) {
+            super(context, query);
         }
 
         @Override
         public View instantiateItem(ViewGroup container, int position) {
             PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setImageUri(sDrawables.get(position).getImageUrl());
+            photoView.setImageUri(getItem(position).getImageUrl());
 
             // Now just add PhotoView to ViewPager and return it
             container.addView(photoView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -97,6 +135,11 @@ public class ViewPagerActivity extends Activity {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
+        }
+
+        @Override
+        public Product getItem(int i) {
+            return DataUtil.toObj(getDocument(i), Product.class);
         }
 
         @Override

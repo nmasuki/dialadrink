@@ -1,0 +1,90 @@
+
+{
+  "createdAt": "2018-04-04 03:12:25 PM",
+  "id": 3,
+  "name": "vodka",
+  "owner": "none",
+  "type": "ProductType",
+  "_rev": "1-a55c41633216f9ed995b3366e1b7db48",
+  "_id": "dec32466-47e1-4f2c-b060-a3ac3954889d"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 2,
+"name": "tequila",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-d5c1408f0ada5f321faa04528e2a6411",
+"_id": "5fc58707-a250-45bb-9485-cd96d57af22e"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 10,
+"name": "others",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-c3afe59a288c88f15fa10b889cad9eed",
+"_id": "5b0a5b2b-9fda-40fb-a536-14da91d94e75"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 1,
+"name": "whisky",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-bfd44a11f59e25f35e57f086d75bf52e",
+"_id": "0c3a04dc-184f-41c7-a97f-7ae1d1f2a95e"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 9,
+"name": "wine",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-827b47d809e292893ae6208e2b64320e",
+"_id": "ebc48e6b-5eef-4928-bfd9-8e81cf4ed41c"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 0,
+"name": "offer",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-eee46243832a99e750714341ba38a3bf",
+"_id": "697e6189-1c62-4c86-bd34-94eb2968e988"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 8,
+"name": "brandy",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-d5134d3d8302956bc1b45465e276d81b",
+"_id": "af925836-fa0a-4793-9e08-61f6d800a840"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 7,
+"name": "gin",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-696308f85732350ea539655f202165a8",
+"_id": "41a53f09-92d2-4bcb-b72c-cf2b464afaf9"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 6,
+"name": "rum",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-b0050840f3c2f6d6aff2496fcf4e075e",
+"_id": "34588488-9497-4f73-92aa-da919111c1b6"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 5,
+"name": "beers",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-376b4c1b0c4c84ecd35a59b0204349d1",
+"_id": "3259fb16-68df-4871-9681-b9ab32ef382e"
+},{
+"createdAt": "2018-04-04 03:12:25 PM",
+"id": 4,
+"name": "liqueurs",
+"owner": "none",
+"type": "ProductType",
+"_rev": "1-3656e95a3684402ff077a52697e4f8f3",
+"_id": "9be17763-4127-443c-99e1-ba72aaf698bd"
+}
