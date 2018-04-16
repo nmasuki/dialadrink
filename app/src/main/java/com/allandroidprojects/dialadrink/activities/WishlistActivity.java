@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.model.Product;
-import com.allandroidprojects.dialadrink.utility.ProductUtil;
-import com.allandroidprojects.dialadrink.utility.ShoppingUtil;
+import com.allandroidprojects.dialadrink.utility.ProductUtils;
+import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class WishlistActivity extends AppCompatActivity {
         setContentView(R.layout.layout_recylerview_list);
         mContext = WishlistActivity.this;
 
-        ArrayList<Product> wishlistImageUri = ShoppingUtil.getWishlistItems();
+        ArrayList<Product> wishlistImageUri = ShoppingUtils.getWishlistItems();
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview);
         RecyclerView.LayoutManager recylerViewLayoutManager = new LinearLayoutManager(mContext);
 
@@ -106,7 +106,7 @@ public class WishlistActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ProductActivity.class);
-                    intent.putExtra(ITEM_JSON_DATA, ProductUtil.getJson(item));
+                    intent.putExtra(ITEM_JSON_DATA, ProductUtils.getJson(item));
                     intent.putExtra(ITEM_POSITION, position);
                     mContext.startActivity(intent);
                 }
@@ -116,7 +116,7 @@ public class WishlistActivity extends AppCompatActivity {
             holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ShoppingUtil.removeFromWishlist(item);
+                    ShoppingUtils.removeFromWishlist(item);
                     notifyDataSetChanged();
                 }
             });

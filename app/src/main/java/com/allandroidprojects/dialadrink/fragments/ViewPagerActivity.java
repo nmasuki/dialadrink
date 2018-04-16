@@ -22,7 +22,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +32,8 @@ import com.allandroidprojects.dialadrink.adapters.LiveQueryPagerAdapter;
 import com.allandroidprojects.dialadrink.model.Product;
 import com.allandroidprojects.dialadrink.model.ProductType;
 import com.allandroidprojects.dialadrink.photoview.view.PhotoView;
-import com.allandroidprojects.dialadrink.startup.DialADrink;
-import com.allandroidprojects.dialadrink.utility.DataUtil;
-import com.allandroidprojects.dialadrink.utility.ProductUtil;
+import com.allandroidprojects.dialadrink.utility.DataUtils;
+import com.allandroidprojects.dialadrink.utility.ProductUtils;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.Query;
 
@@ -67,11 +65,13 @@ public class ViewPagerActivity extends Activity {
         mViewPager = (HackyViewPager) findViewById(R.id.view_pager);
         setContentView(mViewPager);
 
-        Query query = DataUtil.getView("product_by_categoryId").createQuery();
-        mViewPager.setAdapter(new SamplePagerAdapter(this, query.toLiveQuery()));
         if (getIntent() != null) {
+            String category = getIntent().getStringExtra("category");
             position = getIntent().getIntExtra("position", 0);
+            mViewPager.setAdapter(new SamplePagerAdapter(this, getQuery(category).toLiveQuery()));
             mViewPager.setCurrentItem(position);
+        }else {
+            mViewPager.setAdapter(new SamplePagerAdapter(this, getQuery(0).toLiveQuery()));
         }
 
         if (savedInstanceState != null) {
@@ -86,20 +86,9 @@ public class ViewPagerActivity extends Activity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    private Query getQuery(final int categoryId){
-        ProductType productCategory = Linq.stream(ProductUtil.getProductTypes())
-                .where(new Predicate<ProductType>() {
-                    @Override
-                    public boolean apply(ProductType value) {
-                        return value.getId() == categoryId;
-                    }
-                }).firstOrDefault(new ProductType() {{
-                    setId(0);
-                    setName("offer");
-                }});
+    private Query getQuery(final String category){
 
-        String category = productCategory.getName();
-        Query query = DataUtil.getView("product_by_categoryId", Product.Mappers.by_category).createQuery();
+        Query query = DataUtils.getView("product_by_category", Product.Mappers.by_category).createQuery();
 
         query.setDescending(true);
         List<Object> startKeys = new ArrayList<Object>();
@@ -113,6 +102,20 @@ public class ViewPagerActivity extends Activity {
         query.setEndKey(endKeys);
 
         return query;
+    }
+
+    private Query getQuery(final int categoryId){
+        ProductType productCategory = Linq.stream(ProductUtils.getProductTypes())
+                .where(new Predicate<ProductType>() {
+                    @Override
+                    public boolean apply(ProductType value) {
+                        return value.getId() == categoryId;
+                    }
+                }).firstOrDefault(new ProductType() {{
+                    setId(0);
+                    setName("offer");
+                }});
+        return getQuery(productCategory.getName());
     }
 
     class SamplePagerAdapter  extends LiveQueryPagerAdapter<Product> {
@@ -139,7 +142,7 @@ public class ViewPagerActivity extends Activity {
 
         @Override
         public Product getItem(int i) {
-            return DataUtil.toObj(getDocument(i), Product.class);
+            return DataUtils.toObj(getDocument(i), Product.class);
         }
 
         @Override

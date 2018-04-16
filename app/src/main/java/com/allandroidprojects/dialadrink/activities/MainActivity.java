@@ -1,5 +1,6 @@
 package com.allandroidprojects.dialadrink.activities;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -15,18 +16,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SearchEvent;
+import android.widget.ImageView;
+import android.support.v7.widget.SearchView;
+import android.widget.TextView;
 
+import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.fragments.ImageListFragment;
-import com.allandroidprojects.dialadrink.miscellaneous.EmptyActivity;
 import com.allandroidprojects.dialadrink.model.ProductType;
-import com.allandroidprojects.dialadrink.notification.NotificationCountSetClass;
-import com.allandroidprojects.dialadrink.options.CartListActivity;
-import com.allandroidprojects.dialadrink.options.SearchResultActivity;
-import com.allandroidprojects.dialadrink.options.WishlistActivity;
-import com.allandroidprojects.dialadrink.utility.ProductUtil;
-import com.allandroidprojects.dialadrink.utility.ShoppingUtil;
+import com.allandroidprojects.dialadrink.model.User;
+import com.allandroidprojects.dialadrink.notification.NotificationCount;
+import com.allandroidprojects.dialadrink.utility.DataUtils;
+import com.allandroidprojects.dialadrink.utility.ProductUtils;
+import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
+import com.couchbase.lite.Document;
 import com.couchbase.lite.LiveQuery;
+import com.couchbase.lite.QueryEnumerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +63,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        final TextView usernameTextView = (TextView)navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_textview);
+        final ImageView usernameImageView = (ImageView)navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_imageview);
+
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
 
@@ -64,7 +73,6 @@ public class MainActivity extends AppCompatActivity
             setupViewPager(viewPager);
             tabLayout.setupWithViewPager(viewPager);
         }
-
 
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -75,18 +83,43 @@ public class MainActivity extends AppCompatActivity
             }
         });*/
 
-        ShoppingUtil.addChangeListener(new LiveQuery.ChangeListener() {
+        ShoppingUtils.addShoppingCartChangeListener(new LiveQuery.ChangeListener() {
             @Override
-            public void changed(LiveQuery.ChangeEvent event) {
-                NotificationCountSetClass.setNotify("cart", event.getRows().getCount());
+            public void changed(final LiveQuery.ChangeEvent event) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        NotificationCount.setBadgeCount("cart", event.getRows().getCount());
+                    }
+                });
             }
         });
+
+        LiveQuery profileQuery = App.getAppContext().getUserProfilesView()
+                .createQuery().toLiveQuery();
+
+        profileQuery.addChangeListener(new LiveQuery.ChangeListener() {
+            @Override
+            public void changed(LiveQuery.ChangeEvent event) {
+                QueryEnumerator it = event.getRows();
+                if(it!=null && it.hasNext())
+                {
+                    Document doc = it.next().getDocument();
+                    User user = DataUtils.toObj(doc, User.class);
+
+                    usernameTextView.setText(user.getName());
+                    usernameImageView.setImageBitmap(user.getPicture());
+                }
+            }
+        });
+
+        profileQuery.start();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //invalidateOptionsMenu();
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -104,13 +137,36 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
-        // Get the notifications MenuItem and
-        // its LayerDrawable (layer-list)
-        final MenuItem item = menu.findItem(R.id.action_cart);
-        if (item != null)
-            NotificationCountSetClass.setNotify(item,"cart", ShoppingUtil.getCartSize());
+        // Get the notifications MenuItem and its LayerDrawable (layer-list)
+        final MenuItem cartMenu = menu.findItem(R.id.action_cart);
+        final MenuItem searchMenu = menu.findItem(R.id.action_search);
+        if (cartMenu != null)
+            NotificationCount.setBadgeCount(cartMenu,"cart", ShoppingUtils.getCartSize());
 
+        if (searchMenu != null) {
+            SearchView searchView = (SearchView) searchMenu.getActionView();
+            if (searchView != null) {
+                //searchView.setIconifiedByDefault(false);
+                //searchView.setMaxWidth(Integer.MAX_VALUE);
+                //searchItem.setQueryHint("Query Hint");
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                        intent.setAction(Intent.ACTION_SEARCH);
+                        intent.putExtra(SearchManager.QUERY, query);
 
+                        startActivity(intent);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        return false;
+                    }
+                });
+            }
+        }
         return true;
     }
 
@@ -131,28 +187,27 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
-            startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
-            return true;
-        } else if (id == R.id.action_cart) {
+            //startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
+            //return true;
+        } else
+        if (id == R.id.action_cart) {
             startActivity(new Intent(MainActivity.this, CartListActivity.class));
-
-            //NotificationCountSetClass.setNotify(item, "cart", 0);
-            //invalidateOptionsMenu();
-            //notificationCount=0; //clear notification count
-            //invalidateOptionsMenu();
-
             return true;
         } else {
             startActivity(new Intent(MainActivity.this, EmptyActivity.class));
-
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSearchRequested(SearchEvent searchEvent) {
+        return super.onSearchRequested(searchEvent);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         ImageListFragment fragment = new ImageListFragment();
-        ArrayList<ProductType> productTypes = ProductUtil.getProductTypes();
+        ArrayList<ProductType> productTypes = ProductUtils.getProductTypes();
 
         Collections.sort(productTypes, new Comparator<ProductType>() {
             @Override
@@ -170,13 +225,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        for (ProductType type: productTypes){
-            if(type==null)continue;
+        for (ProductType c: productTypes){
+            if(c==null)continue;
             fragment = new ImageListFragment();
             Bundle bundle  = new Bundle();
-            bundle.putDouble("type", type.getId());
+            bundle.putString("category", c.getName());
             fragment.setArguments(bundle);
-            adapter.addFragment(fragment, type.getName());
+            adapter.addFragment(fragment, c.getName());
         }
 
         viewPager.setAdapter(adapter);
@@ -187,9 +242,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_item1) {
+        if (id == R.id.menu_item_offers) {
             viewPager.setCurrentItem(0);
-        } else if (id == R.id.nav_item2) {
+        } else if (id == R.id.menu_item_others) {
             int lastIndex = viewPager.getAdapter().getCount() - 1;
             viewPager.setCurrentItem(lastIndex);
 //        } else if (id == R.id.nav_item3) {

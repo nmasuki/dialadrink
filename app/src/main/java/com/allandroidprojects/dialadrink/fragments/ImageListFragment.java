@@ -31,18 +31,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.model.Product;
-import com.allandroidprojects.dialadrink.model.ProductType;
-import com.allandroidprojects.dialadrink.product.ProductActivity;
-import com.allandroidprojects.dialadrink.startup.DialADrink;
-import com.allandroidprojects.dialadrink.startup.MainActivity;
-import com.allandroidprojects.dialadrink.utility.DataUtil;
+import com.allandroidprojects.dialadrink.activities.ProductActivity;
+import com.allandroidprojects.dialadrink.activities.MainActivity;
+import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.adapters.LiveQueryRecyclerAdapter;
-import com.allandroidprojects.dialadrink.utility.ProductUtil;
-import com.allandroidprojects.dialadrink.utility.ShoppingUtil;
-import com.couchbase.lite.Document;
+import com.allandroidprojects.dialadrink.utility.ProductUtils;
+import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.Query;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -50,9 +48,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import br.com.zbra.androidlinq.Linq;
-import br.com.zbra.androidlinq.delegate.Predicate;
 
 
 public class ImageListFragment extends Fragment {
@@ -67,21 +62,8 @@ public class ImageListFragment extends Fragment {
         mActivity = (MainActivity) getActivity();
     }
 
-    private Query getQuery(final int categoryId){
-        DialADrink app = (DialADrink)getActivity().getApplication();
-        ProductType productCategory = Linq.stream(ProductUtil.getProductTypes())
-                .where(new Predicate<ProductType>() {
-                    @Override
-                    public boolean apply(ProductType value) {
-                        return value.getId() == categoryId;
-                    }
-                }).firstOrDefault(new ProductType() {{
-                    setId(0);
-                    setName("offer");
-                }});
-
-        String category = productCategory.getName();
-        Query query = DataUtil.getView("product_by_categoryId", Product.Mappers.by_category).createQuery();
+    private Query getQuery(final String category){
+        Query query = DataUtils.getView("product_by_category", Product.Mappers.by_category).createQuery();
 
         query.setDescending(true);
         List<Object> startKeys = new ArrayList<Object>();
@@ -106,16 +88,16 @@ public class ImageListFragment extends Fragment {
 
     private void setupRecyclerView(RecyclerView recyclerView) {
         try {
-            int categoryId = 0;
+            String category = "offer";
             if(!recyclerView.isInEditMode())
-                categoryId  = ImageListFragment.this.getArguments().getInt("type");
+                category  = ImageListFragment.this.getArguments().getString("category");
 
             StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManager);
 
-            recyclerView.setAdapter(new SimpleProductRecyclerViewAdapter(getContext(), getQuery(categoryId).toLiveQuery()));
+            recyclerView.setAdapter(new SimpleProductRecyclerViewAdapter(getContext(), getQuery(category).toLiveQuery()));
         }catch (Exception e){
-            LogManager.getLogger().d("ImageFragment",  e.getMessage());
+            LogManager.getLogger().d(App.TAG, "Error while setting up RecyclerView.", e);
         }
     }
 
@@ -133,23 +115,21 @@ public class ImageListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder vholder, int position) {
-
-            final Product item = DataUtil.toObj((Document) getItem(position), Product.class);
+            final Product item = getItem(position, Product.class);
             final Uri uri = Uri.parse(item.getImageUrl());
-
             final ViewHolder holder = (ViewHolder)vholder;
 
             holder.mImageView.setImageURI(uri);
             holder.mNameTextView.setText(item.getName());
-            holder.mDescriptionTextView.setText(item.getDescription());
+            holder.mDescriptionTextView.setText(item.getCategory());
             holder.mPriceTextView.setText(item.getPriceLabel());
 
-            if(ShoppingUtil.isInWishList(item))
+            if(ShoppingUtils.isInWishList(item))
                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
             else
                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_black_18dp);
 
-            if(ShoppingUtil.isInCart(item))
+            if(ShoppingUtils.isInCart(item))
                 holder.mImageViewCartlist.setImageResource(R.drawable.ic_shopping_cart_full);
             else
                 holder.mImageViewCartlist.setImageResource(R.drawable.ic_shopping_cart_empty);
@@ -182,7 +162,7 @@ public class ImageListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(mActivity, ProductActivity.class);
-                        intent.putExtra(ITEM_JSON_DATA, ProductUtil.getJson(getItem()));
+                        intent.putExtra(ITEM_JSON_DATA, ProductUtils.getJson(getItem()));
                         intent.putExtra(ITEM_POSITION, getPosition());
                         mActivity.startActivity(intent);
 
@@ -193,12 +173,12 @@ public class ImageListFragment extends Fragment {
                 mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(ShoppingUtil.isInWishList(getItem()))
-                            ShoppingUtil.removeFromCart(getItem());
+                        if(ShoppingUtils.isInWishList(getItem()))
+                            ShoppingUtils.removeFromCart(getItem());
                         else
-                            ShoppingUtil.addToWishlist(getItem());
-                        notifyDataSetChanged();
+                            ShoppingUtils.addToWishlist(getItem());
 
+                        notifyDataSetChanged();
                         Toast.makeText(mActivity, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -207,16 +187,16 @@ public class ImageListFragment extends Fragment {
                 mImageViewCartlist.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ShoppingUtil.addToCart(getItem());
-                        notifyDataSetChanged();
+                        ShoppingUtils.addToCart(getItem());
 
+                        notifyDataSetChanged();
                         Toast.makeText(mActivity, "Item added to cart!", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             public Product getItem(){
-                return DataUtil.toObj(SimpleProductRecyclerViewAdapter.this.getItem(this.getPosition()), Product.class);
+                return SimpleProductRecyclerViewAdapter.this.getItem(this.getPosition(), Product.class);
             }
         }
     }

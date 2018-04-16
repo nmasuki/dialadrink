@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.allandroidprojects.dialadrink.R;
-import com.allandroidprojects.dialadrink.utility.UserPrefManager;
+import com.allandroidprojects.dialadrink.utility.PreferenceUtils;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -29,14 +29,14 @@ public class WelcomeActivity extends AppCompatActivity {
     private TextView[] dots;
     private int[] layouts;
     private Button btnSkip, btnNext;
-    private UserPrefManager prefManager;
+    private PreferenceUtils prefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Checking for first time launch - before calling setContentView()
-        if (!UserPrefManager.isFirstTimeLaunch()) {
+        if (!PreferenceUtils.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
         }

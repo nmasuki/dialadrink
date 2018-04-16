@@ -41,7 +41,6 @@ public abstract class LiveQueryPagerAdapter<T> extends PagerAdapter {
 
     public abstract T getItem(int i);
 
-
     @Override
     public int getCount() {
         return enumerator != null ? enumerator.getCount() : 0;

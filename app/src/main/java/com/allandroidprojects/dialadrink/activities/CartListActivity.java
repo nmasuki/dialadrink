@@ -11,24 +11,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.adapters.LiveQueryRecyclerAdapter;
+import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.model.CartItem;
-import com.allandroidprojects.dialadrink.utility.DataUtil;
-import com.allandroidprojects.dialadrink.utility.ProductUtil;
-import com.allandroidprojects.dialadrink.utility.ShoppingUtil;
+import com.allandroidprojects.dialadrink.utility.DataUtils;
+import com.allandroidprojects.dialadrink.utility.LoginUtils;
+import com.allandroidprojects.dialadrink.utility.ProductUtils;
+import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
 import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.Query;
-import com.couchbase.lite.QueryEnumerator;
 import com.facebook.drawee.view.SimpleDraweeView;
+
+import java.text.DecimalFormat;
+
+import br.com.zbra.androidlinq.Linq;
+import br.com.zbra.androidlinq.Stream;
+import br.com.zbra.androidlinq.delegate.SelectorDouble;
 
 import static com.allandroidprojects.dialadrink.fragments.ImageListFragment.ITEM_POSITION;
 import static com.allandroidprojects.dialadrink.fragments.ImageListFragment.ITEM_JSON_DATA;
 
 public class CartListActivity extends AppCompatActivity {
+    TextView totalPriceTextView;
+    TextView makePaymentTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,19 +48,87 @@ public class CartListActivity extends AppCompatActivity {
         //Show cart layout based on items
         setCartLayout();
 
+        LiveQuery query = DataUtils.getView("cartlist_by_user_id", CartItem.Mappers.by_userId)
+                .createQuery().toLiveQuery();
         RecyclerView.LayoutManager recylerViewLayoutManager = new LinearLayoutManager(CartListActivity.this);
-
-        Query query = DataUtil.getView("cartlist_by_user_id", CartItem.Mappers.by_userId)
-                .createQuery();
-
-        RecyclerView recyclerView = (RecyclerView)CartListActivity.this.findViewById(R.id.recyclerview);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(recylerViewLayoutManager);
-        recyclerView.setAdapter(new SimpleCartItemRecyclerViewAdapter(this, query.toLiveQuery()));
+        recyclerView.setAdapter(new SimpleCartItemRecyclerViewAdapter(this, query));
+
+        totalPriceTextView = (TextView) findViewById(R.id.price_text_cartlist);
+        makePaymentTextView = (TextView) findViewById(R.id.payment_textview_action);
+
+        Stream<CartItem> cartItemStream = Linq.stream(ShoppingUtils.getCartListItems());
+        final DecimalFormat formatter = new DecimalFormat("#,###,##0.00");
+        if (cartItemStream == null || cartItemStream.toList().isEmpty()) {
+            totalPriceTextView.setText(formatter.format(0.0));
+            setCartLayout(true);
+            return;
+        }else{
+            String currency = cartItemStream.first().getProduct().getCurrency();
+            double totalPrice = cartItemStream.sum(new SelectorDouble<CartItem>() {
+                @Override
+                public Double select(CartItem value) {
+                    return value.getTotalPrice();
+                }
+            });
+
+            totalPriceTextView.setText(currency + " " + formatter.format(totalPrice));
+        }
+
+        query.addChangeListener(new LiveQuery.ChangeListener() {
+            @Override
+            public void changed(LiveQuery.ChangeEvent event) {
+                try {
+                    final Stream<CartItem> cartItemStream = Linq.stream(ShoppingUtils.getCartListItems());
+                    if (cartItemStream == null || cartItemStream.toList().isEmpty()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setCartLayout(true);
+                                totalPriceTextView.setText(formatter.format(0.0));
+                            }
+                        });
+                    }else{
+                        final String currency = cartItemStream.first().getProduct().getCurrency();
+                        final double totalPrice = cartItemStream.sum(new SelectorDouble<CartItem>() {
+                            @Override
+                            public Double select(CartItem value) {
+                                return value.getTotalPrice();
+                            }
+                        });
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                totalPriceTextView.setText(currency + " " + formatter.format(totalPrice));
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    LogManager.getLogger().d(App.TAG, "Error while updating cart price.", e);
+                }
+
+            }
+        });
+
+        makePaymentTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent payIntent = new Intent(CartListActivity.this, EmptyActivity.class);
+                if (LoginUtils.isLoggedAsGuest()) {
+                    Intent intent = new Intent(CartListActivity.this, LoginActivity.class);
+                    intent.putExtra(LoginActivity.NEXT_ACTION_CLASS, payIntent);
+                    startActivity(intent);
+                } else {
+                    startActivity(payIntent);
+                }
+            }
+        });
     }
 
     public class SimpleCartItemRecyclerViewAdapter
             extends LiveQueryRecyclerAdapter<SimpleCartItemRecyclerViewAdapter.ViewHolder> {
-        private QueryEnumerator enumerator;
 
         public SimpleCartItemRecyclerViewAdapter(Context context, LiveQuery query) {
             super(context, query);
@@ -58,7 +137,8 @@ public class CartListActivity extends AppCompatActivity {
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final SimpleDraweeView mImageView;
-            public final LinearLayout mLayoutItem, mLayoutRemove , mLayoutEdit;
+            public final LinearLayout mLayoutItem;
+            public final ImageView addImageView, removeImageView;
             public final TextView mPriceTextView, mNameTextView, mDescriptionTextView, mDelivertyMsgTextView, mQtyTextView;
 
             public ViewHolder(View view) {
@@ -66,13 +146,13 @@ public class CartListActivity extends AppCompatActivity {
                 mView = view;
                 mImageView = (SimpleDraweeView) view.findViewById(R.id.image_cartlist);
                 mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item_desc);
-                mLayoutRemove = (LinearLayout) view.findViewById(R.id.remove_layout_cartlist_item);
-                mLayoutEdit = (LinearLayout) view.findViewById(R.id.edit_layout_cartlist_item);
-                mNameTextView = (TextView)view.findViewById(R.id.name_text_cartlist_item);
-                mDescriptionTextView = (TextView)view.findViewById(R.id.description_text_cartlist_item);
-                mDelivertyMsgTextView = (TextView)view.findViewById(R.id.delivery_msg_text_cartlist_item);
-                mQtyTextView = (TextView)view.findViewById(R.id.qty_text_cartlist_item);
-                mPriceTextView = (TextView)view.findViewById(R.id.price_text_cartlist_item);
+                addImageView = (ImageView) view.findViewById(R.id.addImageView);
+                removeImageView = (ImageView) view.findViewById(R.id.removeImageView);
+                mNameTextView = (TextView) view.findViewById(R.id.name_text_cartlist_item);
+                mDescriptionTextView = (TextView) view.findViewById(R.id.description_text_cartlist_item);
+                mDelivertyMsgTextView = (TextView) view.findViewById(R.id.delivery_msg_text_cartlist_item);
+                mQtyTextView = (TextView) view.findViewById(R.id.qty_text_cartlist_item);
+                mPriceTextView = (TextView) view.findViewById(R.id.price_text_cartlist_item);
             }
         }
 
@@ -83,48 +163,51 @@ public class CartListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder vholder,final int position) {
-            final SimpleCartItemRecyclerViewAdapter.ViewHolder holder = (SimpleCartItemRecyclerViewAdapter.ViewHolder)vholder;
+        public void onBindViewHolder(RecyclerView.ViewHolder vholder, final int position) {
+            final SimpleCartItemRecyclerViewAdapter.ViewHolder holder = (SimpleCartItemRecyclerViewAdapter.ViewHolder) vholder;
             final CartItem item = getItem(position, CartItem.class);
-            if(item == null)
+            if (item == null)
                 return;
             final Uri uri = Uri.parse(item.getProduct().getImageUrl());
 
             String description = item.getProduct().getCategory();
-            if(item.getProduct().getSubCategory() != null)
+            if (item.getProduct().getSubCategory() != null)
                 description += ", " + item.getProduct().getSubCategory();
 
             holder.mImageView.setImageURI(uri);
             holder.mNameTextView.setText(item.getProduct().getName());
             holder.mDescriptionTextView.setText(description);
             holder.mDelivertyMsgTextView.setText(item.getProduct().getDescription());
-            holder.mQtyTextView.setText("Qty: " + item.getSize());
-            holder.mPriceTextView.setText(item.getProduct().getPriceLabel());
+            holder.mQtyTextView.setText("Qty: " + String.valueOf(item.getSize()));
+            holder.mPriceTextView.setText(item.getTotalPriceLabel());
 
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(CartListActivity.this, ProductActivity.class);
-                    intent.putExtra(ITEM_JSON_DATA, ProductUtil.getJson(getItem(position, CartItem.class)));
+                    intent.putExtra(ITEM_JSON_DATA, ProductUtils.getJson(getItem(position, CartItem.class)));
                     intent.putExtra(ITEM_POSITION, position);
                     CartListActivity.this.startActivity(intent);
                 }
             });
 
             //Set click action
-            holder.mLayoutRemove.setOnClickListener(new View.OnClickListener() {
+            holder.removeImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((CartItem)getItem(position, CartItem.class)).remove();
+                    CartItem cartItem = (CartItem) getItem(position, CartItem.class);
+                    if (cartItem != null) cartItem.remove();
                     notifyDataSetChanged();
-
                 }
             });
 
             //Set click action
-            holder.mLayoutEdit.setOnClickListener(new View.OnClickListener() {
+            holder.addImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    CartItem cartItem = (CartItem) getItem(position, CartItem.class);
+                    if (cartItem != null) cartItem.add();
+                    notifyDataSetChanged();
                 }
             });
         }
@@ -144,16 +227,20 @@ public class CartListActivity extends AppCompatActivity {
         }
     }
 
-    protected void setCartLayout(){
+    protected void setCartLayout() {
+        setCartLayout(ShoppingUtils.getCartSize() <= 0);
+    }
+
+    protected void setCartLayout(Boolean noItems) {
         LinearLayout layoutCartItems = (LinearLayout) findViewById(R.id.layout_items);
         LinearLayout layoutCartPayments = (LinearLayout) findViewById(R.id.layout_payment);
         LinearLayout layoutCartNoItems = (LinearLayout) findViewById(R.id.layout_cart_empty);
 
-        if(ShoppingUtil.getCartSize() >0){
+        if (!noItems) {
             layoutCartNoItems.setVisibility(View.GONE);
             layoutCartItems.setVisibility(View.VISIBLE);
             layoutCartPayments.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             layoutCartNoItems.setVisibility(View.VISIBLE);
             layoutCartItems.setVisibility(View.GONE);
             layoutCartPayments.setVisibility(View.GONE);
