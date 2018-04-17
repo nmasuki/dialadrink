@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.allandroidprojects.dialadrink.utility.DbSync;
 import com.allandroidprojects.dialadrink.App;
@@ -113,6 +114,7 @@ public class LoginActivity extends AppCompatActivity implements
         // Set the dimensions of the sign-in button.
         SignInButton googleLoginInButton = findViewById(R.id.googleSignInButton);
         googleLoginInButton.setSize(SignInButton.SIZE_STANDARD);
+        setGooglePlusButtonText(googleLoginInButton, getResources().getString(R.string.google_signin_button));
         Button authCodeSignInButton = findViewById(R.id.authCodeSignInButton);
         Button guestLoginButton = (Button) findViewById(R.id.guestSignInButton);
 
@@ -129,6 +131,19 @@ public class LoginActivity extends AppCompatActivity implements
         authCodeSignInButton.setOnClickListener(this);
         guestLoginButton.setOnClickListener(this);
 
+    }
+
+    protected void setGooglePlusButtonText(SignInButton signInButton, String buttonText) {
+        // Find the TextView that is inside of the SignInButton and set its text
+        for (int i = 0; i < signInButton.getChildCount(); i++) {
+            View v = signInButton.getChildAt(i);
+
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setText(buttonText);
+                return;
+            }
+        }
     }
 
     @Override

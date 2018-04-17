@@ -1,9 +1,9 @@
 package com.allandroidprojects.dialadrink.utility;
 
+import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.model.Product;
 import com.allandroidprojects.dialadrink.model.ProductType;
-import com.allandroidprojects.dialadrink.DialADrink;
 import com.couchbase.lite.Document;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -26,13 +26,13 @@ import br.com.zbra.androidlinq.delegate.Selector;
 public class ProductUtils {
 
     public static ArrayList<Product> getProducts() {
-        ArrayList<Product> allItems = new ArrayList<>(DataUtil.<Product>getAll("Product")
+        ArrayList<Product> allItems = new ArrayList<>(DataUtils.<Product>getAll("Product")
                 .select(new Selector<Document, Product>() {
-            @Override
-            public Product select(Document value) {
-                return DataUtil.toObj(value, Product.class);
-            }
-        }).toList());
+                    @Override
+                    public Product select(Document value) {
+                        return DataUtils.toObj(value, Product.class);
+                    }
+                }).toList());
 
         if (allItems.size() == 0)
             allItems = new ArrayList<>(getProductsFromJsonAsset());
@@ -40,27 +40,30 @@ public class ProductUtils {
         return allItems;
     }
 
-    public static ArrayList<Product> getProductsByCategory(final int categoryId){
+    public static ArrayList<Product> getProductsByCategory(final int categoryId) {
         List<Product> allItems = getProducts();
 
-        return new ArrayList<Product> (Linq.stream(allItems).where(new Predicate<Product>() {
+        return new ArrayList<Product>(Linq.stream(allItems).where(new Predicate<Product>() {
             @Override
             public boolean apply(Product value) {
                 ProductType type = getProductType(value);
-                return (type!=null && type.getId() == categoryId);
+                return (type != null && type.getId() == categoryId);
             }
         }).toList());
     }
 
     public static ArrayList<ProductType> getProductTypes() {
         ArrayList<ProductType> allItems =
-                new ArrayList<ProductType>(DataUtil.getAll("ProductType")
+                new ArrayList<ProductType>(DataUtils.getAll("ProductType")
                         .select(new Selector<Document, ProductType>() {
                             @Override
                             public ProductType select(Document value) {
-                                return DataUtil.toObj(value, ProductType.class);
+                                return DataUtils.toObj(value, ProductType.class);
                             }
                         }).toList());
+
+        if (allItems.size() == 0)
+            allItems = new ArrayList<>(getProductTypesFromJsonAsset());
 
         if (allItems.size() == 0)
             allItems = getProductTypesFromProducts(getProducts());
@@ -79,25 +82,64 @@ public class ProductUtils {
                 }).toList());
     }
 
-    private static ProductType getProductType(Product p){
+    private static ProductType getProductType(Product p) {
         for (ProductType t : getProductTypes()) {
-            if(t.getName().equals(p.getCategory()))
+            if (t.getName().equals(p.getCategory()))
                 return t;
         }
         return null;
     }
 
-    private static List<Product> getProductsFromJsonAsset(){
+    private static List<ProductType> getProductTypesFromJsonAsset() {
+        String json = loadJSONFromAsset("dialadrinkproductstypes.json");
+        Type listType = new TypeToken<List<ProductType>>() {
+        }.getType();
+
+        // In this test code i just shove the JSON here as string.
+        List<ProductType> list = new Gson().fromJson(json, listType);
+
+        for (ProductType p : list) {
+            String id = p.getName().toLowerCase()
+                    .replaceAll("/[\\W]+/g", "-")
+                    .replaceAll("[-]+$", "")
+                    .replaceAll("^[-]+", "");
+
+            p.set_id(id);
+            //DataUtils.save(p);
+        }
+
+        return Linq.stream(list)
+                .groupBy(new Selector<ProductType, String>() {
+                    @Override
+                    public String select(ProductType value) {
+                        return value.getName();
+                    }
+                })
+                .select(new Selector<Grouping<String, ProductType>, ProductType>() {
+                    @Override
+                    public ProductType select(Grouping<String, ProductType> value) {
+                        return value.getElements().first();
+                    }
+                })
+                .toList();
+    }
+
+    private static List<Product> getProductsFromJsonAsset() {
         String json = loadJSONFromAsset("dialadrinkproducts.json");
-        Type listType = new TypeToken<List<Product>>(){}.getType();
+        Type listType = new TypeToken<List<Product>>() {
+        }.getType();
 
         // In this test code i just shove the JSON here as string.
         List<Product> list = new Gson().fromJson(json, listType);
 
-        for (Product p :list)
-        {
-            p.set_id(md5(p.getImageUrl()));
-            DataUtil.save(p);
+        for (Product p : list) {
+            String id = p.getName().toLowerCase()
+                    .replaceAll("/[\\W]+/g", "-")
+                    .replaceAll("[-]+$", "")
+                    .replaceAll("^[-]+", "");
+
+            p.set_id(id);
+            //DataUtils.save(p);
         }
 
         return Linq.stream(list).where(new Predicate<Product>() {
@@ -108,25 +150,35 @@ public class ProductUtils {
         }).toList();
     }
 
-    private static ArrayList<ProductType> getProductTypesFromProducts(List<Product>products){
+    private static ArrayList<ProductType> getProductTypesFromProducts(List<Product> products) {
         Set<String> categories = new HashSet<>();
         ArrayList<ProductType> productTypes = new ArrayList<>();
 
         for (Product p : products)
-            if(p.getCategory()!=null)
+            if (p.getCategories() != null)
+                for (String cat : p.getCategories())
+                    categories.add(cat.toLowerCase());
+            else if (p.getCategory() != null)
                 categories.add(p.getCategory().toLowerCase());
 
         final int[] i = {0};
-        for (final String c: categories) {
+        for (final String c : categories) {
             ProductType type = new ProductType();
+            String id = c.toLowerCase()
+                    .replaceAll("/[\\W]+/g", "-")
+                    .replaceAll("[-]+$", "")
+                    .replaceAll("^[-]+", "");
+
+            type.set_id(id);
+
             type.setId(i[0]++);
             type.setName(c);
 
             productTypes.add(type);
         }
 
-        for (ProductType p :productTypes)
-            DataUtil.save(p);
+        for (ProductType p : productTypes)
+            DataUtils.save(p);
 
         return productTypes;
     }
@@ -134,7 +186,7 @@ public class ProductUtils {
     /*
     Convert Object to json string
      */
-    public static String getJson(Object obj){
+    public static String getJson(Object obj) {
         Gson gson = new Gson();
         String j = gson.toJson(obj);
         return j;
@@ -142,17 +194,18 @@ public class ProductUtils {
 
     /**
      * Convert json string to POJO
+     *
      * @param json
      * @param <T>
      * @return
      */
-    public static <T> T getObject(String json, Class<T> cls){
+    public static <T> T getObject(String json, Class<T> cls) {
         try {
             Gson gson = new Gson();
             T myClass = gson.fromJson(json, cls);
-            return (T)myClass;
+            return (T) myClass;
         } catch (Exception e) {
-            LogManager.getLogger().d(DialADrink.TAG, "Error while parsing json string.", e);
+            LogManager.getLogger().d(App.TAG, "Error while parsing json string.", e);
             return null;
         }
     }
@@ -160,7 +213,7 @@ public class ProductUtils {
     private static String loadJSONFromAsset(String fileName) {
         String json = null;
         try {
-            InputStream is = DialADrink.getAppContext().getAssets().open(fileName);
+            InputStream is = App.getAppContext().getAssets().open(fileName);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -173,28 +226,4 @@ public class ProductUtils {
         return json;
     }
 
-    public static final String md5(final String s) {
-        final String MD5 = "MD5";
-        try {
-            // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest
-                    .getInstance(MD5);
-            digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
-
-            // Create Hex String
-            StringBuilder hexString = new StringBuilder();
-            for (byte aMessageDigest : messageDigest) {
-                String h = Integer.toHexString(0xFF & aMessageDigest);
-                while (h.length() < 2)
-                    h = "0" + h;
-                hexString.append(h);
-            }
-            return hexString.toString();
-
-        } catch (NoSuchAlgorithmException e) {
-            LogManager.getLogger().d(DialADrink.TAG, e.getMessage());
-        }
-        return "";
-    }
 }

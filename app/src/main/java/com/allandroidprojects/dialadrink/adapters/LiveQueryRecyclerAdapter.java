@@ -60,7 +60,7 @@ public abstract class LiveQueryRecyclerAdapter<T extends RecyclerView.ViewHolder
         return enumerator != null ? enumerator.getRow(position).getDocument() : null;
     }
 
-    public <T> T getItem(int position, Class<?> cls){
+    public <T> T getItem(int position, Class<T> cls){
         return (T) DataUtils.toObj(getItem(position), cls);
     }
 

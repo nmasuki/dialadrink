@@ -1,10 +1,12 @@
 package com.allandroidprojects.dialadrink.utility;
 
+import android.os.AsyncTask;
 import android.text.format.DateFormat;
 
+import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.model.BaseModel;
-import com.allandroidprojects.dialadrink.DialADrink;
+import com.allandroidprojects.dialadrink.model.User;
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -18,12 +20,14 @@ import com.couchbase.lite.TransactionalTask;
 import com.couchbase.lite.UnsavedRevision;
 import com.couchbase.lite.View;
 import com.google.gson.Gson;
+import com.google.gson.internal.ObjectConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import br.com.zbra.androidlinq.Linq;
 import br.com.zbra.androidlinq.Stream;
@@ -34,12 +38,12 @@ import br.com.zbra.androidlinq.delegate.Selector;
  */
 
 public class DataUtils {
-    public static View getView(final String name){
+    public static View getView(final String name) {
         return getView(name, null);
     }
 
     public static View getView(final String type, Mapper map) {
-        View view = DialADrink.getAppContext().getDatabase().getView(StringUtils.toUnderScore(type));
+        View view = App.getDatabase().getView(StringUtils.toUnderScore(type));
         if (view.getMap() == null) {
             if (map == null)
                 map = new Mapper() {
@@ -60,91 +64,149 @@ public class DataUtils {
         return view;
     }
 
-    public static Stream<Document> getAll(String type){
+    public static Stream<Document> getAll(String type) {
         ArrayList<Document> allItems = new ArrayList<>();
-        Query query = getView(type).createQuery();
+        Query query = getView("by_type", BaseModel.Mappers.by_type).createQuery();
 
+        query.setDescending(true);
+        if (type != null) {
+            List<Object> startKeys = new ArrayList<Object>();
+            startKeys.add(type); // [type, {}]
+            startKeys.add(new HashMap<String, Object>());
+
+            List<Object> endKeys = new ArrayList<Object>();
+            endKeys.add(type);
+
+            query.setStartKey(startKeys); //[type, null]
+            query.setEndKey(endKeys);
+        }
+
+        Date start = new Date();
         try {
-            List<Document> result = Linq.stream(query.run()).select(new Selector<QueryRow, Document>() {
-                @Override
-                public Document select(QueryRow value) {
-                    return value.getDocument();
-                }
-            }).toList();
+            QueryEnumerator enumerator = query.run();
+            if (enumerator != null && enumerator.hasNext()) {
+                List<Document> result = Linq.stream(query.run()).select(new Selector<QueryRow, Document>() {
+                    @Override
+                    public Document select(QueryRow value) {
+                        return value.getDocument();
+                    }
+                }).toList();
 
-            allItems.addAll(result);
+                allItems.addAll(result);
+            }
         } catch (CouchbaseLiteException e) {
-            LogManager.getLogger().d(DialADrink.TAG, e.getMessage());
+            LogManager.getLogger().d(App.TAG, e.getMessage());
+        }
+
+        if (App.DEBUG) {
+            long time = new Date().getTime() - start.getTime();
+            LogManager.getLogger().d(App.TAG, "Query getAll '" + type + "' in " + time + "ms");
         }
 
         return Linq.stream(allItems);
     }
 
-    public static Document get(String id){
-        if (DialADrink.getAppContext() != null)
-            return DialADrink.getAppContext().getDatabase().getExistingDocument(id);
+    public static Document get(String id) {
+        if (App.getAppContext() != null)
+            return App.getDatabase().getExistingDocument(id);
 
         return null;
     }
 
-    public static <T extends BaseModel> Document save(T model) {
-        Gson gson = new Gson();
-        Map<String, Object> properties = gson.fromJson(gson.toJson(model), HashMap.class);
+    public static <T extends BaseModel> AsyncTask saveAsync(final T model) {
 
-        if(properties==null)
-        {
-            LogManager.getLogger().d(DialADrink.TAG, "Object was serialized to a null String.");
+        AsyncTask task = new AsyncTask<Object, Object, Object>() {
+            @Override
+            protected Document doInBackground(Object... args) {
+                return save(model);
+            }
+        };
+
+        task.execute();
+
+        return task;
+    }
+
+    public static <T extends BaseModel> Document save(final T model) {
+        Gson gson = new Gson();
+        final Map<String, Object> properties = gson.fromJson(gson.toJson(model), HashMap.class);
+
+        if (properties == null) {
+            LogManager.getLogger().d(App.TAG, "Object was serialized to a null String.");
             return null;
         }
 
-        if(properties.containsKey("doc"))
+        if (properties.containsKey("doc"))
             properties.remove("doc");
 
-        if (!properties.containsKey("type") || properties.get("type") == null){
+        if (!properties.containsKey("type") || properties.get("type") == null) {
             String type = model.getClass().getSimpleName();
-            properties.put("type", type.toLowerCase());
+            properties.put("type", type);
         }
 
         if (!properties.containsKey("createdAt"))
-            properties.put("createdAt", DateFormat.format(DialADrink.DATE_FORMAT, new Date()));
+            properties.put("createdAt", DateFormat.format(App.DATE_FORMAT, new Date()));
 
-        if (!properties.containsKey("owner") || properties.get("owner") == null){
-            String userId = DialADrink.getAppContext().getCurrentUserId();
-            if(userId != null)
+        if (!properties.containsKey("owner") || properties.get("owner") == null) {
+            String userId = App.getAppContext().getCurrentUserId();
+            if (userId != null)
                 properties.put("owner", userId);
         }
 
         try {
             Document document = model.getDocument();
-            if(document == null)
-                document = DialADrink.getAppContext().getDatabase().createDocument();
+            if (document == null)
+                document = App.getSyncManager().getDatabase().createDocument();
 
             document.putProperties(properties);
-            model.setFields(document);
-
+            model.setFieldsFromDocument(document);
             return document;
         } catch (CouchbaseLiteException e) {
-            LogManager.getLogger().d(DialADrink.TAG, "Error while saving to CouchbaseLite.", e);
+            LogManager.getLogger().d(App.TAG, "Error while saving to CouchbaseLite.", e);
             return null;
         }
-
     }
 
-    public static <T> T toObj(Document document, Class<T> cls){
+    public static <T> T toObj(Document document, Class<T> cls) {
         T model = toObj(document.getProperties(), cls);
-        if(model instanceof BaseModel)
-            ((BaseModel)model).setFields(document);
+        if (model instanceof BaseModel)
+            ((BaseModel) model).setFieldsFromDocument(document);
 
         return model;
     }
 
-    public static <T> T toObj(Map<String, Object> map, Class<T> cls){
+    public static <T> T toObj(Map<String, Object> map, Class<T> cls) {
         Gson gson = new Gson();
         String jsonElement = gson.toJson(map);
-        return gson.fromJson(jsonElement, cls);
+        try {
+            return gson.fromJson(jsonElement, cls);
+        } catch (Exception e) {
+            LogManager.getLogger().d(App.TAG, "Error while ", e);
+            return null;
+        }
     }
 
-    public static boolean migrateGuestData(final Database guestDb, final Document profile) {
+    public static void migrateGuestToUser(User user) {
+        if (user != null) {
+            App.getAppContext().setCurrentUser(user);
+            App.getSyncManager().setDatabase(App.getSyncManager().getUserDatabase(user.getUserId()));
+
+            //Wait till db initialization is complete
+            while (App.getSyncManager().getDatabase() == null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Document document = DataUtils.save(user);
+            // Migrate guest data to user:
+            migrateGuestData(App.getSyncManager().getUserDatabase(App.GUEST_DATABASE), document);
+        }
+    }
+
+    private static boolean migrateGuestData(final Database guestDb, final Document profile) {
         boolean success = true;
         final Database userDB = profile.getDatabase();
         if (guestDb.getLastSequenceNumber() > 0 && userDB.getLastSequenceNumber() == 0) {
@@ -159,9 +221,9 @@ public class DataUtils {
 
                             Map<String, Object> properties = doc.getUserProperties();
 
-                            if(properties.containsKey("userId"))
+                            if (properties.containsKey("userId"))
                                 properties.remove("userId");
-                            properties.put("userId", DialADrink.getAppContext().getCurrentUserId());
+                            properties.put("userId", App.getAppContext().getCurrentUserId());
 
                             newDoc.putProperties(properties);
 
@@ -180,7 +242,7 @@ public class DataUtils {
                         // Delete guest database:
                         guestDb.delete();
                     } catch (CouchbaseLiteException e) {
-                        LogManager.getLogger().d(DialADrink.TAG, "Error when migrating guest data to user", e);
+                        LogManager.getLogger().d(App.TAG, "Error when migrating guest data to user", e);
                         return false;
                     }
                     return true;

@@ -1,63 +1,47 @@
 {
-  "log": ["*"],
-  "facebook": { "register": true },
-  "databases": {
-    "todolite": {
-      "server": "walrus:",
-      "users": {
-        "GUEST": {"disabled": true}
-      },
-      "sync": `
-function(doc, oldDoc) {
-  // NOTE this function is the same across the iOS, Android, and PhoneGap versions.
-  if (doc.type == "task") {
-    if (!doc.list_id) {
-      throw({forbidden : "Items must have a list_id."});
-    }
-    channel("list-"+doc.list_id);
-  } else if (doc.type == "list" || (doc._deleted && oldDoc && oldDoc.type == "list")) {
-    // Make sure that the owner propery exists:
-    var owner = oldDoc ? oldDoc.owner : doc.owner;
-    if (!owner) {
-      throw({forbidden : "List must have an owner."});
-    }
+	"log": ["HTTP+"],
+	"adminInterface": "0.0.0.0:4985",
+	"interface": "0.0.0.0:4984",
+	"databases": {
+		"dialadrink": {
+			"bucket":"dialadrink",
+			"username": "daduser",
+			"password": "admin@Mai",
+			"server": "http://localhost:8091",
+			"enable_shared_bucket_access": true,
+			"import_docs": "continuous",
+			"sync": `function (doc, oldDoc) {
+	// Make sure that the owner propery exists:
+	var owner = oldDoc ? oldDoc.owner : doc.owner;
+	var ownedTypes = ["WishlistItem", "CartItem"];
+	if (owner && owner != 'none') {
+		// Make sure that only the owner of the document can update the document:
+		if (doc.owner && owner != doc.owner)
+			throw ({
+				forbidden: "Cannot change owner for lists."
+			});
 
-    // Make sure that only the owner of the list can update the list:
-    if (doc.owner && owner != doc.owner) {
-      throw({forbidden : "Cannot change owner for lists."});
-    }
+		channel(doc.type);
+		requireUser(owner);
+		access(owner, doc.type)
+	} else if (doc.type == "profile") {
+		channel("profiles");
+		requireUser(doc._id);
+		access(doc._id, "profiles");
+	} else {
+		if (ownedTypes.indexOf(doc.type) >= 0 || (doc._deleted && oldDoc && ownedTypes.indexOf(oldDoc.type) >= 0)) {
+			if (!owner)
+				throw ({ forbidden: "'"+doc.type+"' must have an owner." });
 
-    var ownerName = owner.substring(owner.indexOf(":")+1);
-    requireUser(ownerName);
-
-    var ch = "list-"+doc._id; 
-    if (!doc._deleted) {
-      channel(ch);
-    }
-
-    // Grant owner access to the channel:
-    access(ownerName, ch);
-
-    // Grant shared members access to the channel:
-    var members = !doc._deleted ? doc.members : oldDoc.members;  
-    if (Array.isArray(members)) {
-      var memberNames = [];
-      for (var i = members.length - 1; i >= 0; i--) {
-        memberNames.push(members[i].substring(members[i].indexOf(":")+1))
-      };
-      access(memberNames, ch);
-    }
-  } else if (doc.type == "profile") {
-    channel("profiles");
-    var user = doc._id.substring(doc._id.indexOf(":")+1);
-    if (user !== doc.user_id) {
-      throw({forbidden : "Profile user_id must match docid."});
-    }
-    requireUser(user);
-    access(user, "profiles");
-  }
+			channel(doc.type);
+			requireUser(owner);
+			access(owner, doc.type);
+		} else {
+			channel(doc.channels)
+		}
+	}
+}`
+		}
+	}
 }
-`
-    }
-  }
-}
+

@@ -1,66 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="@dimen/margin_medium">
+
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3">
-        <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
+        android:weightSum="3"
+        android:id="@+id/search_item_layout">
+
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/image_cartlist" android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            fresco:placeholderImage="@color/stay_color"/>
+            fresco:placeholderImage="@drawable/placeholder_image_wine"/>
+
         <LinearLayout  android:id="@+id/layout_item_desc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_weight="2"
             android:layout_marginLeft="@dimen/activity_horizontal_margin">
-            <TextView android:id="@+id/name_text_cartlist_item"
+            <TextView android:id="@+id/name_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Denim Shirt"
                 android:textSize="@dimen/text_size_small"
                 android:textStyle="bold"/>
-            <TextView android:id="@+id/description_text_cartlist_item"
+            <TextView android:id="@+id/category_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Slim fit, cotton"
+                android:text="Whiskey"
                 android:textSize="@dimen/text_size_small"/>
-            <TextView android:id="@+id/price_text_cartlist_item"
+            <TextView android:id="@+id/price_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rs. 8,999"
                 android:textSize="@dimen/text_size_xmedium"
                 android:textColor="#4CAF50"
                 android:layout_marginTop="@dimen/margin_small"/>
-            <TextView android:id="@+id/delivery_msg_text_cartlist_item"
+
+            <TextView android:id="@+id/description_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delivery charge: FREE"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat...."
                 android:textSize="@dimen/text_size_small"/>
-            <LinearLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/margin_medium">
-                <TextView android:id="@+id/qty_text_cartlist_item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Qty: 1"
-                    android:textSize="@dimen/text_size_small"
-                    android:visibility="visible"/>
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Size: 41"
-                    android:textSize="@dimen/text_size_small"
-                    android:layout_marginLeft="@dimen/margin_medium"
-                    android:visibility="gone"/>
-            </LinearLayout>
+
         </LinearLayout>
+
     </LinearLayout>
 
     <View android:layout_width="match_parent"
@@ -68,65 +60,5 @@
         android:background="@color/grey_light"
         android:layout_marginTop="@dimen/margin_medium"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        android:weightSum="2">
-
-        <LinearLayout android:id="@+id/remove_layout_cartlist_item"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="2">
-            <ImageView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_clear_black_18dp"/>
-            <TextView android:id="@+id/text_action1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="8dp"
-                android:text="Remove"
-                android:textSize="12dp"
-                android:textColor="@color/gen_black"
-                android:gravity="left"/>
-        </LinearLayout>
-
-        <View android:layout_width="@dimen/view_width_small"
-            android:layout_height="match_parent"
-            android:background="@color/grey_light"/>
-
-        <LinearLayout android:id="@+id/edit_layout_cartlist_item"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="2">
-            <ImageView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_mode_edit_black_18dp"
-                />
-            <TextView android:id="@+id/text_action2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="8dp"
-                android:text="Edit"
-                android:textSize="12dp"
-                android:textColor="@color/gen_black"
-                android:gravity="left"/>
-        </LinearLayout>
-
-    </LinearLayout>
-    <View android:layout_width="match_parent"
-        android:layout_height="@dimen/view_width_small"
-        android:background="@color/grey_light"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"/>
 </LinearLayout>
 

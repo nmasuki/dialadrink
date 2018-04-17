@@ -4,24 +4,19 @@ package com.allandroidprojects.dialadrink.model;
  * Created by nmasuki on 3/24/2018.
  */
 
-public class ProductType {
-    int id;
-    String name;
-    String type = "ProductType";
+public class ProductType extends BaseModel {
+    protected String name;
+    protected double id;
 
-    public String getType() {
-        return type;
+    public ProductType(){
+        set_id("0");
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public int getId() {
+    public double getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(double id) {
         this.id = id;
     }
 

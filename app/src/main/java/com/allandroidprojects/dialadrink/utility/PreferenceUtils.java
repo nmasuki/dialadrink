@@ -2,7 +2,7 @@ package com.allandroidprojects.dialadrink.utility;
 
 import android.content.SharedPreferences;
 
-import com.allandroidprojects.dialadrink.DialADrinkApp;
+import com.allandroidprojects.dialadrink.App;
 
 /**
  * Created by Lincoln on 05/05/16.
@@ -20,7 +20,7 @@ public class PreferenceUtils {
 
     public static SharedPreferences getPref() {
         if (pref == null)
-            pref = DialADrinkApp.getAppContext().getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+            pref = App.getAppContext().getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         return pref;
     }
 

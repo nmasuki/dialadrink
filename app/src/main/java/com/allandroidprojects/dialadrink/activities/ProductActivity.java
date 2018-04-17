@@ -32,24 +32,24 @@ public class ProductActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_details);
-        SimpleDraweeView mImageView = (SimpleDraweeView) findViewById(R.id.image1);
-        TextView textViewAddToCart = (TextView) findViewById(R.id.add_to_card_text_item_details);
-        TextView textViewBuyNow = (TextView) findViewById(R.id.buy_now_text_item_details);
-        TextView textViewCallUs = (TextView) findViewById(R.id.call_us_text_item_details);
-        TextView textViewDetails = (TextView) findViewById(R.id.details_activity_item_details_textView);
-        TextView textViewName = (TextView) findViewById(R.id.name_activity_item_details_textView);
-        TextView textViewPrice = (TextView) findViewById(R.id.price_activity_item_details_textView);
-        TextView textViewCategory = (TextView) findViewById(R.id.category_activity_item_details_textView);
-        LinearLayout shareListLayout = findViewById(R.id.share_layout_cartlist_item);
-        LinearLayout findSimilarListLayout = findViewById(R.id.similar_layout_cartlist_item);
-        LinearLayout wishListLayout = findViewById(R.id.wishlist_layout_activity_item);
+        SimpleDraweeView mImageView = (SimpleDraweeView) findViewById(R.id.productImageView);
+        TextView textViewAddToCart = (TextView) findViewById(R.id.addToCardTextView);
+        TextView textViewBuyNow = (TextView) findViewById(R.id.buyNowTextView);
+        TextView textViewCallUs = (TextView) findViewById(R.id.callUsTextView);
+        TextView textViewDetails = (TextView) findViewById(R.id.detailsTextView);
+        TextView textViewName = (TextView) findViewById(R.id.nameTextView);
+        TextView textViewPrice = (TextView) findViewById(R.id.priceTextView);
+        TextView textViewCategory = (TextView) findViewById(R.id.categoryTextView);
+        LinearLayout shareListLayout = findViewById(R.id.shareLayout);
+        LinearLayout findSimilarListLayout = findViewById(R.id.similarItemsLayout);
+        LinearLayout wishListLayout = findViewById(R.id.wishlistLayout);
 
 
-        ratings_1 = (ImageView) findViewById(R.id.product_rating_1);
-        ratings_2 = (ImageView) findViewById(R.id.product_rating_2);
-        ratings_3 = (ImageView) findViewById(R.id.product_rating_3);
-        ratings_4 = (ImageView) findViewById(R.id.product_rating_4);
-        ratings_5 = (ImageView) findViewById(R.id.product_rating_5);
+        ratings_1 = (ImageView) findViewById(R.id.rating1ImageView);
+        ratings_2 = (ImageView) findViewById(R.id.rating2ImageView);
+        ratings_3 = (ImageView) findViewById(R.id.rating3ImageView);
+        ratings_4 = (ImageView) findViewById(R.id.rating4ImageView);
+        ratings_5 = (ImageView) findViewById(R.id.rating5ImageView);
 
         ratings_1.setOnClickListener(this);
         ratings_2.setOnClickListener(this);
@@ -84,8 +84,8 @@ public class ProductActivity extends AppCompatActivity implements View.OnClickLi
 
     private void updateRatingView() {
         Double ratings = product.getAVGRatings();
-        TextView ratingTextView = findViewById(R.id.ratings_activity_item_details_textView);
-        TextView ratingsDetails = findViewById(R.id.ratings_count__activity_item_details_textView);
+        TextView ratingTextView = findViewById(R.id.ratingsTextView);
+        TextView ratingsDetails = findViewById(R.id.ratingCountTextView);
         ImageView wishListIcon = findViewById(R.id.add_to_wishlist_icon);
 
         ratingTextView.setText(String.format("%.1f *", ratings));
@@ -115,44 +115,44 @@ public class ProductActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.product_rating_1:
+            case R.id.rating1ImageView:
                 product.setRatings(1);
                 updateRatingView();
                 break;
-            case R.id.product_rating_2:
+            case R.id.rating2ImageView:
                 product.setRatings(2);
                 updateRatingView();
                 break;
-            case R.id.product_rating_3:
+            case R.id.rating3ImageView:
                 product.setRatings(3);
                 updateRatingView();
                 break;
-            case R.id.product_rating_4:
+            case R.id.rating4ImageView:
                 product.setRatings(4);
                 updateRatingView();
                 break;
-            case R.id.product_rating_5:
+            case R.id.rating5ImageView:
                 product.setRatings(5);
                 updateRatingView();
                 break;
-            case R.id.share_layout_cartlist_item:
+            case R.id.shareLayout:
                 //ShoppingUtils.addToWishlist(product);
                 break;
-            case R.id.similar_layout_cartlist_item:
+            case R.id.similarItemsLayout:
                 //ShoppingUtils.addToWishlist(product);
                 break;
-            case R.id.wishlist_layout_activity_item:
+            case R.id.wishlistLayout:
                 ShoppingUtils.addToWishlist(product);
                 break;
-            case R.id.add_to_card_text_item_details:
+            case R.id.addToCardTextView:
                 ShoppingUtils.addToCart(product);
                 Toast.makeText(ProductActivity.this, "Item added to cart.", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.buy_now_text_item_details:
+            case R.id.buyNowTextView:
                 ShoppingUtils.addToCart(product);
                 startActivity(new Intent(ProductActivity.this, CartListActivity.class));
                 break;
-            case R.id.call_us_text_item_details:
+            case R.id.callUsTextView:
                 ShoppingUtils.addToCart(product);
                 if (ActivityCompat.checkSelfPermission(ProductActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(ProductActivity.this,
@@ -163,14 +163,13 @@ public class ProductActivity extends AppCompatActivity implements View.OnClickLi
                     ProductActivity.this.startActivity(intent);
                 }
                 break;
-            case R.id.image1:
+            case R.id.productImageView:
                 Intent intent = new Intent(ProductActivity.this, ViewPagerActivity.class);
                 if (product != null) {
-                    int position = getIntent().getIntExtra(ImageListFragment.ITEM_POSITION, 0);
+                    String[] images = product.getImages().toArray(new String[product.getImages().size()]);
+                    int position = product.getImages().indexOf(product.getImageUrl());
                     intent.putExtra("position", position);
-                    intent.putExtra("category", product.getCategory());
-                    intent.putExtra("subcategory", product.getSubCategory());
-                    intent.putExtra("subcategory", product.getSubCategory());
+                    intent.putExtra("images", images);
                 }
                 startActivity(intent);
                 break;

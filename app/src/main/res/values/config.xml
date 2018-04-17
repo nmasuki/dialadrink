@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="callus_number">+254723688108</string>
+    <string name="encrption_key">seekrit001</string>
+
+    <!-- Facebook app id -->
+    <string name="facebook_app_id">2018293855111128</string>
+    <string name="fb_login_protocol_scheme">fb2018293855111128</string>
+</resources>

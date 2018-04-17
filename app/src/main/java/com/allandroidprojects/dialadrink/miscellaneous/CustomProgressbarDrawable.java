@@ -2,6 +2,7 @@ package com.allandroidprojects.dialadrink.miscellaneous;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -32,7 +33,7 @@ public class CustomProgressbarDrawable extends Drawable {
 
     @Override
     public int getOpacity() {
-        return 0;
+        return PixelFormat.TRANSLUCENT;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.allandroidprojects.dialadrink.utility;
 
 import com.allandroidprojects.dialadrink.model.CartItem;
 import com.allandroidprojects.dialadrink.model.Product;
+import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
@@ -20,7 +21,7 @@ import br.com.zbra.androidlinq.delegate.SelectorInteger;
 
 public class ShoppingUtils {
     static ArrayList<Product> wishlistItems = new ArrayList<>();
-    static QueryEnumerator cartListItems;
+    static ArrayList<CartItem> cartListItems;
 
     // Methods for Wishlist
     public static void addToWishlist(Product item) {
@@ -63,50 +64,69 @@ public class ShoppingUtils {
                 .firstOrDefault(new Predicate<CartItem>() {
                     @Override
                     public boolean apply(CartItem cart) {
-                        return cart.get_id().equals(product.get_id());
+                        return cart.getProduct()!=null && cart.getProduct().get_id().equals(product.get_id());
                     }
                 }, null);
 
         if (cartItem == null) {
             cartItem = CartItem.fromProduct(product);
-            DataUtil.save(cartItem);
+            cartListItems.add(cartItem);
+            DataUtils.save(cartItem);
         }
 
         return cartItem;
     }
 
     static ArrayList<LiveQuery.ChangeListener> changeListeners = new ArrayList<>();
-    public static void addChangeListener(LiveQuery.ChangeListener listener){
+
+    public static void addShoppingCartChangeListener(LiveQuery.ChangeListener listener) {
         changeListeners.add(listener);
     }
 
-    public static void removeChangeListener(LiveQuery.ChangeListener listener){
+    public static void removeChangeListener(LiveQuery.ChangeListener listener) {
         changeListeners.remove(listener);
     }
 
     public static List<CartItem> getCartListItems() {
         if (cartListItems == null) {
-            LiveQuery query = DataUtil.getView("cartlist_by_user_id", CartItem.Mappers.by_userId)
+            LiveQuery liveQuery = DataUtils.getView("cartlist_by_user_id", CartItem.Mappers.by_userId)
                     .createQuery().toLiveQuery();
 
-            query.addChangeListener(new LiveQuery.ChangeListener() {
+            try {
+                QueryEnumerator it = liveQuery.run();
+                if (it != null && it.hasNext())
+                    cartListItems = new ArrayList<CartItem>(Linq.stream(it).select(new Selector<QueryRow, CartItem>() {
+                        @Override
+                        public CartItem select(QueryRow value) {
+                            return DataUtils.toObj(value.getDocument(), CartItem.class);
+                        }
+                    }).toList());
+                else
+                    cartListItems = new ArrayList<>();
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+
+            liveQuery.addChangeListener(new LiveQuery.ChangeListener() {
                 @Override
                 public void changed(final LiveQuery.ChangeEvent event) {
-                    cartListItems = event.getRows();
-                    for (LiveQuery.ChangeListener listener: changeListeners)
+                    cartListItems = new ArrayList<CartItem>(Linq.stream(event.getRows())
+                            .select(new Selector<QueryRow, CartItem>() {
+                                @Override
+                                public CartItem select(QueryRow value) {
+                                    return DataUtils.toObj(value.getDocument(), CartItem.class);
+                                }
+                            }).toList());
+
+                    for (LiveQuery.ChangeListener listener : changeListeners)
                         listener.changed(event);
                 }
             });
 
-            query.start();
+            liveQuery.start();
         }
 
-        return cartListItems != null? Linq.stream(cartListItems).select(new Selector<QueryRow, CartItem>() {
-            @Override
-            public CartItem select(QueryRow value) {
-                return DataUtil.toObj(value.getDocument(), CartItem.class);
-            }
-        }).toList() : new ArrayList<CartItem>();
+        return cartListItems;
     }
 
     public static int getCartSize() {
@@ -119,7 +139,7 @@ public class ShoppingUtils {
     }
 
     public static boolean isInCart(final Product item) {
-        CartItem matchItem =  Linq.stream(getCartListItems()).firstOrDefault(new Predicate<CartItem>() {
+        CartItem matchItem = Linq.stream(getCartListItems()).firstOrDefault(new Predicate<CartItem>() {
             @Override
             public boolean apply(CartItem value) {
                 return value.getProduct().get_id().equals(item.get_id());

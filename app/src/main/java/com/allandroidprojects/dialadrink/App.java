@@ -5,11 +5,13 @@ package com.allandroidprojects.dialadrink;
  */
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.allandroidprojects.dialadrink.cache.ImagePipelineConfigFactory;
 import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.model.User;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
+import com.allandroidprojects.dialadrink.utility.DbSync;
 import com.allandroidprojects.dialadrink.utility.PreferenceUtils;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -26,12 +28,13 @@ import java.util.UUID;
 import br.com.zbra.androidlinq.Linq;
 
 public class App extends android.app.Application {
-    public static final String TAG = "App";
+    public static final String TAG = "DialADrink";
     public static final String DATE_FORMAT = "yyyy-MM-dd hh:mm:ss a";
+    public static final boolean DEBUG = BuildConfig.DEBUG;
 
     // Guest database:
     public static final String GUEST_DATABASE = "guest";
-    private static DbSyncManager syncManager;
+    private static DbSync syncManager;
 
     private static Context context;
     private User mCurrentUser;
@@ -105,15 +108,20 @@ public class App extends android.app.Application {
      *
      * @return
      */
-    public static DbSyncManager getSyncManager() {
+    public static DbSync getSyncManager() {
         if (syncManager == null)
-            syncManager = new DbSyncManager();
+            syncManager = new DbSync();
 
         return syncManager;
     }
 
     public static Database getDatabase() {
         return getSyncManager().getDatabase();
+    }
+
+    public static void runOnUiThread(Runnable runnable) {
+        Handler mainHandler = new Handler(getAppContext().getMainLooper());
+        mainHandler.post(runnable);
     }
 }
 

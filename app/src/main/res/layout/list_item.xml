@@ -33,7 +33,7 @@
                                                android:id="@+id/image_list_item"
                                                android:layout_width="match_parent"
                                                android:layout_height="200.0dp"
-                                               fresco:placeholderImage="@color/stay_color" />
+                                               fresco:placeholderImage="@drawable/placeholder_image_wine" />
 
     <LinearLayout android:id="@+id/layout_item_desc"
         android:layout_width="match_parent"
@@ -51,13 +51,13 @@
                       android:text="Item Name "
                       android:textSize="10dp"
                       android:textStyle="bold"
-                android:id="@+id/name_list_item" />
+                android:id="@+id/name_list_item"
+                android:minHeight="25dp" />
             <TextView android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:text="Item descriptions"
                       android:textSize="10dp"
-                android:id="@+id/description_list_item"
-                android:minHeight="24dp" />
+                android:id="@+id/description_list_item" />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:text="Rs. 8,999"
@@ -73,12 +73,12 @@
             android:layout_width="10dp">
 
             <ImageView android:id="@+id/ic_cartlist"
-                android:layout_height="wrap_content"
+                android:layout_height="24dp"
                 android:layout_weight="0.3"
                 android:src="@drawable/ic_shopping_cart_empty"
-                android:layout_width="wrap_content"
                 android:scaleType="fitStart"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:layout_width="28dp" />
 
             <ImageView android:id="@+id/ic_wishlist"
                 android:layout_width="28dp"

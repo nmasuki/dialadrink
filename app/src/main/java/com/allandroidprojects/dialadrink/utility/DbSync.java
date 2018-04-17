@@ -1,22 +1,26 @@
 package com.allandroidprojects.dialadrink.utility;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.widget.Toast;
 
 import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
+import com.allandroidprojects.dialadrink.activities.LoginActivity;
 import com.allandroidprojects.dialadrink.log.LogManager;
-import com.allandroidprojects.dialadrink.utility.StringUtils;
+import com.allandroidprojects.dialadrink.model.User;
+import com.allandroidprojects.dialadrink.openid.OpenIDAuthenticator;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseOptions;
 import com.couchbase.lite.Manager;
 import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.auth.Authenticator;
+import com.couchbase.lite.auth.OIDCLoginCallback;
+import com.couchbase.lite.auth.OpenIDConnectAuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
 import com.couchbase.lite.util.Log;
-import com.couchbase.lite.util.ZipUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,62 +34,66 @@ public class DbSync implements Replication.ChangeListener {
     public static String IP = "159.65.50.86";
 
     // Sync end point
-    private static final String SYNC_URL_HTTP = "http://" + IP + ":4984/dialadrink";//"http://nmasuki.mobileaccord.local:4984/dialadrink";//
+    public static final String SYNC_URL_HTTP = "http://" + IP + ":4984/dialadrink";//"http://nmasuki.mobileaccord.local:4984/dialadrink";//
 
     // Storage Type: .SQLITE_STORAGE or .FORESTDB_STORAGE
     private static final String STORAGE_TYPE = Manager.SQLITE_STORAGE;
 
     // Logging:
-    private static final boolean LOGGING_ENABLED = true;
+    private static final boolean LOGGING_ENABLED = App.DEBUG;
 
     // Encryption:
     private static final boolean ENCRYPTION_ENABLED = false;
-    private static String ENCRYPTION_KEY = "seeker1";
+    private static final String ENCRYPTION_KEY = App.getAppContext().getString(R.string.encrption_key);
 
-    private Manager mManager;
-    private Database mDatabase;
-    private Replication mPull;
-    private Replication mPush;
-    private Throwable mReplError;
+    private Manager manager;
+    private Database database;
+    private Replication pull;
+    private Replication push;
+    private Throwable syncError;
+    private int pullIdleCount = 0;
+
+    interface ReplicationSetupCallback {
+        void setup(Replication repl);
+    }
 
     public DbSync() {
-        ENCRYPTION_KEY = App.getAppContext().getString(R.string.encrption_key);
         enableLogging();
     }
 
     private void enableLogging() {
         if (LOGGING_ENABLED) {
-            Manager.enableLogging(App.TAG, Log.VERBOSE);
-            Manager.enableLogging(Log.TAG, Log.VERBOSE);
-            Manager.enableLogging(Log.TAG_SYNC_ASYNC_TASK, Log.VERBOSE);
-            Manager.enableLogging(Log.TAG_SYNC, Log.VERBOSE);
-            Manager.enableLogging(Log.TAG_QUERY, Log.VERBOSE);
-            Manager.enableLogging(Log.TAG_VIEW, Log.VERBOSE);
-            Manager.enableLogging(Log.TAG_DATABASE, Log.VERBOSE);
+            int logLevel = Log.VERBOSE;
+            Manager.enableLogging(App.TAG, logLevel);
+            Manager.enableLogging(Log.TAG, logLevel);
+            Manager.enableLogging(Log.TAG_SYNC_ASYNC_TASK, logLevel);
+            Manager.enableLogging(Log.TAG_SYNC, logLevel);
+            Manager.enableLogging(Log.TAG_QUERY, logLevel);
+            Manager.enableLogging(Log.TAG_VIEW, logLevel);
+            Manager.enableLogging(Log.TAG_DATABASE, logLevel);
         }
     }
 
     public Manager getManager() {
-        if (mManager == null) {
+        if (manager == null) {
             try {
-                AndroidContext context = new AndroidContext(App.getAppContext());
-                mManager = new Manager(context, Manager.DEFAULT_OPTIONS);
+                manager = new Manager(new AndroidContext(App.getAppContext()), Manager.DEFAULT_OPTIONS);
             } catch (Exception e) {
                 Log.e(App.TAG, "Cannot create Manager object", e);
             }
         }
-        return mManager;
+        return manager;
     }
 
     public Database getDatabase() {
-        if (mDatabase == null)
+        if (database == null)
             setDatabase(getUserDatabase(App.GUEST_DATABASE));
 
-        return mDatabase;
+        return database;
     }
 
     public void setDatabase(Database database) {
-        this.mDatabase = database;
+        this.database = database;
     }
 
     private Database touchDatabase(final String dbName) {
@@ -105,7 +113,7 @@ public class DbSync implements Replication.ChangeListener {
                 @Override
                 protected void onPostExecute(Database o) {
                     super.onPostExecute(o);
-                    mDatabase = database[0] = o;
+                    DbSync.this.database = database[0] = o;
                 }
 
                 @Override
@@ -113,7 +121,7 @@ public class DbSync implements Replication.ChangeListener {
                     final File directory = manager.getContext().getFilesDir();
                     try {
                         // 3
-                        ZipUtils.unzip(App.getAppContext().getAssets().open("dialadrink.cblite2.zip"), directory);
+                        FileUtils.unzip(App.getAppContext().getAssets().open("dialadrink.cblite2.zip"), directory);
                     } catch (IOException e) {
                         Log.e(App.TAG, "Cannot extract db from 'assets/dialadrink.cblite2.zip': ");
                     }
@@ -137,6 +145,22 @@ public class DbSync implements Replication.ChangeListener {
                     return null;
                 }
             }).execute();
+        } else if (App.DEBUG) { //Back up to zip
+            final File directory = manager.getContext().getFilesDir();
+            final File dbFile = new File(directory, dbName + ".cblite2");
+            final File zipFile = new File(directory, dbName + ".cblite2.zip");
+            (new AsyncTask<Object, Object, Void>() {
+                @Override
+                protected Void doInBackground(Object... objects) {
+                    try {
+                        if (zipFile.exists()) zipFile.delete();
+                        FileUtils.zipFolder(dbFile.getAbsolutePath(), zipFile.getAbsolutePath());
+                    } catch (IOException e) {
+                        Log.e(App.TAG, "Cannot extract db from 'assets/dialadrink.cblite2.zip': ");
+                    }
+                    return null;
+                }
+            }).execute();
         }
 
         return database[0];
@@ -149,26 +173,68 @@ public class DbSync implements Replication.ChangeListener {
 
     @Override
     public void changed(Replication.ChangeEvent event) {
+        Replication repl = event.getSource();
+        Log.v(App.TAG, "Replication Change Status: " + repl.getStatus() + " [ " + repl + " ]");
         Throwable error = null;
-        if (mPull != null) {
-            if (error == null)
-                error = mPull.getLastError();
+        if (pull != null) {
+            error = pull.getLastError();
+            if (LoginUtils.isShouldStartPushAfterPullStart() && isReplicatorStartedOrError(pull)) {
+                if (error == null) {
+                    User user = new User(pull.getSessionID(), pull.getUsername());
+                    DataUtils.migrateGuestToUser(user);
+
+                    startPush(new ReplicationSetupCallback() {
+                        @Override
+                        public void setup(Replication repl) {
+                            OIDCLoginCallback callback =
+                                    OpenIDAuthenticator.getOIDCLoginCallback(App.getAppContext());
+                            repl.setAuthenticator(
+                                    OpenIDConnectAuthenticatorFactory.createOpenIDConnectAuthenticator(
+                                            callback,
+                                            new AndroidContext(App.getAppContext())
+                                    )
+                            );
+                        }
+                    });
+
+                    Intent nextIntent = LoginActivity.getNextIntent();
+                    nextIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    App.getAppContext().startActivity(nextIntent);
+                } else {
+                    LogManager.getLogger().d(App.TAG, "Error while doing Auth Code login", error);
+                }
+                LoginUtils.setShouldStartPushAfterPullStart(false);
+            }
         }
 
-        if (error == null || error == mReplError)
-            error = mPush.getLastError();
-
-        if (error != mReplError) {
-            mReplError = error;
-            if (mReplError != null)
-                showErrorMessage(mReplError.getMessage(), null);
+        if (pull != null) {
+            if (error == null || error == syncError)
+                error = pull.getLastError();
         }
+
+
+        if (error != null && error != syncError) {
+            syncError = error;
+            if (syncError != null)
+                showErrorMessage(syncError.getMessage(), null);
+        }
+    }
+
+    private boolean isReplicatorStartedOrError(Replication repl) {
+        boolean isIdle;
+        if (repl == pull) {
+            isIdle = repl.getStatus() == Replication.ReplicationStatus.REPLICATION_IDLE;
+            isIdle = isIdle && (++pullIdleCount > 1);
+        } else {
+            isIdle = repl.getStatus() == Replication.ReplicationStatus.REPLICATION_IDLE;
+        }
+        return isIdle || repl.getChangesCount() > 0 || repl.getLastError() != null;
     }
 
     /**
      * Replicator
-     */
-    private URL getSyncUrl() {
+     **/
+    public URL getSyncUrl() {
         URL url = null;
         try {
             url = new URL(SYNC_URL_HTTP);
@@ -178,50 +244,70 @@ public class DbSync implements Replication.ChangeListener {
         return url;
     }
 
-    public void startPullReplication(Authenticator auth) {
+    public void startPull(Authenticator auth) {
         initReplication(auth);
-        mPull.stop();
-        mPull.start();
+        pull.stop();
+        pull.start();
     }
 
-    public void startPushReplication(Authenticator auth) {
+    public void startPush(Authenticator auth) {
         initReplication(auth);
-        mPush.stop();
-        mPush.start();
+        push.stop();
+        push.start();
+    }
+
+    public void startPull(ReplicationSetupCallback callback) {
+        pullIdleCount = 0;
+        pull = database.createPullReplication(getSyncUrl());
+        pull.setContinuous(true);
+        if (callback != null) callback.setup(pull);
+        pull.addChangeListener(this);
+        pull.start();
+    }
+
+    public void startPush(ReplicationSetupCallback callback) {
+        push = database.createPushReplication(getSyncUrl());
+        push.setContinuous(true);
+        if (callback != null) callback.setup(push);
+        push.addChangeListener(this);
+        push.start();
     }
 
     public void startReplication(Authenticator auth) {
-        startPullReplication(auth);
-        startPushReplication(auth);
+        initReplication(auth);
+        push.stop();
+        pull.stop();
+        pull.start();
+        push.start();
     }
 
     public void initReplication(Authenticator auth) {
-        if (mPush == null) {
-            mPush = getDatabase().createPushReplication(getSyncUrl());
-            mPush.setContinuous(true);
-            mPush.setAuthenticator(auth);
-            mPush.addChangeListener(this);
+        if (push == null) {
+            push = getDatabase().createPushReplication(getSyncUrl());
+            push.setContinuous(true);
+            push.setAuthenticator(auth);
+            push.addChangeListener(this);
         }
 
-        if (mPull == null) {
-            mPull = getDatabase().createPullReplication(getSyncUrl());
-            mPull.setContinuous(true);
-            mPull.setAuthenticator(auth);
-            mPull.addChangeListener(this);
+        if (pull == null) {
+            pull = getDatabase().createPullReplication(getSyncUrl());
+            pull.setContinuous(true);
+            pull.setAuthenticator(auth);
+            pull.addChangeListener(this);
         }
     }
 
     public void stopReplication() {
-        if (mPull != null) {
-            mPull.removeChangeListener(this);
-            mPull.stop();
-            mPull = null;
+        if (pull != null) {
+            pull.removeChangeListener(this);
+            pull.stop();
+            pull = null;
         }
 
-        if (mPush != null) {
-            mPush.removeChangeListener(this);
-            mPush.stop();
-            mPush = null;
+        if (push != null) {
+            push.removeChangeListener(this);
+            push.stop();
+            push = null;
         }
     }
 

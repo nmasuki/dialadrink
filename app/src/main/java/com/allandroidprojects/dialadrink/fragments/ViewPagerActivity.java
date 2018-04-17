@@ -22,6 +22,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,9 @@ import com.allandroidprojects.dialadrink.utility.ProductUtils;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.Query;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,12 +69,10 @@ public class ViewPagerActivity extends Activity {
         setContentView(mViewPager);
 
         if (getIntent() != null) {
-            String category = getIntent().getStringExtra("category");
+            List<String> images = Arrays.asList(getIntent().getStringArrayExtra("images"));
             position = getIntent().getIntExtra("position", 0);
-            mViewPager.setAdapter(new SamplePagerAdapter(this, getQuery(category).toLiveQuery()));
+            mViewPager.setAdapter(new SamplePagerAdapter(this, images));
             mViewPager.setCurrentItem(position);
-        }else {
-            mViewPager.setAdapter(new SamplePagerAdapter(this, getQuery(0).toLiveQuery()));
         }
 
         if (savedInstanceState != null) {
@@ -118,16 +119,21 @@ public class ViewPagerActivity extends Activity {
         return getQuery(productCategory.getName());
     }
 
-    class SamplePagerAdapter  extends LiveQueryPagerAdapter<Product> {
+    class SamplePagerAdapter  extends PagerAdapter {
+        List<String> images;
+        public SamplePagerAdapter(Context context, List<String> images) {
+            this.images = new ArrayList<String>(images);
+        }
 
-        public SamplePagerAdapter(Context context, LiveQuery query) {
-            super(context, query);
+        @Override
+        public int getCount() {
+            return images.size();
         }
 
         @Override
         public View instantiateItem(ViewGroup container, int position) {
             PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setImageUri(getItem(position).getImageUrl());
+            photoView.setImageUri(images.get(position));
 
             // Now just add PhotoView to ViewPager and return it
             container.addView(photoView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -138,11 +144,6 @@ public class ViewPagerActivity extends Activity {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
-        }
-
-        @Override
-        public Product getItem(int i) {
-            return DataUtils.toObj(getDocument(i), Product.class);
         }
 
         @Override

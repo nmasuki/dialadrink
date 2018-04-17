@@ -51,12 +51,12 @@ public class CartListActivity extends AppCompatActivity {
         LiveQuery query = DataUtils.getView("cartlist_by_user_id", CartItem.Mappers.by_userId)
                 .createQuery().toLiveQuery();
         RecyclerView.LayoutManager recylerViewLayoutManager = new LinearLayoutManager(CartListActivity.this);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(recylerViewLayoutManager);
         recyclerView.setAdapter(new SimpleCartItemRecyclerViewAdapter(this, query));
 
-        totalPriceTextView = (TextView) findViewById(R.id.price_text_cartlist);
-        makePaymentTextView = (TextView) findViewById(R.id.payment_textview_action);
+        totalPriceTextView = (TextView) findViewById(R.id.priceTextView);
+        makePaymentTextView = (TextView) findViewById(R.id.paymentTextView);
 
         Stream<CartItem> cartItemStream = Linq.stream(ShoppingUtils.getCartListItems());
         final DecimalFormat formatter = new DecimalFormat("#,###,##0.00");
@@ -178,14 +178,14 @@ public class CartListActivity extends AppCompatActivity {
             holder.mNameTextView.setText(item.getProduct().getName());
             holder.mDescriptionTextView.setText(description);
             holder.mDelivertyMsgTextView.setText(item.getProduct().getDescription());
-            holder.mQtyTextView.setText("Qty: " + String.valueOf(item.getSize()));
+            holder.mQtyTextView.setText(String.valueOf(item.getSize()));
             holder.mPriceTextView.setText(item.getTotalPriceLabel());
 
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(CartListActivity.this, ProductActivity.class);
-                    intent.putExtra(ITEM_JSON_DATA, ProductUtils.getJson(getItem(position, CartItem.class)));
+                    intent.putExtra(ITEM_JSON_DATA, ProductUtils.getJson(getItem(position, CartItem.class).getProduct()));
                     intent.putExtra(ITEM_POSITION, position);
                     CartListActivity.this.startActivity(intent);
                 }
@@ -233,8 +233,8 @@ public class CartListActivity extends AppCompatActivity {
 
     protected void setCartLayout(Boolean noItems) {
         LinearLayout layoutCartItems = (LinearLayout) findViewById(R.id.layout_items);
-        LinearLayout layoutCartPayments = (LinearLayout) findViewById(R.id.layout_payment);
-        LinearLayout layoutCartNoItems = (LinearLayout) findViewById(R.id.layout_cart_empty);
+        LinearLayout layoutCartPayments = (LinearLayout) findViewById(R.id.paymentLayout);
+        LinearLayout layoutCartNoItems = (LinearLayout) findViewById(R.id.emptyCartLayout);
 
         if (!noItems) {
             layoutCartNoItems.setVisibility(View.GONE);

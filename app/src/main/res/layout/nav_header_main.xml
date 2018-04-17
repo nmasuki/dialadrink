@@ -18,13 +18,14 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         app:srcCompat="@drawable/ic_account_circle_black_48dp"
-        android:id="@+id/imageView" />
+        android:id="@+id/user_profile_username_imageview" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Mukesh Mikku"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:text="Guest"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:id="@+id/user_profile_username_textview" />
 
 </LinearLayout>

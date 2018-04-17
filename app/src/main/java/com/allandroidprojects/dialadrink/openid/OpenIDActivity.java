@@ -13,7 +13,10 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.couchbase.grocerysync.Application;import com.couchbase.grocerysync.R;import com.couchbase.lite.auth.OpenIDConnectAuthorizer;
+import com.allandroidprojects.dialadrink.App;
+import com.allandroidprojects.dialadrink.R;
+import com.couchbase.lite.auth.OIDCLoginContinuation;
+import com.couchbase.lite.auth.OpenIDConnectAuthorizer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,13 +35,16 @@ public class OpenIDActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_open_id);
+        setContentView(R.layout.activity_openid);
 
         Intent intent = getIntent();
         loginUrl = intent.getStringExtra(INTENT_LOGIN_URL);
         redirectUrl = intent.getStringExtra(INTENT_REDIRECT_URL);
+        String customeUserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
+        //String customeUserAgent = "Mozilla/5.0 Google";
 
         WebView webView = (WebView) findViewById(R.id.webview);
+        webView.getSettings().setUserAgentString(customeUserAgent);
         webView.setWebViewClient(new OpenIdWebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(loginUrl);
@@ -72,20 +78,18 @@ public class OpenIDActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String key = intent.getStringExtra(INTENT_CONTINUATION_KEY);
         if (key != null) {
-            OpenIDConnectAuthorizer.OIDCLoginContinuation continuation =
+            OIDCLoginContinuation continuation =
                     OpenIDAuthenticator.getLoginContinuation(key);
 
             URL authUrl = null;
             if (url != null) {
                 try {
                     authUrl = new URL(url);
-
                     // Workaround for localhost development and test with Android emulators
                     // when the providers such as Google don't allow the callback host to be
                     // a non public domain (e.g. IP addresses):
                     if (authUrl.getHost().equals("localhost") && MAP_LOCALHOST_TO_DB_SERVER_HOST) {
-                        Application application = (Application) getApplication();
-                        String serverHost = application.getServerDbUrl().getHost();
+                        String serverHost = App.getSyncManager().getSyncUrl().getHost();
                         authUrl = new URL(authUrl.toExternalForm().replace("localhost", serverHost));
                     }
                 } catch (MalformedURLException e) { /* Shouldn't happen */ }

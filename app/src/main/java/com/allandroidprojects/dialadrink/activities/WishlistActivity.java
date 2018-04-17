@@ -35,7 +35,7 @@ public class WishlistActivity extends AppCompatActivity {
         mContext = WishlistActivity.this;
 
         ArrayList<Product> wishlistImageUri = ShoppingUtils.getWishlistItems();
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview);
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager recylerViewLayoutManager = new LinearLayoutManager(mContext);
 
         recyclerView.setLayoutManager(recylerViewLayoutManager);
@@ -45,7 +45,7 @@ public class WishlistActivity extends AppCompatActivity {
     public static class SimpleStringRecyclerViewAdapter
             extends RecyclerView.Adapter<WishlistActivity.SimpleStringRecyclerViewAdapter.ViewHolder> {
 
-        private ArrayList<Product> mWishlistImageUri;
+        private ArrayList<Product> mWishlist;
         private RecyclerView mRecyclerView;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -71,7 +71,7 @@ public class WishlistActivity extends AppCompatActivity {
         }
 
         public SimpleStringRecyclerViewAdapter(RecyclerView recyclerView, ArrayList<Product> wishlistImageUri) {
-            mWishlistImageUri = wishlistImageUri;
+            mWishlist = wishlistImageUri;
             mRecyclerView = recyclerView;
         }
 
@@ -94,7 +94,7 @@ public class WishlistActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final WishlistActivity.SimpleStringRecyclerViewAdapter.ViewHolder holder, final int position) {
-            final Product item = mWishlistImageUri.get(position);
+            final Product item = mWishlist.get(position);
             final Uri uri = Uri.parse(item.getImageUrl());
             holder.mImageView.setImageURI(uri);
 
@@ -124,7 +124,7 @@ public class WishlistActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mWishlistImageUri.size();
+            return mWishlist.size();
         }
     }
 }

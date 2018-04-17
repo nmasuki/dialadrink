@@ -17,6 +17,7 @@ allprojects {
         jcenter()
         maven {
             url "https://maven.google.com"
+            //url "http://mobile.maven.couchbase.com/maven2/dev/"
         }
     }
 }

@@ -2,6 +2,7 @@ package com.allandroidprojects.dialadrink.activities;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -95,25 +96,35 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        LiveQuery profileQuery = App.getAppContext().getUserProfilesView()
-                .createQuery().toLiveQuery();
-
-        profileQuery.addChangeListener(new LiveQuery.ChangeListener() {
+        (new AsyncTask<Void, Void, Void>() {
             @Override
-            public void changed(LiveQuery.ChangeEvent event) {
-                QueryEnumerator it = event.getRows();
-                if(it!=null && it.hasNext())
-                {
-                    Document doc = it.next().getDocument();
-                    User user = DataUtils.toObj(doc, User.class);
+            protected Void doInBackground(Void... voids) {
+                LiveQuery profileQuery = App.getAppContext().getUserProfilesView()
+                        .createQuery().toLiveQuery();
 
-                    usernameTextView.setText(user.getName());
-                    usernameImageView.setImageBitmap(user.getPicture());
-                }
+                profileQuery.addChangeListener(new LiveQuery.ChangeListener() {
+                    @Override
+                    public void changed(LiveQuery.ChangeEvent event) {
+                        QueryEnumerator it = event.getRows();
+                        if(it!=null && it.hasNext())
+                        {
+                            Document doc = it.next().getDocument();
+                            final User user = DataUtils.toObj(doc, User.class);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    usernameTextView.setText(user.getName());
+                                    usernameImageView.setImageBitmap(user.getPicture());
+                                }
+                            });
+                        }
+                    }
+                });
+
+                profileQuery.start();
+                return null;
             }
-        });
-
-        profileQuery.start();
+        }).execute();
     }
 
     @Override
