@@ -19,7 +19,7 @@ import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.adapters.LiveQueryRecyclerAdapter;
 import com.allandroidprojects.dialadrink.log.LogManager;
-import com.allandroidprojects.dialadrink.model.CartItem;
+import com.allandroidprojects.dialadrink.model.Cart;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.LoginUtils;
 import com.allandroidprojects.dialadrink.utility.ProductUtils;
@@ -48,7 +48,7 @@ public class CartListActivity extends AppCompatActivity {
         //Show cart layout based on items
         setCartLayout();
 
-        LiveQuery query = DataUtils.getView("cartlist_by_user_id", CartItem.Mappers.by_userId)
+        LiveQuery query = DataUtils.getView("cartlist_by_user_id", Cart.Mappers.by_userId)
                 .createQuery().toLiveQuery();
         RecyclerView.LayoutManager recylerViewLayoutManager = new LinearLayoutManager(CartListActivity.this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -58,7 +58,7 @@ public class CartListActivity extends AppCompatActivity {
         totalPriceTextView = (TextView) findViewById(R.id.priceTextView);
         makePaymentTextView = (TextView) findViewById(R.id.paymentTextView);
 
-        Stream<CartItem> cartItemStream = Linq.stream(ShoppingUtils.getCartListItems());
+        Stream<Cart> cartItemStream = Linq.stream(ShoppingUtils.getCartListItems());
         final DecimalFormat formatter = new DecimalFormat("#,###,##0.00");
         if (cartItemStream == null || cartItemStream.toList().isEmpty()) {
             totalPriceTextView.setText(formatter.format(0.0));
@@ -66,9 +66,9 @@ public class CartListActivity extends AppCompatActivity {
             return;
         }else{
             String currency = cartItemStream.first().getProduct().getCurrency();
-            double totalPrice = cartItemStream.sum(new SelectorDouble<CartItem>() {
+            double totalPrice = cartItemStream.sum(new SelectorDouble<Cart>() {
                 @Override
-                public Double select(CartItem value) {
+                public Double select(Cart value) {
                     return value.getTotalPrice();
                 }
             });
@@ -80,7 +80,7 @@ public class CartListActivity extends AppCompatActivity {
             @Override
             public void changed(LiveQuery.ChangeEvent event) {
                 try {
-                    final Stream<CartItem> cartItemStream = Linq.stream(ShoppingUtils.getCartListItems());
+                    final Stream<Cart> cartItemStream = Linq.stream(ShoppingUtils.getCartListItems());
                     if (cartItemStream == null || cartItemStream.toList().isEmpty()) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -91,9 +91,9 @@ public class CartListActivity extends AppCompatActivity {
                         });
                     }else{
                         final String currency = cartItemStream.first().getProduct().getCurrency();
-                        final double totalPrice = cartItemStream.sum(new SelectorDouble<CartItem>() {
+                        final double totalPrice = cartItemStream.sum(new SelectorDouble<Cart>() {
                             @Override
-                            public Double select(CartItem value) {
+                            public Double select(Cart value) {
                                 return value.getTotalPrice();
                             }
                         });
@@ -165,7 +165,7 @@ public class CartListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder vholder, final int position) {
             final SimpleCartItemRecyclerViewAdapter.ViewHolder holder = (SimpleCartItemRecyclerViewAdapter.ViewHolder) vholder;
-            final CartItem item = getItem(position, CartItem.class);
+            final Cart item = getItem(position, Cart.class);
             if (item == null)
                 return;
             final Uri uri = Uri.parse(item.getProduct().getImageUrl());
@@ -185,7 +185,7 @@ public class CartListActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(CartListActivity.this, ProductActivity.class);
-                    intent.putExtra(ITEM_JSON_DATA, ProductUtils.getJson(getItem(position, CartItem.class).getProduct()));
+                    intent.putExtra(ITEM_JSON_DATA, ProductUtils.getJson(getItem(position, Cart.class).getProduct()));
                     intent.putExtra(ITEM_POSITION, position);
                     CartListActivity.this.startActivity(intent);
                 }
@@ -195,7 +195,7 @@ public class CartListActivity extends AppCompatActivity {
             holder.removeImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CartItem cartItem = (CartItem) getItem(position, CartItem.class);
+                    Cart cartItem = (Cart) getItem(position, Cart.class);
                     if (cartItem != null) cartItem.remove();
                     notifyDataSetChanged();
                 }
@@ -205,7 +205,7 @@ public class CartListActivity extends AppCompatActivity {
             holder.addImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CartItem cartItem = (CartItem) getItem(position, CartItem.class);
+                    Cart cartItem = (Cart) getItem(position, Cart.class);
                     if (cartItem != null) cartItem.add();
                     notifyDataSetChanged();
                 }

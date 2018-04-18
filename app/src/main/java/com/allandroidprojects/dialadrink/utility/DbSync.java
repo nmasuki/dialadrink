@@ -2,6 +2,7 @@ package com.allandroidprojects.dialadrink.utility;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -31,10 +32,12 @@ import java.net.URL;
  * Created by nmasuki on 4/8/2018.
  */
 public class DbSync implements Replication.ChangeListener {
-    public static String IP = "159.65.50.86";
+    public static String IP = "159.65.50.86";//nmasuki.mobileaccord.local
+    public static String SYNC_PORT = "4984";
+    public static String DB = "dialadrink";
 
     // Sync end point
-    public static final String SYNC_URL_HTTP = "http://" + IP + ":4984/dialadrink";//"http://nmasuki.mobileaccord.local:4984/dialadrink";//
+    public static final String SYNC_URL_HTTP = "http://" + IP + ":" + SYNC_PORT + "/" + DB;
 
     // Storage Type: .SQLITE_STORAGE or .FORESTDB_STORAGE
     private static final String STORAGE_TYPE = Manager.SQLITE_STORAGE;
@@ -147,8 +150,10 @@ public class DbSync implements Replication.ChangeListener {
             }).execute();
         } else if (App.DEBUG) { //Back up to zip
             final File directory = manager.getContext().getFilesDir();
+            final File sd = Environment.getExternalStorageDirectory();
+
             final File dbFile = new File(directory, dbName + ".cblite2");
-            final File zipFile = new File(directory, dbName + ".cblite2.zip");
+            final File zipFile = new File(sd.exists() ? sd : directory, dbName + ".cblite2.zip");
             (new AsyncTask<Object, Object, Void>() {
                 @Override
                 protected Void doInBackground(Object... objects) {
@@ -216,7 +221,7 @@ public class DbSync implements Replication.ChangeListener {
         if (error != null && error != syncError) {
             syncError = error;
             if (syncError != null)
-                showErrorMessage(syncError.getMessage(), null);
+                App.getAppContext().showErrorMessage(syncError.getMessage(), null);
         }
     }
 
@@ -311,23 +316,5 @@ public class DbSync implements Replication.ChangeListener {
         }
     }
 
-    /**
-     * Display error message
-     */
-    public void showErrorMessage(final String errorMessage, final Throwable throwable) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                LogManager.getLogger().d(App.TAG, errorMessage, throwable);
-                String msg = String.format("%s: %s", errorMessage, throwable != null ? throwable : "");
-                Toast.makeText(App.getAppContext(), msg, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void runOnUiThread(Runnable runnable) {
-        Handler mainHandler = new Handler(App.getAppContext().getMainLooper());
-        mainHandler.post(runnable);
-    }
 }
 

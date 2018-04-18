@@ -10,23 +10,22 @@ import com.allandroidprojects.dialadrink.utility.ImageUtils;
 
 public class User extends BaseModel {
     protected String name;
-    protected String id;
+    protected String userId;
     protected String pictureUrl;
     protected String gender;
     protected String birthday;
     protected String email;
+    protected String password;
+    protected String accountType;
 
-    public User(){
+    public User() {
         super();
     }
 
-    public User(String userId, String name){
+    public User(String userId, String name) {
         this();
-        this.id = userId;
-        this.name = name;
-        if(userId!=null)
-            set_id(userId);
-
+        setUserId(userId);
+        setName(name);
     }
 
     public String getName() {
@@ -38,13 +37,11 @@ public class User extends BaseModel {
     }
 
     public String getUserId() {
-        return id;
+        return userId;
     }
 
     public void setUserId(String userId) {
-        if(userId!=null)
-            set_id(userId);
-        this.id = userId;
+        this.userId = userId;
     }
 
     public Bitmap getPicture() {
@@ -87,5 +84,21 @@ public class User extends BaseModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
     }
 }

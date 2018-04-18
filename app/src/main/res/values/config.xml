@@ -3,7 +3,18 @@
     <string name="callus_number">+254723688108</string>
     <string name="encrption_key">seekrit001</string>
 
-    <!-- Facebook app id -->
+    <!-- Facebook -->
     <string name="facebook_app_id">2018293855111128</string>
     <string name="fb_login_protocol_scheme">fb2018293855111128</string>
+
+    <!-- Safaricom API -->
+    <string name="mpesa_app_key">LDWSKpUCIxFKXjqOxqh1YeFqimtajFw1</string>
+    <string name="mpesa_app_secret">0nvDn6GkGAHMSiOV</string>
+    <string name="mpesa_url">https://sandbox.safaricom.co.ke</string>
+    <string name="mpesa_confirmation_url">http://159.65.50.86:3000/confirmation</string>
+    <string name="mpesa_result_url">http://159.65.50.86:3000/result</string>
+    <string name="mpesa_timeout_url">http://159.65.50.86:3000/timeout</string>
+    <string name="mpesa_validation_url">http://159.65.50.86:3000/validation</string>
+    <string name="mpesa_shortcode">702421</string>
+    <string name="mpesa_default_account">Test 123</string>
 </resources>

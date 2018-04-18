@@ -3,26 +3,30 @@ package com.allandroidprojects.dialadrink.utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Base64;
 
 import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.activities.LoginActivity;
 import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.model.User;
-import com.allandroidprojects.dialadrink.openid.OpenIDAuthenticator;
-import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.auth.Authenticator;
 import com.couchbase.lite.auth.AuthenticatorFactory;
-import com.couchbase.lite.auth.OIDCLoginCallback;
-import com.couchbase.lite.auth.OpenIDConnectAuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
+import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +67,45 @@ public class LoginUtils {
         LoginActivity.showLogin(context, nextIntent);
     }
 
-    public static void loginAsGoogleUser(final LoginActivity loginActivity, final String token, final User finalUser, final Intent nextIntent) {
+    public static User getUserFromGoogleAccount(GoogleSignInAccount account) {
+        User user = new User();
+        user.setUserId(account.getId());
+        user.setName(account.getDisplayName());
+        user.setPictureUrl(account.getPhotoUrl().toString());
+        user.setEmail(account.getEmail());
+        user.setPassword(StringUtils.MD5(account.getId()));
+        user.setAccountType("Google");
+        return user;
+    }
+
+    public static User getUserFromFacebookAccount(String userId, JSONObject object) {
+        String pictureUrl = null;
+        try {
+            pictureUrl = object.getJSONObject("picture").getJSONObject("data").getString("url");
+        } catch (JSONException e) {
+            LogManager.getLogger().d(App.TAG, "Cannot get facebook picture URL", e);
+        }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        Iterator<String> it = object.keys();
+        while (it.hasNext()) {
+            String key = it.next();
+            try {
+                map.put(key, object.get(key));
+            } catch (JSONException e) {
+                LogManager.getLogger().d(App.TAG, "Cannot get facebook user info after login", e);
+            }
+        }
+
+        User user = DataUtils.toObj(map, User.class);
+        user.setPictureUrl(pictureUrl);
+        user.setUserId(userId);
+        user.setAccountType("Facebook");
+
+        return user;
+    }
+
+    public static void loginUser(final LoginActivity activity, String token, final User finalUser, final Intent nextIntent) {
         Request request = new Request.Builder()
                 .url(getServerDbSessionUrl())
                 .header("Authorization", "Bearer " + token)
@@ -84,16 +126,12 @@ public class LoginUtils {
                     Map<String, Object> session = gson.fromJson(response.body().charStream(), type);
                     Map<String, Object> userInfo = (Map<String, Object>) session.get("userCtx");
 
-                    String userId = (userInfo != null ? (String) userInfo.get("userId") : null);
                     String username = (userInfo != null ? (String) userInfo.get("name") : null);
                     String email = (userInfo != null ? (String) userInfo.get("email") : null);
                     String gender = (userInfo != null ? (String) userInfo.get("gender") : null);
-                    String picture = (userInfo != null ? (String) userInfo.get("picture") : null);
 
                     User user = finalUser != null ? finalUser : new User();
-                    user.setUserId(userId);
-                    user.setName(username);
-                    user.setPictureUrl(picture);
+                    user.setUserId(username);
                     user.setEmail(email);
                     user.setGender(gender);
 
@@ -103,13 +141,13 @@ public class LoginUtils {
                                     response.headers()
                             );
 
-                    loginAsGoogleUser(loginActivity, nextIntent, cookies, user);
+                    loginUser(activity, cookies, nextIntent);
                 }
             }
         });
     }
 
-    private static void loginAsGoogleUser(Activity activity, final Intent nextIntent, final List<Cookie> sessionCookies, final User user) {
+    private static void loginUser(Activity activity, final List<Cookie> sessionCookies, final Intent nextIntent) {
         App.getSyncManager().startPull(new DbSync.ReplicationSetupCallback() {
             @Override
             public void setup(Replication repl) {
@@ -141,29 +179,59 @@ public class LoginUtils {
         login(activity, nextIntent);
     }
 
-    public static void loginWithAuthCode(final Activity activity) {
-        dbMgr.stopReplication();
-        dbMgr.startPull(new DbSync.ReplicationSetupCallback() {
-            @Override
-            public void setup(Replication repl) {
-                shouldStartPushAfterPullStart = true;
-                OIDCLoginCallback callback = OpenIDAuthenticator.getOIDCLoginCallback(App.getAppContext());
-                repl.setAuthenticator(
-                        OpenIDConnectAuthenticatorFactory.createOpenIDConnectAuthenticator(
-                                callback,
-                                new AndroidContext(App.getAppContext())
-                        )
-                );
-                activity.finish();
-            }
-        });
-    }
-
     public static void loginAsFacebookUser(Activity activity, String token, User user, Intent nextIntent) {
         DataUtils.migrateGuestToUser(user);
         Authenticator auth = AuthenticatorFactory.createFacebookAuthenticator(token);
         dbMgr.startReplication(auth);
         login(activity, nextIntent);
+    }
+
+    public static void loginAsGoogleUser(final LoginActivity activity, GoogleSignInAccount account, final Intent nextIntent) {
+        final User user = getUserFromGoogleAccount(account);
+        String basicAuth = "Basic " + Base64.encodeToString(String.format("%s:%s", user.getUserId(), user.getPassword()).getBytes(), Base64.NO_WRAP);
+        String bearerAuth = "Bearer " + account.getIdToken();
+
+        Request request = new Request.Builder()
+                .url(getServerDbSignupUrl())
+                .header("Authorization", basicAuth)
+                .post(new FormBody.Builder().build())
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogManager.getLogger().d(App.TAG, "Error while making http call.", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    LogManager.getLogger().d(App.TAG, response.body().charStream().toString());
+
+                    /*
+                    Type type = new TypeToken<Map<String, Object>>() {
+                    }.getType();
+                    Map<String, Object> session = gson.fromJson(response.body().charStream(), type);
+                    Map<String, Object> userInfo = (Map<String, Object>) session.get("userCtx");
+
+                    String username = (userInfo != null ? (String) userInfo.get("name") : null);
+                    String email = (userInfo != null ? (String) userInfo.get("email") : null);
+                    String gender = (userInfo != null ? (String) userInfo.get("gender") : null);
+
+                    final List<Cookie> cookies =
+                            Cookie.parseAll(
+                                    HttpUrl.get(App.getSyncManager().getSyncUrl()),
+                                    response.headers()
+                            );
+                    */
+
+                    DataUtils.migrateGuestToUser(user);
+                    Authenticator auth = AuthenticatorFactory.createBasicAuthenticator(user.getUserId(), user.getPassword());
+                    dbMgr.startReplication(auth);
+                    login(activity, nextIntent);
+                }
+            }
+        });
     }
 
     public static void loginAsGuest(Activity activity, Intent nextIntent) {
@@ -183,6 +251,17 @@ public class LoginUtils {
             serverUrl = serverUrl + "/";
         try {
             return new URL(serverUrl + "_session");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static URL getServerDbSignupUrl() {
+        String serverUrl = "http://" + DbSync.IP + ":3000";
+        if (!serverUrl.endsWith("/"))
+            serverUrl = serverUrl + "/";
+        try {
+            return new URL(serverUrl);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -213,11 +292,8 @@ public class LoginUtils {
         PreferenceUtils.putBoolean(GUEST_LOGGED_IN_FLAG, loggedInAsGuest);
     }
 
-    public static boolean isLoggedWithAuthCode() {
-        return PreferenceUtils.getBoolean(AUTHCODE_LOGGED_IN_FLAG, false);
-    }
-
     public static void setLoggedWithAuthCode(boolean value) {
         PreferenceUtils.putBoolean(AUTHCODE_LOGGED_IN_FLAG, value);
     }
+
 }

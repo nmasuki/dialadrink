@@ -5,7 +5,9 @@ package com.allandroidprojects.dialadrink;
  */
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
+import android.widget.Toast;
 
 import com.allandroidprojects.dialadrink.cache.ImagePipelineConfigFactory;
 import com.allandroidprojects.dialadrink.log.LogManager;
@@ -119,9 +121,64 @@ public class App extends android.app.Application {
         return getSyncManager().getDatabase();
     }
 
+    public static void init(final Runnable runnable){
+        new AsyncTask<Object, Void, Boolean>() {
+            @Override
+            protected void onPostExecute(Boolean o) {
+                runOnUiThread(runnable);
+            }
+
+            @Override
+            protected Boolean doInBackground(Object[] objects) {
+                Integer retries = 0;
+
+                while (getDatabase() == null) {
+                    LogManager.getLogger().w(App.TAG, "Loading db..");
+                    try {
+                        Thread.currentThread().sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (++retries >= 40)
+                    {
+                        LogManager.getLogger().e(App.TAG, "Unable to load db in a timely way!");
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }.execute();
+    }
+
+
+    /**
+     * Display error message
+     */
+    public static void showErrorMessage(final String errorMessage, final Throwable throwable) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LogManager.getLogger().d(App.TAG, errorMessage, throwable);
+                String msg = String.format("%s: %s", errorMessage, throwable != null ? throwable : "");
+                Toast.makeText(App.getAppContext(), msg, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     public static void runOnUiThread(Runnable runnable) {
         Handler mainHandler = new Handler(getAppContext().getMainLooper());
         mainHandler.post(runnable);
+    }
+
+    public static AsyncTask runAsync(final Runnable runnable){
+        return new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                runnable.run();
+                return null;
+            }
+        };
     }
 }
 

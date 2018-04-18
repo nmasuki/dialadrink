@@ -50,4 +50,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:11.8.0'
     compile 'br.com.zbra:android-linq:1.1.0'
     compile 'com.toe.chowder:chowder:0.8.2'
+    compile 'com.wang.avi:library:2.1.3'
 }

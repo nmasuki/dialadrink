@@ -4,6 +4,6 @@ package com.allandroidprojects.dialadrink.model;
  * Created by nmasuki on 3/27/2018.
  */
 
-public class WishlistItem extends BaseModel{
+public class Wishlist extends BaseModel{
 
 }

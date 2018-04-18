@@ -16,24 +16,24 @@ import java.util.Map;
  * Created by nmasuki on 3/27/2018.
  */
 
-public class CartItem extends BaseModel {
+public class Cart extends BaseModel {
     protected int size = 0;
     protected Product product = new Product();
 
-    public static CartItem fromProduct(Product product) {
+    public static Cart fromProduct(Product product) {
         return fromProduct(product, 0);
     }
 
-    public static CartItem fromProduct(Product product, int size) {
-        return new CartItem(product, size);
+    public static Cart fromProduct(Product product, int size) {
+        return new Cart(product, size);
     }
 
-    private CartItem(Product product, int size) {
+    protected Cart(Product product, int size) {
         this.product = product;
         this.size = size;
     }
 
-    public CartItem add() {
+    public Cart add() {
         NotificationCount.setBadgeCount("cart", ++size);
         try {
             DataUtils.save(this);
@@ -43,7 +43,7 @@ public class CartItem extends BaseModel {
         return this;
     }
 
-    public CartItem remove() {
+    public Cart remove() {
         NotificationCount.setBadgeCount("cart", --size);
 
         if (size <= 0)
@@ -86,7 +86,7 @@ public class CartItem extends BaseModel {
                         size = (double) document.get("size");
 
                     if(size > 0) {
-                        CartItem item = DataUtils.toObj(document, CartItem.class);
+                        Cart item = DataUtils.toObj(document, Cart.class);
                         List<Object> keys = new ArrayList<Object>();
                         keys.add(document.get("userId"));
                         keys.add(item.getTotalPrice());

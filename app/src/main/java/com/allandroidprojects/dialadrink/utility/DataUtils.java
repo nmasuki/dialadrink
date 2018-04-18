@@ -147,7 +147,7 @@ public class DataUtils {
         if (!properties.containsKey("createdAt"))
             properties.put("createdAt", DateFormat.format(App.DATE_FORMAT, new Date()));
 
-        if (!properties.containsKey("owner") || properties.get("owner") == null) {
+        if (properties.get("owner") == null || App.getAppContext().getGuestId().equals(properties.get("owner"))) {
             String userId = App.getAppContext().getCurrentUserId();
             if (userId != null)
                 properties.put("owner", userId);

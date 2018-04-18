@@ -46,7 +46,6 @@ public abstract class BaseModel implements Document.ChangeListener {
     public BaseModel() {
         setType(this.getClass().getSimpleName());
         setCreatedAt(new Date());
-        setOwner(App.getAppContext().getCurrentUserId());
     }
 
     @Override
