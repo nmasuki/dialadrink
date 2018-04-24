@@ -104,10 +104,7 @@ public class LoginActivity extends AppCompatActivity implements
             // Check for existing Google Sign In account
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
             if (account != null) {
-                User user = LoginUtils.getUserFromGoogleAccount(account);
-                if(App.getAppContext().getCurrentUser() == null)
-                    DataUtils.saveAsync(user);
-                LoginUtils.loginUser(this, account.getIdToken(), user, nextIntent);
+                LoginUtils.loginAsGoogleUser(this, account, nextIntent);
                 return;
             }
 
@@ -117,7 +114,6 @@ public class LoginActivity extends AppCompatActivity implements
                 return;
             }
         }
-
     }
 
     protected void setGooglePlusButtonText(SignInButton signInButton, String buttonText) {

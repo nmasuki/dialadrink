@@ -193,8 +193,11 @@ public class LoginUtils {
 
         Request request = new Request.Builder()
                 .url(getServerDbSignupUrl())
-                .header("Authorization", basicAuth)
-                .post(new FormBody.Builder().build())
+                .header("Authorization", bearerAuth)
+                .post(new FormBody.Builder()
+                        .add("name", user.getUserId())
+                        .add("password", user.getPassword())
+                        .build())
                 .build();
 
         httpClient.newCall(request).enqueue(new Callback() {
@@ -209,8 +212,7 @@ public class LoginUtils {
                     LogManager.getLogger().d(App.TAG, response.body().charStream().toString());
 
                     /*
-                    Type type = new TypeToken<Map<String, Object>>() {
-                    }.getType();
+                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
                     Map<String, Object> session = gson.fromJson(response.body().charStream(), type);
                     Map<String, Object> userInfo = (Map<String, Object>) session.get("userCtx");
 
@@ -257,11 +259,8 @@ public class LoginUtils {
     }
 
     private static URL getServerDbSignupUrl() {
-        String serverUrl = "http://" + DbSync.IP + ":3000";
-        if (!serverUrl.endsWith("/"))
-            serverUrl = serverUrl + "/";
         try {
-            return new URL(serverUrl);
+            return new URL("http://" + DbSync.IP + ":3000/signup");
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

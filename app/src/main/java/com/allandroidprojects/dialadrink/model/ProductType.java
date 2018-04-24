@@ -6,18 +6,14 @@ package com.allandroidprojects.dialadrink.model;
 
 public class ProductType extends BaseModel {
     protected String name;
-    protected double id;
+    protected double index;
 
-    public ProductType(){
-        set_id("0");
+    public double getIndex() {
+        return index;
     }
 
-    public double getId() {
-        return id;
-    }
-
-    public void setId(double id) {
-        this.id = id;
+    public void setIndex(double index) {
+        this.index = index;
     }
 
     public String getName() {

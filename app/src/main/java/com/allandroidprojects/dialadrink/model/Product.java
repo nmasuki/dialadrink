@@ -280,11 +280,13 @@ public class Product extends BaseModel {
                         for (String cat : categories) {
                             List<Object> keys = new ArrayList<Object>();
                             keys.add(cat);
+                            keys.add(document.get("modifiedAt"));
                             emitter.emit(keys, document);
                         }
                     } else {
                         List<Object> keys = new ArrayList<Object>();
                         keys.add(document.get("category"));
+                        keys.add(document.get("modifiedAt"));
                         emitter.emit(keys, document);
                     }
                 }
@@ -300,100 +302,10 @@ public class Product extends BaseModel {
                 if ("product".equals(type)) {
                     List<Object> keys = new ArrayList<Object>();
                     keys.add(document.get("price"));
+                    keys.add(document.get("modifiedAt"));
                     emitter.emit(keys, document);
                 }
             }
         };
-
-        public static Selector<Product, Double> getLevenshteinDistanceSelector(final String queryString) {
-            return new Selector<Product, Double>() {
-                @Override
-                public Double select(Product value) {
-                    ArrayList<Integer> levenshteinDistances = new ArrayList<>();
-
-                    //Name
-                    String name = value.getName().toString();
-                    levenshteinDistances.add(StringUtils.levenshteinDistance(name, queryString));
-
-                    //Category
-                    if (value.getCategories() != null) {
-                        ArrayList<String> categories = value.getCategories();
-                        for (String cat : categories)
-                            levenshteinDistances.add(StringUtils.levenshteinDistance(cat, queryString));
-                    } else if (value.getCategory() != null) {
-                        String cat = value.getCategory();
-                        levenshteinDistances.add(StringUtils.levenshteinDistance(cat, queryString));
-                    }
-
-                    /*/Words in Description
-                    if (value.getDescription() != null) {
-                        String description = value.getDescription().toString();
-                        String[] words = description.split("\\s");
-                        for (String word : words)
-                            if (word.length() >= queryString.length()) {
-                                Integer fScore = StringUtils.levenshteinDistance(word, queryString);
-                                if (fScore < word.length())
-                                    levenshteinDistances.add(fScore);
-                            }
-                    }*/
-
-                    Double levenshteinDistance = Linq.stream(levenshteinDistances)
-                            .average(new SelectorDouble<Integer>() {
-                                @Override
-                                public Double select(Integer value) {
-                                    return value.doubleValue();
-                                }
-                            });
-
-                    return levenshteinDistance;
-                }
-            };
-        }
-
-        public static Selector<Product, Double> getFuzzyScoreSelector(final String queryString) {
-            return new Selector<Product, Double>() {
-                @Override
-                public Double select(Product value) {
-                    ArrayList<Integer> fuzzyScores = new ArrayList<>();
-
-                    //Name
-                    String name = value.getName().toString();
-                    fuzzyScores.add(StringUtils.fuzzyScore(name, queryString));
-
-                    //Category
-                    if (value.getCategories() != null) {
-                        ArrayList<String> categories = value.getCategories();
-                        for (String cat : categories)
-                            fuzzyScores.add(StringUtils.fuzzyScore(cat, queryString));
-                    } else if (value.getCategory() != null) {
-                        String cat = value.getCategory();
-                        fuzzyScores.add(StringUtils.fuzzyScore(cat, queryString));
-                    }
-
-                    /*/Words in Description
-                    if (value.getDescription() != null) {
-                        String description = value.getDescription().toString();
-                        String[] words = description.split("\\s");
-                        for (String word : words)
-                            if (word.length() >= queryString.length()) {
-                                Integer fScore = StringUtils.fuzzyScore(word, queryString);
-                                if (fScore < word.length())
-                                    fuzzyScores.add(fScore);
-                            }
-                    }*/
-
-                    Double fuzzyScore = Linq.stream(fuzzyScores)
-                            .average(new SelectorDouble<Integer>() {
-                                @Override
-                                public Double select(Integer value) {
-                                    return value.doubleValue();
-                                }
-                            });
-
-                    return fuzzyScore;
-                }
-            };
-        }
-
     }
 }

@@ -29,16 +29,13 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 
 import com.allandroidprojects.dialadrink.R;
-import com.allandroidprojects.dialadrink.adapters.LiveQueryPagerAdapter;
 import com.allandroidprojects.dialadrink.model.Product;
 import com.allandroidprojects.dialadrink.model.ProductType;
 import com.allandroidprojects.dialadrink.photoview.view.PhotoView;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.ProductUtils;
-import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.Query;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -110,10 +107,10 @@ public class ViewPagerActivity extends Activity {
                 .where(new Predicate<ProductType>() {
                     @Override
                     public boolean apply(ProductType value) {
-                        return value.getId() == categoryId;
+                        return value.getIndex() == categoryId;
                     }
                 }).firstOrDefault(new ProductType() {{
-                    setId(0);
+                    setIndex(0);
                     setName("offer");
                 }});
         return getQuery(productCategory.getName());

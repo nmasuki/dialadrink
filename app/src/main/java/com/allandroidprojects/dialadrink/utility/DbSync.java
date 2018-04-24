@@ -111,61 +111,51 @@ public class DbSync implements Replication.ChangeListener {
         }
 
         if (database[0] == null) {
-            (new AsyncTask<Object, Object, Database>() {
+            if (!App.DEBUG)
+                (new AsyncTask<Object, Object, Database>() {
 
-                @Override
-                protected void onPostExecute(Database o) {
-                    super.onPostExecute(o);
-                    DbSync.this.database = database[0] = o;
+                    @Override
+                    protected void onPostExecute(Database o) {
+                        super.onPostExecute(o);
+                        DbSync.this.database = database[0] = o;
+                    }
+
+                    @Override
+                    protected Database doInBackground(Object... objects) {
+                        final File directory = manager.getContext().getFilesDir();
+                        try {
+                            // 3
+                            FileUtils.unzip(App.getAppContext().getAssets().open("dialadrink.cblite2.zip"), directory);
+                        } catch (IOException e) {
+                            Log.e(App.TAG, "Cannot extract db from 'assets/dialadrink.cblite2.zip': ");
+                        }
+                        // 4
+                        File from = new File(directory, "dialadrink.cblite2");
+                        if (from.exists()) {
+                            File to = new File(directory, dbName + ".cblite2");
+                            from.renameTo(to);
+                        }
+
+                        // 5
+                        DatabaseOptions options = new DatabaseOptions();
+                        options.setCreate(true);
+                        options.setStorageType(STORAGE_TYPE);
+                        options.setEncryptionKey(ENCRYPTION_ENABLED ? ENCRYPTION_KEY : null);
+                        try {
+                            return manager.openDatabase(dbName, options);
+                        } catch (CouchbaseLiteException e) {
+                            Log.e(App.TAG, "Cannot create database for name: " + dbName, e);
+                        }
+                        return null;
+                    }
+                }).execute();
+            else {
+                try {
+                    database[0] = manager.getDatabase(dbName);
+                } catch (CouchbaseLiteException e) {
+                    LogManager.getLogger().d(App.TAG, e.getMessage());
                 }
-
-                @Override
-                protected Database doInBackground(Object... objects) {
-                    final File directory = manager.getContext().getFilesDir();
-                    try {
-                        // 3
-                        FileUtils.unzip(App.getAppContext().getAssets().open("dialadrink.cblite2.zip"), directory);
-                    } catch (IOException e) {
-                        Log.e(App.TAG, "Cannot extract db from 'assets/dialadrink.cblite2.zip': ");
-                    }
-                    // 4
-                    File from = new File(directory, "dialadrink.cblite2");
-                    if (from.exists()) {
-                        File to = new File(directory, dbName + ".cblite2");
-                        from.renameTo(to);
-                    }
-
-                    // 5
-                    DatabaseOptions options = new DatabaseOptions();
-                    options.setCreate(true);
-                    options.setStorageType(STORAGE_TYPE);
-                    options.setEncryptionKey(ENCRYPTION_ENABLED ? ENCRYPTION_KEY : null);
-                    try {
-                        return manager.openDatabase(dbName, options);
-                    } catch (CouchbaseLiteException e) {
-                        Log.e(App.TAG, "Cannot create database for name: " + dbName, e);
-                    }
-                    return null;
-                }
-            }).execute();
-        } else if (App.DEBUG) { //Back up to zip
-            final File directory = manager.getContext().getFilesDir();
-            final File sd = Environment.getExternalStorageDirectory();
-
-            final File dbFile = new File(directory, dbName + ".cblite2");
-            final File zipFile = new File(sd.exists() ? sd : directory, dbName + ".cblite2.zip");
-            (new AsyncTask<Object, Object, Void>() {
-                @Override
-                protected Void doInBackground(Object... objects) {
-                    try {
-                        if (zipFile.exists()) zipFile.delete();
-                        FileUtils.zipFolder(dbFile.getAbsolutePath(), zipFile.getAbsolutePath());
-                    } catch (IOException e) {
-                        Log.e(App.TAG, "Cannot extract db from 'assets/dialadrink.cblite2.zip': ");
-                    }
-                    return null;
-                }
-            }).execute();
+            }
         }
 
         return database[0];
@@ -287,6 +277,8 @@ public class DbSync implements Replication.ChangeListener {
     }
 
     public void initReplication(Authenticator auth) {
+        if (getDatabase() == null) return;
+
         if (push == null) {
             push = getDatabase().createPushReplication(getSyncUrl());
             push.setContinuous(true);

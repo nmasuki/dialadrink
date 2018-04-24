@@ -55,7 +55,7 @@ public abstract class BaseModel implements Document.ChangeListener {
 
     public String get_id() {
         if (_id == null)
-            _id = UUID.randomUUID().toString();
+            _id = this.getClass().getSimpleName().toLowerCase() + "-" + UUID.randomUUID().toString();
 
         return _id;
     }
@@ -73,9 +73,10 @@ public abstract class BaseModel implements Document.ChangeListener {
     }
 
     public String getOwner() {
-        String userId = App.getAppContext().getCurrentUserId();
-        if (userId != null) {
-            if (owner == null || owner == App.getAppContext().getGuestId())
+        if (owner == null || owner == App.getAppContext().getGuestId())
+        {
+            String userId = App.getAppContext().getCurrentUserId();
+            if (userId != null)
                 owner = userId;
         }
         return owner;

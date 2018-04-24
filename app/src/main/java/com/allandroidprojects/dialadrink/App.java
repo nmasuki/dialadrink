@@ -121,26 +121,25 @@ public class App extends android.app.Application {
         return getSyncManager().getDatabase();
     }
 
-    public static void init(final Runnable runnable){
+    public static void init(final Runnable runnable) {
         new AsyncTask<Object, Void, Boolean>() {
             @Override
             protected void onPostExecute(Boolean o) {
-                runOnUiThread(runnable);
+                runnable.run();
             }
 
             @Override
             protected Boolean doInBackground(Object[] objects) {
                 Integer retries = 0;
-
                 while (getDatabase() == null) {
                     LogManager.getLogger().w(App.TAG, "Loading db..");
                     try {
                         Thread.currentThread().sleep(1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        LogManager.getLogger().e(App.TAG, "Interrupted Exception..", e);
                     }
-                    if (++retries >= 40)
-                    {
+
+                    if (++retries >= 120) {
                         LogManager.getLogger().e(App.TAG, "Unable to load db in a timely way!");
                         return false;
                     }
@@ -150,7 +149,6 @@ public class App extends android.app.Application {
             }
         }.execute();
     }
-
 
     /**
      * Display error message
@@ -171,7 +169,7 @@ public class App extends android.app.Application {
         mainHandler.post(runnable);
     }
 
-    public static AsyncTask runAsync(final Runnable runnable){
+    public static AsyncTask runOnAsyncThread(final Runnable runnable) {
         return new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {

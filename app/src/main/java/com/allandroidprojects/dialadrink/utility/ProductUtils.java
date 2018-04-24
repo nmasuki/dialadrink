@@ -11,8 +11,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +45,7 @@ public class ProductUtils {
             @Override
             public boolean apply(Product value) {
                 ProductType type = getProductType(value);
-                return (type != null && type.getId() == categoryId);
+                return (type != null && type.getIndex() == categoryId);
             }
         }).toList());
     }
@@ -171,7 +169,7 @@ public class ProductUtils {
 
             type.set_id(id);
 
-            type.setId(i[0]++);
+            type.setIndex(i[0]++);
             type.setName(c);
 
             productTypes.add(type);

@@ -53,12 +53,12 @@ public class Cart extends BaseModel {
         return this;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
     public int getSize() {
         return size;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public double getTotalPrice() {
@@ -80,7 +80,7 @@ public class Cart extends BaseModel {
                         ? document.get("type").toString().toLowerCase()
                         : "";
 
-                if ("cartitem".equals(type)) {
+                if ("cart".equals(type)) {
                     double size = 0;
                     if (document.get("size") != null)
                         size = (double) document.get("size");
@@ -89,6 +89,7 @@ public class Cart extends BaseModel {
                         Cart item = DataUtils.toObj(document, Cart.class);
                         List<Object> keys = new ArrayList<Object>();
                         keys.add(document.get("userId"));
+                        keys.add(document.get("modifiedAt"));
                         keys.add(item.getTotalPrice());
                         emitter.emit(keys, document);
                     }
