@@ -83,7 +83,7 @@ public class Cart extends BaseModel {
                 if ("cart".equals(type)) {
                     double size = 0;
                     if (document.get("size") != null)
-                        size = (double) document.get("size");
+                        size = ((Number) document.get("size")).doubleValue();
 
                     if(size > 0) {
                         Cart item = DataUtils.toObj(document, Cart.class);

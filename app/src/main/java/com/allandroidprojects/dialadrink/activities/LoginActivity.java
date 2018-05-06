@@ -24,6 +24,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.Login;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -39,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.Map;
 
 
 public class LoginActivity extends AppCompatActivity implements
@@ -210,8 +212,21 @@ public class LoginActivity extends AppCompatActivity implements
 
     private void continueGoogleLogin(Task<GoogleSignInAccount> completedTask) {
         try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            LoginUtils.loginAsGoogleUser(this, account, nextIntent);
+            final GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            User user = LoginUtils.getUserFromGoogleAccount(account);
+
+            LoginUtils.createUser(user, new App.Runnable<Map<String, Object>>() {
+                @Override
+                public void run(Map<String, Object>... param) {
+                    LoginUtils.loginAsGoogleUser(LoginActivity.this, account, nextIntent);
+                }
+            }, new App.Runnable<String>(){
+                @Override
+                public void run(String... param) {
+                    App.showErrorMessage(param[0]);
+                }
+            });
+
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.

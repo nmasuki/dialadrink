@@ -1,7 +1,9 @@
 package com.allandroidprojects.dialadrink.activities;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     static ViewPager viewPager;
     static TabLayout tabLayout;
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         final TextView usernameTextView = (TextView)navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_textview);
-        final ImageView usernameImageView = (ImageView)navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_imageview);
+        final com.facebook.drawee.view.SimpleDraweeView usernameImageView = navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_imageview);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
                                     usernameTextView.setText(user.getName());
-                                    usernameImageView.setImageBitmap(user.getPicture());
+                                    usernameImageView.setImageURI(user.getPicture());
                                 }
                             });
                         }
@@ -264,8 +267,8 @@ public class MainActivity extends AppCompatActivity
 //            viewPager.setCurrentItem(3);
 //        } else if (id == R.id.nav_item5) {
 //            viewPager.setCurrentItem(4);
-//        } else if (id == R.id.nav_item6) {
-//            viewPager.setCurrentItem(5);
+        } else if (id == R.id.my_orders) {
+            startActivity(new Intent(MainActivity.this, OrdersActivity.class));
         } else if (id == R.id.my_wishlist) {
             startActivity(new Intent(MainActivity.this, WishlistActivity.class));
         } else if (id == R.id.my_cart) {

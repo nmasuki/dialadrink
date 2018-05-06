@@ -17,7 +17,7 @@ import com.couchbase.lite.QueryEnumerator;
  *
  */
 public abstract class LiveQueryRecyclerAdapter<T extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter implements LiveQuery.ChangeListener{
+        extends RecyclerView.Adapter<T> implements LiveQuery.ChangeListener{
     private LiveQuery query;
     protected QueryEnumerator enumerator;
     private Context context;

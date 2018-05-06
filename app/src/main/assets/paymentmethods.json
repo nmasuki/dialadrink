@@ -1,0 +1,57 @@
+[{
+  "_id":"paymentmethod-Mpesa",
+  "active": true,
+  "name": "M-Pesa",
+  "orderIndex": 0,
+  "logoImage": "https://seeklogo.com/images/M/mpesa-logo-AE44B6F8EB-seeklogo.com.png",
+  "description": "Send money via the largest mobile network operators in Kenya and Tanzania",
+  "requiredFields":{
+    "identifier": "Mpesa Number"
+  }
+},{
+  "_id":"paymentmethod-Visa",
+  "active": true,
+  "name": "Visa",
+  "orderIndex": 1,
+  "logoImage": "https://seeklogo.com/images/V/VISA-logo-62D5B26FE1-seeklogo.com.png",
+  "description": "Visa! Deliver safe, simple, and speedy online shopping checkout.",
+  "requiredFields": {
+    "identifier":"Card Number",
+    "fullNames":"Cardholder's Name",
+    "expiryDate":""
+  }
+},{
+  "_id":"paymentmethod-MasterCard",
+  "active": true,
+  "name": "Master Card",
+  "orderIndex": 2,
+  "logoImage": "https://seeklogo.com/images/M/Master_Card-logo-027CB51F96-seeklogo.com.png",
+  "description":"A Worldwide credit card corporation that works with financial institutions to issue credit cards.",
+  "requiredFields": {
+    "identifier":"Card Number",
+    "fullNames":"Cardholder's Name",
+    "expiryDate":""
+  }
+},{
+  "_id":"paymentmethod-Paypal",
+  "active": true,
+  "name": "Paypal",
+  "orderIndex": 3,
+  "logoImage": "https://seeklogo.com/images/P/paypal-logo-484B6FE744-seeklogo.com.png",
+  "description":"PayPal is the faster, safer way to send money, make an online payment, receive money or set up a merchant account.",
+  "requiredFields": {
+    "identifier":"Email address",
+    "fullNames":"Name"
+  }
+},{
+  "_id":"paymentmethod-OnDelivery",
+  "active": true,
+  "name": "Cash On Delivery",
+  "orderIndex": 4,
+  "logoImage": "https://www.iconshock.com/image/Beta/Accounting/payment",
+  "logoImage0": "https://www.iconshock.com/image/RealVista/Accounting/payment",
+  "logoImage1": "https://seeklogo.com/images/J/Johnny_Cash-logo-D24454C5AB-seeklogo.com.png",
+  "logoImage2": "http://www.pariyarathusilks.com/onlineshop/modules/productpaymentlogos/img/af5f83965bf01fb2ce9484b979b9f458.png",
+  "description": "Pay for the goods once delivered to your door steps.",
+  "requiredFields": {}
+}]

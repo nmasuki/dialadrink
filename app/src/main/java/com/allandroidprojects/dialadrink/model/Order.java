@@ -1,42 +1,23 @@
 package com.allandroidprojects.dialadrink.model;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by nmasuki on 4/18/2018.
  */
 
-public class Order extends Cart {
+public class Order extends BaseModel {
+    protected String orderNumber;
     protected Date orderDate;
-    protected String orderType;
-    protected Boolean paymentDone;
+    protected String clientName;
+    protected String address1;
+    protected String address2;
+    protected PaymentMethod paymentMethod;
+    protected Boolean paid;
+    protected List<Cart> cartItems;
 
-    private Order(Cart cart) {
-        super(cart.getProduct(), cart.getSize());
-        setType(getClass().getSimpleName());
-    }
-
-    public Date getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public String getOrderType() {
-        return orderType;
-    }
-
-    public void setOrderType(String orderType) {
-        this.orderType = orderType;
-    }
-
-    public Boolean getPaymentDone() {
-        return paymentDone;
-    }
-
-    public void setPaymentDone(Boolean paymentDone) {
-        this.paymentDone = paymentDone;
+    public Order(){
+        
     }
 }

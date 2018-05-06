@@ -89,7 +89,7 @@ public class ProductUtils {
     }
 
     private static List<ProductType> getProductTypesFromJsonAsset() {
-        String json = loadJSONFromAsset("dialadrinkproductstypes.json");
+        String json = DataUtils.loadJSONFromAsset("dialadrinkproductstypes.json");
         Type listType = new TypeToken<List<ProductType>>() {
         }.getType();
 
@@ -123,7 +123,7 @@ public class ProductUtils {
     }
 
     private static List<Product> getProductsFromJsonAsset() {
-        String json = loadJSONFromAsset("dialadrinkproducts.json");
+        String json = DataUtils.loadJSONFromAsset("dialadrinkproducts.json");
         Type listType = new TypeToken<List<Product>>() {
         }.getType();
 
@@ -208,20 +208,5 @@ public class ProductUtils {
         }
     }
 
-    private static String loadJSONFromAsset(String fileName) {
-        String json = null;
-        try {
-            InputStream is = App.getAppContext().getAssets().open(fileName);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }
 
 }

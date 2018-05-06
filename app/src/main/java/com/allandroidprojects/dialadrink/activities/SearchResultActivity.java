@@ -1,5 +1,6 @@
 package com.allandroidprojects.dialadrink.activities;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -44,6 +46,7 @@ import br.com.zbra.androidlinq.delegate.SelectorDouble;
 public class SearchResultActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, View.OnClickListener {
     SearchView searchView;
     MenuItem searchItem;
+    EditText searchEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,23 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         searchView.setOnClickListener(this);
         searchView.setOnQueryTextListener(this);
         searchView.setFocusable(true);
+
         searchItem.expandActionView();
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Do whatever you need
+                return true; // KEEP IT TO TRUE OR IT DOESN'T OPEN !!
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                SearchResultActivity.this.finish();
+                return true; // OR FALSE IF YOU DIDN'T WANT IT TO CLOSE!
+            }
+        });
+        searchEditText = (EditText)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 
         return true;
     }
@@ -89,6 +108,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         handleIntent(intent);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void searchProducts(final String queryStr) {
         (new AsyncTask<String, Void, Stream<SearchItem<Product>>>() {
             @Override
@@ -139,7 +159,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                             .select(new Selector<Product, SearchItem<Product>>() {
                                 @Override
                                 public SearchItem<Product> select(Product value) {
-                                    return StringUtils.getSearchItem(value, queryStr, "name", "category", "description");
+                                    return StringUtils.getSearchItem(value, queryStr, "name", "category", "subcategory", "page");
                                 }
                             });
 
@@ -184,6 +204,9 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                 return null;
             }
         }).execute(queryStr);
+
+        if(searchEditText!=null)
+            searchEditText.setText(queryStr);
 
         // Check if no view has focus:
         View view = this.getCurrentFocus();
@@ -234,7 +257,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         @Override
         public SearchRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_search_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewitem_search, parent, false);
             return new SearchRecyclerViewAdapter.ViewHolder(view);
         }
 
@@ -250,8 +273,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             String description = Html.toHtml(product.getDescription());
             String category = product.getCategory();
             String name = product.getName();
-            if (product.getSubCategory() != null)
-                category += ", " + product.getSubCategory();
+            if (product.getSubcategory() != null)
+                category += ", " + product.getSubcategory();
 
             if (searchStr != null) {
                 String highLight = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
@@ -260,7 +283,6 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
                 category = category.replace(searchStr, String.format(highLight, searchStr));
                 description = description.replace(searchStr, String.format(highLight, searchStr));
-
             }
 
             holder.mImageView.setImageURI(uri);

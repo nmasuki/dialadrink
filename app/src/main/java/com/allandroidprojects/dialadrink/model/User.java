@@ -42,16 +42,17 @@ public class User extends BaseModel {
 
     public void setUserId(String userId) {
         this.userId = userId;
+        set_id("user-" + userId);
     }
 
-    public Bitmap getPicture() {
+    public String getPicture() {
         String avatar = "http://i2.wp.com/pronksiapartments.ee/wp-content/uploads/2015/10/placeholder-face-big.png";
         //"http://www.gravatar.com/avatar/"+ StringUtils.MD5(getEmail())+"?s=40&d=https%3A%2F%2Fcdn-images-1.medium.com%2Fmax%2F1200%2F1*vCm968wcdYjIyg-d40iUOA.png";
 
         if (pictureUrl != null)
             avatar = pictureUrl;
 
-        return ImageUtils.decodeBitmapFromUrl(avatar);
+        return avatar;
     }
 
     public String getPictureUrl() {

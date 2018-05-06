@@ -40,7 +40,7 @@ import okhttp3.Response;
  * Created by nmasuki on 4/18/2018.
  */
 
-public class MpesaUtils {
+public class PaymentMpesaUtils {
     private static final OkHttpClient httpClient = new OkHttpClient();
     private static final Gson gson = new Gson();
 
@@ -51,16 +51,16 @@ public class MpesaUtils {
     private static final String VALIDATION_URL = App.getAppContext().getString(R.string.mpesa_validation_url);
     private String ACCESS_TOKEN;
 
-    public MpesaUtils(String app_key, String app_secret) {
+    public PaymentMpesaUtils(String app_key, String app_secret) {
         authenticate(app_key, app_secret);
     }
 
-    private MpesaUtils() {
-        this(App.getAppContext().getString(R.string.mpesa_app_key), App.getAppContext().getString(R.string.mpesa_app_key));
+    private PaymentMpesaUtils() {
+        this(App.getAppContext().getString(R.string.mpesa_app_key), App.getAppContext().getString(R.string.mpesa_app_secret));
     }
 
-    public static MpesaUtils getInstance() {
-        return new MpesaUtils();
+    public static PaymentMpesaUtils getInstance() {
+        return new PaymentMpesaUtils();
     }
 
     private void authenticate(String app_key, String app_secret) {
@@ -222,6 +222,7 @@ public class MpesaUtils {
             }
         });
     }
+
     public void c2B(String mobileNumber, Double amount){
         c2B(mobileNumber, amount, App.getAppContext().getString(R.string.mpesa_default_account));
     }

@@ -13,6 +13,7 @@ import com.couchbase.lite.auth.Authenticator;
 import com.couchbase.lite.auth.AuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
 import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,6 +38,7 @@ import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -179,6 +181,43 @@ public class LoginUtils {
         login(activity, nextIntent);
     }
 
+    public static void createUser(User user, final App.Runnable<Map<String,Object>> success, final App.Runnable<String> failure) {
+        String basicAuth = "Basic " + Base64.encodeToString(String.format("%s:%s", user.getUserId(), user.getPassword()).getBytes(), Base64.NO_WRAP);
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("name", user.getUserId())
+                .add("password", user.getPassword())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(getServerDbSignupUrl())
+                .header("Authorization", basicAuth)
+                .post(formBody)
+                .build();
+
+        App.getAppContext().showProgressDialog("Loading..");
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogManager.getLogger().d(App.TAG, "Error while making http call.", e);
+                App.getAppContext().hideProgressDialog();
+                failure.run("Error while making http call.");
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                App.getAppContext().hideProgressDialog();
+                if (response.isSuccessful()) {
+                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
+                    Map<String, Object> map = gson.fromJson(response.body().charStream(), type);
+                    success.run(map);
+                }else{
+                    failure.run(response.body().string());
+                }
+            }
+        });
+    }
+
     public static void loginAsFacebookUser(Activity activity, String token, User user, Intent nextIntent) {
         DataUtils.migrateGuestToUser(user);
         Authenticator auth = AuthenticatorFactory.createFacebookAuthenticator(token);
@@ -186,54 +225,14 @@ public class LoginUtils {
         login(activity, nextIntent);
     }
 
-    public static void loginAsGoogleUser(final LoginActivity activity, GoogleSignInAccount account, final Intent nextIntent) {
+    public static void loginAsGoogleUser(final Activity activity, GoogleSignInAccount account, final Intent nextIntent) {
         final User user = getUserFromGoogleAccount(account);
-        String basicAuth = "Basic " + Base64.encodeToString(String.format("%s:%s", user.getUserId(), user.getPassword()).getBytes(), Base64.NO_WRAP);
-        String bearerAuth = "Bearer " + account.getIdToken();
 
-        Request request = new Request.Builder()
-                .url(getServerDbSignupUrl())
-                .header("Authorization", bearerAuth)
-                .post(new FormBody.Builder()
-                        .add("name", user.getUserId())
-                        .add("password", user.getPassword())
-                        .build())
-                .build();
+        DataUtils.migrateGuestToUser(user);
+        Authenticator auth = AuthenticatorFactory.createBasicAuthenticator(user.getUserId(), user.getPassword());
+        dbMgr.startReplication(auth);
 
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                LogManager.getLogger().d(App.TAG, "Error while making http call.", e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    LogManager.getLogger().d(App.TAG, response.body().charStream().toString());
-
-                    /*
-                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
-                    Map<String, Object> session = gson.fromJson(response.body().charStream(), type);
-                    Map<String, Object> userInfo = (Map<String, Object>) session.get("userCtx");
-
-                    String username = (userInfo != null ? (String) userInfo.get("name") : null);
-                    String email = (userInfo != null ? (String) userInfo.get("email") : null);
-                    String gender = (userInfo != null ? (String) userInfo.get("gender") : null);
-
-                    final List<Cookie> cookies =
-                            Cookie.parseAll(
-                                    HttpUrl.get(App.getSyncManager().getSyncUrl()),
-                                    response.headers()
-                            );
-                    */
-
-                    DataUtils.migrateGuestToUser(user);
-                    Authenticator auth = AuthenticatorFactory.createBasicAuthenticator(user.getUserId(), user.getPassword());
-                    dbMgr.startReplication(auth);
-                    login(activity, nextIntent);
-                }
-            }
-        });
+        login(activity, nextIntent);
     }
 
     public static void loginAsGuest(Activity activity, Intent nextIntent) {
@@ -294,5 +293,29 @@ public class LoginUtils {
     public static void setLoggedWithAuthCode(boolean value) {
         PreferenceUtils.putBoolean(AUTHCODE_LOGGED_IN_FLAG, value);
     }
+    public static void startActivity(Activity activity, Intent nextIntent){
+        startActivity(activity, nextIntent, false);
+    }
+    public static void startActivity(Activity activity, Intent nextIntent, Boolean requireLoggedIn) {
 
+        if(requireLoggedIn) {
+            // Check for existing Facebook Sign In account
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            if (accessToken != null && !accessToken.isExpired()) {
+                LoginUtils.loginAsFacebookUser(activity, accessToken.getToken(), null, nextIntent);
+                return;
+            }
+
+            // Check for existing Google Sign In account
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(activity);
+            if (account != null) {
+                LoginUtils.loginAsGoogleUser(activity, account, nextIntent);
+                return;
+            }
+        }
+
+        Intent intent = new Intent(activity, LoginActivity.class);
+        intent.putExtra(LoginActivity.NEXT_ACTION_CLASS, nextIntent);
+        activity.startActivity(intent);
+    }
 }

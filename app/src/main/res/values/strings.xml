@@ -58,5 +58,8 @@
     <string name="action_logout">Logout</string>
     <string name="button_pay_with_mpesa">Pay with MPESA</string>
     <string name="button_pay_on_delivery">Pay on Delivery</string>
+    <string name="payment">Make Payment</string>
+    <string name="paybyVisa">Pay using Visa</string>
+    <string name="title_activity_orders">My Orders</string>
 
 </resources>

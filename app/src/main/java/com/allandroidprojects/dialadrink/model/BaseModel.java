@@ -46,6 +46,7 @@ public abstract class BaseModel implements Document.ChangeListener {
     public BaseModel() {
         setType(this.getClass().getSimpleName());
         setCreatedAt(new Date());
+        _id = this.getClass().getSimpleName().toLowerCase() + "-" + UUID.randomUUID().toString();
     }
 
     @Override
@@ -73,8 +74,7 @@ public abstract class BaseModel implements Document.ChangeListener {
     }
 
     public String getOwner() {
-        if (owner == null || owner == App.getAppContext().getGuestId())
-        {
+        if (owner == null || owner == App.getAppContext().getGuestId()) {
             String userId = App.getAppContext().getCurrentUserId();
             if (userId != null)
                 owner = userId;
@@ -100,9 +100,8 @@ public abstract class BaseModel implements Document.ChangeListener {
     }
 
     public Document getDocument() {
-        if (doc == null) {
-            doc = App.getDatabase().getExistingDocument(get_id());
-        }
+        if (doc == null)
+            doc = App.getDatabase().getDocument(get_id());
         return doc;
     }
 
@@ -144,7 +143,7 @@ public abstract class BaseModel implements Document.ChangeListener {
                 if (pvalue instanceof Map)
                     pvalue = DataUtils.toObj((Map) pvalue, field.getType());
 
-                if(pvalue instanceof TreeMap)
+                if (pvalue instanceof TreeMap)
                     pvalue = DataUtils.toObj((TreeMap) pvalue, field.getType());
 
                 if (field.getType().isAssignableFrom(int.class))
@@ -169,14 +168,15 @@ public abstract class BaseModel implements Document.ChangeListener {
         this._deleted = _deleted;
     }
 
-    public Object get(String fieldName){
+    public Object get(String fieldName) {
         try {
             Field field = getField(fieldName, this.getClass());
-            return field.get(this);
+            if (field != null)
+                return field.get(this);
         } catch (IllegalAccessException e) {
-            LogManager.getLogger().d(App.TAG, "Error while getting value for '"+fieldName+"'!", e);
-            return null;
+            LogManager.getLogger().d(App.TAG, "Error while getting value for '" + fieldName + "'!", e);
         }
+        return null;
     }
 
     protected static Field getField(final String name, Class<?> type) {

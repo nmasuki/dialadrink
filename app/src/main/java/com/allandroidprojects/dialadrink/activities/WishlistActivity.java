@@ -77,7 +77,7 @@ public class WishlistActivity extends AppCompatActivity {
 
         @Override
         public WishlistActivity.SimpleStringRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_wishlist_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewitem_wishlist, parent, false);
             return new WishlistActivity.SimpleStringRecyclerViewAdapter.ViewHolder(view);
         }
 

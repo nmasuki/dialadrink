@@ -28,27 +28,28 @@
         </activity>
         <activity
             android:name=".activities.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.EmptyActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".fragments.ViewPagerActivity" />
-        <activity android:name=".activities.ProductActivity"></activity>
+        <activity android:name=".activities.ProductActivity" />
         <activity
             android:name=".activities.WishlistActivity"
-            android:label="@string/my_wishlist"></activity>
+            android:label="@string/my_wishlist" />
         <activity
             android:name=".activities.CartListActivity"
-            android:label="@string/my_cart"></activity>
+            android:label="@string/my_cart" />
         <activity android:name=".activities.SearchResultActivity">
 
             <!-- to identify this activity as "searchable.xml" -->
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
@@ -58,10 +59,16 @@
         </activity>
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:label="@string/title_activity_login" />
         <activity
             android:name="android.app.ListActivity"
-            android:label="@string/my_orders"></activity>
+            android:label="@string/my_orders" />
+        <activity
+            android:name=".activities.PaymentMethodsActivity"
+            android:label="@string/payment" />
+        <activity
+            android:name=".activities.PaymentDetailsActivity"
+            android:label="@string/paybyVisa" />
 
         <meta-data
             android:name="android.app.default_searchable"
@@ -89,8 +96,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".openid.OpenIDActivity"
-            android:label="@string/title_activity_openid_login"
+            android:name=".activities.OrdersActivity"
+            android:label="@string/title_activity_orders"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

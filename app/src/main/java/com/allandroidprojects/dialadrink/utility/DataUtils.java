@@ -22,6 +22,8 @@ import com.couchbase.lite.View;
 import com.google.gson.Gson;
 import com.google.gson.internal.ObjectConstructor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -139,13 +141,13 @@ public class DataUtils {
         if (properties.containsKey("doc"))
             properties.remove("doc");
 
+        if (!properties.containsKey("_id"))
+            properties.put("_id", model.get_id());
+
         if (!properties.containsKey("type") || properties.get("type") == null) {
             String type = model.getClass().getSimpleName();
             properties.put("type", type);
         }
-
-        if (!properties.containsKey("createdAt"))
-            properties.put("createdAt", DateFormat.format(App.DATE_FORMAT, new Date()));
 
         if (properties.get("owner") == null || App.getAppContext().getGuestId().equals(properties.get("owner"))) {
             String userId = App.getAppContext().getCurrentUserId();
@@ -153,10 +155,21 @@ public class DataUtils {
                 properties.put("owner", userId);
         }
 
+        if (!properties.containsKey("createdAt"))
+            properties.put("createdAt", DateFormat.format(App.DATE_FORMAT, new Date()));
+        else {
+            if(properties.containsKey("modifiedBy"))
+                properties.remove("modifiedBy");
+            if(properties.containsKey("modifiedAt"))
+                properties.remove("modifiedAt");
+            properties.put("modifiedBy", App.getAppContext().getCurrentUserId());
+            properties.put("modifiedAt", DateFormat.format(App.DATE_FORMAT, new Date()));
+        }
+
         try {
             Document document = model.getDocument();
             if (document == null)
-                document = App.getSyncManager().getDatabase().createDocument();
+                document = App.getSyncManager().getDatabase().getDocument(model.get_id());
 
             document.putProperties(properties);
             model.setFieldsFromDocument(document);
@@ -187,7 +200,7 @@ public class DataUtils {
     }
 
     public static void migrateGuestToUser(User user) {
-        if (user != null) {
+        if (user != null && App.getAppContext().getGuestId().equals(App.getAppContext().getCurrentUserId())) {
             App.getAppContext().setCurrentUser(user);
             App.getSyncManager().setDatabase(App.getSyncManager().getUserDatabase(user.getUserId()));
 
@@ -200,15 +213,15 @@ public class DataUtils {
                 }
             }
 
-            Document document = DataUtils.save(user);
+            DataUtils.save(user);
             // Migrate guest data to user:
-            migrateGuestData(App.getSyncManager().getUserDatabase(App.GUEST_DATABASE), document);
+            migrateGuestData(App.getSyncManager().getUserDatabase(App.GUEST_DATABASE), user);
         }
     }
 
-    private static boolean migrateGuestData(final Database guestDb, final Document profile) {
+    private static boolean migrateGuestData(final Database guestDb, final User user) {
         boolean success = true;
-        final Database userDB = profile.getDatabase();
+        final Database userDB = user.getDocument().getDatabase();
         if (guestDb.getLastSequenceNumber() > 0 && userDB.getLastSequenceNumber() == 0) {
             success = userDB.runInTransaction(new TransactionalTask() {
                 @Override
@@ -221,9 +234,12 @@ public class DataUtils {
 
                             Map<String, Object> properties = doc.getUserProperties();
 
-                            if (properties.containsKey("userId"))
-                                properties.remove("userId");
-                            properties.put("userId", App.getAppContext().getCurrentUserId());
+                            if (properties.containsKey("owner")){
+                                if(App.getAppContext().getGuestId().equals(properties.get("owner"))){
+                                    properties.remove("owner");
+                                    properties.put("owner", user.getUserId());
+                                }
+                            }
 
                             newDoc.putProperties(properties);
 
@@ -250,6 +266,22 @@ public class DataUtils {
             });
         }
         return success;
+    }
+
+    public static String loadJSONFromAsset(String fileName) {
+        String json = null;
+        try {
+            InputStream is = App.getAppContext().getAssets().open(fileName);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return "[]";
+        }
+        return json;
     }
 
 }

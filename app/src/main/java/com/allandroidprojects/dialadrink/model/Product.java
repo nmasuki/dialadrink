@@ -1,6 +1,5 @@
 package com.allandroidprojects.dialadrink.model;
 
-import android.media.Rating;
 import android.text.Html;
 import android.text.Spanned;
 
@@ -15,15 +14,12 @@ import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
-import com.couchbase.lite.support.Range;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 import br.com.zbra.androidlinq.Linq;
 import br.com.zbra.androidlinq.delegate.Predicate;
@@ -37,28 +33,34 @@ import br.com.zbra.androidlinq.delegate.SelectorDouble;
 public class Product extends BaseModel {
     protected String imageUrl;
     protected String name;
+    protected String page;
     protected String description;
     protected double price;
     protected String currency;
     protected String category;
+    protected String subcategory;
     protected ArrayList<String> categories;
-    protected String subCategory;
-    protected ArrayList<String> altDescriptions;
     protected ArrayList<String> altImages;
+    protected transient ArrayList<String> altDescriptions;
     protected transient ArrayList<Rating> ratings;
 
     public class Rating extends BaseModel {
         protected int score;
+        protected String ratedBy;
         protected String productId;
 
-        public Rating(String userId, int score) {
-            this(userId, Product.this.get_id(), score);
+        public Rating(int score){
+            this(App.getAppContext().getCurrentUserId(), score);
+        }
+        public Rating(String ratedBy, int score) {
+            this(ratedBy, Product.this.get_id(), score);
         }
 
-        public Rating(String userId, String productId, int score) {
-            setScore(score);
-            setOwner(userId);
+        public Rating(String ratedBy, String productId, int score) {
+            setOwner("none");
+            setRatedBy(ratedBy);
             setProductId(productId);
+            setScore(score);
         }
 
         public Integer getScore() {
@@ -76,12 +78,22 @@ public class Product extends BaseModel {
         public void setProductId(String productId) {
             this.productId = productId;
         }
+
+        public String getRatedBy() {
+            return ratedBy;
+        }
+
+        public void setRatedBy(String ratedBy) {
+            this.ratedBy = ratedBy;
+        }
     }
 
     public Product() {
         altDescriptions = new ArrayList<>();
-        ratings = new ArrayList<>();
+        ratings = null;
+    }
 
+    private Query getRatingsQuery() {
         Query query = DataUtils.getView("ratingsByProduct", new Mapper() {
             @Override
             public void map(Map<String, Object> document, Emitter emitter) {
@@ -97,38 +109,7 @@ public class Product extends BaseModel {
         query.setStartKey(new Object[]{get_id(), new HashMap<String, Object>()});
         query.setEndKey(new Object[]{get_id()});
 
-        try {
-            QueryEnumerator enumerator = query.run();
-            if (enumerator != null && enumerator.hasNext()) {
-                List<Rating> _ratingsList = Linq.stream(enumerator).select(new Selector<QueryRow, Rating>() {
-                    @Override
-                    public Rating select(QueryRow value) {
-                        return DataUtils.toObj(value.getDocument(), Rating.class);
-                    }
-                }).toList();
-                ratings = new ArrayList<Rating>(_ratingsList);
-            }
-        } catch (Exception e) {
-            LogManager.getLogger().d(App.TAG, "Error running query..", e);
-        }
-
-        LiveQuery liveQuery = query.toLiveQuery();
-        liveQuery.addChangeListener(new LiveQuery.ChangeListener() {
-            @Override
-            public void changed(LiveQuery.ChangeEvent event) {
-                if (event.getRows() != null)
-                    ratings = new ArrayList<Rating>(Linq.stream(event.getRows())
-                            .select(new Selector<QueryRow, Rating>() {
-                                @Override
-                                public Rating select(QueryRow value) {
-                                    return DataUtils.toObj(value.getDocument(), Rating.class);
-                                }
-                            })
-                            .toList());
-            }
-        });
-
-        liveQuery.start();
+        return query;
     }
 
     public ArrayList<String> getImages() {
@@ -140,7 +121,7 @@ public class Product extends BaseModel {
     }
 
     public double getAVGRatings() {
-        if (ratings.size() == 0 && getCategories() != null) {
+        if (getRatings().size() == 0 && getCategories() != null) {
             if (getCategories().contains("offer"))
                 return 4.5;
             else if (getCategories().contains("whisky"))
@@ -149,8 +130,8 @@ public class Product extends BaseModel {
                 return 4.3;
             else if (getCategories().contains("vodka"))
                 return 4.4;
-        } else if (!ratings.isEmpty())
-            return Linq.stream(ratings).average(new SelectorDouble<Rating>() {
+        } else if (!getRatings().isEmpty())
+            return Linq.stream(getRatings()).average(new SelectorDouble<Rating>() {
                 @Override
                 public Double select(Rating value) {
                     return value.getScore().doubleValue();
@@ -161,36 +142,71 @@ public class Product extends BaseModel {
     }
 
     public ArrayList<Rating> getRatings() {
+        if (ratings != null) return ratings;
+
+        try {
+            Query query = getRatingsQuery();
+            QueryEnumerator enumerator = query.run();
+            if (enumerator != null && enumerator.hasNext()) {
+                ratings = new ArrayList<Rating>(Linq.stream(enumerator).select(new Selector<QueryRow, Rating>() {
+                    @Override
+                    public Rating select(QueryRow value) {
+                        return DataUtils.toObj(value.getDocument(), Rating.class);
+                    }
+                }).toList());
+            } else {
+                ratings = new ArrayList<>();
+            }
+
+            LiveQuery liveQuery = query.toLiveQuery();
+            liveQuery.addChangeListener(new LiveQuery.ChangeListener() {
+                @Override
+                public void changed(LiveQuery.ChangeEvent event) {
+                    ratings = new ArrayList<Rating>(Linq.stream(event.getRows())
+                            .select(new Selector<QueryRow, Rating>() {
+                                @Override
+                                public Rating select(QueryRow value) {
+                                    return DataUtils.toObj(value.getDocument(), Rating.class);
+                                }
+                            }).toList());
+                }
+            });
+            liveQuery.start();
+
+        } catch (CouchbaseLiteException e) {
+            LogManager.getLogger().d(App.TAG, "Error running query..", e);
+        }
         return ratings;
     }
 
     public Rating getMyRating() {
-        return Linq.stream(ratings).firstOrDefault(new Predicate<Rating>() {
+        final String userId = App.getAppContext().getCurrentUserId();
+        return Linq.stream(getRatings()).firstOrDefault(new Predicate<Rating>() {
             @Override
             public boolean apply(Rating value) {
-                return App.getAppContext().getCurrentUserId().equals(value.getOwner());
+                return userId.equals(value.getRatedBy());
             }
         }, null);
     }
 
     public void setRatings(int rating) {
         Rating myRating = getMyRating();
-        if (myRating == null)
-        {
-            myRating = new Rating(App.getAppContext().getCurrentUserId(), rating);
-            ratings.add(myRating);
+        if (myRating == null) {
+            myRating = new Rating(rating);
+            getRatings().add(myRating);
         }
 
         myRating.setScore(rating);
         DataUtils.saveAsync(myRating);
     }
 
-    public String getSubCategory() {
-        return subCategory;
+    public String getSubcategory() {
+        if(subcategory == null) return null;
+        return StringUtils.toTitleCase(subcategory.replaceAll("[\\W]+", " "));
     }
 
-    public void setSubCategory(String subCategory) {
-        this.subCategory = subCategory;
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
     }
 
     public String getCategory() {

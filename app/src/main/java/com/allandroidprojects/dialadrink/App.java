@@ -4,9 +4,13 @@ package com.allandroidprojects.dialadrink;
  * Created by nmasuki on 3/9/2018.
  */
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
 import com.allandroidprojects.dialadrink.cache.ImagePipelineConfigFactory;
@@ -73,7 +77,7 @@ public class App extends android.app.Application {
 
     public String getCurrentUserId() {
         User user = getCurrentUser();
-        return user != null ? user.getUserId() : null;
+        return user != null && user.getUserId() != null ? user.getUserId() : getGuestId();
     }
 
     public String getGuestId() {
@@ -121,7 +125,7 @@ public class App extends android.app.Application {
         return getSyncManager().getDatabase();
     }
 
-    public static void init(final Runnable runnable) {
+    public static void init(final java.lang.Runnable runnable) {
         new AsyncTask<Object, Void, Boolean>() {
             @Override
             protected void onPostExecute(Boolean o) {
@@ -154,7 +158,7 @@ public class App extends android.app.Application {
      * Display error message
      */
     public static void showErrorMessage(final String errorMessage, final Throwable throwable) {
-        runOnUiThread(new Runnable() {
+        runOnUiThread(new java.lang.Runnable() {
             @Override
             public void run() {
                 LogManager.getLogger().d(App.TAG, errorMessage, throwable);
@@ -164,12 +168,32 @@ public class App extends android.app.Application {
         });
     }
 
-    public static void runOnUiThread(Runnable runnable) {
+    public static void showErrorMessage(final String errorMessage) {
+        runOnUiThread(new java.lang.Runnable() {
+            @Override
+            public void run() {
+                LogManager.getLogger().d(App.TAG, errorMessage);
+                Toast.makeText(App.getAppContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public static void runOnUiThread(java.lang.Runnable runnable) {
         Handler mainHandler = new Handler(getAppContext().getMainLooper());
         mainHandler.post(runnable);
     }
 
-    public static AsyncTask runOnAsyncThread(final Runnable runnable) {
+    public static <T> AsyncTask runOnAsyncThread(final Runnable<T> runnable) {
+        return new AsyncTask<T, T, T>() {
+            @Override
+            protected T doInBackground(T[] objects) {
+                runnable.run(objects);
+                return null;
+            }
+        };
+    }
+
+    public static AsyncTask runOnAsyncThread(final java.lang.Runnable runnable) {
         return new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -177,6 +201,35 @@ public class App extends android.app.Application {
                 return null;
             }
         };
+    }
+
+    ProgressDialog progressDialog;
+    public void showProgressDialog(String message){
+        if(progressDialog == null)
+            progressDialog = new ProgressDialog(App.getAppContext());
+        progressDialog.setMessage(message);
+    }
+
+    public void hideProgressDialog(){
+        if(progressDialog!=null && progressDialog.isShowing())
+            progressDialog.dismiss();
+    }
+
+    public abstract static class Runnable<T> implements java.lang.Runnable {
+        private T toWorkWith = null;
+
+        public Runnable(){}
+
+        public Runnable(T param) {
+            toWorkWith = param;
+        }
+
+        public abstract void run(T... param);
+
+        @Override
+        public void run() {
+            run(toWorkWith);
+        }
     }
 }
 

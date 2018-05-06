@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.allandroidprojects.dialadrink.photoview.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -35,6 +36,7 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.DraweeHolder;
 import com.facebook.imagepipeline.common.ResizeOptions;
@@ -46,6 +48,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 
+@SuppressLint("AppCompatCustomView")
 public class PhotoView extends ImageView implements IPhotoView, ImageDownloadListener {
 
     private PhotoViewAttacher mAttacher;
@@ -83,10 +86,19 @@ public class PhotoView extends ImageView implements IPhotoView, ImageDownloadLis
         }
 
         if (mDraweeHolder == null) {
-            GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
-                    .setFadeDuration(300)
-                    .setProgressBarImage(new CustomProgressbarDrawable(this))
+            Drawable mProgressDrawable = new CustomProgressbarDrawable(this);
+            GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(getResources());
+            GenericDraweeHierarchy hierarchy = builder
+                    .setPlaceholderImage(mProgressDrawable)
+                    .setFadeDuration(400)
+                    .setRoundingParams(new RoundingParams() {
+                        @Override
+                        public boolean getRoundAsCircle() {
+                            return true;
+                        }
+                    })
                     .build();
+
             mDraweeHolder = DraweeHolder.create(hierarchy, getContext());
         }
     }
@@ -344,6 +356,7 @@ public class PhotoView extends ImageView implements IPhotoView, ImageDownloadLis
 
     @Override
     protected boolean verifyDrawable(Drawable dr) {
+        super.verifyDrawable(dr);
         if (dr == mDraweeHolder.getHierarchy().getTopLevelDrawable()) {
             return true;
         }

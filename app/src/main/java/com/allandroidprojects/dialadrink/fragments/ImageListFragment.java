@@ -109,15 +109,14 @@ public class ImageListFragment extends Fragment {
 
         @Override
         public SimpleProductRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewitem_main, parent, false);
             return new SimpleProductRecyclerViewAdapter.ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(final RecyclerView.ViewHolder vholder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             final Product item = getItem(position, Product.class);
             final Uri uri = Uri.parse(item.getImageUrl());
-            final ViewHolder holder = (ViewHolder)vholder;
 
             holder.mImageView.setImageURI(uri);
             holder.mNameTextView.setText(item.getName());

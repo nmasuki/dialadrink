@@ -115,14 +115,8 @@ public class CartListActivity extends AppCompatActivity {
         makePaymentTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent payIntent = new Intent(CartListActivity.this, EmptyActivity.class);
-                if (LoginUtils.isLoggedAsGuest()) {
-                    Intent intent = new Intent(CartListActivity.this, LoginActivity.class);
-                    intent.putExtra(LoginActivity.NEXT_ACTION_CLASS, payIntent);
-                    startActivity(intent);
-                } else {
-                    startActivity(payIntent);
-                }
+                Intent payIntent = new Intent(CartListActivity.this, PaymentMethodsActivity.class);
+                LoginUtils.startActivity(CartListActivity.this, payIntent, true);
             }
         });
     }
@@ -157,22 +151,21 @@ public class CartListActivity extends AppCompatActivity {
         }
 
         @Override
-        public SimpleCartItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_cartlist_item, parent, false);
-            return new SimpleCartItemRecyclerViewAdapter.ViewHolder(view);
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewitem_cartlist, parent, false);
+            return new ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder vholder, final int position) {
-            final SimpleCartItemRecyclerViewAdapter.ViewHolder holder = (SimpleCartItemRecyclerViewAdapter.ViewHolder) vholder;
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             final Cart item = getItem(position, Cart.class);
             if (item == null)
                 return;
             final Uri uri = Uri.parse(item.getProduct().getImageUrl());
 
             String description = item.getProduct().getCategory();
-            if (item.getProduct().getSubCategory() != null)
-                description += ", " + item.getProduct().getSubCategory();
+            if (item.getProduct().getSubcategory() != null)
+                description += ", " + item.getProduct().getSubcategory();
 
             holder.mImageView.setImageURI(uri);
             holder.mNameTextView.setText(item.getProduct().getName());
@@ -213,9 +206,8 @@ public class CartListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onViewRecycled(RecyclerView.ViewHolder vholder) {
-            super.onViewRecycled(vholder);
-            final SimpleCartItemRecyclerViewAdapter.ViewHolder holder = (SimpleCartItemRecyclerViewAdapter.ViewHolder) vholder;
+        public void onViewRecycled(ViewHolder holder) {
+            super.onViewRecycled(holder);
 
             if (holder.mImageView.getController() != null) {
                 holder.mImageView.getController().onDetach();
