@@ -33,12 +33,12 @@
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/logoImageView"
                     android:layout_width="100dp"
-                    android:layout_height="60dp"
+                    android:layout_height="70dp"
                     android:paddingBottom="10dp"
                     android:paddingLeft="5dp"
                     android:paddingTop="10dp"
                     android:src="@drawable/ic_visa"
-                    fresco:actualImageScaleType="centerInside"
+                    fresco:actualImageScaleType="fitCenter"
                     fresco:placeholderImage="@drawable/ic_payment"
                     fresco:viewAspectRatio="1.33" />
 

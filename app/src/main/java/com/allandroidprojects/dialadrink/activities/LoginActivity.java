@@ -179,14 +179,6 @@ public class LoginActivity extends AppCompatActivity implements
         return nextIntent;
     }
 
-    public static void showLogin(Context context, Intent nextIntent) {
-        Intent intent = new Intent(context, LoginActivity.class);
-        intent.putExtra(NEXT_ACTION_CLASS, nextIntent);
-        context.startActivity(intent);
-        if (context instanceof Activity)
-            ((Activity) context).finish();
-    }
-
     private void continueFacebookLogin(final LoginResult loginResult) {
         GraphRequest request = GraphRequest.newMeRequest(
                 loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
@@ -215,12 +207,12 @@ public class LoginActivity extends AppCompatActivity implements
             final GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             User user = LoginUtils.getUserFromGoogleAccount(account);
 
-            LoginUtils.createUser(user, new App.Runnable<Map<String, Object>>() {
+            LoginUtils.createUser(LoginActivity.this, user, new App.Runnable<Map<String, Object>>() {
                 @Override
                 public void run(Map<String, Object>... param) {
                     LoginUtils.loginAsGoogleUser(LoginActivity.this, account, nextIntent);
                 }
-            }, new App.Runnable<String>(){
+            }, new App.Runnable<String>() {
                 @Override
                 public void run(String... param) {
                     App.showErrorMessage(param[0]);
@@ -231,7 +223,7 @@ public class LoginActivity extends AppCompatActivity implements
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             String error = GoogleSignInStatusCodes.getStatusCodeString(e.getStatusCode());
-            LogManager.getLogger().w(App.TAG, error+ ": Google signInResult:failed code=" + e.getStatusCode(), e);
+            LogManager.getLogger().w(App.TAG, error + ": Google signInResult:failed code=" + e.getStatusCode(), e);
             App.showErrorMessage(error, e);
         }
     }

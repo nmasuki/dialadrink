@@ -1,7 +1,11 @@
 package com.allandroidprojects.dialadrink.utility;
 
+import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.model.Cart;
+import com.allandroidprojects.dialadrink.model.Order;
+import com.allandroidprojects.dialadrink.model.PaymentMethod;
 import com.allandroidprojects.dialadrink.model.Product;
+import com.allandroidprojects.dialadrink.model.User;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.QueryEnumerator;
@@ -9,6 +13,7 @@ import com.couchbase.lite.QueryRow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import br.com.zbra.androidlinq.Linq;
 import br.com.zbra.androidlinq.delegate.Predicate;
@@ -22,6 +27,7 @@ import br.com.zbra.androidlinq.delegate.SelectorInteger;
 public class ShoppingUtils {
     static ArrayList<Product> wishlistItems = new ArrayList<>();
     static ArrayList<Cart> cartListItems;
+    static ArrayList<LiveQuery.ChangeListener> changeListeners = new ArrayList<>();
 
     // Methods for Wishlist
     public static void addToWishlist(Product item) {
@@ -64,7 +70,7 @@ public class ShoppingUtils {
                 .firstOrDefault(new Predicate<Cart>() {
                     @Override
                     public boolean apply(Cart cart) {
-                        return cart.getProduct()!=null && cart.getProduct().get_id().equals(product.get_id());
+                        return cart.getProduct() != null && cart.getProduct().get_id().equals(product.get_id());
                     }
                 }, null);
 
@@ -76,8 +82,6 @@ public class ShoppingUtils {
 
         return cartItem;
     }
-
-    static ArrayList<LiveQuery.ChangeListener> changeListeners = new ArrayList<>();
 
     public static void addShoppingCartChangeListener(LiveQuery.ChangeListener listener) {
         changeListeners.add(listener);
@@ -147,4 +151,13 @@ public class ShoppingUtils {
         }, null);
         return matchItem != null;
     }
+
+    // Methods for Order
+    public static Order getOrder(PaymentMethod method, Map<String, Object> metaData) {
+        Order order = new Order(method, getCartListItems(), metaData);
+        User user = App.getAppContext().getCurrentUser();
+        order.setClientName(user.getName());
+        return order;
+    }
+
 }

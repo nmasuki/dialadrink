@@ -215,15 +215,15 @@ public class DbSync implements Replication.ChangeListener {
         }
     }
 
-    private boolean isReplicatorStartedOrError(Replication repl) {
+    private boolean isReplicatorStartedOrError(Replication replication) {
         boolean isIdle;
-        if (repl == pull) {
-            isIdle = repl.getStatus() == Replication.ReplicationStatus.REPLICATION_IDLE;
+        if (replication == pull) {
+            isIdle = replication.getStatus() == Replication.ReplicationStatus.REPLICATION_IDLE;
             isIdle = isIdle && (++pullIdleCount > 1);
         } else {
-            isIdle = repl.getStatus() == Replication.ReplicationStatus.REPLICATION_IDLE;
+            isIdle = replication.getStatus() == Replication.ReplicationStatus.REPLICATION_IDLE;
         }
-        return isIdle || repl.getChangesCount() > 0 || repl.getLastError() != null;
+        return isIdle || replication.getChangesCount() > 0 || replication.getLastError() != null;
     }
 
     /**

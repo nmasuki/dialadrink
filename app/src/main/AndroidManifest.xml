@@ -65,10 +65,10 @@
             android:label="@string/my_orders" />
         <activity
             android:name=".activities.PaymentMethodsActivity"
-            android:label="@string/payment" />
+            android:label="@string/title_make_payment" />
         <activity
             android:name=".activities.PaymentDetailsActivity"
-            android:label="@string/paybyVisa" />
+            android:label="@string/pay_using_visa" />
 
         <meta-data
             android:name="android.app.default_searchable"
@@ -98,6 +98,10 @@
         <activity
             android:name=".activities.OrdersActivity"
             android:label="@string/title_activity_orders"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".activities.OrderDetailsActivity"
+            android:label="@string/title_activity_order_details"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

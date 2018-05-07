@@ -7,10 +7,14 @@ package com.allandroidprojects.dialadrink;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.allandroidprojects.dialadrink.cache.ImagePipelineConfigFactory;
@@ -203,22 +207,48 @@ public class App extends android.app.Application {
         };
     }
 
-    ProgressDialog progressDialog;
-    public void showProgressDialog(String message){
-        if(progressDialog == null)
-            progressDialog = new ProgressDialog(App.getAppContext());
+    ProgressDialog progressDialog = null;
+
+    public void showProgressDialog(Activity activity, String message) {
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
+
+        progressDialog = new ProgressDialog(activity, R.style.Theme_AppCompat);
         progressDialog.setMessage(message);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Drawable drawable = new ProgressBar(activity).getIndeterminateDrawable().mutate();
+            drawable.setColorFilter(ContextCompat.getColor(this, R.color.gray), PorterDuff.Mode.SRC_IN);
+            progressDialog.setIndeterminateDrawable(drawable);
+        }
+        try {
+            progressDialog.show();
+            new Handler().postDelayed(
+                    new java.lang.Runnable() {
+                        public void run() {
+                            runOnUiThread(new java.lang.Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
+                    },1000 * 20);
+        } catch (Exception e) {
+
+        }
     }
 
-    public void hideProgressDialog(){
-        if(progressDialog!=null && progressDialog.isShowing())
+    public void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
     }
 
     public abstract static class Runnable<T> implements java.lang.Runnable {
         private T toWorkWith = null;
 
-        public Runnable(){}
+        public Runnable() {
+        }
 
         public Runnable(T param) {
             toWorkWith = param;

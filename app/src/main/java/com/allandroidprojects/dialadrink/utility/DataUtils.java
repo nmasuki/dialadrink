@@ -40,6 +40,8 @@ import br.com.zbra.androidlinq.delegate.Selector;
  */
 
 public class DataUtils {
+    static Gson gson = new Gson();
+
     public static View getView(final String name) {
         return getView(name, null);
     }
@@ -189,7 +191,6 @@ public class DataUtils {
     }
 
     public static <T> T toObj(Map<String, Object> map, Class<T> cls) {
-        Gson gson = new Gson();
         String jsonElement = gson.toJson(map);
         try {
             return gson.fromJson(jsonElement, cls);
@@ -197,6 +198,19 @@ public class DataUtils {
             LogManager.getLogger().d(App.TAG, "Error while ", e);
             return null;
         }
+    }
+
+    public static Map<String, String> toObj(String json, Class<HashMap> cls) {
+        try {
+            return gson.fromJson(json, cls);
+        } catch (Exception e) {
+            LogManager.getLogger().d(App.TAG, "Error while ", e);
+            return null;
+        }
+    }
+
+    public static String toJson(Object obj){
+        return gson.toJson(obj);
     }
 
     public static void migrateGuestToUser(User user) {

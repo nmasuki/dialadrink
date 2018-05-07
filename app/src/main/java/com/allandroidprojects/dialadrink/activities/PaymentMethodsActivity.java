@@ -12,10 +12,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
+import com.allandroidprojects.dialadrink.model.Order;
 import com.allandroidprojects.dialadrink.model.PaymentMethod;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.PreferenceUtils;
+import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
 import com.couchbase.lite.Document;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -47,11 +50,11 @@ public class PaymentMethodsActivity extends AppCompatActivity {
 
         listview.setAdapter(new PaymentMethodsAdapter(this, Linq.stream(paymetMethods)
                 .where(new Predicate<PaymentMethod>() {
-            @Override
-            public boolean apply(PaymentMethod value) {
-                return value.getActive();
-            }
-        })
+                    @Override
+                    public boolean apply(PaymentMethod value) {
+                        return value.getActive();
+                    }
+                })
                 .orderBy(new Selector<PaymentMethod, Integer>() {
                     @Override
                     public Integer select(PaymentMethod value) {
@@ -95,7 +98,7 @@ public class PaymentMethodsActivity extends AppCompatActivity {
             if (item.requires("identifier2"))
                 identifier2TextView.setText(item.get("identifier2"));
             else
-                identifier2TextView.setText("");
+                identifier2TextView.setText(item.get("description"));
 
             if (item.requires("fullNames"))
                 nameTextView.setText(item.get("fullNames"));
@@ -107,28 +110,25 @@ public class PaymentMethodsActivity extends AppCompatActivity {
                 validThruTextView.setVisibility(View.GONE);
             } else {
                 String expiryDate = item.get("expiryDate");
-                validThruTextView.setVisibility(expiryDate.equals("")? View.GONE: View.VISIBLE);
+                validThruTextView.setVisibility(expiryDate.equals("") ? View.GONE : View.VISIBLE);
                 expiryDateTextView.setVisibility(View.VISIBLE);
                 expiryDateTextView.setText(expiryDate);
             }
 
-            Boolean isPrefered = PreferenceUtils.getString(SELECTED_METHOD_KEY, "")
-                    .equals(item.get_id());
+            Boolean isPrefered = PreferenceUtils.getString(SELECTED_METHOD_KEY, "").equals(item.get_id());
             selectMarkImageView.setImageResource(isPrefered ? R.drawable.ic_right : R.drawable.ic_round);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    App.getAppContext().showProgressDialog(PaymentMethodsActivity.this, "Loading..");
                     PreferenceUtils.setString(SELECTED_METHOD_KEY, item.get_id());
                     notifyDataSetChanged();
 
-                    if(item.requires("identifier")) {
-                        Intent intent = new Intent(PaymentMethodsActivity.this, PaymentDetailsActivity.class);
-                        intent.putExtra(SELECTED_METHOD_KEY, item.get_id());
-                        startActivity(intent);
-                    }else{
+                    Intent intent = new Intent(PaymentMethodsActivity.this, PaymentDetailsActivity.class);
+                    intent.putExtra(SELECTED_METHOD_KEY, item.get_id());
+                    startActivity(intent);
 
-                    }
                 }
             });
 

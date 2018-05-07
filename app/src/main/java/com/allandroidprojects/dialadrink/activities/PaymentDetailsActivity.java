@@ -1,6 +1,7 @@
 package com.allandroidprojects.dialadrink.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -12,14 +13,20 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
+import com.allandroidprojects.dialadrink.model.Cart;
+import com.allandroidprojects.dialadrink.model.Order;
 import com.allandroidprojects.dialadrink.model.PaymentMethod;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
+import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PaymentDetailsActivity extends AppCompatActivity implements View.OnClickListener {
     protected PaymentMethod paymentMethod;
@@ -52,6 +59,9 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
             if (paymentMethod.requires("identifier")) {
                 identifier.setHint(paymentMethod.getHintText("identifier"));
                 identifier.setText(paymentMethod.get("identifier"));
+            } else {
+                saveOrder();
+                return;
             }
 
             if (!paymentMethod.requires("fullNames"))
@@ -75,6 +85,36 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
         }
 
         initSpinners();
+    }
+
+    private void saveOrder() {
+        App.getAppContext().showProgressDialog(PaymentDetailsActivity.this, "Loading..");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("payment-identifier", identifier.getText().toString());
+        if (paymentMethod.requires("fullNames"))
+            map.put("payment-identifier2", identifier2.getText().toString());
+        if (paymentMethod.requires("fullNames"))
+            map.put("payment-fullNames", fullNames.getText().toString());
+        if (paymentMethod.requires("expiryDate"))
+            map.put("payment-expiryDate", String.format("%s/%s",
+                    monthSpinner.getSelectedItem(),
+                    yearSpinner.getSelectedItem()
+            ));
+
+        Order order = ShoppingUtils.getOrder(paymentMethod, map);
+        DataUtils.save(order);
+
+        for (Cart cart : ShoppingUtils.getCartListItems()) {
+            cart.setDeleted(true);
+            DataUtils.saveAsync(cart);
+        }
+
+        Intent intent = new Intent(PaymentDetailsActivity.this, OrderDetailsActivity.class);
+        intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY, order.get_id());
+        intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY + "data", DataUtils.toJson(map));
+        startActivity(intent);
+        finish();
     }
 
     private void initSpinners() {
@@ -110,6 +150,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
                             yearSpinner.getSelectedItem().toString()));
                 }
 
+                saveOrder();
                 break;
             case R.id.backButton:
                 finish();
@@ -118,21 +159,21 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
     }
 
     public class SpinnerAdapter extends ArrayAdapter<SpinnerItem> {
-        int groupid;
+        int groupId;
         Context context;
         ArrayList<SpinnerItem> list;
         LayoutInflater inflater;
 
-        public SpinnerAdapter(Context context, int groupid, int id, ArrayList<SpinnerItem> list) {
+        public SpinnerAdapter(Context context, int groupId, int id, ArrayList<SpinnerItem> list) {
             super(context, id, list);
             this.list = list;
             this.context = context;
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            this.groupid = groupid;
+            this.groupId = groupId;
         }
 
         public View getView(final int position, View convertView, ViewGroup parent) {
-            View itemView = inflater.inflate(groupid, parent, false);
+            View itemView = inflater.inflate(groupId, parent, false);
             TextView textView = (TextView) itemView.findViewById(R.id.data);
             textView.setText(list.get(position).getText());
 

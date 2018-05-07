@@ -1,7 +1,6 @@
 package com.allandroidprojects.dialadrink.utility;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Base64;
 
@@ -55,18 +54,14 @@ public class LoginUtils {
     private static final OkHttpClient httpClient = new OkHttpClient();
     private static final Gson gson = new Gson();
 
+    private static boolean shouldStartPushAfterPullStart = false;
+
     public static boolean isShouldStartPushAfterPullStart() {
         return shouldStartPushAfterPullStart;
     }
 
     public static void setShouldStartPushAfterPullStart(boolean shouldStartPushAfterPullStart) {
         LoginUtils.shouldStartPushAfterPullStart = shouldStartPushAfterPullStart;
-    }
-
-    private static boolean shouldStartPushAfterPullStart = false;
-
-    public static void showLogin(Context context, Intent nextIntent) {
-        LoginActivity.showLogin(context, nextIntent);
     }
 
     public static User getUserFromGoogleAccount(GoogleSignInAccount account) {
@@ -95,7 +90,7 @@ public class LoginUtils {
             try {
                 map.put(key, object.get(key));
             } catch (JSONException e) {
-                LogManager.getLogger().d(App.TAG, "Cannot get facebook user info after login", e);
+                LogManager.getLogger().d(App.TAG, "Cannot get facebook user info after startActivity", e);
             }
         }
 
@@ -107,10 +102,78 @@ public class LoginUtils {
         return user;
     }
 
-    public static void loginUser(final LoginActivity activity, String token, final User finalUser, final Intent nextIntent) {
+    public static void createUser(Activity activity, User user, final App.Runnable<Map<String, Object>> success, final App.Runnable<String> failure) {
+        String basicAuth = Base64.encodeToString(String.format("%s:%s", user.getUserId(), user.getPassword()).getBytes(), Base64.NO_WRAP);
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("name", user.getUserId())
+                .add("password", user.getPassword())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(getServerDbSignupUrl())
+                .header("Authorization", "Basic " + basicAuth)
+                .post(formBody)
+                .build();
+
+        App.getAppContext().showProgressDialog(activity, "Loading..");
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogManager.getLogger().d(App.TAG, "Error while making http call.", e);
+                App.getAppContext().hideProgressDialog();
+                failure.run("Error while making http call.");
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                App.getAppContext().hideProgressDialog();
+                if (response.isSuccessful()) {
+                    Type type = new TypeToken<Map<String, Object>>() {
+                    }.getType();
+                    Map<String, Object> map = gson.fromJson(response.body().charStream(), type);
+                    success.run(map);
+                } else {
+                    failure.run(response.body().string());
+                }
+            }
+        });
+    }
+
+    public static void loginAsFacebookUser(Activity activity, String token, User user, Intent nextIntent) {
+        DataUtils.migrateGuestToUser(user);
+        Authenticator auth = AuthenticatorFactory.createFacebookAuthenticator(token);
+        dbMgr.startReplication(auth);
+        startActivity(activity, nextIntent);
+    }
+
+    public static void loginAsGoogleUser(final Activity activity, GoogleSignInAccount account, final Intent nextIntent) {
+        final User user = getUserFromGoogleAccount(account);
+
+        DataUtils.migrateGuestToUser(user);
+        Authenticator auth = AuthenticatorFactory.createBasicAuthenticator(user.getUserId(), user.getPassword());
+        dbMgr.startReplication(auth);
+
+        startActivity(activity, nextIntent);
+    }
+
+    public static void loginAsGuest(Activity activity, Intent nextIntent) {
+        dbMgr.setDatabase(dbMgr.getUserDatabase(App.GUEST_DATABASE));
+        String guestId = App.getAppContext().getGuestId();
+
+        app.setCurrentUser(new User(guestId, App.GUEST_DATABASE));
+        dbMgr.startReplication(null);
+
+        LoginUtils.setLoggedInAsGuest(true);
+        startActivity(activity, nextIntent);
+    }
+
+    public static void loginUser(final LoginActivity activity, String username, String password, final Intent nextIntent) {
+        String basicAuth = Base64.encodeToString(String.format("%s:%s", username, password).getBytes(), Base64.NO_WRAP);
+
         Request request = new Request.Builder()
                 .url(getServerDbSessionUrl())
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Basic " + basicAuth)
                 .post(new FormBody.Builder().build())
                 .build();
 
@@ -128,20 +191,10 @@ public class LoginUtils {
                     Map<String, Object> session = gson.fromJson(response.body().charStream(), type);
                     Map<String, Object> userInfo = (Map<String, Object>) session.get("userCtx");
 
-                    String username = (userInfo != null ? (String) userInfo.get("name") : null);
-                    String email = (userInfo != null ? (String) userInfo.get("email") : null);
-                    String gender = (userInfo != null ? (String) userInfo.get("gender") : null);
-
-                    User user = finalUser != null ? finalUser : new User();
-                    user.setUserId(username);
-                    user.setEmail(email);
-                    user.setGender(gender);
-
-                    final List<Cookie> cookies =
-                            Cookie.parseAll(
-                                    HttpUrl.get(App.getSyncManager().getSyncUrl()),
-                                    response.headers()
-                            );
+                    final List<Cookie> cookies = Cookie.parseAll(
+                            HttpUrl.get(App.getSyncManager().getSyncUrl()),
+                            response.headers()
+                    );
 
                     loginUser(activity, cookies, nextIntent);
                 }
@@ -178,72 +231,7 @@ public class LoginUtils {
             }
         });
 
-        login(activity, nextIntent);
-    }
-
-    public static void createUser(User user, final App.Runnable<Map<String,Object>> success, final App.Runnable<String> failure) {
-        String basicAuth = "Basic " + Base64.encodeToString(String.format("%s:%s", user.getUserId(), user.getPassword()).getBytes(), Base64.NO_WRAP);
-
-        RequestBody formBody = new FormBody.Builder()
-                .add("name", user.getUserId())
-                .add("password", user.getPassword())
-                .build();
-
-        Request request = new Request.Builder()
-                .url(getServerDbSignupUrl())
-                .header("Authorization", basicAuth)
-                .post(formBody)
-                .build();
-
-        App.getAppContext().showProgressDialog("Loading..");
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                LogManager.getLogger().d(App.TAG, "Error while making http call.", e);
-                App.getAppContext().hideProgressDialog();
-                failure.run("Error while making http call.");
-            }
-
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                App.getAppContext().hideProgressDialog();
-                if (response.isSuccessful()) {
-                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
-                    Map<String, Object> map = gson.fromJson(response.body().charStream(), type);
-                    success.run(map);
-                }else{
-                    failure.run(response.body().string());
-                }
-            }
-        });
-    }
-
-    public static void loginAsFacebookUser(Activity activity, String token, User user, Intent nextIntent) {
-        DataUtils.migrateGuestToUser(user);
-        Authenticator auth = AuthenticatorFactory.createFacebookAuthenticator(token);
-        dbMgr.startReplication(auth);
-        login(activity, nextIntent);
-    }
-
-    public static void loginAsGoogleUser(final Activity activity, GoogleSignInAccount account, final Intent nextIntent) {
-        final User user = getUserFromGoogleAccount(account);
-
-        DataUtils.migrateGuestToUser(user);
-        Authenticator auth = AuthenticatorFactory.createBasicAuthenticator(user.getUserId(), user.getPassword());
-        dbMgr.startReplication(auth);
-
-        login(activity, nextIntent);
-    }
-
-    public static void loginAsGuest(Activity activity, Intent nextIntent) {
-        dbMgr.setDatabase(dbMgr.getUserDatabase(App.GUEST_DATABASE));
-        String guestId = App.getAppContext().getGuestId();
-
-        app.setCurrentUser(new User(guestId, App.GUEST_DATABASE));
-        dbMgr.startReplication(null);
-
-        LoginUtils.setLoggedInAsGuest(true);
-        login(activity, nextIntent);
+        startActivity(activity, nextIntent);
     }
 
     private static URL getServerDbSessionUrl() {
@@ -265,23 +253,6 @@ public class LoginUtils {
         }
     }
 
-    private static void login(Activity activity, Intent nextIntent) {
-        nextIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(nextIntent);
-        activity.finish();
-    }
-
-    public static void logout() {
-        app.setCurrentUser(null);
-        dbMgr.stopReplication();
-        dbMgr.setDatabase(null);
-
-        Intent intent = new Intent(app, LoginActivity.class);
-        intent.setAction(LoginActivity.ACTION_LOGOUT);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        app.startActivity(intent);
-    }
-
     public static boolean isLoggedAsGuest() {
         return PreferenceUtils.getBoolean(GUEST_LOGGED_IN_FLAG, AUTO_GUEST_LOGIN);
     }
@@ -293,12 +264,13 @@ public class LoginUtils {
     public static void setLoggedWithAuthCode(boolean value) {
         PreferenceUtils.putBoolean(AUTHCODE_LOGGED_IN_FLAG, value);
     }
-    public static void startActivity(Activity activity, Intent nextIntent){
+
+    public static void startActivity(Activity activity, Intent nextIntent) {
         startActivity(activity, nextIntent, false);
     }
-    public static void startActivity(Activity activity, Intent nextIntent, Boolean requireLoggedIn) {
 
-        if(requireLoggedIn) {
+    public static void startActivity(Activity activity, Intent nextIntent, Boolean requireLoggedIn) {
+        if (requireLoggedIn) {
             // Check for existing Facebook Sign In account
             AccessToken accessToken = AccessToken.getCurrentAccessToken();
             if (accessToken != null && !accessToken.isExpired()) {
@@ -312,10 +284,27 @@ public class LoginUtils {
                 LoginUtils.loginAsGoogleUser(activity, account, nextIntent);
                 return;
             }
-        }
 
-        Intent intent = new Intent(activity, LoginActivity.class);
-        intent.putExtra(LoginActivity.NEXT_ACTION_CLASS, nextIntent);
-        activity.startActivity(intent);
+
+            Intent intent = new Intent(activity, LoginActivity.class);
+            intent.putExtra(LoginActivity.NEXT_ACTION_CLASS, nextIntent);
+            activity.startActivity(intent);
+        }else{
+            nextIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            activity.startActivity(nextIntent);
+            activity.finish();
+        }
+    }
+
+    public static void logout() {
+        app.setCurrentUser(null);
+        dbMgr.stopReplication();
+        dbMgr.setDatabase(null);
+
+        Intent intent = new Intent(app, LoginActivity.class);
+        intent.setAction(LoginActivity.ACTION_LOGOUT);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        app.startActivity(intent);
     }
 }
