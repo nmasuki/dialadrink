@@ -190,23 +190,23 @@ public class DataUtils {
         return model;
     }
 
-    public static <T> T toObj(Map<String, Object> map, Class<T> cls) {
-        String jsonElement = gson.toJson(map);
-        try {
-            return gson.fromJson(jsonElement, cls);
-        } catch (Exception e) {
-            LogManager.getLogger().d(App.TAG, "Error while ", e);
-            return null;
-        }
-    }
-
-    public static Map<String, String> toObj(String json, Class<HashMap> cls) {
+    public static <T> T toObj(String json, Class<T> cls) {
         try {
             return gson.fromJson(json, cls);
         } catch (Exception e) {
             LogManager.getLogger().d(App.TAG, "Error while ", e);
             return null;
         }
+    }
+
+    public static <T> T toObj(Map<String, Object> map, Class<T> cls) {
+        String jsonElement = DataUtils.toJson(map);
+        return toObj(jsonElement, cls);
+    }
+
+    public static <T> T toObj(Object obj, Class<T> cls){
+        String jsonElement = DataUtils.toJson(obj);
+        return toObj(jsonElement, cls);
     }
 
     public static String toJson(Object obj){

@@ -90,8 +90,7 @@ public class ProductUtils {
 
     private static List<ProductType> getProductTypesFromJsonAsset() {
         String json = DataUtils.loadJSONFromAsset("dialadrinkproductstypes.json");
-        Type listType = new TypeToken<List<ProductType>>() {
-        }.getType();
+        Type listType = new TypeToken<List<ProductType>>() {}.getType();
 
         // In this test code i just shove the JSON here as string.
         List<ProductType> list = new Gson().fromJson(json, listType);

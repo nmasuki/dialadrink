@@ -6,13 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.allandroidprojects.dialadrink.App;
+import com.couchbase.lite.Document;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.QueryEnumerator;
 
 public class LiveQueryBaseAdapter extends BaseAdapter {
-    private LiveQuery query;
-    private QueryEnumerator enumerator;
-    private Context context;
+    protected LiveQuery query;
+    protected QueryEnumerator enumerator;
+    protected Context context;
 
     public LiveQueryBaseAdapter(Context context, LiveQuery query) {
         this.context = context;
@@ -21,7 +23,7 @@ public class LiveQueryBaseAdapter extends BaseAdapter {
         query.addChangeListener(new LiveQuery.ChangeListener() {
             @Override
             public void changed(final LiveQuery.ChangeEvent event) {
-                ((Activity) LiveQueryBaseAdapter.this.context).runOnUiThread(new Runnable() {
+                App.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         enumerator = event.getRows();
@@ -39,7 +41,7 @@ public class LiveQueryBaseAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public Document getItem(int i) {
         return enumerator != null ? enumerator.getRow(i).getDocument() : null;
     }
 
@@ -50,7 +52,7 @@ public class LiveQueryBaseAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+        return convertView;
     }
 
     @Override

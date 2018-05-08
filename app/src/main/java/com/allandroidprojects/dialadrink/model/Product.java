@@ -35,7 +35,7 @@ public class Product extends BaseModel {
     protected String name;
     protected String page;
     protected String description;
-    protected double price;
+    protected double price = 0.0;
     protected String currency;
     protected String category;
     protected String subcategory;

@@ -8,6 +8,14 @@
     android:orientation="vertical"
     tools:context=".activities.PaymentMethodsActivity">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:indeterminateDuration="3000"
+        android:indeterminateTint="@color/gray"
+        android:indeterminateTintMode="src_atop"/>
+
     <ListView
         android:id="@+id/paymentListView"
         android:layout_width="match_parent"

@@ -20,9 +20,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_empty);
 
         String orderId = getIntent().getStringExtra(SELECTED_ORDER_KEY);
-        String json = getIntent().getStringExtra(SELECTED_ORDER_KEY + "data");
-        Map<String, String> meta = DataUtils.toObj(json, HashMap.class);
+        String json = getIntent().getStringExtra(SELECTED_ORDER_KEY  + "payment-data");
         Order order = DataUtils.toObj(DataUtils.get(orderId), Order.class);
+        Map<String, Object> meta = DataUtils.toObj(json, HashMap.class);
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);

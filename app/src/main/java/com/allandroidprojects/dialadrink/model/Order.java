@@ -2,12 +2,15 @@ package com.allandroidprojects.dialadrink.model;
 
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import br.com.zbra.androidlinq.Linq;
+import br.com.zbra.androidlinq.delegate.SelectorBigDecimal;
+import br.com.zbra.androidlinq.delegate.SelectorDouble;
 
 /**
  * Created by nmasuki on 4/18/2018.
@@ -22,6 +25,7 @@ public class Order extends BaseModel {
     protected Boolean paid;
     protected List<Cart> cartItems;
     protected Map<String, Object> metaData;
+    protected Double shippingCost = 0.0;
 
     public Order(PaymentMethod paymentMethod, List<Cart> cartItems, Map<String, Object> metaData) {
         super();
@@ -101,5 +105,30 @@ public class Order extends BaseModel {
             sequence += characters.charAt(index);
         }
         return sequence;
+    }
+
+    public String getPaymentType() {
+        return metaData.containsKey("payment-type")? (String)metaData.get("payment-type"): "";
+    }
+
+    public Double getTotalAmount() {
+        return this.getShippingCost() + Linq.stream(cartItems)
+                .sum(new SelectorDouble<Cart>() {
+                    @Override
+                    public Double select(Cart value) {
+                        return value.getTotalPrice();
+                    }
+                });
+    }
+
+    public Double getShippingCost() {
+        return shippingCost;
+    }
+
+    @Override
+    public Object get(String fieldName) {
+        if(metaData!=null && metaData.containsKey(fieldName))
+            return metaData.get(fieldName);
+        return super.get(fieldName);
     }
 }

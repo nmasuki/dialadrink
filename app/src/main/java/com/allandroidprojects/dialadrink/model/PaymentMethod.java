@@ -5,12 +5,16 @@ import android.graphics.Bitmap;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.ImageUtils;
 import com.allandroidprojects.dialadrink.utility.PreferenceUtils;
+import com.couchbase.lite.Emitter;
+import com.couchbase.lite.Mapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PaymentMethod extends BaseModel {
     protected String name;
@@ -107,4 +111,23 @@ public class PaymentMethod extends BaseModel {
 
         return list;
     }
+
+    public static class Mappers {
+        public static Mapper by_active = new Mapper() {
+            @Override
+            public void map(Map<String, Object> document, Emitter emitter) {
+                String type = document.containsKey("type") && document.get("type") != null
+                        ? document.get("type").toString().toLowerCase()
+                        : null;
+
+                if (type != null && "paymentmethod".equals(type)) {
+                    List<Object> keys = new ArrayList<>();
+                    keys.add(document.get("active"));
+                    keys.add(document.get("orderIndex"));
+                    emitter.emit(keys, document);
+                }
+            }
+        };
+    }
+
 }

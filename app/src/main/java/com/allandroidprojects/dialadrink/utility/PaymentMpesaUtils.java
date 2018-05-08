@@ -223,11 +223,11 @@ public class PaymentMpesaUtils {
         });
     }
 
-    public void c2B(String mobileNumber, Double amount){
-        c2B(mobileNumber, amount, App.getAppContext().getString(R.string.mpesa_default_account));
+    public void c2B(String mobileNumber, Double amount, final App.Runnable<Map<String, Object>> callback){
+        c2B(mobileNumber, amount, App.getAppContext().getString(R.string.mpesa_default_account), callback);
     }
 
-    public void c2B(String mobileNumber, Double amount, String billRefNumber) {
+    public void c2B(String mobileNumber, Double amount, String billRefNumber, final App.Runnable<Map<String, Object>> callback) {
         if(billRefNumber == null || billRefNumber.isEmpty())
             billRefNumber = App.getAppContext().getString(R.string.mpesa_default_account);
 
@@ -249,7 +249,7 @@ public class PaymentMpesaUtils {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                callback.run();
             }
 
             @Override
@@ -259,7 +259,7 @@ public class PaymentMpesaUtils {
                     Type type = new TypeToken<Map<String, Object>>() {
                     }.getType();
                     Map<String, Object> map = gson.fromJson(response.body().charStream(), type);
-
+                    callback.run(map);
                 }
             }
         });

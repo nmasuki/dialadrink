@@ -10,6 +10,8 @@ import com.couchbase.lite.Emitter;
 import com.couchbase.lite.Mapper;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -142,19 +144,21 @@ public abstract class BaseModel implements Document.ChangeListener {
                 Object pvalue = properties.get(key);
                 if (pvalue instanceof Map)
                     pvalue = DataUtils.toObj((Map) pvalue, field.getType());
-
-                if (pvalue instanceof TreeMap)
+                else if (pvalue instanceof TreeMap)
                     pvalue = DataUtils.toObj((TreeMap) pvalue, field.getType());
-
-                if (field.getType().isAssignableFrom(int.class))
+                else if (pvalue instanceof List){
+                    Class<?> type = field.getType();
+                    pvalue = DataUtils.toObj(pvalue, field.getType());
+                    continue;
+                }
+                else if (field.getType().isAssignableFrom(int.class))
                     pvalue = ((Number) pvalue).intValue();
 
                 field.set(this, pvalue);
-
             } catch (IllegalAccessException e) {
-                LogManager.getLogger().d(App.TAG, e.getMessage());
+                LogManager.getLogger().e(App.TAG, e.getMessage(), e);
             } catch (Exception e) {
-                LogManager.getLogger().d(App.TAG, e.getMessage());
+                LogManager.getLogger().e(App.TAG, e.getMessage(), e);
             }
         }
         return this;
@@ -200,6 +204,21 @@ public abstract class BaseModel implements Document.ChangeListener {
         }
 
         return fields;
+    }
+
+    public static <T> List<T> fromJsonList(String json, Class<T> clazz) {
+        Object [] array = (Object[])java.lang.reflect.Array.newInstance(clazz, 0);
+        array = DataUtils.toObj(json, array.getClass());
+        List<T> list = new ArrayList<T>();
+        for (int i=0 ; i<array.length ; i++)
+            list.add(clazz.cast(array[i]));
+        return list;
+    }
+
+    private static Class<?> getListItemType(List list) {
+        final Class<? extends List> listClass = list.getClass();
+        final ParameterizedType genericSuperclass = (ParameterizedType) listClass.getGenericSuperclass();
+        return (Class) genericSuperclass.getActualTypeArguments()[0];
     }
 
     public static class Mappers {

@@ -154,9 +154,11 @@ public class ShoppingUtils {
 
     // Methods for Order
     public static Order getOrder(PaymentMethod method, Map<String, Object> metaData) {
-        Order order = new Order(method, getCartListItems(), metaData);
+        List<Cart> cartList = getCartListItems();
+        Order order = new Order(method, cartList , metaData);
         User user = App.getAppContext().getCurrentUser();
-        order.setClientName(user.getName());
+        if(user != null)
+            order.setClientName(user.getName());
         return order;
     }
 

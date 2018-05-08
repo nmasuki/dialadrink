@@ -62,7 +62,7 @@ public class Cart extends BaseModel {
     }
 
     public double getTotalPrice() {
-        if (getProduct() != null)
+        if (getProduct() != null && size > 0)
             return getProduct().getPrice() * size;
         return 0.0;
     }

@@ -18,7 +18,9 @@ import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.model.Cart;
 import com.allandroidprojects.dialadrink.model.Order;
 import com.allandroidprojects.dialadrink.model.PaymentMethod;
+import com.allandroidprojects.dialadrink.model.User;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
+import com.allandroidprojects.dialadrink.utility.PaymentUtils;
 import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -54,26 +56,34 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
         }
 
         if (paymentMethod != null) {
+            int count = 4;
+            User user = App.getAppContext().getCurrentUser();
+
             logoImageView.setImageURI(paymentMethod.getLogoImage());
             saveCheckbox.setText("  Save '" + paymentMethod.getName() + "' details.");
-            if (paymentMethod.requires("identifier")) {
-                identifier.setHint(paymentMethod.getHintText("identifier"));
-                identifier.setText(paymentMethod.get("identifier"));
-            } else {
-                saveOrder();
-                return;
-            }
 
-            if (!paymentMethod.requires("fullNames"))
+            if (!paymentMethod.requires("fullNames")) {
                 fullNames.setVisibility(View.GONE);
-            else {
+                count--;
+            } else {
                 fullNames.setHint(paymentMethod.getHintText("fullNames"));
                 fullNames.setText(paymentMethod.get("fullNames"));
+                if (user != null && !"guest".equals(user.getName()))
+                    fullNames.setText(user.getName());
             }
 
-            if (!paymentMethod.requires("identifier2"))
+            if (!paymentMethod.requires("identifier")) {
+                identifier.setVisibility(View.GONE);
+                count--;
+            } else {
+                identifier.setHint(paymentMethod.getHintText("identifier"));
+                identifier.setText(paymentMethod.get("identifier"));
+            }
+
+            if (!paymentMethod.requires("identifier2")) {
                 identifier2.setVisibility(View.GONE);
-            else {
+                count--;
+            } else {
                 identifier2.setHint(paymentMethod.getHintText("identifier2"));
                 identifier2.setText(paymentMethod.get("identifier2"));
             }
@@ -81,16 +91,18 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
             if (!paymentMethod.requires("expiryDate")) {
                 monthSpinner.setVisibility(View.GONE);
                 yearSpinner.setVisibility(View.GONE);
+                count--;
             }
+
+            if (count <= 0)
+                saveOrder();
         }
 
         initSpinners();
     }
 
     private void saveOrder() {
-        App.getAppContext().showProgressDialog(PaymentDetailsActivity.this, "Loading..");
-
-        Map<String, Object> map = new HashMap<>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("payment-identifier", identifier.getText().toString());
         if (paymentMethod.requires("fullNames"))
             map.put("payment-identifier2", identifier2.getText().toString());
@@ -102,7 +114,7 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
                     yearSpinner.getSelectedItem()
             ));
 
-        Order order = ShoppingUtils.getOrder(paymentMethod, map);
+        final Order order = ShoppingUtils.getOrder(paymentMethod, map);
         DataUtils.save(order);
 
         for (Cart cart : ShoppingUtils.getCartListItems()) {
@@ -110,11 +122,28 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
             DataUtils.saveAsync(cart);
         }
 
-        Intent intent = new Intent(PaymentDetailsActivity.this, OrderDetailsActivity.class);
-        intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY, order.get_id());
-        intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY + "data", DataUtils.toJson(map));
-        startActivity(intent);
-        finish();
+        App.getAppContext().showProgressDialog(PaymentDetailsActivity.this, "Loading..");
+
+        Double amount = order.getTotalAmount();
+        String orderNo = order.getOrderNumber();
+
+        PaymentUtils.makePayment(
+                order, amount,
+                "Payment for Order " + orderNo,
+                new App.Runnable<Map<String, Object>>() {
+                    @Override
+                    public void run(Map<String, Object>... param) {
+                        App.getAppContext().hideProgressDialog();
+
+                        Intent intent = new Intent(PaymentDetailsActivity.this, OrderDetailsActivity.class);
+                        intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY, order.get_id());
+                        intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY + "payment-data", DataUtils.toJson(param));
+
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+        );
     }
 
     private void initSpinners() {

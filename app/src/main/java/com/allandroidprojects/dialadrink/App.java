@@ -213,30 +213,16 @@ public class App extends android.app.Application {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
 
-        progressDialog = new ProgressDialog(activity, R.style.Theme_AppCompat);
+        progressDialog = new ProgressDialog(activity);
         progressDialog.setMessage(message);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Drawable drawable = new ProgressBar(activity).getIndeterminateDrawable().mutate();
             drawable.setColorFilter(ContextCompat.getColor(this, R.color.gray), PorterDuff.Mode.SRC_IN);
             progressDialog.setIndeterminateDrawable(drawable);
-        }
-        try {
-            progressDialog.show();
-            new Handler().postDelayed(
-                    new java.lang.Runnable() {
-                        public void run() {
-                            runOnUiThread(new java.lang.Runnable() {
-                                @Override
-                                public void run() {
-                                    progressDialog.dismiss();
-                                }
-                            });
-                        }
-                    },1000 * 20);
-        } catch (Exception e) {
+        }*/
 
-        }
+        progressDialog.show();
     }
 
     public void hideProgressDialog() {
@@ -245,7 +231,7 @@ public class App extends android.app.Application {
     }
 
     public abstract static class Runnable<T> implements java.lang.Runnable {
-        private T toWorkWith = null;
+        private T toWorkWith = (T)null;
 
         public Runnable() {
         }
