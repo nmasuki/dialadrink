@@ -21,6 +21,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.BadPaddingException;
@@ -249,15 +250,14 @@ public class PaymentMpesaUtils {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.run();
+                callback.run(new HashMap<String, Object>());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     LogManager.getLogger().d(App.TAG, response.body().charStream().toString());
-                    Type type = new TypeToken<Map<String, Object>>() {
-                    }.getType();
+                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
                     Map<String, Object> map = gson.fromJson(response.body().charStream(), type);
                     callback.run(map);
                 }

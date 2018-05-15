@@ -15,16 +15,22 @@ public class PaymentUtils {
             case "MPESA":
                 PaymentMpesaUtils.getInstance().c2B(
                     (String)order.get("payment-identifier"),
-                    amount, runnable
+                    amount, order.getOrderNumber(), runnable
                 );
                 break;
             default:
-                new Handler().postDelayed(new Runnable() {
+                App.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        runnable.run(new HashMap<String, Object>());
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                runnable.run(new HashMap<String, Object>());
+                            }
+                        }, 1000);
                     }
-                }, 1000);
+                });
+
         }
     }
 }
