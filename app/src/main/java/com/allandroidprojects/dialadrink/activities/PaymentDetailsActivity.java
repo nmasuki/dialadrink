@@ -1,8 +1,13 @@
 package com.allandroidprojects.dialadrink.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +17,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
-import com.allandroidprojects.dialadrink.model.Cart;
 import com.allandroidprojects.dialadrink.model.Order;
 import com.allandroidprojects.dialadrink.model.PaymentMethod;
 import com.allandroidprojects.dialadrink.model.User;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
-import com.allandroidprojects.dialadrink.utility.PaymentUtils;
+import com.allandroidprojects.dialadrink.utility.DeviceAccountUtils;
 import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -28,14 +33,26 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+
+import br.com.zbra.androidlinq.Linq;
+import br.com.zbra.androidlinq.delegate.Predicate;
+
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.WRITE_CONTACTS;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class PaymentDetailsActivity extends AppCompatActivity implements View.OnClickListener {
+    final String SELECTED_ORDER_KEY = "selectedOrderKey";
+    final int REQUEST_READ_CONTACTS_PERMISSION = 1;
     protected PaymentMethod paymentMethod;
     SimpleDraweeView logoImageView;
     EditText identifier, identifier2, fullNames;
     Spinner monthSpinner, yearSpinner;
     CheckBox saveCheckbox;
+    Order order = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +69,19 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
 
         if (getIntent() != null) {
             String methodId = getIntent().getStringExtra(PaymentMethodsActivity.SELECTED_METHOD_KEY);
-            paymentMethod = DataUtils.toObj(DataUtils.get(methodId), PaymentMethod.class);
+            if (methodId != null)
+                paymentMethod = DataUtils.get(methodId, PaymentMethod.class);
+            else {
+                String orderId = getIntent().getStringExtra(SELECTED_ORDER_KEY);
+                order = DataUtils.get(orderId, Order.class);
+                paymentMethod = order.getPaymentMethod();
+            }
         }
 
         if (paymentMethod != null) {
             int count = 4;
             User user = App.getAppContext().getCurrentUser();
+            DeviceAccountUtils.UserProfile userProfile = DeviceAccountUtils.getUserProfile(this);
 
             logoImageView.setImageURI(paymentMethod.getLogoImage());
             saveCheckbox.setText("  Save '" + paymentMethod.getName() + "' details.");
@@ -67,9 +91,15 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
                 count--;
             } else {
                 fullNames.setHint(paymentMethod.getHintText("fullNames"));
-                fullNames.setText(paymentMethod.get("fullNames"));
                 if (user != null && !"guest".equals(user.getName()))
                     fullNames.setText(user.getName());
+                else if (paymentMethod.get("fullNames") != null && paymentMethod.get("fullNames").length() > 0) {
+                    fullNames.setText(paymentMethod.get("fullNames"));
+                } else if (userProfile != null || userProfile.possibleNames() ==null || userProfile.possibleNames().isEmpty()) {
+                    fullNames.setText(Linq.stream(userProfile.possibleNames()).firstOrDefault(null));
+                } else {
+                    checkReadContactsPermissions();
+                }
             }
 
             if (!paymentMethod.requires("identifier")) {
@@ -78,6 +108,12 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
             } else {
                 identifier.setHint(paymentMethod.getHintText("identifier"));
                 identifier.setText(paymentMethod.get("identifier"));
+                Pattern regex = paymentMethod.getValidationRegex("identifier");
+                if (paymentMethod.get("identifier") == null || paymentMethod.get("identifier").isEmpty()) {
+                    if (regex.matcher("0720805835").find() && !regex.matcher("ANYTHING").find())
+                        if (userProfile != null)
+                            identifier.setText(userProfile.primaryPhoneNumber());
+                }
             }
 
             if (!paymentMethod.requires("identifier2")) {
@@ -99,9 +135,22 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
         }
 
         initSpinners();
+
+        this.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                unregisterReceiver(this);
+                finish();
+            }
+        }, new IntentFilter(ShoppingUtils.ORDER_SUCCESS_INTENT_FILTER));
     }
 
     private void saveOrder() {
+        if (!isValid()) {
+            Toast.makeText(this, "Found some invalid input. Please fill in the fields with valid data..", Toast.LENGTH_LONG);
+            return;
+        }
+
         final Map<String, Object> map = new HashMap<>();
         map.put("payment-identifier", identifier.getText().toString());
         if (paymentMethod.requires("fullNames"))
@@ -114,36 +163,75 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
                     yearSpinner.getSelectedItem()
             ));
 
-        final Order order = ShoppingUtils.getOrder(paymentMethod, map);
-        DataUtils.save(order);
-
-        for (Cart cart : ShoppingUtils.getCartListItems()) {
-            cart.setDeleted(true);
-            DataUtils.saveAsync(cart);
-        }
-
         App.getAppContext().showProgressDialog(PaymentDetailsActivity.this, "Loading..");
-
-        Double amount = order.getTotalAmount();
-        String orderNo = order.getOrderNumber();
-
-        PaymentUtils.makePayment(
-                order, amount,
-                "Payment for Order " + orderNo,
+        order = order == null ? ShoppingUtils.getOrder(paymentMethod, map) : order.setMetaData(map);
+        ShoppingUtils.postOrder(PaymentDetailsActivity.this, order,
                 new App.Runnable<Map<String, Object>>() {
                     @Override
                     public void run(Map<String, Object>... param) {
-                        App.getAppContext().hideProgressDialog();
+                        Map<String, Object> response = Linq.stream(param).firstOrDefault(new HashMap<String, Object>());
+                        Map<String, Object> meta = order.getMetaData();
+                        for (Map<String, Object> m : param)
+                            for (Map.Entry<String, Object> entry : m.entrySet()) {
+                                String key = entry.getKey();
+                                Object value = entry.getValue();
+                                if (!key.startsWith("payment"))
+                                    key = "payment-" + key;
+                                meta.put(key, value);
+                            }
 
-                        Intent intent = new Intent(PaymentDetailsActivity.this, OrderDetailsActivity.class);
-                        intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY, order.get_id());
-                        intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY + "payment-data", DataUtils.toJson(param));
+                        DataUtils.save(order);
+                        String status = response.containsKey("status") ? response.get("status").toString() : "failed";
 
-                        startActivity(intent);
-                        finish();
+                        if (!status.equals("error") && !status.equals("failed")) {
+                            App.getAppContext().hideProgressDialog();
+                            Intent intent = new Intent(PaymentDetailsActivity.this, OrderDetailsActivity.class);
+                            intent.putExtra(OrderDetailsActivity.SELECTED_ORDER_KEY, order.get_id());
+                            startActivity(intent);
+
+                            ShoppingUtils.broadCastOrderSuccess(order);
+                        } else {
+                            App.getAppContext().hideProgressDialog();
+                            String msgKey = Linq.stream(response.keySet()).firstOrDefault(new Predicate<String>() {
+                                @Override
+                                public boolean apply(String value) {
+                                    return value.toLowerCase().contains("message");
+                                }
+                            }, "errorMessage");
+                            String codeKey = Linq.stream(response.keySet()).firstOrDefault(new Predicate<String>() {
+                                @Override
+                                public boolean apply(String value) {
+                                    return value.toLowerCase().contains("code");
+                                }
+                            }, "errorCode");
+
+                            final String msg = String.format("%s: %s",
+                                    response.containsKey(codeKey) ? response.get(codeKey).toString() : "",
+                                    response.containsKey(msgKey) ? response.get(msgKey).toString() : "",
+                                    getString(R.string.check_internet_try_again)
+                            );
+
+                            App.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(PaymentDetailsActivity.this, msg, Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
                     }
-                }
-        );
+                }, new App.Runnable<String>() {
+                    @Override
+                    public void run(final String... param) {
+                        App.getAppContext().hideProgressDialog();
+                        App.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String msg = Linq.stream(param).firstOrDefault(getString(R.string.payment_error_msg));
+                                Toast.makeText(PaymentDetailsActivity.this, msg, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
     }
 
     private void initSpinners() {
@@ -163,6 +251,45 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
 
         monthSpinner.setAdapter(adapter);
         yearSpinner.setAdapter(adapters);
+    }
+
+    private boolean checkReadContactsPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, READ_CONTACTS) != PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(
+                        new String[]{READ_CONTACTS,WRITE_CONTACTS},
+                        REQUEST_READ_CONTACTS_PERMISSION
+                );
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_READ_CONTACTS_PERMISSION) {
+            if (ActivityCompat.checkSelfPermission(this, READ_CONTACTS) != PERMISSION_GRANTED) {
+                DeviceAccountUtils.UserProfile userProfile = DeviceAccountUtils.getUserProfile(this);
+                if (userProfile != null) {
+                    if (identifier.getText().toString() == null || identifier.getText().toString().isEmpty()) {
+                        Pattern regex = paymentMethod.getValidationRegex("identifier");
+                        if (paymentMethod.get("identifier") == null || paymentMethod.get("identifier").isEmpty()) {
+                            if (regex.matcher("0720805835").find() && !regex.matcher("ANYTHING").find())
+                                if (userProfile != null)
+                                    identifier.setText(userProfile.primaryPhoneNumber());
+                        }
+                    }
+
+                    if (fullNames.getText().toString() == null || fullNames.getText().toString().isEmpty()) {
+                        List<String> names = userProfile.possibleNames();
+                        fullNames.setText(Linq.stream(names).firstOrDefault(null));
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -185,6 +312,27 @@ public class PaymentDetailsActivity extends AppCompatActivity implements View.On
                 finish();
                 break;
         }
+    }
+
+    public boolean isValid() {
+        boolean valid = true;
+
+        if (!paymentMethod.getValidationRegex("identifier").matcher(identifier.getText().toString()).find()) {
+            valid = false;
+            identifier.setBackgroundColor((int) R.color.grey_light);
+        }
+
+        if (!paymentMethod.getValidationRegex("identifier2").matcher(identifier2.getText().toString()).find()) {
+            valid = false;
+            identifier2.setBackgroundColor((int) R.color.grey_light);
+        }
+
+        if (!paymentMethod.getValidationRegex("fullNames").matcher(fullNames.getText().toString()).find()) {
+            valid = false;
+            fullNames.setBackgroundColor((int) R.color.grey_light);
+        }
+
+        return valid;
     }
 
     public class SpinnerAdapter extends ArrayAdapter<SpinnerItem> {

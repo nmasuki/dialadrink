@@ -16,8 +16,10 @@
 
 package com.allandroidprojects.dialadrink.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,6 +36,7 @@ import android.widget.Toast;
 import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.log.LogManager;
+import com.allandroidprojects.dialadrink.model.Cart;
 import com.allandroidprojects.dialadrink.model.Product;
 import com.allandroidprojects.dialadrink.activities.ProductActivity;
 import com.allandroidprojects.dialadrink.activities.MainActivity;
@@ -62,7 +65,7 @@ public class ImageListFragment extends Fragment {
         mActivity = (MainActivity) getActivity();
     }
 
-    private Query getQuery(final String category){
+    private Query getQuery(final String category) {
         Query query = DataUtils.getView("product_by_category", Product.Mappers.by_category).createQuery();
 
         query.setDescending(true);
@@ -78,6 +81,7 @@ public class ImageListFragment extends Fragment {
 
         return query;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.layout_recylerview_list, container, false);
@@ -89,14 +93,14 @@ public class ImageListFragment extends Fragment {
     private void setupRecyclerView(RecyclerView recyclerView) {
         try {
             String category = "offer";
-            if(!recyclerView.isInEditMode())
-                category  = ImageListFragment.this.getArguments().getString("category");
+            if (!recyclerView.isInEditMode())
+                category = ImageListFragment.this.getArguments().getString("category");
 
             StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManager);
 
             recyclerView.setAdapter(new SimpleProductRecyclerViewAdapter(getContext(), getQuery(category).toLiveQuery()));
-        }catch (Exception e){
+        } catch (Exception e) {
             LogManager.getLogger().d(App.TAG, "Error while setting up RecyclerView.", e);
         }
     }
@@ -105,6 +109,13 @@ public class ImageListFragment extends Fragment {
             extends LiveQueryRecyclerAdapter<SimpleProductRecyclerViewAdapter.ViewHolder> {
         public SimpleProductRecyclerViewAdapter(Context context, LiveQuery query) {
             super(context, query);
+
+            getActivity().registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    notifyDataSetChanged();
+                }
+            }, new IntentFilter(ShoppingUtils.ORDER_SUCCESS_INTENT_FILTER));
         }
 
         @Override
@@ -118,17 +129,23 @@ public class ImageListFragment extends Fragment {
             final Product item = getItem(position, Product.class);
             final Uri uri = Uri.parse(item.getImageUrl());
 
+            String cat = item.getCategory();
+            String subCat = item.getSubcategory();
+
+            if (cat.equals("Others") && subCat != null && subCat.length() > 0)
+                cat = subCat;
+
             holder.mImageView.setImageURI(uri);
             holder.mNameTextView.setText(item.getName());
-            holder.mDescriptionTextView.setText(item.getCategory());
+            holder.mDescriptionTextView.setText(cat);
             holder.mPriceTextView.setText(item.getPriceLabel());
 
-            if(ShoppingUtils.isInWishList(item))
+            if (ShoppingUtils.isInWishList(item))
                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
             else
                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_black_18dp);
 
-            if(ShoppingUtils.isInCart(item))
+            if (ShoppingUtils.isInCart(item))
                 holder.mImageViewCartlist.setImageResource(R.drawable.ic_shopping_cart_full);
             else
                 holder.mImageViewCartlist.setImageResource(R.drawable.ic_shopping_cart_empty);
@@ -149,9 +166,9 @@ public class ImageListFragment extends Fragment {
                 mView = view;
 
                 mImageView = (SimpleDraweeView) view.findViewById(R.id.image_list_item);
-                mNameTextView = (TextView)view.findViewById(R.id.name_list_item);
-                mDescriptionTextView = (TextView)view.findViewById(R.id.description_list_item);
-                mPriceTextView = (TextView)view.findViewById(R.id.price_list_item);
+                mNameTextView = (TextView) view.findViewById(R.id.name_list_item);
+                mDescriptionTextView = (TextView) view.findViewById(R.id.description_list_item);
+                mPriceTextView = (TextView) view.findViewById(R.id.price_list_item);
 
                 mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
                 mImageViewWishlist = (ImageView) view.findViewById(R.id.ic_wishlist);
@@ -164,7 +181,6 @@ public class ImageListFragment extends Fragment {
                         intent.putExtra(ITEM_JSON_DATA, ProductUtils.getJson(getItem()));
                         intent.putExtra(ITEM_POSITION, getPosition());
                         mActivity.startActivity(intent);
-
                     }
                 });
 
@@ -172,13 +188,15 @@ public class ImageListFragment extends Fragment {
                 mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(ShoppingUtils.isInWishList(getItem()))
+                        String action = "added to";
+                        if (ShoppingUtils.isInWishList(getItem())) {
                             ShoppingUtils.removeFromCart(getItem());
-                        else
+                            action = "removed from";
+                        } else
                             ShoppingUtils.addToWishlist(getItem());
 
                         notifyDataSetChanged();
-                        Toast.makeText(mActivity, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, getItem().getName() + " " + action + " wishlist.", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -189,12 +207,12 @@ public class ImageListFragment extends Fragment {
                         ShoppingUtils.addToCart(getItem());
 
                         notifyDataSetChanged();
-                        Toast.makeText(mActivity, "Item added to cart!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, getItem().getName() + " added to cart!", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
-            public Product getItem(){
+            public Product getItem() {
                 return SimpleProductRecyclerViewAdapter.this.getItem(this.getPosition(), Product.class);
             }
         }

@@ -58,9 +58,14 @@
     <string name="action_logout">Logout</string>
     <string name="button_pay_with_mpesa">Pay with MPESA</string>
     <string name="button_pay_on_delivery">Pay on Delivery</string>
-    <string name="title_make_payment">Make Payment</string>
-    <string name="pay_using_visa">Pay Using Visa</string>
+    <string name="payment_method_title">Select Payment Mode</string>
+    <string name="payment_details">Payment Details</string>
     <string name="title_activity_orders">My Orders</string>
     <string name="title_activity_order_details">Order Details</string>
-
+    <string name="payment_error_msg">Error while posting order. Ensure you have an internet connection then try again..</string>
+    <string name="check_internet_try_again">Please confirm that you have internet access and try again.</string>
+    <string name="payment_success_msg">Payment successful. Delivery will be on its way soon.</string>
+    <string name="payment_failure_msg">Order failed. Please call to place your order.</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
 </resources>

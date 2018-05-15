@@ -1,15 +1,15 @@
 package com.allandroidprojects.dialadrink.model;
 
-import com.allandroidprojects.dialadrink.utility.DataUtils;
+import com.allandroidprojects.dialadrink.App;
+import com.allandroidprojects.dialadrink.log.LogManager;
 
-import java.math.BigDecimal;
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import br.com.zbra.androidlinq.Linq;
-import br.com.zbra.androidlinq.delegate.SelectorBigDecimal;
 import br.com.zbra.androidlinq.delegate.SelectorDouble;
 
 /**
@@ -19,21 +19,37 @@ import br.com.zbra.androidlinq.delegate.SelectorDouble;
 public class Order extends BaseModel {
     protected String orderNumber;
     protected Date orderDate;
+
     protected String clientName;
-    protected String address1;
-    protected String address2;
+    protected String clientAddress1;
+    protected String clientAddress2;
+
     protected Boolean paid;
-    protected List<Cart> cartItems;
     protected Map<String, Object> metaData;
     protected Double shippingCost = 0.0;
+    protected Double itemsCost = 0.0;
 
-    public Order(PaymentMethod paymentMethod, List<Cart> cartItems, Map<String, Object> metaData) {
+    protected PaymentMethod paymentMethod;
+    protected List<Cart> orderItems;
+
+    public Order(PaymentMethod paymentMethod, List<Cart> orderItems, Map<String, Object> metaData) {
         super();
         this.orderNumber = getOrderNumber();
-        this.cartItems = cartItems;
-        this.metaData = metaData;
-        String paymentType = Linq.stream(paymentMethod.get_id().split("-")).lastOrDefault(null);
-        this.metaData.put("payment-type", paymentType);
+        this.orderDate = new Date();
+
+        this.metaData = metaData != null ? metaData : new HashMap<String, Object>();
+        this.metaData.put("payment-type", paymentMethod.getName());
+
+        this.paymentMethod = paymentMethod;
+        this.orderItems = orderItems;
+
+        this.itemsCost = Linq.stream(orderItems)
+                .sum(new SelectorDouble<Cart>() {
+                    @Override
+                    public Double select(Cart value) {
+                        return value.getTotalPrice();
+                    }
+                });
     }
 
     public void setOrderNumber(String orderNumber) {
@@ -48,30 +64,6 @@ public class Order extends BaseModel {
         this.orderDate = orderDate;
     }
 
-    public String getClientName() {
-        return clientName;
-    }
-
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
-    }
-
-    public String getAddress1() {
-        return address1;
-    }
-
-    public void setAddress1(String address1) {
-        this.address1 = address1;
-    }
-
-    public String getAddress2() {
-        return address2;
-    }
-
-    public void setAddress2(String address2) {
-        this.address2 = address2;
-    }
-
     public Boolean getPaid() {
         return paid;
     }
@@ -80,12 +72,12 @@ public class Order extends BaseModel {
         this.paid = paid;
     }
 
-    public List<Cart> getCartItems() {
-        return cartItems;
+    public List<Cart> getOrderItems() {
+        return orderItems;
     }
 
-    public void setCartItems(List<Cart> cartItems) {
-        this.cartItems = cartItems;
+    public void setOrderItems(List<Cart> orderItems) {
+        this.orderItems = orderItems;
     }
 
     public static String getOrderNumber() {
@@ -93,7 +85,7 @@ public class Order extends BaseModel {
         String alphabetic = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         return String.format("O-%s%s%s",
                 getRandomSequence(alphabetic, 1),
-                getRandomSequence(numeric, 4),
+                getRandomSequence(numeric, 6),
                 getRandomSequence(alphabetic, 1)
         );
     }
@@ -108,17 +100,11 @@ public class Order extends BaseModel {
     }
 
     public String getPaymentType() {
-        return metaData.containsKey("payment-type")? (String)metaData.get("payment-type"): "";
+        return metaData.containsKey("payment-type") ? (String) metaData.get("payment-type") : "";
     }
 
     public Double getTotalAmount() {
-        return this.getShippingCost() + Linq.stream(cartItems)
-                .sum(new SelectorDouble<Cart>() {
-                    @Override
-                    public Double select(Cart value) {
-                        return value.getTotalPrice();
-                    }
-                });
+        return this.getShippingCost() + itemsCost;
     }
 
     public Double getShippingCost() {
@@ -127,8 +113,37 @@ public class Order extends BaseModel {
 
     @Override
     public Object get(String fieldName) {
-        if(metaData!=null && metaData.containsKey(fieldName))
+        if (metaData != null && metaData.containsKey(fieldName))
             return metaData.get(fieldName);
         return super.get(fieldName);
+    }
+
+    public void set(String fieldName, Object value) {
+        Field field = getField(fieldName);
+        if (field != null) {
+            try {
+                field.set(this, value);
+                return;
+            } catch (IllegalAccessException e) {
+                LogManager.getLogger().e(App.TAG, "Error setting field!", e);
+            }
+        }
+
+        if (metaData.containsKey(fieldName))
+            metaData.remove(fieldName);
+        metaData.put(fieldName, value);
+    }
+
+    public Map<String, Object> getMetaData() {
+        return metaData;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public Order setMetaData(Map<String, Object> metaData) {
+        this.metaData = metaData;
+        return this;
     }
 }

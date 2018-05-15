@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 
 import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
-import com.wang.avi.AVLoadingIndicatorView;
+import com.allandroidprojects.dialadrink.utility.Alerts;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,7 +27,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
+        Alerts.register(this);
         if (Build.VERSION.SDK_INT < 16) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -44,8 +44,8 @@ public class SplashActivity extends Activity {
         linearLayout = (LinearLayout) findViewById(R.id.layout_linear);
         linearLayout.setVisibility(View.VISIBLE);
 
-        AVLoadingIndicatorView avi = findViewById(R.id.loadinAnimation);
-        avi.show();
+        //AVLoadingIndicatorView avi = findViewById(R.id.loadinAnimation);
+        //avi.show();
 
         //Init app
         App.init(new Runnable() {
@@ -72,6 +72,12 @@ public class SplashActivity extends Activity {
                 }
             }
         }, 3000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Alerts.unregister(this);
     }
 
     @Override

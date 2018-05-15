@@ -146,13 +146,13 @@ public abstract class BaseModel implements Document.ChangeListener {
                     pvalue = DataUtils.toObj((Map) pvalue, field.getType());
                 else if (pvalue instanceof TreeMap)
                     pvalue = DataUtils.toObj((TreeMap) pvalue, field.getType());
-                else if (pvalue instanceof List){
+                else if (pvalue instanceof List) {
                     Class<?> type = field.getType();
                     pvalue = DataUtils.toObj(pvalue, field.getType());
                     continue;
-                }
-                else if (field.getType().isAssignableFrom(int.class))
+                } else if (field.getType().isAssignableFrom(int.class)) {
                     pvalue = ((Number) pvalue).intValue();
+                }
 
                 field.set(this, pvalue);
             } catch (IllegalAccessException e) {
@@ -183,6 +183,10 @@ public abstract class BaseModel implements Document.ChangeListener {
         return null;
     }
 
+    protected Field getField(String fieldName) {
+        return getField(fieldName, this.getClass());
+    }
+
     protected static Field getField(final String name, Class<?> type) {
         return Linq.stream(getAllFields(type)).firstOrDefault(new Predicate<Field>() {
             @Override
@@ -207,10 +211,10 @@ public abstract class BaseModel implements Document.ChangeListener {
     }
 
     public static <T> List<T> fromJsonList(String json, Class<T> clazz) {
-        Object [] array = (Object[])java.lang.reflect.Array.newInstance(clazz, 0);
+        Object[] array = (Object[]) java.lang.reflect.Array.newInstance(clazz, 0);
         array = DataUtils.toObj(json, array.getClass());
         List<T> list = new ArrayList<T>();
-        for (int i=0 ; i<array.length ; i++)
+        for (int i = 0; i < array.length; i++)
             list.add(clazz.cast(array[i]));
         return list;
     }

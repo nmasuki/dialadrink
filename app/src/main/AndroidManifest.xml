@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.allandroidprojects.dialadrink">
 
-    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-sdk tools:overrideLibrary="com.github.ybq.android.spinkit" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
     <application
         android:name=".App"
@@ -65,10 +70,10 @@
             android:label="@string/my_orders" />
         <activity
             android:name=".activities.PaymentMethodsActivity"
-            android:label="@string/title_make_payment" />
+            android:label="@string/payment_method_title" />
         <activity
             android:name=".activities.PaymentDetailsActivity"
-            android:label="@string/pay_using_visa" />
+            android:label="@string/payment_details" />
 
         <meta-data
             android:name="android.app.default_searchable"
@@ -98,11 +103,11 @@
         <activity
             android:name=".activities.OrdersActivity"
             android:label="@string/title_activity_orders"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.OrderDetailsActivity"
             android:label="@string/title_activity_order_details"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

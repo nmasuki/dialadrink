@@ -1,7 +1,9 @@
 package com.allandroidprojects.dialadrink.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -108,7 +110,6 @@ public class CartListActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     LogManager.getLogger().d(App.TAG, "Error while updating cart price.", e);
                 }
-
             }
         });
 
@@ -119,6 +120,20 @@ public class CartListActivity extends AppCompatActivity {
                 LoginUtils.startActivity(CartListActivity.this, payIntent, true);
             }
         });
+
+        this.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //Remove cart items
+                for (Cart cart : ShoppingUtils.getCartListItems()) {
+                    cart.setDeleted(true);
+                    DataUtils.saveAsync(cart);
+                }
+
+                unregisterReceiver(this);
+                finish();
+            }
+        }, new IntentFilter(ShoppingUtils.ORDER_SUCCESS_INTENT_FILTER));
     }
 
     public class SimpleCartItemRecyclerViewAdapter

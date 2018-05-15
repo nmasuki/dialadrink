@@ -82,7 +82,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                 return true; // OR FALSE IF YOU DIDN'T WANT IT TO CLOSE!
             }
         });
-        searchEditText = (EditText)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 
         return true;
     }
@@ -131,10 +131,10 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                 if (progressBar != null)
                     progressBar.setVisibility(View.GONE);
 
-                if(!searchItems.any()) {
+                if (!searchItems.any()) {
                     noResultsLayout.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
-                }else {
+                } else {
                     noResultsLayout.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
 
@@ -155,11 +155,17 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             @Override
             protected Stream<SearchItem<Product>> doInBackground(String... strings) {
                 if (queryStr.length() > 0) {
-                    Stream<SearchItem<Product>> stream = Linq.stream(ProductUtils.getProducts())
+                    final Stream<SearchItem<Product>> stream = Linq.stream(ProductUtils.getProducts())
                             .select(new Selector<Product, SearchItem<Product>>() {
                                 @Override
                                 public SearchItem<Product> select(Product value) {
                                     return StringUtils.getSearchItem(value, queryStr, "name", "category", "subcategory", "page");
+                                }
+                            })
+                            .where(new Predicate<SearchItem<Product>>() {
+                                @Override
+                                public boolean apply(SearchItem<Product> value) {
+                                    return value.getFuzzyScore() > 0;
                                 }
                             });
 
@@ -170,8 +176,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                         }
                     });
 
-
-                    if(matchedStream.any()){
+                    if (matchedStream.any()) {
                         return matchedStream.orderBy(new Selector<SearchItem<Product>, Integer>() {
                             @Override
                             public Integer select(SearchItem<Product> value) {
@@ -180,17 +185,10 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                         });
                     }
 
-                    final Double avgScore = stream.average(new SelectorDouble<SearchItem<Product>>() {
-                        @Override
-                        public Double select(SearchItem<Product> value) {
-                            return value.getFuzzyScore();
-                        }
-                    });
-
                     Stream<SearchItem<Product>> fuzzyMatchedStream = stream.where(new Predicate<SearchItem<Product>>() {
                         @Override
                         public boolean apply(SearchItem<Product> value) {
-                            return value.isWordMatched() || value.getFuzzyScore() >= avgScore;
+                            return value.isWordMatched() || value.getPercentileRank(stream) > 70.0;
                         }
                     }).orderByDescending(new Selector<SearchItem<Product>, Double>() {
                         @Override
@@ -205,7 +203,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             }
         }).execute(queryStr);
 
-        if(searchEditText!=null)
+        if (searchEditText != null)
             searchEditText.setText(queryStr);
 
         // Check if no view has focus:
@@ -273,13 +271,16 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             String description = Html.toHtml(product.getDescription());
             String category = product.getCategory();
             String name = product.getName();
-            if (product.getSubcategory() != null)
+
+            if(category.equals("Others") && product.getSubcategory() != null)
+                category = product.getSubcategory();
+            else if (product.getSubcategory() != null)
                 category += ", " + product.getSubcategory();
 
             if (searchStr != null) {
                 String highLight = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                        ?"<mark style='background-color:#FFFF00'>%s</mark>"
-                        :"<font color='#FFFF00'>%s</font>";
+                        ? "<mark style='background-color:#FFFF00'>%s</mark>"
+                        : "<font color='#FFFF00'>%s</font>";
 
                 category = category.replace(searchStr, String.format(highLight, searchStr));
                 description = description.replace(searchStr, String.format(highLight, searchStr));

@@ -1,38 +1,30 @@
 package com.allandroidprojects.dialadrink.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.adapters.LiveQueryBaseAdapter;
-import com.allandroidprojects.dialadrink.model.Order;
 import com.allandroidprojects.dialadrink.model.PaymentMethod;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.PreferenceUtils;
 import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
-import com.couchbase.lite.Document;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.Query;
 import com.facebook.drawee.view.SimpleDraweeView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import br.com.zbra.androidlinq.Linq;
-import br.com.zbra.androidlinq.delegate.Predicate;
-import br.com.zbra.androidlinq.delegate.Selector;
 
 public class PaymentMethodsActivity extends AppCompatActivity {
     public static final String SELECTED_METHOD_KEY = "preferedPaymentMethod";
@@ -55,6 +47,14 @@ public class PaymentMethodsActivity extends AppCompatActivity {
         query.setEndKey(endKey);
 
         listview.setAdapter(new PaymentMethodsAdapter(this, query.toLiveQuery()));
+
+        this.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                unregisterReceiver(this);
+                finish();
+            }
+        }, new IntentFilter(ShoppingUtils.ORDER_SUCCESS_INTENT_FILTER));
     }
 
     public class PaymentMethodsAdapter extends LiveQueryBaseAdapter {

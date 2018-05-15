@@ -30,12 +30,14 @@ import com.allandroidprojects.dialadrink.fragments.ImageListFragment;
 import com.allandroidprojects.dialadrink.model.ProductType;
 import com.allandroidprojects.dialadrink.model.User;
 import com.allandroidprojects.dialadrink.notification.NotificationCount;
+import com.allandroidprojects.dialadrink.utility.Alerts;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.ProductUtils;
 import com.allandroidprojects.dialadrink.utility.ShoppingUtils;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.QueryEnumerator;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +58,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        Alerts.register(this);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle =
                 new ActionBarDrawerToggle(this, drawer, toolbar,
                     R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -64,11 +68,11 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final TextView usernameTextView = (TextView)navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_textview);
-        final com.facebook.drawee.view.SimpleDraweeView usernameImageView = navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_imageview);
+        final TextView usernameTextView = navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_textview);
+        final SimpleDraweeView usernameImageView = navigationView.getHeaderView(0).findViewById(R.id.user_profile_username_imageview);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -128,6 +132,12 @@ public class MainActivity extends AppCompatActivity
                 return null;
             }
         }).execute();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Alerts.unregister(this);
     }
 
     @Override

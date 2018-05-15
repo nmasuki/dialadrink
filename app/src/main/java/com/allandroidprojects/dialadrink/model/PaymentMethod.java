@@ -2,6 +2,8 @@ package com.allandroidprojects.dialadrink.model;
 
 import android.graphics.Bitmap;
 
+import com.allandroidprojects.dialadrink.App;
+import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.ImageUtils;
 import com.allandroidprojects.dialadrink.utility.PreferenceUtils;
@@ -15,6 +17,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+
+import br.com.zbra.androidlinq.Stream;
 
 public class PaymentMethod extends BaseModel {
     protected String name;
@@ -23,6 +28,7 @@ public class PaymentMethod extends BaseModel {
     protected Boolean active = false;
     protected Integer orderIndex;
     protected HashMap<String, String> requiredFields = new HashMap<>();
+    protected HashMap<String, Object> metaData = new HashMap<>();
 
     public PaymentMethod() {
         super();
@@ -57,15 +63,6 @@ public class PaymentMethod extends BaseModel {
         return logoImage;
     }
 
-    public Bitmap getLogoBitmap() {
-        String imageUrl = "http://www.pariyarathusilks.com/onlineshop/modules/productpaymentlogos/img/af5f83965bf01fb2ce9484b979b9f458.png";
-
-        if (logoImage != null)
-            imageUrl = logoImage;
-
-        return ImageUtils.decodeBitmapFromUrl(imageUrl);
-    }
-
     public void setLogoImage(String logoImage) {
         this.logoImage = logoImage;
     }
@@ -90,12 +87,29 @@ public class PaymentMethod extends BaseModel {
         return PreferenceUtils.getString(get_id() + key, "");
     }
 
-    public void set(String key, String value){
+    public void set(String key, String value) {
         PreferenceUtils.setString(get_id() + key, value);
     }
 
     public String getHintText(String key) {
-        return requiredFields.containsKey(key) ? requiredFields.get(key) : "Enter '" + key + "' here..";
+        return requiredFields.containsKey(key) ? requiredFields.get(key).split(":")[0] : "Enter '" + key + "' here..";
+    }
+
+    public Pattern getValidationRegex(String key) {
+        if (requiredFields.containsKey(key)) {
+            String value = requiredFields.get(key);
+            if (value.contains(":")) {
+                String regex = requiredFields.get(key).split(":")[1];
+                if (regex != null && regex.length() > 0) {
+                    try {
+                        return Pattern.compile(regex);
+                    } catch (Exception e) {
+                        LogManager.getLogger().e(App.TAG, "Error parsing regex '" + regex + "'", e);
+                    }
+                }
+            }
+        }
+        return Pattern.compile("[\\w]*");
     }
 
     public static List<PaymentMethod> getFromJsonAsset() {

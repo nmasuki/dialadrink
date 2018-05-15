@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Base64;
 
 import com.allandroidprojects.dialadrink.App;
+import com.allandroidprojects.dialadrink.R;
 import com.allandroidprojects.dialadrink.activities.LoginActivity;
 import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.model.User;
@@ -102,8 +103,20 @@ public class LoginUtils {
         return user;
     }
 
+    public static String getBasicAuth(){
+        User user = App.getAppContext().getCurrentUser();
+        if(user!=null)
+            return getBasicAuth(user.getUserId(), user.getPassword());
+        else
+            return getBasicAuth(App.getAppContext().getString(R.string.app_name), "masmiller");
+    }
+
+    public static String getBasicAuth(String username, String password){
+        return Base64.encodeToString(String.format("%s:%s", username, password).getBytes(), Base64.NO_WRAP);
+    }
+
     public static void createUser(Activity activity, User user, final App.Runnable<Map<String, Object>> success, final App.Runnable<String> failure) {
-        String basicAuth = Base64.encodeToString(String.format("%s:%s", user.getUserId(), user.getPassword()).getBytes(), Base64.NO_WRAP);
+        String basicAuth = getBasicAuth(user.getUserId(), user.getPassword());
 
         RequestBody formBody = new FormBody.Builder()
                 .add("name", user.getUserId())

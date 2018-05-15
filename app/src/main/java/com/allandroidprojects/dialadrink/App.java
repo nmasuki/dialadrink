@@ -5,8 +5,10 @@ package com.allandroidprojects.dialadrink;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -20,8 +22,10 @@ import android.widget.Toast;
 import com.allandroidprojects.dialadrink.cache.ImagePipelineConfigFactory;
 import com.allandroidprojects.dialadrink.log.LogManager;
 import com.allandroidprojects.dialadrink.model.User;
+import com.allandroidprojects.dialadrink.utility.Alerts;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.DbSync;
+import com.allandroidprojects.dialadrink.utility.DeviceAccountUtils;
 import com.allandroidprojects.dialadrink.utility.PreferenceUtils;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -54,6 +58,31 @@ public class App extends android.app.Application {
         super.onCreate();
         App.context = getApplicationContext();
         Fresco.initialize(this, ImagePipelineConfigFactory.getImagePipelineConfig(this));
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                String msg = throwable.getMessage();
+                Throwable t = throwable.getCause();
+                while (t != null) {
+                    msg += "\r\n-------------------\r\n" + t.getMessage();
+                    t = t.getCause();
+                }
+
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run(Object[] param) {
+                        try {
+                            Thread.sleep(4000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        System.exit(2);
+                    }
+                };
+
+                Alerts.displayError(getAppContext(), msg);
+            }
+        });
     }
 
     public static App getAppContext() {
@@ -152,7 +181,6 @@ public class App extends android.app.Application {
                         return false;
                     }
                 }
-
                 return true;
             }
         }.execute();
@@ -210,6 +238,10 @@ public class App extends android.app.Application {
     ProgressDialog progressDialog = null;
 
     public void showProgressDialog(Activity activity, String message) {
+        showProgressDialog(activity, message, false);
+    }
+
+    public void showProgressDialog(Activity activity, String message, Boolean noDismiss) {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
 
@@ -231,7 +263,7 @@ public class App extends android.app.Application {
     }
 
     public abstract static class Runnable<T> implements java.lang.Runnable {
-        private T toWorkWith = (T)null;
+        private T toWorkWith = (T) null;
 
         public Runnable() {
         }

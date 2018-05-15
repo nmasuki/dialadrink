@@ -17,8 +17,8 @@ import java.util.Map;
  */
 
 public class Cart extends BaseModel {
+    protected Product product;
     protected int size = 0;
-    protected Product product = new Product();
 
     public static Cart fromProduct(Product product) {
         return fromProduct(product, 0);
@@ -89,7 +89,7 @@ public class Cart extends BaseModel {
                         Cart item = DataUtils.toObj(document, Cart.class);
                         List<Object> keys = new ArrayList<Object>();
                         keys.add(document.get("userId"));
-                        keys.add(document.get("modifiedAt"));
+                        keys.add(document.get("createdAt"));
                         keys.add(item.getTotalPrice());
                         emitter.emit(keys, document);
                     }

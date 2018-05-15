@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import br.com.zbra.androidlinq.Linq;
+import br.com.zbra.androidlinq.Stream;
 import br.com.zbra.androidlinq.delegate.Predicate;
 import br.com.zbra.androidlinq.delegate.SelectorDouble;
 
@@ -102,10 +103,10 @@ public class SearchItem<T extends BaseModel> {
     public Double getFuzzyScore() {
         if (fuzzyScore == null) {
             fuzzyScore = calculateFuzzyScore(model, searchTerm, searchFields);
-            if (App.DEBUG) {
+            /*if (App.DEBUG) {
                 if (fuzzyScore > 0)
                     LogManager.getLogger().d(App.TAG, "Fuzzy score " + getModel().get("name") + "/" + searchTerm + "=" + fuzzyScore);
-            }
+            }*/
         }
         return fuzzyScore;
     }
@@ -113,12 +114,22 @@ public class SearchItem<T extends BaseModel> {
     public Double getSimilarityScore() {
         if (similarityScore == null) {
             similarityScore = calculateSimilarityScore(model, searchTerm, searchFields);
-            if (App.DEBUG) {
+            /*if (App.DEBUG) {
                 if (similarityScore > 0)
                     LogManager.getLogger().d(App.TAG, "Similarity score " + getModel().get("name") + "/" + searchTerm + "=" + similarityScore);
-            }
+            }*/
         }
         return similarityScore;
+    }
+
+    public Double getPercentileRank(Stream<SearchItem<T>> stream){
+        Double denominator = stream.count() - 1.0;
+        return 100.0 * stream.where(new Predicate<SearchItem<T>>() {
+            @Override
+            public boolean apply(SearchItem<T> value) {
+                return getFuzzyScore()> value.getFuzzyScore();
+            }
+        }).count() / denominator;
     }
 
     private Double calculateFuzzyScore(T model, String searchTerm, String... searchFields) {

@@ -117,6 +117,20 @@ public class DataUtils {
         return null;
     }
 
+    public static <T> T get(String id, Class<T> tClass){
+        Document doc = DataUtils.get(id);
+        return doc != null? toObj(doc, tClass): null;
+    }
+
+    public static <T> List<T> get(List<String> ids, final Class<T> tClass){
+        return Linq.stream(ids).select(new Selector<String, T>() {
+            @Override
+            public T select(String id) {
+                return DataUtils.get(id, tClass);
+            }
+        }).toList();
+    }
+
     public static <T extends BaseModel> AsyncTask saveAsync(final T model) {
 
         AsyncTask task = new AsyncTask<Object, Object, Object>() {
