@@ -15,7 +15,6 @@
         android:background="@color/background"
         android:orientation="vertical">
 
-
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +40,6 @@
                     fresco:actualImageScaleType="fitCenter"
                     fresco:placeholderImage="@drawable/ic_payment"
                     fresco:viewAspectRatio="1.33" />
-
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -83,7 +81,8 @@
                         android:hint="CARD NUMBER"
                         android:padding="15dp"
                         android:textAllCaps="false"
-                        android:textSize="13dp" />
+                        android:textSize="13dp"
+                        android:imeOptions="actionNext" />
 
                 </LinearLayout>
 
@@ -100,7 +99,8 @@
                         android:background="#00000000"
                         android:hint="CARDHOLDER'S NAME"
                         android:padding="15dp"
-                        android:textSize="13dp" />
+                        android:textSize="13dp"
+                        android:imeOptions="actionNext" />
 
                 </LinearLayout>
 
@@ -162,7 +162,8 @@
                             android:background="#00000000"
                             android:hint="CVV"
                             android:padding="13dp"
-                            android:textSize="12dp" />
+                            android:textSize="12dp"
+                            android:imeOptions="actionDone" />
 
                     </LinearLayout>
 
@@ -174,7 +175,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginTop="10dp"
-                    android:text="   Save payment information" />
+                    android:text="Save payment information" />
 
                 <com.allandroidprojects.dialadrink.fonts.MyTextView_Roboto_Medium
                     android:id="@+id/nextButton"
