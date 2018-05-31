@@ -8,20 +8,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.allandroidprojects.dialadrink.App;
-
 import java.util.HashMap;
 
 public class Alerts {
     public static String INTENT_DISPLAYERROR = "intentDisplayError";
 
     private static class AlertReceiver extends BroadcastReceiver {
-
         private static HashMap<Activity, AlertReceiver> registrations;
         private Context activityContext;
 
         static {
             registrations = new HashMap<Activity, AlertReceiver>();
+        }
+
+        private AlertReceiver(Activity activity) {
+            activityContext = activity;
         }
 
         static void register(Activity activity) {
@@ -36,10 +37,6 @@ public class Alerts {
                 activity.unregisterReceiver(receiver);
                 registrations.remove(activity);
             }
-        }
-
-        private AlertReceiver(Activity activity) {
-            activityContext = activity;
         }
 
         @Override

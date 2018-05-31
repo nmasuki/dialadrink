@@ -22,7 +22,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_empty);
+        setContentView(R.layout.activity_order_detail);
 
         String orderId = getIntent().getStringExtra(SELECTED_ORDER_KEY);
         Order order = DataUtils.get(orderId, Order.class);
@@ -50,7 +50,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         String message = meta.containsKey(msgKey)
                 ? meta.get(msgKey).toString()
                 : (status == "success"? getString(R.string.payment_success_msg): getString(R.string.payment_failure_msg));
-
+        if(emptyInfoTextView!=null)
         emptyInfoTextView.setText(message);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);

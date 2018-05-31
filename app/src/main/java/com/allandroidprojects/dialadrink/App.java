@@ -5,18 +5,10 @@ package com.allandroidprojects.dialadrink;
  */
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.allandroidprojects.dialadrink.cache.ImagePipelineConfigFactory;
@@ -25,7 +17,6 @@ import com.allandroidprojects.dialadrink.model.User;
 import com.allandroidprojects.dialadrink.utility.Alerts;
 import com.allandroidprojects.dialadrink.utility.DataUtils;
 import com.allandroidprojects.dialadrink.utility.DbSync;
-import com.allandroidprojects.dialadrink.utility.DeviceAccountUtils;
 import com.allandroidprojects.dialadrink.utility.PreferenceUtils;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -37,9 +28,10 @@ import com.couchbase.lite.View;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.util.Map;
-import java.util.UUID;
 
 import br.com.zbra.androidlinq.Linq;
+
+import static android.provider.Settings.Secure;
 
 public class App extends android.app.Application {
     public static final String TAG = "DialADrink";
@@ -51,7 +43,7 @@ public class App extends android.app.Application {
     private static DbSync syncManager;
 
     private static Context context;
-    private User mCurrentUser;
+    private User currentUser;
 
     @Override
     public void onCreate() {
@@ -63,10 +55,12 @@ public class App extends android.app.Application {
             public void uncaughtException(Thread thread, Throwable throwable) {
                 String msg = throwable.getMessage();
                 Throwable t = throwable.getCause();
+
                 while (t != null) {
-                    msg += "\r\n-------------------\r\n" + t.getMessage();
+                    msg += "\r\n---------------------------------------------\r\n" + t.getMessage();
                     t = t.getCause();
                 }
+                msg += "\r\n---------------------------------------------\r\n";
 
                 Runnable runnable = new Runnable() {
                     @Override
@@ -90,22 +84,23 @@ public class App extends android.app.Application {
     }
 
     public User getCurrentUser() {
-        if (mCurrentUser == null) {
+        if (currentUser == null) {
             try {
-                QueryRow row = Linq.stream(getUserProfilesView().createQuery().run()).first();
+                QueryRow row = Linq.stream(getUserProfilesView().createQuery().run())
+                        .firstOrDefault(null);
                 if (row != null) {
                     Document doc = row.getDocument();
-                    mCurrentUser = DataUtils.toObj(doc, User.class);
+                    currentUser = DataUtils.toObj(doc, User.class);
                 }
             } catch (CouchbaseLiteException e) {
                 LogManager.getLogger().d(App.TAG, "Error while reading user.", e);
             }
         }
-        return mCurrentUser;
+        return currentUser;
     }
 
     public void setCurrentUser(User user) {
-        this.mCurrentUser = user;
+        this.currentUser = user;
     }
 
     public String getCurrentUserId() {
@@ -117,7 +112,10 @@ public class App extends android.app.Application {
         String guestId = PreferenceUtils.getString(App.GUEST_DATABASE + "_Id", null);
 
         if (guestId == null) {
-            guestId = UUID.randomUUID().toString().replace("-", "") + "@dialadrink.com";
+            String android_id =
+                    Secure.getString(getAppContext().getContentResolver(), Secure.ANDROID_ID);
+
+            guestId = android_id + "@dialadrink.com";
             PreferenceUtils.setString(App.GUEST_DATABASE + "_Id", guestId);
         }
 

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,10 +7,6 @@
     android:orientation="vertical"
     tools:context=".activities.OrdersActivity">
 
-    <include
-        layout="@layout/app_bar_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <ListView
         android:id="@+id/ordersListView"
@@ -21,7 +16,6 @@
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false"
         android:orientation="vertical">
-
-
     </ListView>
+
 </LinearLayout>

@@ -17,4 +17,7 @@
     <string name="mpesa_validation_url">http://159.65.50.86:3000/validation</string>
     <string name="mpesa_shortcode">702421</string>
     <string name="mpesa_default_account">Test 123</string>
+
+    <!-- FCM -->
+    <string name="default_notification_channel_id">747301597735</string>
 </resources>

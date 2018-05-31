@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentFilter;
 
 import com.allandroidprojects.dialadrink.App;
 import com.allandroidprojects.dialadrink.log.LogManager;
@@ -17,6 +16,7 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -177,8 +177,7 @@ public class ShoppingUtils {
     public static Order getOrder(PaymentMethod method, Map<String, Object> metaData) {
         List<Cart> cartList = getCartListItems();
         Order order = new Order(method, cartList, metaData);
-        User user = App.getAppContext().getCurrentUser();
-        String regId = PreferenceUtils.getString("regId", null);
+        String regId = PreferenceUtils.getString("regId", FirebaseInstanceId.getInstance().getToken());
 
         order.set("clientName", getClientName());
         if (regId != null)

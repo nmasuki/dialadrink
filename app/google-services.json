@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "747301597735",
+    "firebase_url": "https://api-project-747301597735.firebaseio.com",
+    "project_id": "api-project-747301597735",
+    "storage_bucket": "api-project-747301597735.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747301597735:android:6c4b1b51352d02ef",
+        "android_client_info": {
+          "package_name": "com.allandroidprojects.dialadrink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "747301597735-0cmugkgo9jnhjivmcl8s66359kbldb4q.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "747301597735-bamp3q2co4c8cp65ff069pf4tmms2l7i.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "747301597735-c3qh3bi0bvn4slmsvi7glgfmvmt44b9b.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "747301597735-0cmugkgo9jnhjivmcl8s66359kbldb4q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU48aNFp551Tguh8iBuk19L1CLC2lrwi0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
