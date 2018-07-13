@@ -24,7 +24,7 @@ options[domain] = function ($, uri, json, done) {
 		//'/', '/home', '/index.html',
 		//'/blog/*','/blog/post/*',
 		//'/gallery','/contact-us',
-		'/login', '/admin*',
+		'/login', '/admin*','/blog*',
 		'/search/*', '/category/*',
 		'/product/*', '/products/*',
 		'/cart', '/checkout'

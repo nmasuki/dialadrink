@@ -317,15 +317,16 @@ module.exports = function () {
 		return (str || "").truncate(length, '...')
 	}
 
-	// Direct url link to a specific post
-	_helpers.postUrl = function (postSlug, options) {
-		return ('/blog/post/' + postSlug);
-	};
 
 	// Direct url link to a specific product
 	_helpers.productUrl = function (productSlug, options) {
 		return ('/product/' + productSlug);
 	};
+
+    // Direct url link to a specific post
+    _helpers.postUrl = function (postSlug, options) {
+        return ('/blog/' + postSlug);
+    };
 
 	// might be a ghost helper
 	// used for pagination urls on blog
@@ -335,7 +336,7 @@ module.exports = function () {
 
 	// create the category url for a blog-category page
 	_helpers.categoryUrl = function (categorySlug, options) {
-		return ('/blog/' + categorySlug);
+		return ('/blog/cat/' + categorySlug);
 	};
 
 	// ### Pagination Helpers
@@ -343,7 +344,7 @@ module.exports = function () {
 	// Mostly generalized and with a small adjust to `_helper.pageUrl` could be universal for content types
 
 	/*
-	* expecting the data.posts context or an object literal that has `previous` and `next` properties
+	* expecting the data.blogs context or an object literal that has `previous` and `next` properties
 	* ifBlock helpers in hbs - http://stackoverflow.com/questions/8554517/handlerbars-js-using-an-helper-function-in-a-if-statement
 	* */
 	_helpers.ifHasPagination = function (postContext, options) {

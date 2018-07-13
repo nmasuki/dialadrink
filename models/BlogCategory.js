@@ -7,13 +7,14 @@ var Types = keystone.Field.Types;
  */
 
 var BlogCategory = new keystone.List('BlogCategory', {
-	autokey: { from: 'name', path: 'key', unique: true },
+    autokey: {from: 'name', path: 'key', unique: true},
 });
 
 BlogCategory.add({
-	name: { type: String, required: true },
+    name: {type: String, required: true, initial: true},
+    regexMatch: {type: String},
 });
 
-BlogCategory.relationship({ ref: 'Post', path: 'post', refPath: 'categories' });
+BlogCategory.relationship({ref: 'Blog', path: 'blog', refPath: 'categories'});
 
 BlogCategory.register();

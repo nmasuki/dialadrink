@@ -54,8 +54,7 @@ exports = module.exports = function (app) {
 
 	//app.use('/order-template', routes.views['order-template']);
 	app.use('/brand', routes.views.brand);
-	app.use('/blog/post/:post', routes.views.post);
-	app.use('/blog/:category?', routes.views.blog);
+	app.use('/blog', routes.views.blog);
 	app.use('/contact-us', routes.views.contact);
 	app.use('/gallery', routes.views.gallery);
 		

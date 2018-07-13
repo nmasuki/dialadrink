@@ -106,7 +106,7 @@ keystone.set('nav', {
 	orders: 'orders',
 	enquiries: 'enquiries',
 	'content-and-seo': ['menu-items', 'pages'],
-	blog: ["posts", "post-categories", "blogs", "blog-categories"],
+	blog: ["blogs", "blog-categories"],
 	users: 'users',
 });
 

@@ -1,12 +1,9 @@
 <div class="container">
-	<h1>Blog</h1>
-</div>
-<div class="container">
 	<div class="row">
 		<div class="col-sm-8 col-md-9">
-			<h4 class="text-weight-normal">Showing {{ data.posts.results.length}} post.</h4>
+			<h4 class="text-weight-normal">Showing {{ data.blogs.results.length}} post.</h4>
 			<div class="blog">
-				{{# each data.posts.results}}
+				{{# each data.blogs.results}}
 				<div data-ks-editable="{{#if ../user}}{{adminEditableUrl ../../user _id}}{{/if}}" class="post">
 					<h2><a href="{{postUrl href}}">{{{title}}}</a></h2>
 					<p class="lead text-muted">{{{categoryList categories prefix="Posted in "}}}
@@ -20,11 +17,11 @@
 			</div>
 		</div>
 		<div class="col-sm-4 col-md-3">
-			<h2>Categories</h2>
-			<div style="margin-top: 70px;" class="list-group">
-				<a href="/blog" class="active list-group-item">All Categories</a>
+			<h2 style="margin-left: 20px">Categories</h2>
+			<div style="margin-top: 30px; margin-left: 20px" class="list-group">
+				<a href="/blog" class="{{#unless filters.category}}active{{/unless}} list-group-item">All Categories</a>
 				{{# each data.categories }}
-				<a href="{{categoryUrl key}}" class="false list-group-item">{{name}}</a>
+				<a href="{{categoryUrl key}}" class="{{#ifeq ../filters.category key}}active{{/ifeq}} list-group-item">{{name}}</a>
 				{{/each}}
 			</div>
 		</div>
