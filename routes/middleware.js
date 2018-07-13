@@ -104,7 +104,10 @@ exports.initTopMenuLocals = function (req, res, next) {
 
 			res.locals.navLinks = menu
 				.filter(m => m.show)
-				.orderBy(m => m.index)
+				.orderBy(m =>{
+					m.submenus = m.submenus.orderBy(n=>n.index);
+					return m.index
+				})
 				.distinctBy(m => m.label.cleanId());
 
 			next();

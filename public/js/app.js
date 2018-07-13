@@ -9,8 +9,8 @@ var app = {
 	initPickColor: function () {
 		$('.pick-class-label').click(function () {
 			var new_class = $(this).attr('new-class');
-			var old_class = $('#display-buttons').attr('data-class');
-			var display_div = $('#display-buttons');
+            var display_div = $('#display-buttons');
+            var old_class = display_div.attr('data-class');
 			if (display_div.length) {
 				var display_buttons = display_div.find('.btn');
 				display_buttons.removeClass(old_class);
@@ -32,7 +32,7 @@ var app = {
 		};
 
 		var optionsSales = {
-			lineSmooth: false,
+			//lineSmooth: false,
 			low: 0,
 			high: 800,
 			showArea: true,
@@ -210,7 +210,7 @@ var app = {
 		});
 
 		$(window).resize(function() {
-			if ($('.modal.in').length != 0) {
+			if ($('.modal.in').length !== 0) {
 				setModalMaxHeight($('.modal.in'));
 			}
 		});
@@ -235,12 +235,12 @@ var app = {
 		var modal = $($('#modal-template').html());
 		$(document.body).append(modal);
 
-		if (typeof option.ok == "function")
+		if (typeof option.ok === "function")
 			modal.find(".btn-primary").on("click", function () {
 				option.ok.apply(this, arguments);
 			});
 
-		if (typeof option.close == "function")
+		if (typeof option.close === "function")
 			modal.find(".btn-secondary, .close").on("click", function () {
 				option.close.apply(this, arguments);
 			});
@@ -286,7 +286,7 @@ if(window.cartUtil){
 
 		var query = $('#search_box').val();
 
-		if (query != "") {
+		if (query !== "") {
 			console.log(query)
 			window.location.href = "/search/" + query;
 		}

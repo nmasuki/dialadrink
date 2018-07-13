@@ -15,6 +15,22 @@ router.get("/:product", function (req, res) {
 				locals.product = product;
 				locals.page.title = product.pageTitle;
 
+				[
+                    product.category && product.category.name,
+                    product.subCategory && product.subCategory.name,
+					product.name
+                ].filter(i=>!!i).forEach(i=>{
+                	locals.page.breadcrumbs.push({
+						title: i,
+						href: "/" + i.toLowerCase()
+					})
+				});
+
+                locals.page.breadcrumbs.push({
+                    title: product.name,
+                    href: "/product/" + product.href
+                });
+
 				locals.page.title = locals.page.title || [
 					product.name,
 					product.category && product.category.name,
@@ -22,7 +38,7 @@ router.get("/:product", function (req, res) {
 					product.brand && product.brand.name,
 				].filter(a => !!a).join(" - ") + " | " + keystone.get("name");
 
-				locals.userRating = product.ratings && product.ratings.find(r => r.userId == req.session.id)
+				locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
 
 				product.findSimilar((err, products) => {
 					if (products)

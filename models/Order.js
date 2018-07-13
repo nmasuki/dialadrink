@@ -104,8 +104,8 @@ Order.schema.methods.sendUserNotification = function (callback) {
 	email.transport = require("../helpers/mailer");
 
 	var subject = "Your order at " + keystone.get("name");
-	if (keystone.get("env") == "development")
-		subject = "(Testing)" + subject;
+	//if (keystone.get("env") == "development")
+	//	subject = "(Testing)" + subject;
 
 	var orderId = this._id;
 	Order.model.findOne({_id: orderId})

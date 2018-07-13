@@ -147,7 +147,7 @@ function handleDropdown(){
       
   $('.dropdown').on('click', function() {
       if(touch == false && getWidthBrowser() > 767 ){
-        var href = $(this).find('.dropdown-link').attr('href');
+        var href = $(this).find('a.dropdown-toggle').attr('href');
         window.location = href;
       }
   });
