@@ -94,7 +94,7 @@
 
 				<div class="row">
 					<div class="col-md-4 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
-						<span class="sr-only">{{avgRatings}} out of 5 Stars</span>
+						<span class="sr-only">{{formatNumber avgRatings 1}} out of 5 Stars</span>
 						<span class="glyphicon glyphicon-star{{#ifgte 0 avgRatings}}-empty{{/ifgte}}"
 							  aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-star{{#ifgte 1 avgRatings}}-empty{{/ifgte}}"
@@ -105,7 +105,7 @@
 							  aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-star{{#ifgte 4 avgRatings}}-empty{{/ifgte}}"
 							  aria-hidden="true"></span>
-						<span class="label label-success">{{avgRatings}} *</span>
+						<span class="label label-success">{{formatNumber avgRatings 1}} *</span>
 					</div>
 					{{#unless ../userRating}}
 						<div class="col-md-8">
