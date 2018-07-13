@@ -1,12 +1,8 @@
-### What is this repository for? ###
 
-* Dial a drink CMS site
-* 1.0.0
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### Running KeystoneJS in Production
 
-### How do I get set up? ###
+When you deploy your KeystoneJS app to production, be sure to set your `ENV` environment variable to `production`.
 
-Uses KeystoneJS
+You can do this by setting `NODE_ENV=production` in your `.env` file, which gets handled by [dotenv](https://github.com/motdotla/dotenv).
 
-npm install
-node keystone.js
+Setting your environment enables certain features (including template caching, simpler error reporting, and HTML minification) that are important in production but annoying in development.

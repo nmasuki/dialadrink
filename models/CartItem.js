@@ -1,0 +1,83 @@
+var keystone = require('keystone');
+var Types = keystone.Field.Types;
+
+/**
+ * CartItem Model
+ * ==========
+ */
+
+var CartItem = new keystone.List('CartItem', {
+	hidden: true,
+	map: {name: 'title'},
+	autokey: {path: 'key', from: 'orderNumber', unique: true},
+});
+
+CartItem.add({
+	date: {type: Types.Date, index: true, default: Date.now, noedit: true},
+	pieces: {type: Number},
+
+	state: {
+		type: Types.Select,
+		options: 'placed, dispatched, delivered, paid, completed',
+		default: 'placed',
+		index: true
+	},
+
+	product: {type: Types.Relationship, ref: 'Product'},
+
+	quantity: {type: String}
+});
+
+CartItem.schema.virtual("image").get(function () {
+	return this.product.image;
+});
+
+CartItem.schema.virtual("price").get(function () {
+	var priceOption = this.product.options.find(o => o.quantity == this.quantity);
+	return (priceOption || {}).price;
+});
+
+CartItem.schema.virtual("currency").get(function () {
+	var priceOption = this.product.options.find(o => o.quantity == this.quantity);
+	return (priceOption || {}).currency;
+});
+
+CartItem.schema.virtual("total").get(function () {
+	return this.price * this.pieces;
+});
+
+CartItem.schema.virtual("cartId").get(function () {
+	return (this.product._id || this.product) + "|" + this.quantity;
+});
+
+var autoId = 72490002;//Some random number from which to start counting
+CartItem.schema.pre('save', function (next) {
+	this.orderNumber = autoId + 100;
+	next();
+});
+
+CartItem.schema.set('toObject', {
+	virtual: true,
+	transform: function (doc, ret, options) {
+		var whitelist = ['cartId', 'date', 'pieces', 'state', 'product', 'quantity', 'image', 'price', 'currency', 'total'];
+		whitelist.forEach(i => ret[i] = doc[i]);
+		ret._id = doc.product._id + "|" + doc.quantity;
+		return ret;
+	}
+});
+
+CartItem.schema.set('toJSON', {
+	transform: function (doc, ret, options) {
+		return doc.toObject();
+	}
+});
+
+CartItem.defaultColumns = 'orderNumber, orderDate|20%, author|20%, publishedDate|20%';
+CartItem.register();
+
+CartItem.model.find().sort({'id': -1}).limit(1)
+	.exec(function (err, data) {
+		if (data[0] && data[0].orderNumber)
+			autoId = data[0].orderNumber;
+	});
+

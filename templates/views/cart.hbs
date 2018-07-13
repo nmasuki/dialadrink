@@ -1,0 +1,100 @@
+<style>
+	.summary {
+		position: relative;
+		display: block;
+		padding: 10px 15px;
+		margin: 0 6px;
+		background-color: #fff;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+	}
+</style>
+
+<div id="cart-content-main" class="container">
+	<div class="col-md-7">
+		<ul class="list-group mb-3" id="cart-view">
+			{{#each cartItems}}
+				<li data-cartid="{{cartId}}" class="list-group-item d-flex justify-content-between lh-condensed row">
+					<div style="float: left; width: auto;">
+						<img class="cart-image" src="{{cloudinaryUrl image crop='fit'}}" style="max-height: 52px">
+					</div>
+					<div class="col-md-5">
+						<h6 class="my-0">
+							<a class="cart-product-link" href="/product/{{product.href}}">
+								{{product.name}}&nbsp;{{quantity}}
+							</a>
+						</h6>
+						<small class="text-muted cart-description">{{truncate description 50}}</small>
+						<small class="text-muted">
+							<span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
+							@<span class="cart-currency">KES</span> {{formatNumber price}}
+						</small>
+						<div class="right">
+							<span class="cart-currency">KES</span>
+							<stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
+						</div>
+					</div>
+					<div class="col-md-4 product-qty" style="padding-top: 10px;">
+						<span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty cart-pieces-add"
+							  style="width: 42px; height: 40px">
+						  <span class="glyphicon glyphicon-plus" aria-hidden="true" style="padding: 8px 0px;"></span>
+						</span>
+						<input id="pieces" value="{{pieces}}"
+							   class="pieces cart-pieces btn btn-default btn-lg btn-qty cart-pieces"
+							   style="width: 42px; height: 40px"/>
+						<span id="pieces-minus" class="pieces-minus btn btn-default btn-lg btn-qty cart-pieces-minus"
+							  style="width: 42px; height: 40px">							
+							<span class="glyphicon glyphicon-minus" aria-hidden="true" style="padding: 8px 0px;"></span>
+						</span>
+					</div>
+					<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>
+				</li>
+			{{else}}
+				<li class="list-group-item d-flex justify-content-between lh-condensed row">
+					<div class="loading cart-loading">
+						<img src="/images/empty-cart.png" alt="Empty!" style="height: 50px;">
+						You have no items in your cart!!
+					</div>
+					<a href="/">Continue shopping.</a>
+				</li>
+			{{/each}}
+
+			<li style="display: none;"
+				class="promo-code-wrapper list-group-item d-flex justify-content-between lh-condensed row">
+				<div class="text-success">
+					<h6 class="my-0">Promo code</h6>
+					<small class="promo-code">{{promocode.code}}</small>
+				</div>
+				<span class="cart-currency">KES</span> (<span class="text-success promo-code-amount">{{promocode.amount}}</span>)
+			</li>
+		</ul>
+	</div>
+	{{#if cartItems.length}}
+		<div class="col-md-5">
+			<div class="summary">
+				<div class="row">
+					<div class="col-md-8">
+						<div class="summary-item">
+							<div style="float:left; width:150px">Products</div>
+							<strong class="cart-total-products">{{sumEvals cartItems 'c=>1' }}</strong>
+						</div>
+						<div class="summary-item">
+							<div style="float:left; width:150px">Total Pieces</div>
+							<strong class="cart-total-pieces">{{sumEvals cartItems 'c=>c.pieces' }}</strong>
+						</div>
+						<div class="summary-item">
+							<div style="float:left; width:150px">Total (<span class="cart-currency">KES</span>)</div>
+							<strong class="cart-total">{{formatNumber
+									(sumEvals cartItems 'c=>c.pieces*c.price')}}</strong>
+						</div>
+					</div>
+					<div class="summary-item col-md-4">
+						<a href="/">Continue shopping</a>
+						<button class="btn btn-1 btn-primary" style="float: right; bottom:0;" onclick="window.location='/checkout'"
+								id="update-cart" name="update">Checkout
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	{{/if}}</div>

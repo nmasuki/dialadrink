@@ -1,0 +1,48 @@
+<a href="{{productUrl href}}" style="display :block; color: black;">
+	<div class="featured-image" style="text-align :center ;">
+		<div class="item-name"
+			 style="text-align:center; justify-content :center; color: black;">
+			
+			<img src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
+				 class="img-responsive"
+				 style="margin: auto"
+				 itemprop="image"/>
+
+			<a href="{{productUrl href}}" style="font-size: 15px; color: black; ">
+				<div itemprop="name" class="drinks-name">
+					{{{name}}}
+				</div>
+			</a>
+
+			<span>{{quantity}}</span><br>
+			<span itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+				<meta itemprop="priceCurrency" content="{{currency}}"/>
+				{{currency}} <span itemprop="price">{{price}}</span>
+			</span>
+			<br>
+			<div class="dropdown">
+				<button class="btn btn-1" style="max-width:120px ; font-size:14px !important;">
+					<span data-qty="{{quantity}}" data-product="{{_id}}" class="add-to-cart">
+					  Add to cart
+					</span>
+					{{#ifgt options.length 1}}
+						<span class="dropdown">
+							<i class="fa fa-angle-down"></i>
+						</span>
+					{{/ifgt}}
+				</button>
+				{{#ifgt options.length 1}}
+					<div class="dropdown-content">
+						{{#each options }}
+							<a href="#" class="add-to-cart"
+							   data-qty="{{quantity}}"
+							   data-product="{{../_id}}">
+								{{quantity}} - {{currency}} {{ price }}
+							</a>
+						{{/each}}
+					</div>
+				{{/ifgt}}
+			</div>
+		</div>
+	</div>
+</a>

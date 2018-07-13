@@ -1,0 +1,144 @@
+<table width="100%" cellspacing="0" cellpadding="20" border="0">
+	<tbody>
+	<tr>
+		<td style="padding:48px 48px 0" valign="top">
+			<div id="order-body_content_inner"
+				 style="color:#737373;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:14px;line-height:150%;text-align:left">
+				{{#with order}}
+					<p style="margin:0 0 16px">Hi {{delivery.firstName}} {{delivery.lastName}}</p>
+					<p style="margin:0 0 16px">
+						Your order has been received and will be dispatched shortly. The order is as follows:
+					</p>
+
+					<h2 style="color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
+						Order #{{orderNumber}} {{formatDate orderDate 'MMM Do, YYYY'}}
+					</h2>
+
+					<div style="margin-bottom:40px">
+						<table class="order-td"
+							   style="width:100%;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;color:#737373;border:1px solid #e4e4e4"
+							   cellspacing="0" cellpadding="6" border="1">
+							<thead>
+							<tr>
+								<th class="order-td" scope="col"
+									style="text-align:left;color:#737373;border:1px solid #e4e4e4;padding:12px">Product
+								</th>
+								<th class="order-td" scope="col"
+									style="text-align:left;color:#737373;border:1px solid #e4e4e4;padding:12px">Quantity
+								</th>
+								<th class="order-td" scope="col" align="right"
+									style="text-align:right;color:#737373;border:1px solid #e4e4e4;padding:12px">Price
+								</th>
+							</tr>
+							</thead>
+							<tbody>
+							{{#each cart}}
+								<tr class="order-order_item">
+									<td class="order-td"
+										style="text-align:left;vertical-align:middle;border:1px solid #eee;word-wrap:break-word;color:#737373;padding:12px">
+										{{product.name}} {{quantity}}
+									</td>
+									<td class="order-td"
+										style="text-align:left;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
+										{{pieces}} * {{price}}
+									</td>
+									<td class="order-td" align="right"
+										style="text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
+										<span class="order-amount amount">
+											<span class="order-currencySymbol">{{currency}}</span>
+											{{formatNumber (prod pieces price)}}
+										</span>
+									</td>
+								</tr>
+							{{else}}
+								<tr class="order-order_item">
+									<td class="order-td" colspan="3" align="center">
+										<img src="https://www.dialadrinkkenya.com/images/empty-cart.png" alt="Empty!"
+											 style="height: 50px"><br/>
+										You have no items in your cart!!<br/>
+										<a href="https://www.dialadrinkkenya.com/">Continue shopping with Dial a Drink Kenya.</a>
+									</td>
+								</tr>
+							{{/each}}
+							</tbody>
+							<tfoot>
+							<tr>
+								<th class="order-td" scope="row" colspan="2"
+									style="text-align:left;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+									Subtotal:
+								</th>
+								<td class="order-td"
+									style="text-align:left;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+								<span class="order-amount order-amount"><span
+										class="order-currencySymbol">{{currency}}</span> 
+									{{formatNumber subtotal}}</span>
+								</td>
+							</tr>
+							{{#if promo.code}}
+								<tr style="color: lightgreen">
+									<td class="order-td" scope="row" colspan="2"
+										style="text-align:left;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+										Promotion <i>({{#if promo.name}}{{promo.name}}{{else}}{{promo.code}}{{/if}})</i>
+										{{#ifne promo.discountType 'percent'}}{{promo.discountType}}{{else}}{{/ifne}}
+										{{promo.discount}}{{#ifeq promo.discountType 'percent'}}
+										%{{else}}{{/ifeq}} off on the total order.
+									</td>
+									<td class="order-td"
+										style="text-align:left;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+									<span class="order-amount order-amount">
+										<span class="order-currencySymbol">{{currency}}</span>
+										({{{formatNumber discount}}})
+									</span>
+									</td>
+								</tr>
+							{{/if}}
+							<tr>
+								<th class="order-td" scope="row" colspan="2"
+									style="text-align:left;color:#737373;border:1px solid #e4e4e4;padding:12px">Total:
+								</th>
+								<td class="order-td"
+									style="text-align:left;color:#737373;border:1px solid #e4e4e4;padding:12px"><span
+										class="order-amount order-amount"><span
+										class="order-currencySymbol">{{currency}}</span>
+									{{{formatNumber total}}}
+							</span>
+								</td>
+							</tr>
+							</tfoot>
+						</table>
+					</div>
+
+
+					<p style="margin:0 0 16px">
+						<b>Payment Method:</b> Cash on delivery
+					</p>
+					<table id="order-addresses"
+						   style="width:100%;vertical-align:top;margin-bottom:40px;padding:0" cellspacing="0"
+						   cellpadding="0" border="0">
+						<tbody>
+						<tr>
+							<td style="text-align:left;border:0;padding:0" width="50%" valign="top">
+								<h2 style="color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
+									Billing address
+								</h2>
+
+								<address class="order-address"
+										 style="padding:12px 12px 0;color:#737373;border:1px solid #e4e4e4">
+									{{delivery.firstName}} {{delivery.lastName}}<br>
+									{{delivery.address}}, {{delivery.building}}<br>
+									{{delivery.houseNumber}}<br>
+									{{delivery.phoneNumber}}
+									<p style="margin:0 0 16px">
+										<a href="mailto:{{delivery.email}}" target="_blank">{{delivery.email}}</a>
+									</p>
+								</address>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				{{/with}}
+			</div>
+		</td>
+	</tr>
+	</tbody>
+</table>

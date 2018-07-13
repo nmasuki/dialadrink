@@ -1,0 +1,34 @@
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+	{{#each pages}}
+		<url>
+			<loc>https://www.dialadrinkkenya.com{{href}}</loc>
+		</url>
+	{{/each}}
+
+	{{#each products}}
+		<url>
+			<loc>https://www.dialadrinkkenya.com/product/{{href}}</loc>
+		</url>
+	{{/each}}
+	
+	{{#each brands}}
+		<url>
+			<loc>https://www.dialadrinkkenya.com/brand/{{lowerCase name}}</loc>
+		</url>
+	{{/each}}
+	
+	{{#each categories}}
+		<url>
+			<loc>https://www.dialadrinkkenya.com/product/{{lowerCase key}}</loc>
+		</url>
+	{{/each}}
+
+	{{#each subCategories}}
+		<url>
+			<loc>https://www.dialadrinkkenya.com/category/{{category.key}}/{{lowerCase key}}</loc>
+		</url>
+	{{/each}}
+</urlset>	

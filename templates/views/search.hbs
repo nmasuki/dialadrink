@@ -1,0 +1,28 @@
+<style>
+	.featured-image img.img-responsive {
+		min-height: 180.6px;
+		max-height: 180.6px;
+	}
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 col-lg-12">
+			<div class="row">
+				{{#each products}}
+					<div class="col-md-2 col-lg-2 single"
+						 itemscope itemtype="http://schema.org/Product"
+						 style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;">
+						{{>product}}
+					</div>
+				{{else}}
+					<div class="col-md-12 text-center">
+						<h2 style="font-size: 18px;">No results found!</h2>
+						<img src="/images/no_results.png"/><br>
+						<a href="/">Back to Today's Offers</a>
+					</div>
+				{{/each}}
+			</div>
+		</div>
+	</div>
+</div>

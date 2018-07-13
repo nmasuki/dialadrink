@@ -1,0 +1,47 @@
+{{#ifgt cartItems.length 0}}
+	<div id="cart-content-mini">
+		<ul class="list-group mb-3" style="margin-bottom: 0;max-height: 528px;overflow: auto;">
+			{{#each cartItems}}
+				<li data-cartid="{{cartId}}" class="list-group-item d-flex justify-content-between lh-condensed row">
+					<div style="float: left; width: auto;">
+						<img class="cart-image" src="{{cloudinaryUrl image crop='fit'}}" style="max-height: 52px">
+					</div>
+					<div class="col-md-8">
+						<h6 class="my-0"><a href="/product/{{product.href}}">{{product.name}}&nbsp;{{quantity}}</a></h6>
+						<small class="text-muted">{{truncate description 50}}</small>
+						<small class="text-muted">
+							<span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
+							@<span class="cart-currency">KES</span>
+							<stan class="cart-cost">{{price}}</stan>
+						</small>
+						<div class="right">
+							<span class="text-muted">
+								<span class="cart-currency">KES</span> 
+								<stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
+							</span>
+						</div>
+					</div>
+					<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>
+				</li>
+			{{/each}}
+			<li class="list-group-item d-flex justify-content-between lh-condensed row">
+				<div class="total" style="text-align: right">
+					<div class="col-md-4">Total (<span class="cart-currency">KES</span>)</div>
+					<strong class="cart-total">
+						{{formatNumber (sumEvals cartItems 'c=>c.pieces*c.price')}}
+					</strong>
+				</div>
+			</li>
+			<li class="list-group-item d-flex justify-content-between lh-condensed row">
+				<button class="btn btn-1 btn-primary" style="float: right" onclick="window.location='/checkout'"
+						id="update-cart" name="update">Checkout
+				</button>
+			</li>
+		</ul>
+	</div>
+{{else}}
+	<div class="loading cart-loading">
+		<img src="/images/empty-cart.png" alt="Empty!" style="height: 50px;"/> 
+		You have no items in your cart!!
+	</div>
+{{/ifgt}}
