@@ -217,8 +217,8 @@ module.exports = function () {
 		}
 	};
 
-	_helpers.formatNumber = function (n) {
-		return parseFloat(n).format(2);
+	_helpers.formatNumber = function (n, d) {
+		return parseFloat(n).format(d || 2);
 	}
 
 	_helpers.properCase = _helpers.propercase = function (a) {
