@@ -177,7 +177,6 @@ router.get("/cat/:category", function (req, res) {
 
     // Load the current category filter
     view.on('init', function (next) {
-
         if (req.params.category) {
             keystone.list('BlogCategory').model.findOne({key: locals.filters.category}).exec(function (err, result) {
                 locals.data.category = result;

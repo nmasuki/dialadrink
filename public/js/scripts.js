@@ -256,6 +256,7 @@ function handleQuantity(){
     });
   }
 }
+
 function colorwarches(){
    jQuery('.swatch :radio').change(function() {
      var optionIndex = jQuery(this).closest('.swatch').attr('data-option-index');

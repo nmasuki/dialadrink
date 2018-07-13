@@ -289,7 +289,11 @@ if(window.cartUtil)
 			console.log(query)
 			window.location.href = "/search/" + query;
 		}
-	})
+	});
+
+	$(".disabled a, a.disabled").on("click", function(e){
+        e.preventDefault();
+    })
 })(jQuery);
 
 
