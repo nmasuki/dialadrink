@@ -7,54 +7,6 @@ var ProductSubCategory = keystone.list("ProductSubCategory");
 var ProductBrand = keystone.list("ProductBrand");
 
 function search(req, res, next) {
-<<<<<<< HEAD
-	var view = new keystone.View(req, res);
-	var locals = res.locals;
-
-	// Skip to page if valid
-	if (locals.page._id && locals.page.content)
-		return next();
-
-	//Searching h1 title
-	locals.page = Object.assign(locals.page, {
-		h1: req.params.query.toProperCase() + ` drinks`
-	});
-
-	if (req.originalUrl.startsWith("/search"))
-		locals.breadcrumbs.push({
-			label: "Search Results",
-			href: req.originalUrl
-		});
-
-	function renderResults(products, title) {
-		title = title || "";
-
-		var i = 0;
-		while (products[++i] && title.length < 40)
-			title += (title?" - ":"") + products[++i].name;
-
-		if (!locals.page.title || locals.page.title == keystone.get("name"))
-			locals.page.title = title + " | " + keystone.get("name");
-
-		locals.products = products;
-
-		view.render('search');
-	}
-
-	if (req.params.query)
-		Product.search(req.params.query, function (err, products) {
-			if (err || !products || !products.length) {
-				if (req.originalUrl.startsWith("/search"))
-					res.status(404).render('errors/404');
-				else
-					next();
-			} else {
-				renderResults(products, "")
-			}
-		});
-	else
-		next();
-=======
     var view = new keystone.View(req, res);
     var locals = res.locals;
 
@@ -101,7 +53,6 @@ function search(req, res, next) {
         });
     else
         next();
->>>>>>> ab8438d971909f16b27f4cd7e53243e24a4bebd9
 }
 
 router.get("/search/:query", search);
