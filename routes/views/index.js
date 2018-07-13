@@ -11,7 +11,7 @@ function search(req, res, next) {
 	var locals = res.locals;
 
 	// Skip to page if valid
-	if (!locals.page._id || locals.page.content)
+	if (locals.page._id && locals.page.content)
 		return next();
 
 	//Searching h1 title
@@ -30,10 +30,10 @@ function search(req, res, next) {
 
 		var i = 0;
 		while (products[++i] && title.length < 40)
-			title += " - " + products[++i].name;
+			title += (title?" - ":"") + products[++i].name;
 
 		if (!locals.page.title || locals.page.title == keystone.get("name"))
-			locals.page.title = title + " | " + keystone.get("name");
+			locals.page.title = + " | " + keystone.get("name");
 
 		locals.products = products;
 
@@ -54,6 +54,8 @@ function search(req, res, next) {
 	else
 		next();
 }
+
+router.get("/search/:query", search);
 
 router.get("/home", function (req, res) {
 
@@ -142,8 +144,6 @@ router.get('/sitemap', function (req, res) {
 router.get('/google81a0290a139b9339.html', function (req, res) {
 	res.send('google-site-verification: google81a0290a139b9339.html')
 });
-
-router.get("/search/:query", search);
 
 router.get("/:query", search);
 

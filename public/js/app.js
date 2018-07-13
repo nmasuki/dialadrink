@@ -274,8 +274,9 @@ var app = {
 	}
 }
 
-if(window.cartUtil)
+if(window.cartUtil){
 	app.cartUtil = new window.cartUtil();
+}
 
 /*Handle searching*/
 (function ($) {

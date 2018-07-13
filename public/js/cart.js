@@ -36,7 +36,9 @@ var cartUtil = function () {
 		view: function (selector) {
 			var view = $('#cart-content-main, #cart-content-mini');
 			if (selector)
+			{
 				return view.find(selector);
+            }
 			return view;
 		},
 
@@ -92,8 +94,9 @@ var cartUtil = function () {
 
 		removeItem: function (cartId) {
 			var self = this;
-			if (!_cart[cartId])
-				throw "Cart item not found! " + cartId;
+			if (!_cart[cartId]) {
+                throw "Cart item not found! " + cartId;
+            }
 
 			return $.ajax({
 				url: _url + 'cart/remove/' + cartId,
@@ -161,7 +164,9 @@ var cartUtil = function () {
 			//Remove missing
 			Object.keys(_cart).forEach(function (cartId) {
 				if (!cart[cartId])
-					self.view("li[data-cartid='" + cartId + "']").hide();
+                {
+                    self.view("li[data-cartid='" + cartId + "']").hide();
+                }
 			});
 
 			var promoView = $(".promo-code-wrapper").slideDown();
@@ -180,13 +185,19 @@ var cartUtil = function () {
 
 		updateCartItemView: function (item) {
 			if (typeof item == "string")
-				item = self.getCartItem(item);
+            {
+                item = self.getCartItem(item);
+            }
 
 			if (!item)
-				throw "Missing [item] when updating cart item view";
+            {
+                throw "Missing [item] when updating cart item view";
+            }
 
 			if (!item._id)
-				throw "Missing [item._id] when updating cart item view";
+            {
+                throw "Missing [item._id] when updating cart item view";
+            }
 
 			// item = fillIn(item);
 

@@ -29,7 +29,7 @@ router.get("/:category", function (req, res) {
 					
 					var i = 0
 					while(products[++i] && title.length < 40)
-						title += " - " + products[++i].name;
+						title += (title?" - ":"") + products[++i].name;
 					
 					if(!locals.page.title|| locals.page.title == keystone.get("name"))
 						locals.page.title = title + " | " + keystone.get("name");
