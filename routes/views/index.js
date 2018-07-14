@@ -29,7 +29,7 @@ function search(req, res, next) {
         title = title || "";
 
         var i = -1, meta = title.replace(/\ \-\ /g, ", ");
-        while (products[++i] && title.length < 100) {
+        while (products[++i] && meta.length < 100) {
             meta += (meta ? ", " : "") + products[i].name;
             if (title.length < 40)
                 title += (title ? ", " : "") + products[i].name;

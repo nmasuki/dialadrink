@@ -2,11 +2,13 @@
  * Created by nmasuki on 7/7/2018.
  */
 var app = {
-	csrf_token: $('meta[name="_csrf"]').attr('content'),
+    csrf_token: $('meta[name="_csrf"]').attr('content'),
 
 	type: ['', 'info', 'success', 'warning', 'danger'],
 
-	initPickColor: function () {
+    cartUtil: new window.cartUtil(),
+
+    initPickColor: function () {
 		$('.pick-class-label').click(function () {
 			var new_class = $(this).attr('new-class');
             var display_div = $('#display-buttons');
@@ -272,30 +274,5 @@ var app = {
 			}
 		});
 	}
-}
-
-if(window.cartUtil){
-	app.cartUtil = new window.cartUtil();
-}
-
-/*Handle searching*/
-(function ($) {
-
-	$('#search').on('click', function (e) {
-		e.preventDefault();
-
-		var query = $('#search_box').val();
-
-		if (query !== "") {
-			console.log(query)
-			window.location.href = "/search/" + query;
-		}
-	});
-
-	$(".disabled a, a.disabled").on("click", function(e){
-        e.preventDefault();
-    })
-})(jQuery);
-
-
+};
 

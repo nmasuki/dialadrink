@@ -28,7 +28,7 @@ router.get("/:category", function (req, res) {
                 keystone.list('Product').findPublished(filter, (err, products) => {
 
                     var i = -1, meta = title.replace(/\ \-\ /g, ", ");
-                    while (products[++i] && title.length < 100) {
+                    while (products[++i] && meta.length < 120) {
                         meta += (meta ? ", " : "") + products[i].name;
                         if (title.length < 40)
                             title += (title ? ", " : "") + products[i].name;

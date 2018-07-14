@@ -1348,7 +1348,6 @@ body header.home1_theme_header .top-header .right-area>ul {
 
 body header.home1_theme_header .top-header .right-area>ul>li {
 	display: inline-block;
-	*
 	display: block;
 	zoom: 1;
 	position: relative;
@@ -7088,8 +7087,6 @@ body ul.nav-tabs li {
 	margin-right: 4px;
 	margin-top: 4px;
 	display: inline-block;
-	*
-	display: block;
 	zoom: 1;
 }
 
