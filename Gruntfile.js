@@ -9,14 +9,14 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     expand: true,
-                    src: 'public/js/**/*.js',//['public/js/*.js'],//
+                    src: ['public/js/**/*.js','!public/js/**/*min.js'], //['public/js/*.js'],//
                     cwd: '.',
                     rename: function (dst, src) {
                         // To keep src js files and make new files as *.min.js :
                         if (src.indexOf('.min.js') < 0)
                             return (dst ? dst + '/' : '') + src.replace('.js', '.min.js');
                         else
-                            return src;
+                            return null;
                     }
                 }]
             }
@@ -29,13 +29,13 @@ module.exports = function (grunt) {
             target: {
                 files: [{
                     expand: true,
-                    src: ['public/styles/**/*.css','public/js/**/*.css'],//
+                    src: ['public/styles/**/*.css','!public/styles/**/*min.css'], //['public/js/*.js'],//
                     cwd: '.',
                     rename: function (dst, src) {
                         if (src.indexOf('.min.css') < 0)
                             return (dst ? dst + '/' : '') + src.replace('.css', '.min.css');
                         else
-                            return src;
+                            return null;
                     }
                 }]
             }
