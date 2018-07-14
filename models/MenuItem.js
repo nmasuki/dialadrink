@@ -31,7 +31,7 @@ MenuItem.add({
 });
 
 MenuItem.relationship({ref: 'MenuItem', path: 'submenus'});
-MenuItem.relationship({ref: 'MenuItem', path: 'menuItem', refPath: 'parent'});
+MenuItem.relationship({ref: 'MenuItem', path: 'parent'});
 
 MenuItem.defaultColumns = 'label, level, parent, link|20%, show|20%';
 

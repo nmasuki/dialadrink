@@ -28,9 +28,15 @@ function search(req, res, next) {
     function renderResults(products, title) {
         title = title || "";
 
-        var i = 0;
-        while (products[++i] && title.length < 40)
-            title += (title ? " - " : "") + products[++i].name;
+        var i = 0, meta = title.replace(/\ \-\ /g, ", ");
+        while (products[++i] && title.length < 100) {
+            meta += (meta ? ", " : "") + products[++i].name;
+            if (title.length < 40)
+                title += (title ? ", " : "") + products[++i].name;
+        }
+
+        if(!locals.page.meta)
+            locals.page.meta = meta + " all available at " + keystone.get("name");
 
         if (!locals.page.title || locals.page.title == keystone.get("name"))
             locals.page.title = title + " | " + keystone.get("name");
@@ -48,7 +54,7 @@ function search(req, res, next) {
                 else
                     next();
             } else {
-                renderResults(products, "")
+                renderResults(products, req.params.query.toProperCase())
             }
         });
     else
