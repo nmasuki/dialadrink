@@ -15,6 +15,7 @@ router.get("/:product", function (req, res) {
 				locals.product = product;
 				locals.page.title = product.pageTitle;
 
+                locals.page.breadcrumbs = locals.page.breadcrumbs || {};
 				[
                     product.category && product.category.name,
                     product.subCategory && product.subCategory.name,
