@@ -186,7 +186,7 @@ Product.findByCategory = function (filter, callback) {
                 return console.log(err);
 
             filter = {category: {"$in": categories.map(b => b._id)}};
-            Product.findOnePublished(filter, callback);
+            Product.findPublished(filter, callback);
         });
 }
 
