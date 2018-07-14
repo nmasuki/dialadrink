@@ -363,13 +363,15 @@ function toggleLeftMenu() {
         var menuLeft = document.getElementById('is-mobile-nav-menu'),
             showLeftPush = document.getElementById('showLeftPush'),
             body = document.body;
+
         showLeftPush.onclick = function () {
             classie.toggle(this, 'active');
             classie.toggle(body, 'pushed');
             classie.toggle(menuLeft, 'leftnavi-open');
             if (classie.has(this, 'active'))
                 $('#showLeftPush').html("<i class='fa fa-times fa-2x'></i>");
-            else $('#showLeftPush').html("<i class='fa fa-bars fa-2x'></i>");
+            else
+                $('#showLeftPush').html("<i class='fa fa-bars fa-2x'></i>");
         };
     }
 };
