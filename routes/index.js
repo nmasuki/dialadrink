@@ -21,24 +21,11 @@
 var keystone = require('keystone');
 var middleware = require('./middleware');
 var importRoutes = keystone.importer(__dirname);
-var minify = require('express-minify');
 
 //Set admin path
-keystone.set('admin path', "admin")
+keystone.set('admin path', "admin");
 
 // Common Middleware
-keystone.pre('routes', minify({
-	cache: __dirname + "/cache",
-	uglifyJsModule: require('uglify-js'),
-	errorHandler: null,
-	jsMatch: /javascript/,
-	cssMatch: /css/,
-	jsonMatch: /json/,
-	sassMatch: /scss/,
-	lessMatch: /less/,
-	stylusMatch: /stylus/,
-	coffeeScriptMatch: /coffeescript/,
-}));
 keystone.pre('routes', middleware.initLocals);
 keystone.pre('render', middleware.flashMessages);
 

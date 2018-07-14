@@ -175,7 +175,7 @@ Product.findByBrand = function (filter, callback) {
                 return console.log(err);
 
             filter = {brand: {"$in": brands.map(b => b._id)}};
-            Product.findOnePublished(filter, callback);
+            Product.findPublished(filter, callback);
         });
 }
 
@@ -197,7 +197,7 @@ Product.findBySubCategory = function (filter, callback) {
                 return console.log(err);
 
             filter = {subCategory: {"$in": subCategories.map(b => b._id)}};
-            Product.findOnePublished(filter, callback);
+            Product.findPublished(filter, callback);
         });
 }
 
@@ -214,7 +214,7 @@ Product.findByOption = function (filter, callback) {
                         return console.log(err);
 
                     filter = {option: {"$in": options.map(b => b._id)}};
-                    Product.findOnePublished(filter, callback);
+                    Product.findPublished(filter, callback);
                 })
 
         });
@@ -230,6 +230,7 @@ Product.search = function (query, next) {
         "$or": [
             {href: regex},
             {href: regex2},
+            {key: regex2},
             {name: regex},
             //{description: regex}
         ]
@@ -242,12 +243,11 @@ Product.search = function (query, next) {
                 if (err || !products || !products.length)
                     Product.findBySubCategory(filters, function (err, products) {
                         if (err || !products || !products.length)
-                            Product.findPublished(filters, function (err, products) {
-                                if (err || !products || !products.length) {
-                                    Product.findByOption(filters, function (err, products) {
+                            Product.findByOption(filters, function (err, products) {
+                                if (err || !products || !products.length)
+                                    Product.findPublished(filters, function (err, products) {
                                         next(err, products)
                                     });
-                                }
                                 else
                                     next(err, products)
                             });

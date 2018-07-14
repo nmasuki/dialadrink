@@ -9,7 +9,7 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     expand: true,
-                    src: ['public/js/**/*.js','!public/js/**/*min.js'], //['public/js/*.js'],//
+                    src: ['public/js/**/*.js','!public/js/**/*min.js'],
                     cwd: '.',
                     rename: function (dst, src) {
                         // To keep src js files and make new files as *.min.js :

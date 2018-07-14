@@ -37,6 +37,7 @@ keystone.init({
 	'user model': 'User',
 	'session store': 'mongo',
 	'signin logo': '/images/logo-email.gif',
+    'cloudinary secure': true
 });
 
 //add ProductPriceOption Custom Field Type
