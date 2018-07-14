@@ -13,7 +13,6 @@ router.get("/:product", function (req, res) {
         keystone.list('Product').findOnePublished({href: regex}, function (err, product) {
             if (product) {
                 locals.product = product;
-                locals.page.title = product.pageTitle;
 
                 [
                     product.category && product.category.name,
@@ -21,17 +20,17 @@ router.get("/:product", function (req, res) {
                     product.name
                 ].filter(i => !!i).forEach(i => {
                     locals.breadcrumbs.push({
-                        title: i,
+                        label: i,
                         href: "/" + i.toLowerCase()
                     })
                 });
 
                 locals.breadcrumbs.push({
-                    title: product.name,
+                    label: product.name,
                     href: "/product/" + product.href
                 });
 
-                locals.page.title = locals.page.title || [
+                locals.page.title = product.pageTitle || [
                     product.name,
                     product.category && product.category.name,
                     product.subCategory && product.subCategory.name,
