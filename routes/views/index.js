@@ -28,11 +28,11 @@ function search(req, res, next) {
     function renderResults(products, title) {
         title = title || "";
 
-        var i = 0, meta = title.replace(/\ \-\ /g, ", ");
+        var i = -1, meta = title.replace(/\ \-\ /g, ", ");
         while (products[++i] && title.length < 100) {
-            meta += (meta ? ", " : "") + products[++i].name;
+            meta += (meta ? ", " : "") + products[i].name;
             if (title.length < 40)
-                title += (title ? ", " : "") + products[++i].name;
+                title += (title ? ", " : "") + products[i].name;
         }
 
         if(!locals.page.meta)

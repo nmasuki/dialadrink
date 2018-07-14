@@ -27,11 +27,11 @@ router.get("/:category", function (req, res) {
                 var filter = {category: {"$in": categories.map(c => c._id)}};
                 keystone.list('Product').findPublished(filter, (err, products) => {
 
-                    var i = 0, meta = title.replace(/\ \-\ /g, ", ");
+                    var i = -1, meta = title.replace(/\ \-\ /g, ", ");
                     while (products[++i] && title.length < 100) {
-                        meta += (meta ? ", " : "") + products[++i].name;
+                        meta += (meta ? ", " : "") + products[i].name;
                         if (title.length < 40)
-                            title += (title ? ", " : "") + products[++i].name;
+                            title += (title ? ", " : "") + products[i].name;
                     }
 
                     if(!locals.page.meta)
@@ -75,7 +75,7 @@ router.get("/:category/:subcategory", function (req, res) {
                 var filter = {subCategory: {"$in": subCategories.map(c => c._id)}};
                 keystone.list('Product').findPublished(filter, (err, products) => {
 
-                    var i = 0;
+                    var i = -1;
                     while (products[++i] && title.length < 40)
                         title += " - " + products[i].name;
 
