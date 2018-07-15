@@ -16181,7 +16181,8 @@ body footer.home6_theme_footer .footer_contact_group > div .fa {
     position: fixed;
     right: 20px;
     bottom: 120px;
-    overflow: hidden
+    overflow: hidden;
+    z-index: 100;
 }
 
 .float-right-icon ul {

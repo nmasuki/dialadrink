@@ -63,6 +63,22 @@ CartItem.schema.pre('save', function (next) {
 	next();
 });
 
+CartItem.schema.set('toObject', {
+    virtual: true,
+    transform: function (doc, ret, options) {
+        var whitelist = ['cartId', 'date', 'pieces', 'state', 'product', 'quantity', 'image', 'price', 'currency', 'total'];
+        whitelist.forEach(i => ret[i] = doc[i]);
+        ret._id = doc.product._id + "|" + doc.quantity;
+        return ret;
+    }
+});
+
+CartItem.schema.set('toJSON', {
+    transform: function (doc, ret, options) {
+        return doc.toObject();
+    }
+});
+
 CartItem.defaultColumns = 'date, product, pieces|20%, quantity|20%';
 
 CartItem.register();
