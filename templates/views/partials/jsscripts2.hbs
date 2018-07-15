@@ -49,7 +49,7 @@
 
         $(".num-items-in-cart").on("mouseover", function (e) {
             var that = $(this);
-            var time = new Date().getTime() - that.data("loadedAt");
+            var time = new Date().getTime() - (that.data("loadedAt") || 0);
             if (time > 30 * 1000 && (!window.cartXHR || window.cartXHR.state() == "resolved"))
                 window.cartXHR = $.ajax("/cart/mini").then(function (html, b, c) {
                     if (typeof html === "string") {
