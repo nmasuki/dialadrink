@@ -61,7 +61,7 @@ Product.schema.virtual('avgRatings').get(function () {
         return Math.round((this.ratings || []).avg(r => r.rating));
     else if (this.onOffer)
         return 4.5;
-    else if (this.category.name) { //Delelopers own ratings
+    else if (this.category.name) { //Developers own ratings
         if (this.category.name.toLowerCase().contains("whisky"))
             return 4.6;
         else if (this.category.name.toLowerCase().contains("beer"))
@@ -126,7 +126,7 @@ Product.schema.methods.findSimilar = function (callback) {
 Product.schema.methods.addPopularity = function (factor) {
     this.popularity = (this.popularity || 0) + (factor || 1);
     this.save();
-}
+};
 
 Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
@@ -177,7 +177,7 @@ Product.findByBrand = function (filter, callback) {
             filter = {brand: {"$in": brands.map(b => b._id)}};
             Product.findPublished(filter, callback);
         });
-}
+};
 
 Product.findByCategory = function (filter, callback) {
     keystone.list('ProductCategory').model.find(filter)
@@ -188,7 +188,7 @@ Product.findByCategory = function (filter, callback) {
             filter = {category: {"$in": categories.map(b => b._id)}};
             Product.findPublished(filter, callback);
         });
-}
+};
 
 Product.findBySubCategory = function (filter, callback) {
     keystone.list('ProductSubCategory').model.find(filter)
@@ -199,7 +199,7 @@ Product.findBySubCategory = function (filter, callback) {
             filter = {subCategory: {"$in": subCategories.map(b => b._id)}};
             Product.findPublished(filter, callback);
         });
-}
+};
 
 Product.findByOption = function (filter, callback) {
     keystone.list('ProductOption').model.find(filter)
@@ -218,7 +218,7 @@ Product.findByOption = function (filter, callback) {
                 })
 
         });
-}
+};
 
 Product.search = function (query, next) {
 
@@ -260,4 +260,4 @@ Product.search = function (query, next) {
         else
             next(err, products)
     });
-}
+};

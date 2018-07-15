@@ -16,7 +16,7 @@ ProductOption.add({
 	description: {type: Types.Html, wysiwyg: true, height: 150}
 });
 
-ProductOption.relationship({ref: 'ProductPriceOption', ref: 'productPriceOption', refPath: 'option'});
+ProductOption.relationship({ref: 'ProductPriceOption', ref: 'option', refPath: 'option'});
 
 ProductOption.defaultColumns = 'quantity, description';
 ProductOption.register();

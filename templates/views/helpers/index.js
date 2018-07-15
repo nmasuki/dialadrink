@@ -211,9 +211,9 @@ module.exports = function () {
 			var count = Object.values(locals.cartItems || {})
 				.sum(c => c.pieces)
 
-			return count;
+			return count || "";
 		} else {
-			return 0;
+			return "";
 		}
 	};
 

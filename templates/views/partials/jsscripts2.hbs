@@ -1,186 +1,191 @@
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js" type="text/javascript"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js"></script>
 
-<script src="/js/jquery/imagesloaded.pkgd.min.js" type="text/javascript"></script>
-<script src="/js/jquery/jquery.flexslider.min.js" type="text/javascript"></script>
-<script src="/js/jquery/jquery.zoom.min.js" type="text/javascript"></script>
+<script src="/js/jquery/imagesloaded.pkgd.min.js"></script>
+<script src="/js/jquery/jquery.flexslider.min.js"></script>
+<script src="/js/jquery/jquery.zoom.min.js"></script>
 
-<script src="/js/jquery/jquery.fancybox{{dotmin}}.js" type="text/javascript"></script>
+<script src="/js/jquery/jquery.fancybox{{dotmin}}.js"></script>
 <script src="/js/jquery/jquery.scrollbar{{dotmin}}.js"></script>
 <script src="/js/owlcarousel/owl.carousel{{dotmin}}.js"></script>
 
 <!---->
-<script src="/js/polyfills{{dotmin}}.js" type="text/javascript"></script>
-<script src="/js/countDown{{dotmin}}.js" type="text/javascript"></script>
-<script src="/js/classie{{dotmin}}.js" type="text/javascript"></script>
-<script src="/js/scripts{{dotmin}}.js" type="text/javascript"></script>
-<script src="/js/cart{{dotmin}}.js" type="text/javascript"></script>
-<script src="/js/app{{dotmin}}.js" type="text/javascript"></script>
+<script src="/js/polyfills{{dotmin}}.js"></script>
+<script src="/js/countDown{{dotmin}}.js"></script>
+<script src="/js/classie{{dotmin}}.js"></script>
+<script src="/js/scripts{{dotmin}}.js"></script>
+<script src="/js/cart{{dotmin}}.js"></script>
+<script src="/js/app{{dotmin}}.js"></script>
 
 <script>
-	$('body').imagesLoaded()
-			.always(function (instance) {
-				//console.log('all images loaded');
-			})
-			.done(function (instance) {
-				console.log('all images successfully loaded');
-			})
-			.fail(function () {
-				console.log('all images loaded, at least one is broken');
-			})
-			.progress(function (instance, image) {
-				var result = image.isLoaded ? 'loaded' : 'broken';
-				if (!image.isLoaded)
-					console.warn('image is ' + result + ' for ' + image.img.src);
-			});
+    $('body').imagesLoaded()
+            .always(function (instance) {
+                //console.log('all images loaded');
+            })
+            .done(function (instance) {
+                console.log('all images successfully loaded');
+            })
+            .fail(function () {
+                console.log('all images loaded, at least one is broken');
+            })
+            .progress(function (instance, image) {
+                var result = image.isLoaded ? 'loaded' : 'broken';
+                if (!image.isLoaded)
+                    console.warn('image is ' + result + ' for ' + image.img.src);
+            });
 
 
-	$(document).ready(function () {
-		{{#if (contains page.h1 'Offer')}}
-			$("#countDownTimer").startCountDown();
-		{{/if}}
-		$(".owl-carousel").owlCarousel({
-			items: 1,
-			loop: true,
-			autoplay: true,
-			autoplayTimeout: 3000,
-			autoplayHoverPause: true
-		});
-		$(".num-items-in-cart").on("mouseover", function (e) {
-			if (!window.cartXHR || window.cartXHR.state() == "resolved")
-				window.cartXHR = $.ajax("/cart/mini").then(function (html, b, c) {
-					if (typeof html == "string")
-						$("#cart-info").html(html);
-					else
-						app.cartUtil.updateView(window.cart = html);
-				})
-		});
+    $(document).ready(function () {
+        {{#if (contains page.h1 'Offer')}}
+            $("#countDownTimer").startCountDown();
+        {{/if}}
 
-		if (location.search.search("sort_by=") == -1) {
+        $(".owl-carousel").owlCarousel({
+            items: 1,
+            loop: true,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            autoplayHoverPause: true
+        });
 
-		} else {
-			if (location.search != "") {
-				var stpo = location.search.search("sort_by=") + 8,
-						sortby_url = '.' + location.search.substr(stpo).split('='),
-						sortby_url_a = sortby_url + " a";
-				$(sortby_url).addClass("active");
-				$('#sortButton .name').html($(sortby_url_a).html());
-			}
-			else {
-				$('.manual').addClass("active");
-			}
-		}
-	});
+        $(".num-items-in-cart").on("mouseover", function (e) {
+            var that = $(this);
+            var time = new Date().getTime() - that.data("loadedAt");
+            if (time > 30 * 1000 && !window.cartXHR || window.cartXHR.state() == "resolved")
+                window.cartXHR = $.ajax("/cart/mini").then(function (html, b, c) {
+                    if (typeof html === "string") {
+                        that.data("loadedAt", new Date().getTime());
+                        $("#cart-info").html(html);
+                    } else
+                        app.cartUtil.updateView(window.cart = html);
+                })
+        });
+
+        if (location.search.search("sort_by=") === -1) {
+
+        } else {
+            if (location.search != "") {
+                var stpo = location.search.search("sort_by=") + 8,
+                        sortby_url = '.' + location.search.substr(stpo).split('='),
+                        sortby_url_a = sortby_url + " a";
+                $(sortby_url).addClass("active");
+                $('#sortButton .name').html($(sortby_url_a).html());
+            }
+            else {
+                $('.manual').addClass("active");
+            }
+        }
+    });
 </script>
 
 <script>
-	function addaffix(scr) {
-		if ($(window).innerWidth() >= 992) {
-			if (window.minifiedMenu || scr > 87) {
-				if (!$('#top').hasClass('affix')) {
-					$('#top').addClass('affix').addClass('');
-				}
-			}
-			else {
-				if ($('#top').hasClass('affix')) {
-					$('#top').prev().remove();
-					$('#top').removeClass('affix').removeClass('');
-				}
-			}
-		}
-		else $('#top').removeClass('affix');
-	}
+    function addaffix(scr) {
+        if ($(window).innerWidth() >= 992) {
+            if (window.minifiedMenu || scr > 87) {
+                if (!$('#top').hasClass('affix')) {
+                    $('#top').addClass('affix').addClass('');
+                }
+            }
+            else {
+                if ($('#top').hasClass('affix')) {
+                    $('#top').prev().remove();
+                    $('#top').removeClass('affix').removeClass('');
+                }
+            }
+        }
+        else $('#top').removeClass('affix');
+    }
 
-	$(window).scroll(function () {
-		var scrollTop = $(this).scrollTop();
-		addaffix(scrollTop);
-	});
-	$(window).resize(function () {
-		var scrollTop = $(this).scrollTop();
-		addaffix(scrollTop);
-	});
+    $(window).scroll(function () {
+        var scrollTop = $(this).scrollTop();
+        addaffix(scrollTop);
+    });
+    $(window).resize(function () {
+        var scrollTop = $(this).scrollTop();
+        addaffix(scrollTop);
+    });
 </script>
 
-<script type="text/javascript">
-	(function (i, s, o, g, r, a, m) {
-		i['GoogleAnalyticsObject'] = r;
-		i[r] = i[r] || function () {
-			(i[r].q = i[r].q || []).push(arguments)
-		}, i[r].l = 1 * new Date();
-		a = s.createElement(o),
-				m = s.getElementsByTagName(o)[0];
-		a.async = 1;
-		a.src = g;
-		m.parentNode.insertBefore(a, m)
-	})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-	ga('create', 'UA-99954194-1', 'auto');
-	ga('send', 'pageview');
+    ga('create', 'UA-99954194-1', 'auto');
+    ga('send', 'pageview');
 </script>
 
 <script type="text/html" id="cart-template">
-	<li class="list-group-item d-flex justify-content-between lh-condensed row" data-cartid="{{_id}}">
-		<div style="float: left; width: auto;">
-			<img class="cart-image" src="{{cloudinaryUrl image crop='fit'}}" style="max-height: 52px">
-		</div>
-		<div class="col-md-8">
-			<h6 class="my-0"><a href="/product/{{product.href}}">{{product.name}}&nbsp;{{quantity}}</a></h6>
-			<small class="text-muted">{{truncate description 50}}</small>
-			<small class="text-muted">
-				<span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
-				@<span class="cart-currency">KES</span>
-				<stan class="cart-cost">{{price}}</stan>
-			</small>
-			<div class="right">
+    <li class="list-group-item d-flex justify-content-between lh-condensed row" data-cartid="{{_id}}">
+        <div style="float: left; width: auto;">
+            <img class="cart-image" src="{{cloudinaryUrl image crop='fit'}}" style="max-height: 52px">
+        </div>
+        <div class="col-md-8">
+            <h6 class="my-0"><a href="/product/{{product.href}}">{{product.name}}&nbsp;{{quantity}}</a></h6>
+            <small class="text-muted">{{truncate description 50}}</small>
+            <small class="text-muted">
+                <span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
+                @<span class="cart-currency">KES</span>
+                <stan class="cart-cost">{{price}}</stan>
+            </small>
+            <div class="right">
 				<span class="text-muted">
 					<span class="cart-currency">KES</span> 
 					<stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
 				</span>
-			</div>
-		</div>
-		<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>
-	</li>
+            </div>
+        </div>
+        <a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>
+    </li>
 </script>
 
 <script type="text/html" id="modal-template">
-	<!-- Modal -->
-	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header row">
-					<div class="col-md-7">
-						<h4 class="modal-title" style="text-transform: uppercase;" id="myModalLabel">
-							Dial a Drink!
-						</h4>
-					</div>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					...
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
+    <!-- Modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header row">
+                    <div class="col-md-7">
+                        <h4 class="modal-title" style="text-transform: uppercase;" id="myModalLabel">
+                            Dial a Drink!
+                        </h4>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </script>
 
 <script type="text/html" id="loading-template">
-	<div class="modal fade loading" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-body loading">
+    <div class="modal fade loading" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body loading">
 					<span>
 						<img src="/assets/loader.gif" width="32" alt="Loading.."/> 
 						<span class="loading-msg">Processing your order! Please wait..</span>
 					</span>
-				</div>
-			</div>
-		</div>
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </script>
 

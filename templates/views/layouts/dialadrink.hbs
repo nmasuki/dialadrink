@@ -2,28 +2,29 @@
 <html class="no-js">
 <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 <head>
-	<meta charset="utf-8"/>
-	<meta name="description" content="{{page.meta}}"/>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8"/>
+    <meta name="description" content="{{page.meta}}"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>{{page.title}}</title>
+    <title>{{page.title}}</title>
 
 
-	{{!-- This file provides the default styling for the KeystoneJS Content Editor
+    {{!-- This file provides the default styling for the KeystoneJS Content Editor
         - only renders when user is logged in and admin--}}
-	{{{isAdminEditorCSS user}}}
+    {{{isAdminEditorCSS user}}}
 
-	{{!--PWA setups and js regestry--}}
-	{{>pwaheaders}}
+    {{!--PWA setups and js regestry--}}
+    {{>pwaheaders}}
 
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700"/>
-	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700"/>
+    <link rel="stylesheet" type="text/css"
+          href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
 
-	<link href="/js/social-buttons{{dotmin}}.css" rel="stylesheet" type="text/css" media="all"/>
-	<link href="/js/owlcarousel/assets/owl.carousel{{dotmin}}.css" rel="stylesheet" type="text/css" media="all"/>
-	<link href="/styles/site{{dotmin}}.css" rel="stylesheet">
+    <link href="/js/social-buttons{{dotmin}}.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/js/owlcarousel/assets/owl.carousel{{dotmin}}.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/styles/site{{dotmin}}.css" rel="stylesheet">
 
 </head>
 
@@ -33,352 +34,337 @@
 <!-- nav -->
 <!-- Header -->
 <header id="top" class="home1_theme_header header clearfix">
-	<section class="top-header">
-		<div class="top-header-wrapper">
-			<div class="container">
-				<div class="row">
-					<div class="top-header-inner">
-						<div class="left-area hidden-xs">
+    <section class="top-header">
+        <div class="top-header-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="top-header-inner">
+                        <div class="left-area hidden-xs">
+                            <div class="currency_group hidden-xs currencies-switcher">
+                                <a>
+                                    <img src="/images/logo.png" height="50px" alt="Dial a Drink logo">
+                                    <span style="padding-left: 10px; color: white;  font-size: 18px;">
+                                        <span>CALL</span>
+                                        <span><strong>{{contactNumber}}</strong></span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="tool right-area hidden-xs">
+                            <ul class="unstyled">
+                                <li class="toolbar-customer my-wishlist"><a href="/">Home</a></li>
+                                <li class="toolbar-customer my-wishlist"><a href="/contact-us">Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-							<div class="currency_group hidden-xs">
-								<div class="currencies-switcher">
+    <section class="main-header">
+        <div class="main-header-wrapper">
+            <div class="container clearfix">
+                <div class="row">
+                    <div class="main-header-inner">
+                        <div class="nav-top">
 
-									<div>
-										<a>
-											<img src="/images/logo.png" height="50px" alt="Dial a Drink logo">
-											<font style="padding-left: 10px; color: white;  font-size: 18px;">
-												<span>CALL</span>
-												<span><strong>{{contactNumber}}</strong></span>
-											</font>
-										</a>
-									</div>
+                            <div class="nav-search">
+                                <form class="search" action="#">
+                                    <input type="hidden" name="type" value="product"/>
+                                    <input type="image" src="/assets/icon-search.png" alt="Go" id="search">
+                                    <input type="text" name="q" class="search_box" placeholder="Search for a drink..."
+                                           value="" id="search_box"/>
+                                </form>
+                            </div>
 
-								</div>
-							</div>
+                            <div class="nav-logo">
+                                <h1>
+                                    <a href="/"><strong><font style=" color: #F44336">Dial A Drink Kenya</font></strong></a>
+                                </h1>
+                            </div>
 
-						</div>
-						<div class="tool right-area hidden-xs">
-
-							<ul class="unstyled">
-								<li class="toolbar-customer my-wishlist"><a href="/">Home</a></li>
-								<li class="toolbar-customer my-wishlist"><a href="/contact-us">Contact Us</a></li>
-							</ul>
-
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<section class="main-header">
-		<div class="main-header-wrapper">
-			<div class="container clearfix">
-				<div class="row">
-					<div class="main-header-inner">
-						<div class="nav-top">
-
-							<div class="nav-search">
-								<form class="search" action="#">
-									<input type="hidden" name="type" value="product"/>
-									<input type="image" src="/assets/icon-search.png" alt="Go" id="search">
-									<input type="text" name="q" class="search_box" placeholder="Search for a drink..."
-										   value="" id="search_box"/>
-								</form>
-							</div>
-
-							<div class="nav-logo">
-								<h1>
-									<a href="/"><strong><font style=" color: #F44336">Dial A Drink Kenya</font></strong></a>
-								</h1>
-							</div>
-
-							<div id="cart-target" class="nav-cart ">
-								<div class="cart-info-group">
-									<a href="/cart" class="cart dropdown-toggle dropdown-link" data-toggle="dropdown"
-									   title="Shopping Cart">
-										<i class="sub-dropdown1 visible-sm visible-md visible-lg"></i>
-										<i class="sub-dropdown visible-sm visible-md visible-lg"></i>
-										<div class="num-items-in-cart">
-											<img class="cart_img" src="/assets/bg-cart.png" alt="My Cart"/>
-											<span class="cart_text">
+                            <div id="cart-target" class="nav-cart ">
+                                <div class="cart-info-group">
+                                    <a href="/cart" class="cart dropdown-toggle dropdown-link" data-toggle="dropdown"
+                                       title="Shopping Cart">
+                                        <i class="sub-dropdown1 visible-sm visible-md visible-lg"></i>
+                                        <i class="sub-dropdown visible-sm visible-md visible-lg"></i>
+                                        <div class="num-items-in-cart">
+                                            <img class="cart_img" src="/assets/bg-cart.png" alt="My Cart"/>
+                                            <span class="cart_text">
 												<a href="/cart">
 													My Cart 
-													<span class="number cart-total-pieces" id="number">{{cartItemCount this}}</span>
+													<span class="number cart-total-pieces" id="number">{{cartItemCount
+                                                            this}}</span>
 												</a>											  
 											</span>
-										</div>
-									</a>
-									<div id="cart-info" class="dropdown-menu">
-										<div id="cart-content">
-											<div class="loading">
-												<img src="/assets/loader.gif" alt="Loading.."/> Loading..
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="navigation_area">
-							<ul class="navigation_links">
-								{{#each navLinks}}
-									<li class="nav-item {{#ifgt submenus.length 0}}dropdown{{/ifgt}}">
-										<a href="{{{href}}}"{{#ifgt submenus.length 0}} data-toggle="dropdown"
-										   class="dropdown-toggle" {{/ifgt}}>
-											<span>{{{label}}}</span>
-										</a>
-										{{#ifgt submenus.length 0}}
-											<ul class="dropdown-menu">
-												{{#each submenus}}
-													<li><a href="{{{href}}}">{{{label}}}</a></li>
-												{{/each}}
-											</ul>
-										{{/ifgt}}
-									</li>
-								{{/each}}
-							</ul>
-						</div>
+                                        </div>
+                                    </a>
+                                    <div id="cart-info" class="dropdown-menu">
+                                        <div id="cart-content">
+                                            <div class="loading">
+                                                <img src="/assets/loader.gif" alt="Loading.."/> Loading..
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="navigation_area">
+                            <ul class="navigation_links">
+                                {{#each navLinks}}
+                                    <li class="nav-item {{#ifgt submenus.length 0}}dropdown{{/ifgt}}">
+                                        <a href="{{{href}}}"{{#ifgt submenus.length 0}} data-toggle="dropdown"
+                                           class="dropdown-toggle" {{/ifgt}}>
+                                            <span>{{{label}}}</span>
+                                        </a>
+                                        {{#ifgt submenus.length 0}}
+                                            <ul class="dropdown-menu">
+                                                {{#each submenus}}
+                                                    <li><a href="{{{href}}}">{{{label}}}</a></li>
+                                                {{/each}}
+                                            </ul>
+                                        {{/ifgt}}
+                                    </li>
+                                {{/each}}
+                            </ul>
+                        </div>
 
-						<div class="mobile-top-navigation visible-xs">
-							<button id="showLeftPush" class="visible-xs"><i class="fa fa-bars fa-2x"></i></button>
-							<ul class="list-inline">
+                        <div class="mobile-top-navigation visible-xs">
+                            <button id="showLeftPush" class="visible-xs"><i class="fa fa-bars fa-2x"></i></button>
+                            <ul class="list-inline">
 
-								<li class="is-mobile-login">
-									<div class="btn-group">
-										<div class="dropdown-toggle" data-toggle="dropdown">
-											<i class="fa fa-user"></i>
-										</div>
+                                <li class="is-mobile-login">
+                                    <div class="btn-group">
+                                        <div class="dropdown-toggle" data-toggle="dropdown">
+                                            <i class="fa fa-user"></i>
+                                        </div>
 
-									</div>
-								</li>
+                                    </div>
+                                </li>
 
-								<li class="is-mobile-currency currency_group">
-									<div class="currencies-switcher">
-										<div><a> <span><font style="color: black">{{contactNumber}}</font></span> </a>
-										</div>
-									</div>
-								</li>
+                                <li class="is-mobile-currency currency_group">
+                                    <div class="currencies-switcher">
+                                        <div><a> <span><font style="color: black">{{contactNumber}}</font></span> </a>
+                                        </div>
+                                    </div>
+                                </li>
 
-								<li class="is-mobile-cart">
-									<a href="/cart" title="Shopping Cart">
-										<div class="num-items-in-cart">
-											<i class="fa fa-shopping-cart"></i>
-											<span class="icon">
+                                <li class="is-mobile-cart">
+                                    <a href="/cart" title="Shopping Cart">
+                                        <div class="num-items-in-cart">
+                                            <i class="fa fa-shopping-cart"></i>
+                                            <span class="icon">
 											  <span class="number cart-total-pieces">{{cartItemCount this}}</span>
 											</span>
-											<div class="ajax-subtotal" style="display:none;"></div>
-										</div>
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="is-mobile-nav-menu nav-menu visible-xs" id="is-mobile-nav-menu">
-							<ul class="nav navbar-nav hoverMenuWrapper">
+                                            <div class="ajax-subtotal" style="display:none;"></div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="is-mobile-nav-menu nav-menu visible-xs" id="is-mobile-nav-menu">
+                            <ul class="nav navbar-nav hoverMenuWrapper">
 
-								<li class="nav-item">
-									<a href="/">
-										<span>Home</span>
-									</a>
-								</li>
+                                <li class="nav-item">
+                                    <a href="/">
+                                        <span>Home</span>
+                                    </a>
+                                </li>
 
-								{{#each navLinks}}
-									<li class="nav-item">
-										<a href="{{{href}}}">
-											<span>{{{label}}}</span>
-										</a>
-									</li>
-								{{/each}}
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<div class="calltoaction">
-		<a href="tel:+254723688108" title="Call to order">
-			<img src="/images/phoneicon.png" width="48px" alt="Call to order">
-		</a>
-	</div>
+                                {{#each navLinks}}
+                                    <li class="nav-item">
+                                        <a href="{{{href}}}">
+                                            <span>{{{label}}}</span>
+                                        </a>
+                                    </li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </header>
 
 <div class="fix-sticky"></div>
 
 <!-- Main Content -->
 <main class="main-content" role="main" style="min-height: 400px">
-	<section class="collection-heading">
-		<div class="collection-heading-wrapper">
-			<div class="container" style="padding-bottom: 0">
-				{{#if page.bannerImages }}
-					<div class="row owl-carousel offset-0" data-items="1" data-autoplay="true">
-						{{#each page.bannerImages}}
-							<div class="collection-heading-inner heading-group item inset-2"
-								 style="background-image:url({{{cloudinaryUrl this}}})">
-							</div>
-						{{/each}}
-					</div>
-				{{/if}}
-			</div>
-		</div>
-	</section>
+    <section class="collection-heading">
+        <div class="collection-heading-wrapper">
+            <div class="container" style="padding-bottom: 0">
+                {{#if page.bannerImages }}
+                    <div class="row owl-carousel offset-0" data-items="1" data-autoplay="true">
+                        {{#each page.bannerImages}}
+                            <div class="collection-heading-inner heading-group item inset-2"
+                                 style="background-image:url({{{cloudinaryUrl this}}})">
+                            </div>
+                        {{/each}}
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </section>
 
-	<section class="home3_featured" id="home_featured_layout">
-		<div class="home_featured_wrapper">
-			<div class="container" style="margin-bottom: 0">
-				<div class="col-sm-4" style="text-align: left;">
-					<div class="breadcrumb clearfix" style="background-color: transparent">
-						{{#each breadcrumbs}}
-							{{#if @last }}
-								<span itemprop="title" style="color: #f44336;">{{propercase label}}</span>
-							{{else}}
-								<a href="{{href}}" title="Alcohol delivery - {{label}}" itemprop="url">
-									<span itemprop="title">{{propercase label}}</span>
-								</a>
-								<span class="arrow-space">&#62;</span>
-							{{/if}}
-						{{else}}
-							<span itemprop="title" style="color: #f44336;">
+    <section class="home3_featured" id="home_featured_layout">
+        <div class="home_featured_wrapper">
+            <div class="container" style="margin-bottom: 0">
+                <div class="col-sm-4" style="text-align: left;">
+                    <div class="breadcrumb clearfix" style="background-color: transparent">
+                        {{#each breadcrumbs}}
+                            {{#if @last }}
+                                <span itemprop="title" style="color: #f44336;">{{propercase label}}</span>
+                            {{else}}
+                                <a href="{{href}}" title="Alcohol delivery - {{label}}" itemprop="url">
+                                    <span itemprop="title">{{propercase label}}</span>
+                                </a>
+                                <span class="arrow-space">&#62;</span>
+                            {{/if}}
+                        {{else}}
+                            <span itemprop="title" style="color: #f44336;">
 								Home
 							</span>
-						{{/each}}
-					</div>
-				</div>
+                        {{/each}}
+                    </div>
+                </div>
 
-				<div class="col-sm-5">
-					{{#if page.h1}}
-						<h1 class="home_featured_title home-title page-title">
-							<span class="category-name">{{{page.h1}}}</span>
-						</h1>
-					{{/if}}
-				</div>
+                <div class="col-sm-5">
+                    {{#if page.h1}}
+                        <h1 class="home_featured_title home-title page-title">
+                            <span class="category-name">{{{page.h1}}}</span>
+                        </h1>
+                    {{/if}}
+                </div>
 
-				<div class="col-sm-3" style="text-align: center;display:none;">
-					<span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
-				</div>
-			</div>
+                <div class="col-sm-3" style="text-align: center;display:none;">
+                    <span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
+                </div>
+            </div>
 
-			{{{body}}}
+            {{{body}}}
 
-			{{#if page.content}}
-				<div class="container">
-					{{{page.content}}}
-				</div>
-			{{/if}}
-		</div>
-	</section>
+            {{#if page.content}}
+                <div class="container">
+                    {{{page.content}}}
+                </div>
+            {{/if}}
+        </div>
+    </section>
 </main>
 
 <!-- Footer -->
 <!-- Footer -->
 <footer>
-	<div class="container">
-		<div class="row">
-			<div class="col-md-3 col-sm-6 footerleft ">
-				<h6 class="heading7">DIAL A DRINK KENYA</h6>
-				<ul class="footer-ul">
-					<li>
-						<a href="/about-us">About Us</a>
-					</li>
-					<li>
-						<a href="/blog">Blog</a>
-					</li>
-					<li>
-						<a href="/delivery-locations">Delivery Locations</a>
-					</li>
-					<li>
-						<a href="#">Gifts Delivery</a>
-					</li>
-					<li>
-						<a href="/pricelist">Get Our Pricelist</a>
-					</li>
-					<li>
-						<a href="/">Drinks Delivery Kenya</a>
-					</li>
-				</ul>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-sm-6 footerleft ">
+                <h6 class="heading7">DIAL A DRINK KENYA</h6>
+                <ul class="footer-ul">
+                    <li>
+                        <a href="/about-us">About Us</a>
+                    </li>
+                    <li>
+                        <a href="/blog">Blog</a>
+                    </li>
+                    <li>
+                        <a href="/delivery-locations">Delivery Locations</a>
+                    </li>
+                    <li>
+                        <a href="#">Gifts Delivery</a>
+                    </li>
+                    <li>
+                        <a href="/pricelist">Get Our Pricelist</a>
+                    </li>
+                    <li>
+                        <a href="/">Drinks Delivery Kenya</a>
+                    </li>
+                </ul>
 
-			</div>
-			<div class="col-md-3 col-sm-6 paddingtop-bottom">
-				<h6 class="heading7">GENERAL LINKS</h6>
-				<ul class="footer-ul">
-					<li>
-						<a href="/terms-and-conditions">Terms and Conditions</a>
-					</li>
-					<li>
-						<a href="/privacy-policy" title="Buy alcohol online in Kenya" rel="noopener">Privacy Policy</a>
-					</li>
-					<li>
-						<a href="/sitemap">Sitemap</a>
-					</li>
-					<li>
-						<a href="#">Our Monthly Offers</a>
-					</li>
-					<li>
-						<a href="https://play.google.com/store/apps/details?id=md.app.ke.dialadrink">Get Our App</a>
-					</li>
-				</ul>
-			</div>
+            </div>
+            <div class="col-md-3 col-sm-6 paddingtop-bottom">
+                <h6 class="heading7">GENERAL LINKS</h6>
+                <ul class="footer-ul">
+                    <li>
+                        <a href="/terms-and-conditions">Terms and Conditions</a>
+                    </li>
+                    <li>
+                        <a href="/privacy-policy" title="Buy alcohol online in Kenya" rel="noopener">Privacy Policy</a>
+                    </li>
+                    <li>
+                        <a href="/sitemap">Sitemap</a>
+                    </li>
+                    <li>
+                        <a href="#">Our Monthly Offers</a>
+                    </li>
+                    <li>
+                        <a href="https://play.google.com/store/apps/details?id=md.app.ke.dialadrink">Get Our App</a>
+                    </li>
+                </ul>
+            </div>
 
-			<div class="col-md-3 col-sm-6 paddingtop-bottom">
-				<h6 class="heading7">PAYMENT METHODS</h6>
+            <div class="col-md-3 col-sm-6 paddingtop-bottom">
+                <h6 class="heading7">PAYMENT METHODS</h6>
 
-				<ul style="color: #848484">
-					<li>Cash On Delivery</li>
-					<p>
-					<li>
-						<img src="/images/mpesa.png" alt="Pay via MPESA" height="30px">
-					</li>
-					<p>
-					<li>
-						<img src="/images/visa.png" alt="Pay via VISA" height="30px">
-					</li>
-					<p>
-					<li>
-						<img src="/images/mastercard.png" alt="Pay Via Master Card" height="30px">
-					</li>
-				</ul>
-			</div>
+                <ul style="color: #848484">
+                    <li>Cash On Delivery</li>
+                    <p>
+                    <li>
+                        <img src="/images/mpesa.png" alt="Pay via MPESA" height="30px">
+                    </li>
+                    <p>
+                    <li>
+                        <img src="/images/visa.png" alt="Pay via VISA" height="30px">
+                    </li>
+                    <p>
+                    <li>
+                        <img src="/images/mastercard.png" alt="Pay Via Master Card" height="30px">
+                    </li>
+                </ul>
+            </div>
 
-			<div class="col-md-3 col-sm-6 paddingtop-bottom">
-				<h6 class="heading7">SOCIAL NETWORKS</h6>
-				<div class="footer-ul">
-					<a href="https://www.facebook.com/drinkdeliverynairobi" title="Dial A Drink Facebook"
-					   class="icon-social facebook">
-						<i class="fa fa-facebook"></i>
-					</a>
-					<a href="https://twitter.com/liqourdelivery" title="Dial A Drink Twitter"
-					   class="icon-social twitter">
-						<i class="fa fa-twitter"></i>
-					</a>
-					<a href="https://instagram.com/alcoholdeliverynairobi" title="Dial A Drink Instagram"
-					   class="icon-social instagram">
-						<i class="fa fa-instagram"></i>
-					</a>
-					<a href="https://www.youtube.com/user/dialadrink" title="Dial A Drink Youtube"
-					   class="icon-social youtube">
-						<i class="fa fa-youtube"></i>
-					</a>
-					<a href="https://plus.google.com/u/1/102101315171058540161" title="Dial A Drink Google+"
-					   class="icon-social google-plus">
-						<i class="fa fa-google-plus"></i>
-					</a>
-					<a href="https://www.pinterest.com/liqourdelivery" title="Dial A Drink Pinterest"
-					   class="icon-social google-plus">
-						<i class="fa fa-pinterest"></i>
-					</a>
-				</div>
+            <div class="col-md-3 col-sm-6 paddingtop-bottom">
+                <h6 class="heading7">SOCIAL NETWORKS</h6>
+                <div class="footer-ul">
+                    <a href="https://www.facebook.com/drinkdeliverynairobi" title="Dial A Drink Facebook"
+                       class="icon-social facebook">
+                        <i class="fa fa-facebook"></i>
+                    </a>
+                    <a href="https://twitter.com/liqourdelivery" title="Dial A Drink Twitter"
+                       class="icon-social twitter">
+                        <i class="fa fa-twitter"></i>
+                    </a>
+                    <a href="https://instagram.com/alcoholdeliverynairobi" title="Dial A Drink Instagram"
+                       class="icon-social instagram">
+                        <i class="fa fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/user/dialadrink" title="Dial A Drink Youtube"
+                       class="icon-social youtube">
+                        <i class="fa fa-youtube"></i>
+                    </a>
+                    <a href="https://plus.google.com/u/1/102101315171058540161" title="Dial A Drink Google+"
+                       class="icon-social google-plus">
+                        <i class="fa fa-google-plus"></i>
+                    </a>
+                    <a href="https://www.pinterest.com/liqourdelivery" title="Dial A Drink Pinterest"
+                       class="icon-social google-plus">
+                        <i class="fa fa-pinterest"></i>
+                    </a>
+                </div>
 
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </footer>
 <div class="copyright">
-	<div class="container">
-		<div class="col-md-6">
-			<p>©Dial A Drink Kenya 2017 - All Rights Reserved</p>
-		</div>
-		<div class="col-md-6">
-			<!-- <ul class="bottom_ul">
+    <div class="container">
+        <div class="col-md-6">
+            <p>©Dial A Drink Kenya 2017 - All Rights Reserved</p>
+        </div>
+        <div class="col-md-6">
+            <!-- <ul class="bottom_ul">
               <li><a href="/">Drinks delivery kenya</a></li>
               <li><a href="#">About us</a></li>
               <li><a href="/">Blog</a></li>
@@ -386,22 +372,36 @@
               <li><a href="#">Contact us</a></li>
               <li><a href="/sitemap">Site Map</a></li>
             </ul> -->
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 <!--footer start from here-->
 
 <!-- Float right icon -->
 <div class="float-right-icon">
-	<ul>
-		<li>
+    <ul>
+        <li class="mobile-only">
+            <a href="/cart" title="My cart">
+                <span class="badge badge-secondary badge-pill cart-total-pieces"
+                    style="position: absolute;left: 18px;background-color: red;">
+                    {{cartItemCount this}}
+                </span>
+                <img src="/images/empty-cart-2.png" width="48px" alt="My cart"/>
+            </a>
+        </li>
 
-			<div id="scroll-to-top" data-toggle="" data-placement="left" title="Scroll to Top" class="off">
-				<i class="fa fa-angle-up"></i>
-			</div>
+        <li class="mobile-only">
+            <a href="tel:{{contactNumber}}" title="Call to order">
+                <img src="/images/phoneicon.png" width="48px" alt="Call to order"/>
+            </a>
+        </li>
 
-		</li>
-	</ul>
+        <li>
+            <div id="scroll-to-top" data-toggle="" data-placement="left" title="Scroll to Top" class="off">
+                <i class="fa fa-angle-up"></i>
+            </div>
+        </li>
+    </ul>
 </div>
 
 {{>jsscripts2}}
