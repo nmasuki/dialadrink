@@ -1,20 +1,23 @@
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js"></script>
+{{#ifeq env 'production'}}
+    <script src="/dest/all.scripts.js"></script>
+{{else}}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js"></script>
+    <script src="/js/jquery/imagesloaded.pkgd.min.js"></script>
+    <script src="/js/jquery/jquery.flexslider.min.js"></script>
+    <script src="/js/jquery/jquery.zoom.min.js"></script>
 
-<script src="/js/jquery/imagesloaded.pkgd.min.js"></script>
-<script src="/js/jquery/jquery.flexslider.min.js"></script>
-<script src="/js/jquery/jquery.zoom.min.js"></script>
+    <script src="/js/jquery/jquery.fancybox{{dotmin}}.js"></script>
+    <script src="/js/jquery/jquery.scrollbar{{dotmin}}.js"></script>
+    <script src="/js/owlcarousel/owl.carousel{{dotmin}}.js"></script>
 
-<script src="/js/jquery/jquery.fancybox{{dotmin}}.js"></script>
-<script src="/js/jquery/jquery.scrollbar{{dotmin}}.js"></script>
-<script src="/js/owlcarousel/owl.carousel{{dotmin}}.js"></script>
-
-<!---->
-<script src="/js/polyfills{{dotmin}}.js"></script>
-<script src="/js/countDown{{dotmin}}.js"></script>
-<script src="/js/classie{{dotmin}}.js"></script>
-<script src="/js/scripts{{dotmin}}.js"></script>
-<script src="/js/cart{{dotmin}}.js"></script>
-<script src="/js/app{{dotmin}}.js"></script>
+    <!---->
+    <script src="/js/polyfills{{dotmin}}.js"></script>
+    <script src="/js/countDown{{dotmin}}.js"></script>
+    <script src="/js/classie{{dotmin}}.js"></script>
+    <script src="/js/scripts{{dotmin}}.js"></script>
+    <script src="/js/cart{{dotmin}}.js"></script>
+    <script src="/js/app{{dotmin}}.js"></script>
+{{/ifeq}}
 
 <script>
     $('body').imagesLoaded()

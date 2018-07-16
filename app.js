@@ -40,29 +40,6 @@ keystone.init({
     'cloudinary secure': true
 });
 
-//add ProductPriceOption Custom Field Type
-Object.defineProperty(
-	keystone.Field.Types,
-	'ProductPriceOption', {
-		get: function () {
-			var ppo = require('./helpers/customTypes/ProductPriceOption');
-			// or whatever your path is
-			return ppo;
-		}
-	}
-);
-
-Object.defineProperty(
-	keystone.Field.Types,
-	'Array', {
-		get: function () {
-			var ppo = require('./helpers/customTypes/ObjArrayField/test/explorer');
-			// or whatever your path is
-			return ppo;
-		}
-	}
-);
-
 // Assists with mongoose deepPopullate
 keystone.deepPopulate = require('mongoose-deep-populate')(keystone.mongoose);
 

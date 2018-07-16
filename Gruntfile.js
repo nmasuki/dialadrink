@@ -9,7 +9,7 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     expand: true,
-                    src: ['public/js/**/*.js','!public/js/**/*min.js'],
+                    src: ['public/js/**/*.js', '!public/js/**/*min.js'],
                     cwd: '.',
                     rename: function (dst, src) {
                         // To keep src js files and make new files as *.min.js :
@@ -29,7 +29,7 @@ module.exports = function (grunt) {
             target: {
                 files: [{
                     expand: true,
-                    src: ['public/styles/**/*.css','!public/styles/**/*min.css'], //['public/js/*.js'],//
+                    src: ['public/styles/**/*.css', '!public/styles/**/*min.css'], //['public/js/*.js'],//
                     cwd: '.',
                     rename: function (dst, src) {
                         if (src.indexOf('.min.css') < 0)
@@ -39,14 +39,41 @@ module.exports = function (grunt) {
                     }
                 }]
             }
+        },
+        concat: {
+            options: {
+                separator: ';',
+            },
+            dist: {
+                src: [
+                    'https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js',
+                    'public/js/jquery/imagesloaded.pkgd.min.js',
+                    'public/js/jquery/jquery.flexslider.min.js',
+                    'public/js/jquery/jquery.zoom.min.js',
+
+                    'public/js/jquery/jquery.fancybox.min.js',
+                    'public/js/jquery/jquery.scrollbar.min.js',
+                    'public/js/owlcarousel/owl.carousel.min.js',
+
+                    'public/js/polyfills.min.js',
+                    'public/js/countDown.min.js',
+                    'public/js/classie.min.js',
+                    'public/js/scripts.min.js',
+                    'public/js/cart.min.js',
+                    'public/js/app.min.js'
+                ],
+                dest: 'public/js/all.scripts.min.js',
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
     grunt.registerTask('build', [
         'uglify',
-        'cssmin'
+        'cssmin',
+        'concat'
     ]);
 }
