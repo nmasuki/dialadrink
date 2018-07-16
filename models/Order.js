@@ -8,7 +8,7 @@ var Types = keystone.Field.Types;
 
 var Order = new keystone.List('Order', {
     map: {name: 'orderNumber'},
-    autokey: {path: 'key', from: 'orderNumber', unique: true},
+    //autokey: {path: 'key', from: 'orderNumber', unique: true},
 });
 
 Order.add({
@@ -181,7 +181,7 @@ Order.register();
 //Some random number from which to start counting
 var autoId = 72490002;
 
-Order.getNextOrderId = () => autoId + 100;
+Order.getNextOrderId = () => autoId = autoId + 100;
 
 Order.model.find().sort({'id': -1}).limit(1)
     .exec(function (err, data) {
