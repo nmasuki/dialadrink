@@ -330,27 +330,14 @@
                         });
                     },
                     error: function (xhr, status, error) {
-                        var responseText = xhr.responseText;
-                        if (!responseText)
-                            console.warn("Ajax call failed!");
-                        else {
-                            app.showModal({
-                                title: error,
-                                msg: responseText,
-                                ok: function (e) {
-                                    app.cartUtil.updateView({});
-                                    that.removeAttr("disabled");
-                                },
-                                close: function (e) {
-                                    app.cartUtil.updateView({});
-                                    that.removeAttr("disabled");
-                                }
-                            });
-                        }
+                        var responseText = xhr.responseText || "Unknown error on '" + that.text() + "'";
+
+                        $(".alert-danger").find(".msg-text").html("<strong>{0}!</strong> {1}. Please try again later..", error, responseText);
+                        $(".alert-danger").slideDown();
                     }
                 })
             } else {
-                $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found. Please review your info above.")
+                $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
                 $(".alert-danger").slideDown();
             }
         });
