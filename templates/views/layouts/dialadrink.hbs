@@ -2,12 +2,17 @@
 <html class="no-js">
 <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 <head>
+    <title>{{page.title}}</title>
+
     <meta charset="utf-8"/>
     <meta name="description" content="{{page.meta}}"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{page.title}}</title>
+    <meta property="og:title" content="{{truncate page.title 60}}" />
+    <meta property="og:site_name" content="Dial A Drink Kenya" />
+    <meta property="og:description" content="{{truncate page.meta 100}}" />
+    <meta property="og:image" content="/images/icons/apple-icon-152x152.png" />
 
     {{!-- This file provides the default styling for the KeystoneJS Content Editor
         - only renders when user is logged in and admin--}}
