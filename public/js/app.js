@@ -173,8 +173,14 @@ var app = {
 		marker.setMap(map);
 	},
 
+    hideModal: function(){
+        $(".modal:visible").modal("hide");
+    },
+
 	showLoading: function (msg, timeout) {
-		var x, modal = $($('#loading-template').html());
+        app.hideModal();
+
+        var x, modal = $($('#loading-template').html());
 		$(document.body).append(modal);
 
 		modal.on('hidden.bs.modal', function () {
@@ -230,11 +236,14 @@ var app = {
 	},
 
 	showModal: function (option) {
-		option = option || {};
+        app.hideModal();
+
+        option = option || {};
 		var title = option.title || "Dial a Drink";
 		var msg = option.msg || option.message;
 
 		var modal = $($('#modal-template').html());
+
 		$(document.body).append(modal);
 
 		if (typeof option.ok === "function")
