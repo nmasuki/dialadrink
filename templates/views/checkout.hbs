@@ -1,192 +1,193 @@
 <style>
-	form.promo-redeem {
-		padding: 22px;
-	}
+    form.promo-redeem {
+        padding: 22px;
+    }
 
-	form.needs-validation {
-		padding: 0 22px;
-	}
+    form.needs-validation {
+        padding: 0 22px;
+    }
 
-	form.promo-redeem button {
-		margin-top: 0;
-		border-bottom-left-radius: 0;
-		border-top-left-radius: 0;
-		border-left: none;
-	}
+    form.promo-redeem button {
+        margin-top: 0;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        border-left: none;
+    }
 
-	form.promo-redeem button, form.needs-validation button {
-		border: 1px solid lightgray;
-	}
+    form.promo-redeem button, form.needs-validation button {
+        border: 1px solid lightgray;
+    }
 
-	form.promo-redeem input {
-		margin: 0;
-		padding: 19px;
-	}
+    form.promo-redeem input {
+        margin: 0;
+        padding: 19px;
+    }
 
-	form.needs-validation {
-		margin: 2px 5px;
-	}
+    form.needs-validation {
+        margin: 2px 5px;
+    }
 
-	h4.mb-3 {
-		margin-left: 20px;
-	}
+    h4.mb-3 {
+        margin-left: 20px;
+    }
 
-	form .mb-3 input {
-		width: 281px;
-	}
+    form .mb-3 input {
+        width: 281px;
+    }
 
-	.invalid-feedback {
-		display: none;
-	}
+    .invalid-feedback {
+        display: none;
+    }
 
 </style>
 <div class="container">
-	<div class="row">
-		<div class="col-md-4 order-md-2 mb-4">
-			<h4 class="d-flex justify-content-between align-items-center mb-3">
-				<span class="text-muted">Your cart</span>
-				{{#if cartItems.length}}
-					<span class="badge badge-secondary badge-pill">{{cartItemCount this}}</span>
-				{{/if}}
-			</h4>
-			<ul class="list-group mb-3">
-				{{#if cartItems.length}}
-					{{#each cartItems}}
-						<li data-cartid="{{_id}}"
-							class="list-group-item d-flex justify-content-between lh-condensed row">
-							<div style="float: left; width: auto; min-width: 53px;">
-								<img class="cart-image" src="{{cloudinaryUrl image crop='fit'}}"
-									 style="max-height: 52px;">
-							</div>
-							<div class="col-md-8">
-								<h6 class="my-0"><a href="/product/{{product.href}}">{{product.name}}
-									&nbsp;{{quantity}}</a>
-								</h6>
-								<small class="text-muted">{{truncate description 50}}</small>
-								<small class="text-muted">
-									<span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
-									@<span class="cart-currency">KES</span>
-									<stan class="cart-cost">{{price}}</stan>
-								</small>
-								<div class="right">
+    <div class="row">
+        <div class="col-md-4 order-md-2 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Your cart</span>
+                {{#if cartItems.length}}
+                    <span class="badge badge-secondary badge-pill">{{cartItemCount this}}</span>
+                {{/if}}
+            </h4>
+            <ul class="list-group mb-3">
+                {{#if cartItems.length}}
+                    {{#each cartItems}}
+                        <li data-cartid="{{_id}}"
+                            class="list-group-item d-flex justify-content-between lh-condensed row">
+                            <div style="float: left; width: auto; min-width: 53px;">
+                                <img class="cart-image" src="{{cloudinaryUrl image crop='fit'}}"
+                                     style="max-height: 52px;">
+                            </div>
+                            <div class="col-md-8">
+                                <h6 class="my-0"><a href="/product/{{product.href}}">{{product.name}}
+                                    &nbsp;{{quantity}}</a>
+                                </h6>
+                                <small class="text-muted">{{truncate description 50}}</small>
+                                <small class="text-muted">
+                                    <span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
+                                    @<span class="cart-currency">KES</span>
+                                    <stan class="cart-cost">{{price}}</stan>
+                                </small>
+                                <div class="right">
 							<span class="text-muted">
 								<span class="cart-currency">KES</span> 
 								<stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
 							</span>
-								</div>
-							</div>
-							<!--<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>-->
-						</li>
-					{{/each}}
+                                </div>
+                            </div>
+                            <!--<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>-->
+                        </li>
+                    {{/each}}
 
-					<li {{#unless promocode}}style="display: none;"{{/unless}}  
-							class="promo-code-wrapper list-group-item d-flex justify-content-between bg-light">
-						<div class="text-success">
-							<h6 class="my-0">Promo code</h6>
-							<small class="promo-code">{{promocode.code}}</small>
-						</div>
-						<span class="cart-currency">KES</span>(<span class="text-success promo-code-amount">{{formatNumber promocode.amount}}</span>)
-					</li>
+                    <li {{#unless promocode}}style="display: none;"{{/unless}}
+                        class="promo-code-wrapper list-group-item d-flex justify-content-between bg-light">
+                        <div class="text-success">
+                            <h6 class="my-0">Promo code</h6>
+                            <small class="promo-code">{{promocode.code}}</small>
+                        </div>
+                        <span class="cart-currency">KES</span>(<span
+                            class="text-success promo-code-amount">{{formatNumber promocode.amount}}</span>)
+                    </li>
 
-					<li class="list-group-item d-flex justify-content-between">
-						<span>Total (<span class="cart-currency">KES</span>)</span>
-						<strong class="cart-total">{{formatNumber
-								(sumEvals cartItems 'c=>c.pieces*c.price')}}</strong>
-					</li>
-				{{else}}
-					<li class="list-group-item d-flex justify-content-between">
-						<div class="loading cart-loading">
-							<img src="/images/empty-cart.png" alt="Empty!" style="height: 50px;"> You have no items in
-							your cart!!
-						</div>
-						<a href="/">Continue shopping.</a>
-						<p style="font-size: 13px">
-							You can proceed to filling in and saving your delivery details for future references.
-						</p>
-					</li>
-				{{/if}}
-			</ul>
-			{{#if cartItems.length}}
-				<form class="card promo-redeem">
-					<div class="row">
-						<div class="col-md-12">
-							<input id="promocode" type="text" class="form-control" placeholder="Promo code"
-								   style="width: 249px; float: left;">
-							<button type="submit" class="btn btn-secondary" style="    margin-top: 0;">Redeem
-							</button>
-						</div>
-					</div>
-				</form>
-			{{/if}}
-		</div>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (<span class="cart-currency">KES</span>)</span>
+                        <strong class="cart-total">{{formatNumber
+                                (sumEvals cartItems 'c=>c.pieces*c.price')}}</strong>
+                    </li>
+                {{else}}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div class="loading cart-loading">
+                            <img src="/images/empty-cart.png" alt="Empty!" style="height: 50px;"> You have no items in
+                            your cart!!
+                        </div>
+                        <a href="/">Continue shopping.</a>
+                        <p style="font-size: 13px">
+                            You can proceed to filling in and saving your delivery details for future references.
+                        </p>
+                    </li>
+                {{/if}}
+            </ul>
+            {{#if cartItems.length}}
+                <form class="card promo-redeem">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input id="promocode" type="text" class="form-control" placeholder="Promo code"
+                                   style="width: 249px; float: left;">
+                            <button type="submit" class="btn btn-secondary" style="    margin-top: 0;">Redeem
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            {{/if}}
+        </div>
 
-		<div class="col-md-8 order-md-1">
-			<div class="row">
-				<h4 class="mb-3">Billing address</h4>
-				<form method="post" action="/checkout" class="needs-validation billing-address">
-					<div class="row">
-						<div class="col-md-6 mb-3">
-							<label for="firstName">First name</label>
-							<input type="text" class="form-control" name="firstName" id="firstName" placeholder=""
-								   value="{{userData.firstName}}" required="">
-							<div class="invalid-feedback">
-								Valid first name is required.
-							</div>
-						</div>
-						<div class="col-md-6 mb-3">
-							<label for="lastName">Last name</label>
-							<input type="text" class="form-control" name="lastName" id="lastName" placeholder=""
-								   value="{{userData.lastName}}" required="">
-							<div class="invalid-feedback">
-								Valid last name is required.
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6 mb-3">
-							<label for="email">Phone Number</label>
-							<input type="text" class="form-control" name="phoneNumber" id="phoneNumber"
-								   placeholder="0712345678" value="{{userData.phoneNumber}}" pattern="\d+" required>
-							<div class="invalid-feedback">
-								Please enter a valid phone number for shipping updates.
-							</div>
-						</div>
-						<div class="col-md-6 mb-3">
-							<label for="email">Email <span class="text-muted">(Optional)</span></label>
-							<input type="email" class="form-control" name="email" id="email"
-								   placeholder="you@example.com" value="{{userData.email}}">
-							<div class="invalid-feedback">
-								Please enter a valid email address for shipping updates.
-							</div>
-						</div>
-					</div>
+        <div class="col-md-8 order-md-1">
+            <div class="row">
+                <h4 class="mb-3">Billing address</h4>
+                <form method="post" action="/checkout" class="needs-validation billing-address">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName">First name</label>
+                            <input type="text" class="form-control" name="firstName" id="firstName" placeholder=""
+                                   value="{{userData.firstName}}" required="">
+                            <div class="invalid-feedback">
+                                Valid first name is required.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName">Last name</label>
+                            <input type="text" class="form-control" name="lastName" id="lastName" placeholder=""
+                                   value="{{userData.lastName}}" required="">
+                            <div class="invalid-feedback">
+                                Valid last name is required.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email">Phone Number</label>
+                            <input type="text" class="form-control" name="phoneNumber" id="phoneNumber"
+                                   placeholder="0712345678" value="{{userData.phoneNumber}}" pattern="\d+" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid phone number for shipping updates.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email">Email <span class="text-muted">(Optional)</span></label>
+                            <input type="email" class="form-control" name="email" id="email"
+                                   placeholder="you@example.com" value="{{userData.email}}">
+                            <div class="invalid-feedback">
+                                Please enter a valid email address for shipping updates.
+                            </div>
+                        </div>
+                    </div>
 
-					<div class="row">
-						<div class="col-md-6 mb-3">
-							<label for="address">Address</label>
-							<input type="text" class="form-control" name="address" id="address"
-								   placeholder="1234 Main St" required value="{{userData.address}}">
-							<div class="invalid-feedback">
-								Please enter your shipping address.
-							</div>
-						</div>
-						<div class="col-md-6 mb-3">
-							<label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
-							<input type="text" class="form-control" name="building" id="address2"
-								   placeholder="Apartment or suite" value="{{userData.building}}">
-						</div>
-					</div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="address">Address</label>
+                            <input type="text" class="form-control" name="address" id="address"
+                                   placeholder="1234 Main St" required value="{{userData.address}}">
+                            <div class="invalid-feedback">
+                                Please enter your shipping address.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+                            <input type="text" class="form-control" name="building" id="address2"
+                                   placeholder="Apartment or suite" value="{{userData.building}}">
+                        </div>
+                    </div>
 
-					<div class="row">
-						<div class="col-md-8 mb-3">
-							<label for="address">Address 3 <span class="text-muted">(Optional)</span></label>
-							<input type="text" class="form-control" name="houseNumber" id="houseNumber"
-								   placeholder="House number" value="{{userData.houseNumber}}">
-						</div>
-					</div>
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="address">Address 3 <span class="text-muted">(Optional)</span></label>
+                            <input type="text" class="form-control" name="houseNumber" id="houseNumber"
+                                   placeholder="House number" value="{{userData.houseNumber}}">
+                        </div>
+                    </div>
 
-					<hr class="mb-4">
-					{{!--
+                    <hr class="mb-4">
+                    {{!--
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="same-address">
                         <label class="custom-control-label" for="same-address">
@@ -194,13 +195,13 @@
                         </label>
                     </div>
                     --}}
-					<div class="custom-control custom-checkbox">
-						<input type="checkbox" checked {{#unless cartItems.length}}disabled{{/unless}}
-							   class="custom-control-input" id="saveInfo" name="saveInfo">
-						<label class="custom-control-label" for="saveInfo">Save this information for next time</label>
-					</div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" checked {{#unless cartItems.length}}disabled{{/unless}}
+                               class="custom-control-input" id="saveInfo" name="saveInfo">
+                        <label class="custom-control-label" for="saveInfo">Save this information for next time</label>
+                    </div>
 
-					{{!--
+                    {{!--
                     <hr class="mb-4">
                     <h4 class="mb-3">Payment</h4>
 
@@ -255,111 +256,114 @@
                         </div>
                     </div>
                     --}}
-					<hr class="mb-4">
-					<button class="btn btn-primary btn-lg" type="submit">
-						{{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
-					</button>
-				</form>
-			</div>
-		</div>
-	</div>
+                    <div class="alert alert-danger fade in alert-dismissible" style="display: none">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                        <span class="msg-text"><strong>Danger!</strong> This alert box indicates a dangerous or potentially negative action.</span>
+                    </div>
+                    <hr class="mb-4">
+                    <button class="btn btn-primary btn-lg" type="submit">
+                        {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-	$(document).ready(function () {
-		window.minifiedMenu = true;
-		$(document).ready(function () {
-			if (addaffix) addaffix();
-		});
+    $(document).ready(function () {
+        window.minifiedMenu = true;
+        $(document).ready(function () {
+            if (addaffix) addaffix();
+        });
 
-		$(document).on("click", ".promo-redeem button", function (e) {
-			e.preventDefault();
-			if ($("#promocode").val()) {
-				$.get('/checkout/validatepromo/' + $("#promocode").val())
-						.then(function (data) {
-							if (data.state) {
-								app.cartUtil.updateView(null, data.promo);
-								app.showNotification(data.msg)
-							} else {
-								app.showModal({
-									title: "",
-									msg: data.msg
-								})
-							}
-						});
-			}
-		})
+        $(document).on("click", ".promo-redeem button", function (e) {
+            e.preventDefault();
+            if ($("#promocode").val()) {
+                $.get('/checkout/validatepromo/' + $("#promocode").val())
+                        .then(function (data) {
+                            if (data.state) {
+                                app.cartUtil.updateView(null, data.promo);
+                                app.showNotification(data.msg)
+                            } else {
+                                app.showModal({
+                                    title: "",
+                                    msg: data.msg
+                                })
+                            }
+                        });
+            }
+        })
 
-		$(document).on("click", ".billing-address button[type='submit']", function (e) {
-			e.preventDefault();
-			var form = $(this).parents("form");
-			var array = form.serializeArray();
+        $(document).on("click", ".billing-address button[type='submit']", function (e) {
+            e.preventDefault();
+            var form = $(this).parents("form");
+            var array = form.serializeArray();
+            $(".alert-danger").hide();
 
-			if (form[0].checkValidity()) {
-				var that = $(this);
-				var data = {saveInfo: $("#saveInfo").is(":checked")};
-				array.forEach(function (a) {
-					data[a.name] = a.value;
-				});
+            if (form[0].checkValidity()) {
+                var that = $(this);
+                var data = {saveInfo: $("#saveInfo").is(":checked")};
+                array.forEach(function (a) {
+                    data[a.name] = a.value;
+                });
 
-				$(this).attr("disabled", true);
+                $(this).attr("disabled", true);
 
-				app.showLoading("Processing your order! Please wait..", 60000);
+                app.showLoading("Processing your order! Please wait..", 60000);
 
-				$.ajax({
-					url: form.attr("action"),
-					data: JSON.stringify(data),
-					contentType: "application/json; charset=utf-8",
-					dataType: "json",
-					type: "POST",
-					success: function (res) {
-						app.showModal({
-							msg: res.msg,
-							ok: function (e) {
-								window.location = "/";
-							},
-							close: function (e) {
-								window.location = "/";
-							}
-						});
-					},
-					error: function (xhr, status, error) {
-						var responseText = xhr.responseText;
-						if (!responseText)
-							console.warn("Ajax call failed!");
-						else {
-							app.showModal({
-								title: error,
-								msg: responseText,
-								ok: function (e) {
-									app.cartUtil.updateView({});
-									that.removeAttr("disabled");
-								},
-								close: function (e) {
-									app.cartUtil.updateView({});
-									that.removeAttr("disabled");
-								}
-							});
-						}
-					}
-				})
-			} else {
-				console.warn("Invalid for inputs!!");
-			}
-		})
+                $.ajax({
+                    url: form.attr("action"),
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    type: "POST",
+                    success: function (res) {
+                        app.showModal({
+                            msg: res.msg,
+                            ok: function (e) {
+                                window.location = "/";
+                            },
+                            close: function (e) {
+                                window.location = "/";
+                            }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        var responseText = xhr.responseText;
+                        if (!responseText)
+                            console.warn("Ajax call failed!");
+                        else {
+                            app.showModal({
+                                title: error,
+                                msg: responseText,
+                                ok: function (e) {
+                                    app.cartUtil.updateView({});
+                                    that.removeAttr("disabled");
+                                },
+                                close: function (e) {
+                                    app.cartUtil.updateView({});
+                                    that.removeAttr("disabled");
+                                }
+                            });
+                        }
+                    }
+                })
+            } else {
+                $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found. Please review your info above.")
+                $(".alert-danger").slideDown();
+            }
+        });
 
-		var elements = document.getElementsByTagName("INPUT");
-		for (var i = 0; i < elements.length; i++) {
-			elements[i].oninvalid = function (e) {
-				e.target.setCustomValidity("");
-				if (!e.target.validity.valid) {
-					var errMessage = $(e.target).siblings(".invalid-feedback").text().trim() || "This field cannot be left blank!"
-					e.target.setCustomValidity(errMessage);
-				}
-			};
-			elements[i].oninput = function (e) {
-				e.target.setCustomValidity("");
-			};
-		}
-	})
+        var elements = document.getElementsByTagName("INPUT");
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].oninvalid = function (e) {
+                e.target.setCustomValidity("");
+                if (!e.target.validity.valid) {
+                    var errMessage = $(e.target).siblings(".invalid-feedback").text().trim() || "This field cannot be left blank!"
+                    e.target.setCustomValidity(errMessage);
+                }
+            };
+        }
+    })
 </script>
