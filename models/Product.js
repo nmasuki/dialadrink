@@ -26,7 +26,7 @@ Product.add({
     description: {type: Types.Html, wysiwyg: true, height: 150},
     publishedDate: {type: Date, default: Date.now},
 
-    popularity: {type: Number, hidden: true},
+    popularity: {type: Number, noedit: true},
 
     category: {type: Types.Relationship, ref: 'ProductCategory'},
     subCategory: {type: Types.Relationship, ref: 'ProductSubCategory', filters: {product: ':category'}},

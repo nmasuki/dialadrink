@@ -351,6 +351,11 @@ String.prototype.truncate = function (length, ending) {
 	}
 };
 
+if (!Array.prototype.clone)
+    Array.prototype.clone = function () {
+        return this.slice(0);
+    };
+
 if (!Array.prototype.nth)
 	Array.prototype.nth = function (filter, index) {
 		index = (index || 1) - 1;
@@ -369,26 +374,12 @@ if (!Array.prototype.first)
 		return filtered ? filtered[0] : null;
 	}
 
-if (!Array.prototype.clone)
-	Array.prototype.clone = function () {
-		return this.slice(0);
-	};
-
-
-if (!Array.prototype.first)
-	Array.prototype.first = function (filter) {
-		filter = filter || (f => true);
-		var arr = this.filter(filter)
-		return arr[0];
-	};
-
 if (!Array.prototype.last)
 	Array.prototype.last = function (filter) {
 		filter = filter || (f => true);
 		var arr = this.filter(filter)
 		return arr[arr.length - 1];
 	};
-
 
 //
 if (!Array.prototype.any)
@@ -447,7 +438,13 @@ if (!Array.prototype.splitChunks)
 
 		var groups = this.groupBy((a, i) => i % chunkCount);
 		return Object.values(groups);
-	}
+	};
+//
+if (!Array.prototype.group)
+    Array.prototype.group = function (compare) {
+        var groups = this.groupBy();
+        return Object.keys(groups).map(k => groups[k]);
+    };
 
 //
 if (!Array.prototype.groupBy)
@@ -459,14 +456,8 @@ if (!Array.prototype.groupBy)
 			i++;
 			return groups;
 		}, {});
-	}
-
-//
-if (!Array.prototype.group)
-	Array.prototype.group = function (compare) {
-		var groups = this.groupBy();
-		return Object.keys(groups).map(k => groups[k]);
 	};
+
 
 if (!Array.prototype.distinctBy)
 	Array.prototype.distinctBy = function (compare) {

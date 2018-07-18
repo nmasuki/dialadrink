@@ -13,12 +13,12 @@ self.addEventListener('install', function (event) {
 					console.warn(e);
 				}
 				return null;
-			}).catch(err => {
+			}).catch(function(err){
 				console.warn(err)
 			});
-		}).catch(err => {
-			console.warn(err)
-		}));
+		}).catch(function(err){
+            console.warn(err)
+        }));
 });
 
 //If any fetch fails, it will look for the request in the cache and serve it from there first
@@ -32,12 +32,12 @@ self.addEventListener('fetch', function (event) {
 					console.warn(e);
 				}
 				return null;
-			}).catch(err => {
-				console.warn(err)
-			});
-		}).catch(err => {
-			console.warn(err)
-		});
+			}).catch(function(err){
+                console.warn(err)
+            });
+		}).catch(function(err){
+            console.warn(err)
+        });
 	};
 
 	event.waitUntil(updateCache(event.request));
@@ -51,12 +51,13 @@ self.addEventListener('fetch', function (event) {
 			//If not in the cache, then return error page
 			return caches.open('pwa-offline').then(function (cache) {
 				return cache.match(event.request).then(function (matching) {
-					var report = !matching || matching.status == 404 ? Promise.reject('no-match') : matching;
-					return report
+                    return !matching || matching.status == 404 ? Promise.reject('no-match') : matching;
 				});
-			});
-		}).catch(err => {
-			console.warn(err)
-		})
+			}).catch(function(err){
+                console.warn(err)
+            });
+		}).catch(function(err){
+            console.warn(err)
+        })
 	);
 })
