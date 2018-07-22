@@ -8,12 +8,27 @@
     <meta name="description" content="{{page.meta}}"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{#if page.canonical}}<link rel="canonical" href="{{page.canonical}}"/>{{/if}}
 
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="Dial A Drink Kenya"/>
     <meta property="og:description" content="{{page.meta}}"/>
-    <meta property="og:image" content="/images/icons/apple-icon-152x152.png"/>
+    {{#if product}}
+        {{#each product.altImages}}
+            <meta property="og:image" content="{{cloudinaryUrl this crop='fit'}}"/>
+        {{else}}
+            <meta property="og:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>
+        {{/each}}
+    {{else}}
+        <meta property="og:image" content="/images/icons/apple-icon-152x152.png"/>
+    {{/if}}
 
+    <meta name="twitter:site" content="@DialADrinkKenya">
+    {{#if product}}
+        <meta name="twitter:card" content="summary_large_image">
+    {{/if}}
+    <meta name="twitter:title" content="{{page.title}}">
+    <meta name="twitter:description" content="{{page.meta}}">
     {{!-- This file provides the default styling for the KeystoneJS Content Editor
         - only renders when user is logged in and admin--}}
     {{{isAdminEditorCSS user}}}
@@ -21,11 +36,9 @@
     {{!--PWA setups and js regestry--}}
     {{>pwaheaders}}
 
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700"/>
     <link rel="stylesheet" type="text/css"
           href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
-
     <link href="/styles/site{{dotmin}}.css" rel="stylesheet">
 </head>
 

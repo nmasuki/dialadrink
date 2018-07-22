@@ -52,7 +52,10 @@ exports.initLocals = function (req, res, next) {
 
 exports.initPageLocals = function (req, res, next) {
 	//Load Page details
-	res.locals.page = {title: keystone.get("name")}
+	res.locals.page = {
+		title: keystone.get("name"),
+        canonical: req.originalUrl.replace(/\:\/\/(www.)?/, "://www.")
+	};
 
 	var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 	keystone.list('Page').model
@@ -61,7 +64,7 @@ exports.initPageLocals = function (req, res, next) {
 			var page = pages.orderBy(m => m.href.length).first();
 
 			res.locals.page = Object.assign({title: keystone.get("name")}, page && page.toObject() || {});
-			next();
+			next(err);
 		});
 	
 }
@@ -88,7 +91,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
 			else
 				res.locals.breadcrumbs = [{"label": "Home", "href": "/"}];
 
-			next();
+			next(err);
 		})
 }
 

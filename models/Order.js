@@ -181,9 +181,9 @@ Order.register();
 //Some random number from which to start counting
 var autoId = 72490002;
 
-Order.getNextOrderId = () => autoId = autoId + 100;
+Order.getNextOrderId = () => (autoId = (autoId + 100));
 
-Order.model.find().sort({'id': -1}).limit(1)
+Order.model.find().sort({'orderNumber': -1})//.limit(1)
     .exec(function (err, data) {
         if (data[0] && data[0].orderNumber)
             autoId = data[0].orderNumber;

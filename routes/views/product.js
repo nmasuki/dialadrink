@@ -14,16 +14,18 @@ router.get("/:product", function (req, res) {
             if (product) {
                 locals.product = product;
 
-                [
-                    product.category && product.category.name,
-                    product.subCategory && product.subCategory.name,
-                    product.name
-                ].filter(i => !!i).forEach(i => {
+                if (product.category && product.category.name) {
                     locals.breadcrumbs.push({
-                        label: i,
-                        href: "/" + i.toLowerCase()
-                    })
-                });
+                        label: product.category.name,
+                        href: [product.category.key].join("/")
+                    });
+
+                    if (product.subCategory && product.subCategory.name)
+                        locals.breadcrumbs.push({
+                            label: product.subCategory.name,
+                            href: [product.category.key, product.subCategory.key].join("/")
+                        });
+                }
 
                 locals.breadcrumbs.push({
                     label: product.name,
@@ -44,7 +46,6 @@ router.get("/:product", function (req, res) {
                         locals.similar = products
                             .orderBy(p => Math.abs(p.popularity - product.popularity))
                             .slice(0, 10);
-
 
                     //popularity goes up
                     product.addPopularity(1);

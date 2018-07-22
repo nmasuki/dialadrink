@@ -152,7 +152,7 @@ Product.findPublished = function (filter, callback) {
 };
 
 Product.findOnePublished = function (filter, callback) {
-    filter = Object.assign(filter || {}, {state: 'published'});
+    filter = Object.assign({state: 'published'}, filter || {});
     var a = keystone.list('Product').model.findOne(filter)
         .sort({popularity: -1})
         .populate('brand')
@@ -228,10 +228,11 @@ Product.search = function (query, next) {
     // Set locals
     var filters = {
         "$or": [
+            {key: regex2},
             {href: regex},
             {href: regex2},
-            {key: regex2},
             {name: regex},
+            {name: regex2},
             //{description: regex}
         ]
     };
