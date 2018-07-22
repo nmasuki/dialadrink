@@ -175,7 +175,7 @@ Order.schema.methods.sendUserNotification = function (callback) {
 
 keystone.deepPopulate(Order.schema);
 
-Order.defaultColumns = 'orderDate|20%, orderNumber, delivery.firstName|20%, delivery.phoneNumber, deliveryAddress|20%';
+Order.defaultColumns = 'orderDate|20%, orderNumber, delivery.firstName|20%, delivery.phoneNumber';
 Order.register();
 
 //Some random number from which to start counting

@@ -33,7 +33,7 @@ MenuItem.add({
 MenuItem.relationship({ref: 'MenuItem', path: 'submenus'});
 MenuItem.relationship({ref: 'MenuItem', path: 'parent'});
 
-MenuItem.defaultColumns = 'label, level, parent, link|20%, show|20%';
+MenuItem.defaultColumns = 'label, level, parent, href|20%, show|20%';
 
 
 keystone.deepPopulate(MenuItem.schema);
