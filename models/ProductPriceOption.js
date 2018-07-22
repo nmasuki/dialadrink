@@ -32,7 +32,7 @@ ProductPriceOption.schema.pre('save', function (next) {
     var ppo = this;
 
     function updateProduct(next) {
-        var productId = this.product._id || this.product;
+        var productId = ppo.product._id || ppo.product;
         keystone.list("Product").model.findOne({_id: productId})
             .deepPopulate("priceOptions.option")
             .exec((err, product) => {
@@ -45,17 +45,17 @@ ProductPriceOption.schema.pre('save', function (next) {
                     product.priceOptions.push(thisOption = ppo);
 
                 thisOption = Object.assign(thisOption, ppo);
-
                 product.save();
+
                 next(err);
             });
     }
 
-    if (this.option && this.option.quantity) {
-        this.optionText = this.option.quantity;
+    if (ppo.option && ppo.option.quantity) {
+        ppo.optionText = ppo.option.quantity;
         updateProduct(next);
     } else {
-        keystone.list("ProductOption").model.findOne({_id: this.option._id || this.option})
+        keystone.list("ProductOption").model.findOne({_id: ppo.option._id || ppo.option})
             .populate('option')
             .exec(function (err, option) {
                 if (err || !option)
