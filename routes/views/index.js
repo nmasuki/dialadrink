@@ -97,8 +97,8 @@ router.get("/pricelist", function (req, res) {
 
             pdf.create(html, {
                 //8.27 × 11.69 in
-                "height": "11.69in",        // allowed units: mm, cm, in, px
-                "width": "8.27in",            // allowed units: mm, cm, in, px
+                "height": (11.69 * 2) + "in",        // allowed units: mm, cm, in, px
+                "width": (8.27 * 2) + "in",            // allowed units: mm, cm, in, px
 
                 //"format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
                 //"orientation": "landscape", // portrait or landscape
