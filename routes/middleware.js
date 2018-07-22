@@ -53,7 +53,7 @@ exports.initLocals = function (req, res, next) {
 exports.initPageLocals = function (req, res, next) {
 	//Load Page details
 	res.locals.page = {
-		title: keystone.get("name"),
+		title: keystone.get("name").toProperCase(),
         canonical: "https://www.dialadrinkkenya.com" + req.originalUrl.replace(/\:\/\/(www.)?/, "://www.")
 	};
 
