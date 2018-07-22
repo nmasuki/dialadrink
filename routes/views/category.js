@@ -34,7 +34,7 @@ router.get("/:category", function (req, res) {
                             title += (title ? ", " : "") + products[i].name;
                     }
 
-                    if(!locals.page.meta)
+                    if (!locals.page.meta)
                         locals.page.meta = meta + "all available at " + keystone.get("name");
 
                     if (!locals.page.title || locals.page.title == keystone.get("name"))
@@ -82,7 +82,8 @@ router.get("/:category/:subcategory", function (req, res) {
                     if (!locals.page.title || locals.page.title == keystone.get("name"))
                         locals.page.title = title + " | " + keystone.get("name");
 
-                    locals.page.h1 = subCategories.first().name;
+                    if (subCategories.first(a => !!a))
+                        locals.page.h1 = subCategories.first(a => !!a).name;
                     locals.products = products;
                     next();
                 });
