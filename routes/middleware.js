@@ -54,7 +54,7 @@ exports.initPageLocals = function (req, res, next) {
 	//Load Page details
 	res.locals.page = {
 		title: keystone.get("name"),
-        canonical: req.originalUrl.replace(/\:\/\/(www.)?/, "://www.")
+        canonical: "https://www.dialadrinkkenya.com" + req.originalUrl.replace(/\:\/\/(www.)?/, "://www.")
 	};
 
 	var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
