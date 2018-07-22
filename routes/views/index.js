@@ -96,11 +96,12 @@ router.get("/pricelist", function (req, res) {
             res.setHeader('Content-type', 'application/pdf');
 
             pdf.create(html, {
-                //"height": "10.5in",        // allowed units: mm, cm, in, px
-                //"width": "8in",            // allowed units: mm, cm, in, px
+                //8.27 × 11.69 in
+                "height": "11.69in",        // allowed units: mm, cm, in, px
+                "width": "8.27in",            // allowed units: mm, cm, in, px
 
-                "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
-                "orientation": "landscape", // portrait or landscape
+                //"format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+                //"orientation": "landscape", // portrait or landscape
             }).toStream(function (err, stream) {
                 stream.pipe(res);
             });
