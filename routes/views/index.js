@@ -82,7 +82,7 @@ router.get("/pricelist", function (req, res) {
     var locals = res.locals;
 
     Product.findPublished({}, function (err, products) {
-        locals.products = products.orderBy(p=>p.name);
+        locals.products = products.orderBy(p => p.name);
         locals.lastUpdated = products.map(p => p.modifiedDate).orderBy().first();
         locals.categories = products.map(p => p.category && p.category.name).filter(c => !!c).distinct().orderBy();
 
@@ -95,7 +95,13 @@ router.get("/pricelist", function (req, res) {
             res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
             res.setHeader('Content-type', 'application/pdf');
 
-            pdf.create(html).toStream(function(err, stream){
+            pdf.create(html, {
+                //"height": "10.5in",        // allowed units: mm, cm, in, px
+                //"width": "8in",            // allowed units: mm, cm, in, px
+
+                "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+                "orientation": "landscape", // portrait or landscape
+            }).toStream(function (err, stream) {
                 stream.pipe(res);
             });
         }
