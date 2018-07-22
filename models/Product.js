@@ -25,6 +25,7 @@ Product.add({
     pageTitle: {type: String},
     description: {type: Types.Html, wysiwyg: true, height: 150},
     publishedDate: {type: Date, default: Date.now},
+    modifiedDate: {type: Date, default: Date.now},
 
     popularity: {type: Number, noedit: true},
 
@@ -136,6 +137,7 @@ Product.schema.pre('save', function (next) {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
     this.price = cheapestOption.price;
     this.quantity = cheapestOption.quantity;
+    this.modifiedDate = new Date();
     next();
 });
 
@@ -218,7 +220,7 @@ Product.findByOption = function (filter, callback) {
             keystone.list('ProductPriceOption').model.find(filter)
                 .exec((err, options) => {
                     if (err || !options)
-                        return console.log(err);
+                        return console.log(err, options);
 
                     filter = {option: {"$in": options.map(b => b._id)}};
                     Product.findPublished(filter, callback);
@@ -229,7 +231,7 @@ Product.findByOption = function (filter, callback) {
 
 Product.search = function (query, next) {
 
-    var regex = new RegExp(query.trim(), "i");
+    var regex = new RegExp(query.trim().escapeRegExp(), "i");
     var regex2 = new RegExp(query.cleanId().trim(), "i");
 
     // Set locals
@@ -240,6 +242,8 @@ Product.search = function (query, next) {
             {href: regex2},
             {name: regex},
             {name: regex2},
+            {quantity: regex},
+            {quantity: regex2},
             //{description: regex}
         ]
     };

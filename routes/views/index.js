@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var router = keystone.express.Router();
+
 var Page = keystone.list("Page");
 var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
@@ -35,7 +36,7 @@ function search(req, res, next) {
                 title += (title ? ", " : "") + products[i].name;
         }
 
-        if(!locals.page.meta)
+        if (!locals.page.meta)
             locals.page.meta = meta + " all available at " + keystone.get("name");
 
         if (!locals.page.title || locals.page.title == keystone.get("name"))
@@ -74,6 +75,33 @@ router.get("/home", function (req, res) {
 
     // Render the view
     view.render('index');
+});
+
+router.get("/pricelist", function (req, res) {
+    var view = new keystone.View(req, res);
+    var locals = res.locals;
+
+    Product.findPublished({}, function (err, products) {
+        locals.products = products.orderBy(p=>p.name);
+        locals.lastUpdated = products.map(p => p.modifiedDate).orderBy().first();
+        locals.categories = products.map(p => p.category && p.category.name).filter(c => !!c).distinct().orderBy();
+
+        function printPdf(err, html) {
+            var pdf = require('html-pdf');
+
+            let filename = encodeURIComponent("DIAL A DRINK PRICELIST") + '.pdf';
+            // Setting response to 'attachment' (download).
+            // If you use 'inline/attachment' here it will automatically open/download the PDF
+            res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
+            res.setHeader('Content-type', 'application/pdf');
+
+            pdf.create(html).toStream(function(err, stream){
+                stream.pipe(res);
+            });
+        }
+
+        view.render('pricelist', {layout: 'newsletter'}, printPdf);
+    });
 });
 
 router.get("/products.json", function (req, res) {

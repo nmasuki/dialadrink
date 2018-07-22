@@ -17,6 +17,7 @@
     "grunt-contrib-cssmin": "^2.2.1",
     "grunt-contrib-uglify": "^3.3.0",
     "handlebars": "4.0.6",
+    "html-pdf": "^2.2.0",
     "keystone": "4.0.0-beta.5",
     "keystone-email": "^1.0.5",
     "lodash": "^4.13.1",
