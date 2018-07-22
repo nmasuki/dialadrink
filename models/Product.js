@@ -12,7 +12,7 @@ Product.add({
     href: {type: String, initial: true, required: true},
     name: {type: String, initial: true},
 
-    price: {type: Types.Number},
+    price: {type: Types.Number, noedit: true},
     offerPrice: {type: Types.Number},
 
     onOffer: {type: Types.Boolean},
@@ -56,6 +56,10 @@ Product.schema.virtual('options').get(function () {
     })).distinctBy(op => op.quantity);
 });
 
+Product.schema.virtual('cheapestOption').get(function(){
+   return this.options.orderBy(o=>o.price).first();
+});
+
 Product.schema.virtual('avgRatings').get(function () {
     if (this.ratings && this.ratings.length)
         return Math.round((this.ratings || []).avg(r => r.rating));
@@ -82,17 +86,13 @@ Product.schema.virtual('ratingCount').get(function () {
 });
 
 Product.schema.virtual('quantity').get(function () {
-    var mainPriceOption = this.priceOptions
-        .find(po => po.price == this.price) || this.priceOptions.first() || {};
-
-    return mainPriceOption.option ? mainPriceOption.option.quantity : null;
+    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
+    return cheapestOption ? cheapestOption.quantity : null;
 });
 
 Product.schema.virtual('currency').get(function () {
-    var mainPriceOption = this.priceOptions
-        .find(po => po.price == this.price) || this.priceOptions.first() || {};
-
-    return mainPriceOption.option ? mainPriceOption.option.currency || "KES" : null;
+    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
+    return cheapestOption ? cheapestOption.currency || "KES" : null;
 });
 
 Product.schema.virtual('tags').get(function () {
@@ -131,6 +131,13 @@ Product.schema.methods.addPopularity = function (factor) {
 Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
 keystone.deepPopulate(Product.schema);
+
+Product.schema.pre('save', function (next) {
+    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
+    this.price = cheapestOption.price;
+    this.quantity = cheapestOption.quantity;
+    next();
+});
 
 Product.register();
 

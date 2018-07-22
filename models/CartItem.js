@@ -55,14 +55,6 @@ CartItem.schema.virtual("cartId").get(function () {
 	return (this.product._id || this.product) + "|" + this.quantity;
 });
 
-//Some random number from which to start counting
-var autoId = 72490002;
-
-CartItem.schema.pre('save', function (next) {
-	this.orderNumber = autoId + 100;
-	next();
-});
-
 CartItem.schema.set('toObject', {
     virtual: true,
     transform: function (doc, ret, options) {
@@ -82,10 +74,3 @@ CartItem.schema.set('toJSON', {
 CartItem.defaultColumns = 'date, product, pieces|20%, quantity|20%';
 
 CartItem.register();
-
-CartItem.model.find().sort({'id': -1}).limit(1)
-	.exec(function (err, data) {
-		if (data[0] && data[0].orderNumber)
-			autoId = data[0].orderNumber;
-	});
-
