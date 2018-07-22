@@ -127,9 +127,12 @@ router.get("/:post", function (req, res) {
             .findOne({href: req.params.post})
             .populate('author categories')
             .exec((err, post) => {
-                locals.data.blog = post;
-                locals.page.title = post.title;
-                locals.page.meta = post.content.breaf || post.title;
+                if (post) {
+                    locals.data.blog = post;
+                    locals.page.title = post.title;
+                    locals.page.meta = post.content.breaf || post.title;
+                }
+
                 next();
             });
     });
