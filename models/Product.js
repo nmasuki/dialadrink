@@ -100,8 +100,8 @@ Product.schema.virtual('tags').get(function () {
 
     if (this.brand) {
         tags.push(this.brand.name);
-        if (this.brand.company)
-            tags.push(this.brand.company.name.toProperCase(true));
+        if (this.brand.company && this.brand.company.name)
+            tags.push((this.brand.company.name || "").toProperCase(true));
     }
     if (this.category)
         tags.push(this.category.name);
