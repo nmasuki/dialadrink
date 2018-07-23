@@ -17,13 +17,13 @@ router.get("/:product", function (req, res) {
                 if (product.category && product.category.name) {
                     locals.breadcrumbs.push({
                         label: product.category.name,
-                        href: [product.category.key].join("/")
+                        href: ["/category", product.category.key].join("/")
                     });
 
                     if (product.subCategory && product.subCategory.name)
                         locals.breadcrumbs.push({
                             label: product.subCategory.name,
-                            href: [product.category.key, product.subCategory.key].join("/")
+                            href: ["/category", product.category.key, product.subCategory.key].join("/")
                         });
                 }
 
