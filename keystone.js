@@ -45,9 +45,8 @@ Object.defineProperty(
 	keystone.Field.Types,
 	'ProductPriceOption', {
 		get: function () {
-			var ppo = require('./helpers/customTypes/ProductPriceOption');
 			// or whatever your path is
-			return ppo;
+			return require('./helpers/customTypes/ProductPriceOption');
 		}
 	}
 );

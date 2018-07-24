@@ -9,8 +9,10 @@ router.get("/:product", function (req, res) {
 
     locals.page = Object.assign(locals.page, {title: ""});
 
+    var filter = {"$or": [{href: regex}, {href: req.params.product}]}
+
     view.on('init', function (next) {
-        keystone.list('Product').findOnePublished({href: regex}, function (err, product) {
+        keystone.list('Product').findOnePublished(filter, function (err, product) {
             if (product) {
                 locals.product = product;
 

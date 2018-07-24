@@ -12,7 +12,7 @@ var ProductOption = new keystone.List('ProductOption', {
 });
 
 ProductOption.add({
-	quantity: {type: String},
+	quantity: {type: String, initial: true, required: true},
 	description: {type: Types.Html, wysiwyg: true, height: 150}
 });
 

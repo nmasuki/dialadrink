@@ -32,12 +32,15 @@ ProductPriceOption.schema.pre('save', function (next) {
     var ppo = this;
 
     function updateProduct(next) {
+        if(!ppo.product)
+            return next();
+
         var productId = ppo.product._id || ppo.product;
         keystone.list("Product").model.findOne({_id: productId})
             .deepPopulate("priceOptions.option")
             .exec((err, product) => {
-                if(err)
-                    console.error(err);
+                if(err || !product)
+                    return next(err);
 
                 var thisOption = product.priceOptions.find(po=>po.option.quality == ppo.quality);
 
@@ -54,7 +57,7 @@ ProductPriceOption.schema.pre('save', function (next) {
     if (ppo.option && ppo.option.quantity) {
         ppo.optionText = ppo.option.quantity;
         updateProduct(next);
-    } else {
+    } else if(ppo.option){
         keystone.list("ProductOption").model.findOne({_id: ppo.option._id || ppo.option})
             .populate('option')
             .exec(function (err, option) {
@@ -64,6 +67,20 @@ ProductPriceOption.schema.pre('save', function (next) {
                 ppo.optionText = option.quantity;
                 updateProduct(next);
             })
+    } else if(ppo.optionText){
+        var filter = {"$or":[{quantity: ppo.optionText.trim()}, {"key": ppo.optionText.cleanId()}]};
+        keystone.list("ProductOption").model.findOne(filter)
+            .populate('option')
+            .exec(function (err, option) {
+                if (err || !option)
+                    return next(err);
+
+                ppo.optionText = option.quantity;
+                ppo.option = option;
+                updateProduct(next);
+            })
+    }else{
+        next();
     }
 });
 
