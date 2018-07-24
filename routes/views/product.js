@@ -64,24 +64,28 @@ router.get("/:product", function (req, res) {
 });
 
 router.get("/rate/:product/:rating", function (req, res, next) {
-    keystone.list('Product').findOnePublished({href: req.params.product})
+    keystone.list('Product').findOnePublished({_id: req.params.product})
         .exec(function (err, product) {
             if (product) {
 
-                var userRating = new ProductRating.model({
-                    userId: req.session.id,
-                    product: product,
-                    rating: req.params.rating,
-                });
+                var userRating = product.ratings.find(r=> r.userId == req.session.id);
+                if(!userRating){
+                    userRating = new ProductRating.model({
+                        userId: req.session.id,
+                        product: product,
+                        rating: req.params.rating,
+                    });
 
-                userRating.save((err, a) => {
-                    if (err)
-                        console.err(err);
+                    userRating.save((err, a) => {
+                        if (err)
+                            console.err(err);
 
-                    product.ratings.push(userRating);
-                    product.save();
-                });
+                        product.ratings.push(userRating);
+                        product.save();
+                    });
+                }else{
 
+                }
 
                 return res.send({state: true, rating: userRating})
             }
