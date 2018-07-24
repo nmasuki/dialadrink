@@ -467,7 +467,7 @@ function handleProductRating(){
 
     $(document).on("click", ".unrated .glyphicon", function (e) {
         $(this).parent().removeClass("unrated").addClass("rated");
-        $.ajax("/product/rate/{{product.href}}/" + parseInt($(this).index()));
+        $.ajax("/product/rate/{{product.href}}/" + (parseInt($(this).index()) + 1));
     });
 
     $(document).on("click", ".thumbnail.review-link", function (e) {

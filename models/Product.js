@@ -1,4 +1,5 @@
 var keystone = require('keystone');
+var extractor = require("keyword-extractor");
 var Types = keystone.Field.Types;
 
 var Product = new keystone.List('Product', {
@@ -39,6 +40,37 @@ Product.add({
     brand: {type: Types.Relationship, ref: 'ProductBrand'},
 
     ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true}
+});
+
+Product.schema.virtual("keyWords").get(function () {
+    var tags = [];
+
+    if (this.brand) {
+        tags.push(this.brand.name);
+        if (this.brand.company && this.brand.company.name)
+            tags.push((this.brand.company.name || "").toProperCase(true));
+    }
+    if (this.category)
+        tags.push(this.category.name);
+    if (this.subCategory)
+        tags.push(this.subCategory.name);
+    if (this.options)
+        this.options.forEach(po => tags.push(po.quantity));
+
+    var sentence = ([this.name, this.pageTitle, this.description].concat(tags))
+        .join(", ").replace(/(&nbsp;?)/g, " ")
+        .replace(/\W/g, function(x){
+            return (x.trim() + " ");
+        });
+
+    var keyWords = extractor.extract(sentence, {
+        language: "english",
+        remove_digits: false,
+        return_changed_case: false,
+        remove_duplicates: true
+    });
+
+    return keyWords.filter(s => s && s.length > 2);
 });
 
 Product.schema.virtual('options').get(function () {

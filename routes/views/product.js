@@ -42,6 +42,7 @@ router.get("/:product", function (req, res) {
                 ].filter(a => !!a).join(" - ") + " | " + keystone.get("name");
 
                 locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
+                locals.page.keyWords = product.keyWords.join(", ");
 
                 product.findSimilar((err, products) => {
                     if (products)
