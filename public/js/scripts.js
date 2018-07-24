@@ -161,7 +161,7 @@ function handleDropdown() {
     });
 }
 
-/* Fucntion get width browser */
+/* Function get width browser */
 function getWidthBrowser() {
     var myWidth;
 
@@ -454,6 +454,30 @@ function addClassFirst() {
     }*/
 }
 
+function handleProductRating(){
+    $(document).on("mouseover", ".unrated .glyphicon", function (e) {
+        var index = $(this).index();
+        for (var i = 0; i <= index; i++)
+            $(".unrated .glyphicon").eq(i).css("color", "orange");
+    });
+
+    $(document).on("mouseout", ".unrated", function () {
+        $(this).find(".glyphicon").css("color", "black");
+    });
+
+    $(document).on("click", ".unrated .glyphicon", function (e) {
+        $(this).parent().removeClass("unrated").addClass("rated");
+        $.ajax("/product/rate/{{product.href}}/" + parseInt($(this).index()));
+    });
+
+    $(document).on("click", ".thumbnail.review-link", function (e) {
+        var src = $(this).find("img").attr("src");
+        $(this).parents(".row.product-thumbnails")
+            .siblings("img.image-responsive")
+            .attr("src", src)
+    });
+}
+
 $(window).resize(function () {
     toggleLeftMenu();
 });
@@ -465,6 +489,8 @@ $(window).ready(function ($) {
     slider_main();
 
     slider_product();
+
+    handleProductRating();
 
     handleDropdown();
 

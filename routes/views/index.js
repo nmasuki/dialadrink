@@ -17,12 +17,17 @@ function search(req, res, next) {
 
     //Searching h1 title
     locals.page = Object.assign(locals.page, {
-        h1: req.params.query.toProperCase() + ` drinks`
+        h1: ((req.params.query || "").toProperCase() + " drinks").trim()
     });
 
     if (req.originalUrl.startsWith("/search"))
         locals.breadcrumbs.push({
             label: "Search Results",
+            href: req.originalUrl
+        });
+    else
+        locals.breadcrumbs.push({
+            label: (req.params.query || "Search Results").toLowerCase(),
             href: req.originalUrl
         });
 

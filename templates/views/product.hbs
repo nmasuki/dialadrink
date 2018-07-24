@@ -274,33 +274,10 @@
         //$('.tab-content .tab-pane').scrollbar();
         //$(".similar-products").owlCarousel({items:12})
 
-        $(document).on("mouseover", ".unrated .glyphicon", function (e) {
-            var index = $(this).index();
-            for (var i = 0; i < index; i++)
-                $(".unrated .glyphicon").eq(i).css("color", "orange");
-        });
-
-        $(document).on("mouseout", ".unrated", function () {
-            $(this).find(".glyphicon").css("color", "black");
-        });
-
-        $(document).on("click", ".unrated .glyphicon", function (e) {
-            $(this).parent().removeClass("unrated").addClass("rated");
-            $.ajax("/product/rate/{{product.href}}/" + parseInt($(this).index()));
-        });
-
-        $(document).on("click", ".thumbnail.review-link", function (e) {
-            var src = $(this).find("img").attr("src");
-            $(this).parents(".row.product-thumbnails")
-                    .siblings("img.image-responsive")
-                    .attr("src", src)
-        });
-
         {{#if userRating}}
             var index = Math.min(5,{{userRating.rating}});
             for (var i = 0; i < index; i++)
                 $(".rated .glyphicon").eq(i).css("color", "orange");
         {{/if}}
-
     })
 </script>

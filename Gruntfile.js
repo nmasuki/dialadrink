@@ -18,25 +18,6 @@ module.exports = function (grunt) {
                 }]
             }
         },
-        cssmin: {
-            options: {
-                mergeIntoShorthands: false,
-                roundingPrecision: -1
-            },
-            target: {
-                files: [{
-                    expand: true,
-                    src: ['public/styles/**/*.css', '!public/styles/**/*min.css'], //['public/js/*.js'],//
-                    cwd: '.',
-                    rename: function (dst, src) {
-                        if (src.indexOf('.min.css') < 0)
-                            return (dst ? dst + '/' : '') + src.replace('.css', '.min.css');
-                        else
-                            return null;
-                    }
-                }]
-            }
-        },
         concat: {
             options: {
                 separator: ';',
@@ -61,16 +42,51 @@ module.exports = function (grunt) {
                 ],
                 dest: 'public/js/all.scripts.min.js',
             }
-        }
+        },
+        cssmin: {
+            options: {
+                mergeIntoShorthands: true,
+                roundingPrecision: -1
+            },
+            target: {
+                files: [{
+                    expand: true,
+                    src: ['public/styles/**/*.css', '!public/styles/**/*min.css'],
+                    cwd: '.',
+                    rename: function (dst, src) {
+                        if (src.indexOf('.min.css') < 0)
+                            return (dst ? dst + '/' : '') + src.replace('.css', '.min.css');
+                        else
+                            return null;
+                    }
+                }]
+            }
+        },
+        css_clean: {
+            options: {},
+            target: {
+                files: [{
+                    expand: true,
+                    src: ['!public/styles/**/*.css', 'public/styles/**/*min.css'],
+                    cwd: '.',
+                    rename: function (dst, src) {
+                        if (src.indexOf('.min.css') < 0)
+                            return (dst ? dst + '/' : '') + src.replace('.css', 'min.css');
+                        else
+                            return src;
+                    }
+                }]
+            }
+        },
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-css-clean');
 
     grunt.registerTask('build', [
-        'uglify',
-        'cssmin',
-        'concat'
+        'uglify', 'concat',
+        'cssmin', 'css_clean'
     ]);
 }
