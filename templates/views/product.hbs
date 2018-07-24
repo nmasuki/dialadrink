@@ -41,7 +41,9 @@
     }
 </style>
 {{#with product}}
-    <div class="container" id="product-section" itemscope itemtype="http://schema.org/Product">
+    <div class="container" id="product-section"
+         data-product="{{_id}}"
+         itemscope itemtype="http://schema.org/Product">
         <div class="row">
             <div class="col-md-4">
                 <img src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"

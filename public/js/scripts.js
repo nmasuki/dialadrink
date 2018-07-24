@@ -466,8 +466,10 @@ function handleProductRating(){
     });
 
     $(document).on("click", ".unrated .glyphicon", function (e) {
-        $(this).parent().removeClass("unrated").addClass("rated");
-        $.ajax("/product/rate/{{product.href}}/" + (parseInt($(this).index()) + 1));
+        var elem = $(this);
+        elem.parent().removeClass("unrated").addClass("rated");
+        var productId = elem.parents("[data-product]").data("product");
+        $.ajax(["/product/rate", productId, parseInt(elem.index()) + 1].join("/"));
     });
 
     $(document).on("click", ".thumbnail.review-link", function (e) {

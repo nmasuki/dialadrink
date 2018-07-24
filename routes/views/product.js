@@ -63,7 +63,7 @@ router.get("/:product", function (req, res) {
     view.render('product');
 });
 
-router.get("/rate/:product/:rating", function (req, res) {
+router.get("/rate/:product/:rating", function (req, res, next) {
     keystone.list('Product').findOnePublished({href: req.params.product})
         .exec(function (err, product) {
             if (product) {
