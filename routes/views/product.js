@@ -43,6 +43,7 @@ router.get("/:product", function (req, res) {
 
                 locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
                 locals.page.keyWords = product.keyWords.join(", ");
+                locals.page.meta = locals.page.meta || product.keyWords.join(" ") + ".";
 
                 product.findSimilar((err, products) => {
                     if (products)
@@ -68,8 +69,8 @@ router.get("/rate/:product/:rating", function (req, res, next) {
         .exec(function (err, product) {
             if (product) {
 
-                var userRating = product.ratings.find(r=> r.userId == req.session.id);
-                if(!userRating){
+                var userRating = product.ratings.find(r => r.userId == req.session.id);
+                if (!userRating) {
                     userRating = new ProductRating.model({
                         userId: req.session.id,
                         product: product,
@@ -83,7 +84,7 @@ router.get("/rate/:product/:rating", function (req, res, next) {
                         product.ratings.push(userRating);
                         product.save();
                     });
-                }else{
+                } else {
 
                 }
 
