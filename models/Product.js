@@ -12,8 +12,13 @@ Product.add({
     href: {type: String, initial: true, required: true},
     name: {type: String, initial: true},
 
-    price: {type: Types.Number, noedit: true},
-    offerPrice: {type: Types.Number},
+    priceOptions: {
+        type: Types.Relationship,
+        ref: 'ProductPriceOption',
+        label: "Prices",
+        many: true,
+        noedit: true,
+    },
 
     onOffer: {type: Types.Boolean},
     inStock: {type: Types.Boolean},
@@ -33,18 +38,6 @@ Product.add({
     subCategory: {type: Types.Relationship, ref: 'ProductSubCategory', filters: {product: ':category'}},
     brand: {type: Types.Relationship, ref: 'ProductBrand'},
 
-    priceOptions: {
-        type: Types.Relationship,
-        ref: 'ProductPriceOption',
-        label: "Prices",
-        many: true,
-        noedit: true,
-    },
-
-    //priceOptionsText: { type: Types.TextArray, label: "Option Quantity" },
-
-    //priceOptionsValue: { type: Types.NumberArray, label: "Option Price" },
-
     ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true}
 });
 
@@ -57,8 +50,8 @@ Product.schema.virtual('options').get(function () {
     })).distinctBy(op => op.quantity);
 });
 
-Product.schema.virtual('cheapestOption').get(function(){
-   return this.options.orderBy(o=>o.price).first();
+Product.schema.virtual('cheapestOption').get(function () {
+    return this.options.orderBy(o => o.price).first();
 });
 
 Product.schema.virtual('avgRatings').get(function () {
@@ -94,6 +87,16 @@ Product.schema.virtual('quantity').get(function () {
 Product.schema.virtual('currency').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
     return cheapestOption ? cheapestOption.currency || "KES" : null;
+});
+
+Product.schema.virtual('price').get(function () {
+    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
+    return cheapestOption ? cheapestOption.price : null;
+});
+
+Product.schema.virtual('offerPrice').get(function () {
+    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
+    return cheapestOption ? cheapestOption.offerPrice : null;
 });
 
 Product.schema.virtual('tags').get(function () {
@@ -232,7 +235,7 @@ Product.findByOption = function (filter, callback) {
 Product.search = function (query, next) {
 
     var regex = new RegExp(query.trim().escapeRegExp(), "i");
-    var regex2 = new RegExp(query.cleanId().trim(), "i");
+    var regex2 = new RegExp(query.cleanId().trim().escapeRegExp(), "i");
 
     // Set locals
     var filters = {
@@ -257,7 +260,7 @@ Product.search = function (query, next) {
                         if (err || !products || !products.length)
                             Product.findByOption(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                    Product.findPublished(filters, function (err, products) {
+                                    Product.findPublished(Object.assign({description: regex}, filters), function (err, products) {
                                         next(err, products)
                                     });
                                 else

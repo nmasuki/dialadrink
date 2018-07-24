@@ -6,7 +6,6 @@ var Types = keystone.Field.Types;
  * ==================
  */
 var ProductPriceOption = new keystone.List('ProductPriceOption', {
-    //hidden: true,
     singular: 'Product Price',
     prural: 'Product Prices',
     map: {name: 'label'},
@@ -15,8 +14,10 @@ var ProductPriceOption = new keystone.List('ProductPriceOption', {
 ProductPriceOption.add({
     option: {type: Types.Relationship, ref: 'ProductOption', many: false},
     product: {type: Types.Relationship, ref: 'Product', many: false},
-    price: {type: Types.Number},
+
     currency: {type: String},
+    price: {type: Types.Number},
+    offerPrice: {type: Types.Number},
 
     optionText: {type: String, hidden: true}
 });
