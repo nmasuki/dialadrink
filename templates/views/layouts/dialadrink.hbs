@@ -9,9 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{page.meta}}"/>
     {{#if page.keyWords}}
-        <meta name="keywords" content="{{page.keyWords}}" />
+        <meta name="keywords" content="{{page.keyWords}}"/>
     {{/if}}
-    {{#if page.canonical}}<link rel="canonical" href="{{page.canonical}}"/>{{/if}}
+    {{#if page.canonical}}
+        <link rel="canonical" href="{{page.canonical}}"/>{{/if}}
 
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="Dial A Drink Kenya"/>
@@ -22,8 +23,8 @@
         {{else}}
             <meta property="og:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>
         {{/each}}
-        <meta property='product:price:amount' content='{{product.price}}' />
-        <meta property='product:price:currency' content='{{product.currency}}' />
+        <meta property='product:price:amount' content='{{product.price}}'/>
+        <meta property='product:price:currency' content='{{product.currency}}'/>
     {{else}}
         <meta property="og:image" content="/images/icons/apple-icon-152x152.png"/>
     {{/if}}
@@ -113,9 +114,10 @@
                                             <img class="cart_img" src="/assets/bg-cart.png" alt="My Cart"/>
                                             <span class="cart_text">
 												<a href="/cart">
-													My Cart 
-													<span class="number cart-total-pieces" id="number">{{cartItemCount
-                                                            this}}</span>
+                                                    My Cart
+                                                    <span class="number cart-total-pieces" id="number">
+                                                        {{cartItemCount this}}
+                                                    </span>
 												</a>											  
 											</span>
                                         </div>

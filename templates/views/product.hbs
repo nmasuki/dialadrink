@@ -1,291 +1,306 @@
 <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 <style>
-	.monospaced {
-		font-family: 'Ubuntu Mono', monospaced;
-	}
+    .monospaced {
+        font-family: 'Ubuntu Mono', monospaced;
+    }
 
-	.add-to-cart-wrapper .btn {
-		padding: 10px;
-		border: 1px solid gray;
-		height: 44px;
-		margin: 10px 0px 0 0;
-		border-radius: 2px;
-	}
+    .add-to-cart-wrapper .btn {
+        padding: 10px;
+        border: 1px solid gray;
+        height: 44px;
+        margin: 10px 0px 0 0;
+        border-radius: 2px;
+    }
 
-	#product-section .row {
-		padding-bottom: 10px;
-	}
+    #product-section .row {
+        padding-bottom: 10px;
+    }
 
-	.product-thumbnails > div {
-		margin: 3px;
-		cursor: pointer;
-	}
+    .product-thumbnails > div {
+        margin: 3px;
+        cursor: pointer;
+    }
 
-	.tab-pane {
-		/* border-top: 1px solid #3093a3; */
-		padding: 6px;
-		font-size: 15px;
-	}
+    .tab-pane {
+        /* border-top: 1px solid #3093a3; */
+        padding: 6px;
+        font-size: 15px;
+    }
 
-	.rated .glyphicon, .unrated .glyphicon {
-		font-size: 24px;
-	}
+    .rated .glyphicon, .unrated .glyphicon {
+        font-size: 24px;
+    }
 
-	.unrated .glyphicon {
-		cursor: pointer;
-	}
+    .unrated .glyphicon {
+        cursor: pointer;
+    }
 
-	.more-details .tab-pane {
-		height: 180px;
-		overflow: auto;
-	}
+    .more-details .tab-pane {
+        height: 180px;
+        overflow: auto;
+    }
 </style>
 {{#with product}}
-	<div class="container" id="product-section">
-		<div class="row">
-			<div class="col-md-4">
-				<img src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
-					 class="image-responsive" style="max-height: 400px; margin: 0 auto"
-					 itemprop="image"/>
-				<div class="row product-thumbnails">
-					{{#each altImages}}
-						<div class="col-md-1 ">
-							<div class="thumbnail review-link" style="width: 34px;height: 34px;margin-bottom: 0;">
-								<img src="{{cloudinaryUrl this crop='fit'}}" alt="{{{../name}}}"/>
-							</div>
-						</div>
-					{{else}}
-						<div class="col-md-1 ">
-							<div class="thumbnail">
-								<img src="{{cloudinaryUrl ../image crop='fit'}}" alt="{{{../name}}}"/>
-							</div>
-						</div>
-					{{/each}}
-				</div>
-			</div>
-			<div class="col-md-6">
+    <div class="container" id="product-section" itemscope itemtype="http://schema.org/Product">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
+                     class="image-responsive" style="max-height: 400px; margin: 0 auto"
+                     itemprop="image"/>
+                <div class="row product-thumbnails">
+                    {{#each altImages}}
+                        <div class="col-md-1 ">
+                            <div class="thumbnail review-link" style="width: 34px;height: 34px;margin-bottom: 0;">
+                                <img src="{{cloudinaryUrl this crop='fit'}}" alt="{{{../name}}}" itemprop="image"/>
+                            </div>
+                        </div>
+                    {{else}}
+                        <div class="col-md-1 ">
+                            <div class="thumbnail">
+                                <img src="{{cloudinaryUrl ../image crop='fit'}}" alt="{{{../name}}}"/>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="col-md-6">
 
-				<div class="row">
-					<div class="col-md-12">
-						<h1 style="margin: 0">{{{name}}}</h1>
-					</div>
-				</div><!-- end row-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 style="margin: 0" itemprop="name">{{{name}}}</h1>
+                    </div>
+                </div><!-- end row-->
 
-				<div class="row">
-					<div class="col-md-12">
-						{{#each tags}}
-							<a href="/search/{{{this}}}">
-								<span class="label label-primary">{{{this}}}</span>
-							</a>
-						{{/each}}
-						{{#if no}}
-							<span class="monospaced">No.{{no}}</span>
-						{{/if}}
-					</div>
-				</div><!-- end row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        {{#each tags}}
+                            <a href="/search/{{{this}}}">
+                                <span class="label label-primary">{{{this}}}</span>
+                            </a>
+                        {{/each}}
+                        {{#if no}}
+                            <span class="monospaced">No.{{no}}</span>
+                        {{/if}}
+                    </div>
+                </div><!-- end row -->
 
-				<div class="row">
-					<div class="col-md-12">
-						<p class="description">
-							{{shortDescription}}
-						</p>
-					</div>
-				</div><!-- end row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="description">
+                            {{shortDescription}}
+                        </p>
+                    </div>
+                </div><!-- end row -->
 
-				<div class="row">
-					<div class="col-md-4 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
-						<span class="sr-only">{{formatNumber avgRatings 1}} out of 5 Stars</span>
+                <div class="row"
+                     itemprop="aggregateRating"
+                     itemscope="" itemtype="http://schema.org/AggregateRating">
+                    <div class="col-md-12 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
 						<span class="glyphicon glyphicon-star{{#ifgte 0 avgRatings}}-empty{{/ifgte}}"
-							  aria-hidden="true"></span>
-						<span class="glyphicon glyphicon-star{{#ifgte 1 avgRatings}}-empty{{/ifgte}}"
-							  aria-hidden="true"></span>
-						<span class="glyphicon glyphicon-star{{#ifgte 2 avgRatings}}-empty{{/ifgte}}"
-							  aria-hidden="true"></span>
-						<span class="glyphicon glyphicon-star{{#ifgte 3 avgRatings}}-empty{{/ifgte}}"
-							  aria-hidden="true"></span>
-						<span class="glyphicon glyphicon-star{{#ifgte 4 avgRatings}}-empty{{/ifgte}}"
-							  aria-hidden="true"></span>
-						<span class="label label-success">{{formatNumber avgRatings 1}} *</span>
-					</div>
-					{{#unless ../userRating}}
-						<div class="col-md-8">
-							<span class="monospaced right">Rate {{name}}!</span>
-						</div>
-					{{/unless}}
-				</div><!-- end row -->
+                              aria-hidden="true">
+                        </span>
+                        <span class="glyphicon glyphicon-star{{#ifgte 1 avgRatings}}-empty{{/ifgte}}"
+                              aria-hidden="true">
+                        </span>
+                        <span class="glyphicon glyphicon-star{{#ifgte 2 avgRatings}}-empty{{/ifgte}}"
+                              aria-hidden="true">
+                        </span>
+                        <span class="glyphicon glyphicon-star{{#ifgte 3 avgRatings}}-empty{{/ifgte}}"
+                              aria-hidden="true">
+                        </span>
+                        <span class="glyphicon glyphicon-star{{#ifgte 4 avgRatings}}-empty{{/ifgte}}"
+                              aria-hidden="true">
+                        </span>
 
-				<div class="row">
-					<div class="col-md-5 bottom-rule">
-						<h2>{{currency}} <span class="product-price" id="product-price">{{price}}</span></h2>
-					</div>
+                        <span itemprop="aggregateRating" itemscope
+                              itemtype="http://schema.org/AggregateRating">
+                            <span class="label label-success">
+                                <span itemprop="reviewCount">{{formatNumber avgRatings 1}}</span> *
+                            </span>&nbsp;
+                            {{#if ratings.length}}
+                                <span itemprop="reviewCount" class="monospaced">{{ratings.length}}</span> reviews.
+                            {{/if}}
 
-					{{#ifgt options.length 1}}
-						<div class="col-md-2" style="padding-top: 23px;">Option:</div>
-						<div class="col-md-3" style="padding-top: 15px;">
-							<select id="change-quantity" class="quantity" style="width: 134px; height: 40px;">
-								{{#each options}}
-									<option value="{{price}}" {{#ifeq ../price price}}selected{{/ifeq}}>
-										{{quantity}}
-									</option>
-								{{/each}}
-							</select>
-						</div>
-					{{/ifgt}}
-				</div>
+                            {{#unless ../userRating}}
+                                <span class="monospaced right">Rate {{truncate name 25}}!</span>
+                            {{/unless}}
+                        </span>
 
-				<div class="row add-to-cart-wrapper">
-					<div class="col-md-5 product-qty">
+                    </div>
+                </div><!-- end row -->
+
+                <div class="row">
+                    <div class="col-md-5 bottom-rule">
+                        <h2>{{currency}} <span class="product-price" id="product-price">{{price}}</span></h2>
+                    </div>
+
+                    {{#ifgt options.length 1}}
+                        <div class="col-md-2" style="padding-top: 23px;">Option:</div>
+                        <div class="col-md-3" style="padding-top: 15px;">
+                            <select id="change-quantity" class="quantity" style="width: 134px; height: 40px;">
+                                {{#each options}}
+                                    <option value="{{price}}" {{#ifeq ../price price}}selected{{/ifeq}}>
+                                        {{quantity}}
+                                    </option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    {{/ifgt}}
+                </div>
+
+                <div class="row add-to-cart-wrapper">
+                    <div class="col-md-5 product-qty">
 						<span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 46px;">
 						  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 						</span>
-						<input id="pieces" class="pieces btn btn-default btn-lg btn-qty" style="width: 48px" value="1"/>
-						<span id="pieces-minus" class="pieces-minus btn btn-default btn-lg btn-qty"
-							  style="width: 46px;">							
+                        <input id="pieces" class="pieces btn btn-default btn-lg btn-qty" style="width: 48px" value="1"/>
+                        <span id="pieces-minus" class="pieces-minus btn btn-default btn-lg btn-qty"
+                              style="width: 46px;">
 							<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
 						</span>
-					</div>
-					<div class="col-md-5" style="margin-top: 5px">
-						<button data-qty="{{quantity}}" data-product="{{_id}}"
-								class="btn btn-lg btn-brand btn-full-width add-to-cart">
-							Add to Cart
-						</button>
-						<button onclick="window.location='/checkout'" data-product="{{_id}}" style="width: 121px;"
-								class="btn btn-lg btn-brand btn-full-width">
-							Checkout
-						</button>
-					</div>
-				</div><!-- end row -->
+                    </div>
+                    <div class="col-md-5" style="margin-top: 5px">
+                        <button data-qty="{{quantity}}" data-product="{{_id}}"
+                                class="btn btn-lg btn-brand btn-full-width add-to-cart">
+                            Add to Cart
+                        </button>
+                        <button onclick="window.location='/checkout'" data-product="{{_id}}" style="width: 121px;"
+                                class="btn btn-lg btn-brand btn-full-width">
+                            Checkout
+                        </button>
+                    </div>
+                </div><!-- end row -->
 
-				<div class="row">
-					<div class="col-md-4 text-left">
-						{{#if inStock}}
-							<span class="monospaced label label-success">In Stock</span>
-						{{else}}
-							<span class="monospaced label label-warning">Out of Stock</span>
-						{{/if}}
-					</div>
-				</div>
-				<!-- end row -->
+                <div class="row">
+                    <div class="col-md-4 text-left">
+                        {{#if inStock}}
+                            <span class="monospaced label label-success">In Stock</span>
+                        {{else}}
+                            <span class="monospaced label label-warning">Out of Stock</span>
+                        {{/if}}
+                    </div>
+                </div>
+                <!-- end row -->
 
-				<div class="row">
-					<div class="col-md-12 bottom-rule top-10"></div>
-				</div>
-				<!-- end row -->
+                <div class="row">
+                    <div class="col-md-12 bottom-rule top-10"></div>
+                </div>
+                <!-- end row -->
 
-				<div class="row">
-					{{#if ../contactNumber}}
-						<div class="col-md-12 top-10">
-							<p>
-								<span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
-								To order by telephone, please call
-								<a href="tel:{{../contactNumber}}">{{../contactNumber}}</a>
-							</p>
-						</div>
-					{{/if}}
-				</div><!-- end row -->
-			</div>
-			<div class="col-md-12 more-details">
-				<!-- Nav tabs -->
-				<ul class="nav nav-tabs" role="tablist">
-					{{#if description}}
-						<li role="presentation" class="active">
-							<a href="#description"
-							   aria-controls="description"
-							   role="tab"
-							   data-toggle="tab">Description</a>
-						</li>
-					{{/if}}
-					{{#if features}}
-						<li role="presentation">
-							<a href="#features"
-							   aria-controls="features"
-							   role="tab"
-							   data-toggle="tab"
-							>Features</a>
-						</li>
-					{{/if}}
-					{{#if reviews}}
-						<li role="presentation">
-							<a href="#reviews"
-							   aria-controls="reviews"
-							   role="tab"
-							   data-toggle="tab"
-							>Reviews</a>
-						</li>
-					{{/if}}
-				</ul>
-				<!-- Tab panes -->
-				<div class="tab-content">
-					{{#if description}}
-						<div role="tabpanel" class="tab-pane active" id="description">
-							{{{description}}}
-						</div>
-					{{/if}}
-					{{#if features}}
-						<div role="tabpanel" class="tab-pane top-10" id="features">
-							<ul>
-								{{#each feature}}
-									<li>{{{this}}}</li>
-								{{/each}}
-							</ul>
-						</div>
-					{{/if}}
-					{{#if reviews}}
-						<div role="tabpanel" class="tab-pane" id="reviews">
-							{{>productReview}}
-						</div>
-					{{/if}}
-				</div>
-			</div>
-			<div style="border-top: 1px solid lightgray;" class="similar-products col-md-12">
-				<h2 style="font-size: 15px;text-transform: uppercase">Similar Products</h2>
-				{{#each ../similar}}
-					<div class="col-md-1">
-						{{>product2}}
-					</div>
-				{{/each}}
-			</div>
-		</div><!-- end row -->
-		<div class="row">
+                <div class="row">
+                    {{#if ../contactNumber}}
+                        <div class="col-md-12 top-10">
+                            <p>
+                                <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+                                To order by telephone, please call
+                                <a href="tel:{{../contactNumber}}">{{../contactNumber}}</a>
+                            </p>
+                        </div>
+                    {{/if}}
+                </div><!-- end row -->
+            </div>
+            <div class="col-md-12 more-details">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    {{#if description}}
+                        <li role="presentation" class="active">
+                            <a href="#description"
+                               aria-controls="description"
+                               role="tab"
+                               data-toggle="tab">Description</a>
+                        </li>
+                    {{/if}}
+                    {{#if features}}
+                        <li role="presentation">
+                            <a href="#features"
+                               aria-controls="features"
+                               role="tab"
+                               data-toggle="tab"
+                            >Features</a>
+                        </li>
+                    {{/if}}
+                    {{#if reviews}}
+                        <li role="presentation">
+                            <a href="#reviews"
+                               aria-controls="reviews"
+                               role="tab"
+                               data-toggle="tab"
+                            >Reviews</a>
+                        </li>
+                    {{/if}}
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    {{#if description}}
+                        <div role="tabpanel" class="tab-pane active" id="description">
+                            {{{description}}}
+                        </div>
+                    {{/if}}
+                    {{#if features}}
+                        <div role="tabpanel" class="tab-pane top-10" id="features">
+                            <ul>
+                                {{#each feature}}
+                                    <li>{{{this}}}</li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    {{/if}}
+                    {{#if reviews}}
+                        <div role="tabpanel" class="tab-pane" id="reviews">
+                            {{>productReview}}
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+            <div style="border-top: 1px solid lightgray;" class="similar-products col-md-12">
+                <h2 style="font-size: 15px;text-transform: uppercase">Similar Products</h2>
+                {{#each ../similar}}
+                    <div class="col-md-1">
+                        {{>product2}}
+                    </div>
+                {{/each}}
+            </div>
+        </div><!-- end row -->
+        <div class="row">
 
-		</div>
-	</div><!-- end container -->
+        </div>
+    </div><!-- end container -->
 {{/with}}
 
 <script>
-	window.minifiedMenu = true;
-	$(document).ready(function () {
-		if (addaffix) addaffix();
-		//$('.tab-content .tab-pane').scrollbar();		
-		//$(".similar-products").owlCarousel({items:12})
+    window.minifiedMenu = true;
+    $(document).ready(function () {
+        if (addaffix) addaffix();
+        //$('.tab-content .tab-pane').scrollbar();
+        //$(".similar-products").owlCarousel({items:12})
 
-		$(document).on("mouseover", ".unrated .glyphicon", function (e) {
-			var index = $(this).index();
-			for (var i = 0; i < index; i++)
-				$(".unrated .glyphicon").eq(i).css("color", "orange");
-		});
+        $(document).on("mouseover", ".unrated .glyphicon", function (e) {
+            var index = $(this).index();
+            for (var i = 0; i < index; i++)
+                $(".unrated .glyphicon").eq(i).css("color", "orange");
+        });
 
-		$(document).on("mouseout", ".unrated", function () {
-			$(this).find(".glyphicon").css("color", "black");
-		});
+        $(document).on("mouseout", ".unrated", function () {
+            $(this).find(".glyphicon").css("color", "black");
+        });
 
-		$(document).on("click", ".unrated .glyphicon", function (e) {
-			$(this).parent().removeClass("unrated").addClass("rated");
-			$.ajax("/product/rate/{{product.href}}/" + parseInt($(this).index()));
-		});
+        $(document).on("click", ".unrated .glyphicon", function (e) {
+            $(this).parent().removeClass("unrated").addClass("rated");
+            $.ajax("/product/rate/{{product.href}}/" + parseInt($(this).index()));
+        });
 
-		$(document).on("click", ".thumbnail.review-link", function (e) {
-			var src = $(this).find("img").attr("src");
-			$(this).parents(".row.product-thumbnails")
-					.siblings("img.image-responsive")
-					.attr("src", src)
-		});
+        $(document).on("click", ".thumbnail.review-link", function (e) {
+            var src = $(this).find("img").attr("src");
+            $(this).parents(".row.product-thumbnails")
+                    .siblings("img.image-responsive")
+                    .attr("src", src)
+        });
 
-		{{#if userRating}}
-			var index = Math.min(5,{{userRating.rating}});
-			for (var i = 0; i < index; i++)
-				$(".rated .glyphicon").eq(i).css("color", "orange");
-		{{/if}}
+        {{#if userRating}}
+            var index = Math.min(5,{{userRating.rating}});
+            for (var i = 0; i < index; i++)
+                $(".rated .glyphicon").eq(i).css("color", "orange");
+        {{/if}}
 
-	})
+    })
 </script>
