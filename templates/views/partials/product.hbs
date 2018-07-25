@@ -4,7 +4,7 @@
 			 style="text-align:center; justify-content :center; color: black;">
 			
 			<img src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
-				 class="img-responsive" title="{{{name}}}..{{truncate description 100}}"
+				 class="img-responsive" title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
 				 style="margin: auto"
 				 itemprop="image"/>
 
