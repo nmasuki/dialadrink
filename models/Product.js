@@ -77,8 +77,9 @@ Product.schema.virtual('options').get(function () {
     return this.priceOptions.map(op => ({
         _id: op._id,
         quantity: (op.option || {}).quantity,
+        currency: op.currency || "KES",
+        offerPrice: op.offerPrice,
         price: op.price,
-        currency: "KES"
     })).distinctBy(op => op.quantity);
 });
 

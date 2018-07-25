@@ -33,22 +33,31 @@ ProductPriceOption.schema.pre('save', function (next) {
     var ppo = this;
 
     function updateProduct(next) {
-        if(!ppo.product)
+        if (!ppo.product)
             return next();
 
         var productId = ppo.product._id || ppo.product;
         keystone.list("Product").model.findOne({_id: productId})
             .deepPopulate("priceOptions.option")
             .exec((err, product) => {
-                if(err || !product)
+                if (err || !product)
                     return next(err);
 
-                var thisOption = product.priceOptions.find(po=>po.option.quality == ppo.quality);
+                var thisOption = product.priceOptions.find(po => "" + po.option._id == "" + ppo.option);
 
-                if(!thisOption)
+                if (!thisOption)
                     product.priceOptions.push(thisOption = ppo);
 
-                thisOption = Object.assign(thisOption, ppo);
+                //product.priceOptions = product.priceOptions.distinctBy(op => op.option.quantity);
+                thisOption.option = ppo.option;
+                thisOption.product = ppo.product;
+
+                thisOption.currency = ppo.currency;
+                thisOption.price = ppo.price;
+                thisOption.offerPrice = ppo.offerPrice;
+
+                thisOption.optionText = ppo.optionText;
+
                 product.save();
 
                 next(err);
@@ -58,7 +67,7 @@ ProductPriceOption.schema.pre('save', function (next) {
     if (ppo.option && ppo.option.quantity) {
         ppo.optionText = ppo.option.quantity;
         updateProduct(next);
-    } else if(ppo.option){
+    } else if (ppo.option) {
         keystone.list("ProductOption").model.findOne({_id: ppo.option._id || ppo.option})
             .populate('option')
             .exec(function (err, option) {
@@ -68,8 +77,8 @@ ProductPriceOption.schema.pre('save', function (next) {
                 ppo.optionText = option.quantity;
                 updateProduct(next);
             })
-    } else if(ppo.optionText){
-        var filter = {"$or":[{quantity: ppo.optionText.trim()}, {"key": ppo.optionText.cleanId()}]};
+    } else if (ppo.optionText) {
+        var filter = {"$or": [{quantity: ppo.optionText.trim()}, {"key": ppo.optionText.cleanId()}]};
         keystone.list("ProductOption").model.findOne(filter)
             .populate('option')
             .exec(function (err, option) {
@@ -80,7 +89,7 @@ ProductPriceOption.schema.pre('save', function (next) {
                 ppo.option = option;
                 updateProduct(next);
             })
-    }else{
+    } else {
         next();
     }
 });

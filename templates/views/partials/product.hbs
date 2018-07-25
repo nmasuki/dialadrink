@@ -17,17 +17,16 @@
             <span>{{quantity}}</span><br>
             <span itemscope itemprop="offers" itemtype="http://schema.org/Offer">
 				<meta itemprop="priceCurrency" content="{{currency}}"/>
-                {{currency}}
-                {{#if offerPrice}}
+                {{#ifgt price offerPrice}}
                     <span>
                         <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                            {{formatNumber price}}
+                            {{currency}} <span itemprop="price">{{formatNumber price}}</span>
                         </span>
-                        <span itemprop="price">{{formatNumber offerPrice}}</span>
+                    {{currency}} <span itemprop="offerPrice">{{formatNumber offerPrice}}</span>
                     </span>
                 {{else}}
-                    <span itemprop="price">{{formatNumber price}}</span>
-                {{/if}}
+                    {{currency}} <span itemprop="price">{{formatNumber price}}</span>
+                {{/ifgt}}
 			</span>
             <br>
             <div class="dropdown">
