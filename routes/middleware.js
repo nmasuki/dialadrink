@@ -54,7 +54,7 @@ exports.initPageLocals = function (req, res, next) {
 	//Load Page details
 	res.locals.page = {
 		title: keystone.get("name").toProperCase(),
-        canonical: "https://www.dialadrinkkenya.com" + req.originalUrl.replace(/\:\/\/(www.)?/, "://www.")
+        canonical: "https://www.dialadrinkkenya.com" + req.originalUrl
 	};
 
 	var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
@@ -63,7 +63,7 @@ exports.initPageLocals = function (req, res, next) {
 		.exec((err, pages) => {
 			var page = pages.orderBy(m => m.href.length).first();
 
-			res.locals.page = Object.assign({title: keystone.get("name")}, page && page.toObject() || {});
+			res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
 			next(err);
 		});
 	

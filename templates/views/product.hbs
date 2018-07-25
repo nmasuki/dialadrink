@@ -89,7 +89,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <p class="description">
-                            {{shortDescription}}
+                            {{truncate (cleanHtml description) 70}}
                         </p>
                     </div>
                 </div><!-- end row -->
@@ -166,10 +166,10 @@
                                 class="btn btn-lg btn-brand btn-full-width add-to-cart">
                             Add to Cart
                         </button>
-                        <button onclick="window.location='/checkout'" data-product="{{_id}}" style="width: 121px;"
-                                class="btn btn-lg btn-brand btn-full-width">
-                            Checkout
-                        </button>
+                        <!--<button onclick="window.location='/checkout'" data-product="{{_id}}" style="width: 121px;"-->
+                                <!--class="btn btn-lg btn-brand btn-full-width">-->
+                            <!--Checkout-->
+                        <!--</button>-->
                     </div>
                 </div><!-- end row -->
 

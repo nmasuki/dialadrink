@@ -131,6 +131,8 @@ router.get("/products.json", function (req, res) {
                 subcategory: d.subCategory ? d.subCategory.name : null,
                 ratings: d.avgRatings,
                 quantity: d.quantity,
+                brand: d.brand? d.brand.name: null,
+                company: d.brand && d.brand.company? d.brand.company.name: null,
                 price: d.price,
                 currency: d.currency,
                 options: d.options

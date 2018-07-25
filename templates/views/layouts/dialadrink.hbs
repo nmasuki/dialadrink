@@ -12,7 +12,8 @@
         <meta name="keywords" content="{{page.keyWords}}"/>
     {{/if}}
     {{#if page.canonical}}
-        <link rel="canonical" href="{{page.canonical}}"/>{{/if}}
+        <link rel="canonical" href="{{page.canonical}}"/>
+    {{/if}}
 
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="Dial A Drink Kenya"/>
@@ -26,7 +27,7 @@
         <meta property='product:price:amount' content='{{product.price}}'/>
         <meta property='product:price:currency' content='{{product.currency}}'/>
     {{else}}
-        <meta property="og:image" content="/images/icons/apple-icon-152x152.png"/>
+        <meta property="og:image" content="https://www.dialadrinkkenya.com/images/icons/apple-icon-152x152.png"/>
     {{/if}}
 
     <meta name="twitter:site" content="@DialADrinkKenya">
@@ -43,8 +44,7 @@
     {{>pwaheaders}}
 
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700"/>
-    <link rel="stylesheet" type="text/css"
-          href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
     <link href="/styles/site{{dotmin}}.css" rel="stylesheet">
 </head>
 
@@ -99,9 +99,9 @@
                             </div>
 
                             <div class="nav-logo">
-                                <h1>
+                                <h>
                                     <a href="/"><strong><span style=" color: #F44336">Dial A Drink Kenya</span></strong></a>
-                                </h1>
+                                </h>
                             </div>
 
                             <div id="cart-target" class="nav-cart ">

@@ -342,11 +342,15 @@ if (!String.prototype.escapeRegExp)
 String.prototype.truncate = function (length, ending) {
     length = length || 100;
     ending = ending || '...';
+    var str = (this || ""), index = length - ending.length;
+
+    while(index > 0 && str[index] && /\w/.test(str[index]))
+        index--;
 
     if (this.length > length) {
-        return (this || "").substring(0, length - ending.length).trim() + ending;
+        return str.substring(0, index).trim().trim('.') + ending;
     } else {
-        return this;
+        return str;
     }
 };
 

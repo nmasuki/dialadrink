@@ -337,8 +337,11 @@ module.exports = function () {
 
     _helpers.truncate = function (str, length) {
         return (str || "").truncate(length, '...')
-    }
+    };
 
+    _helpers.cleanHtml = function(str){
+        return (str || "").replace(/<(?:.|\n)*?>/gm, '');
+    };
 
     // Direct url link to a specific product
     _helpers.productUrl = function (productSlug, options) {

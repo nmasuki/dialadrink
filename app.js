@@ -32,10 +32,14 @@ keystone.init({
 
 	'compress': true,
 	'auto update': true,
-	'session': true,
 	'auth': true,
 	'user model': 'User',
-	'session store': 'mongo',
+    'session': true,
+    'session store': 'mongo',
+    'session options': {
+        cookie: { secure: false, maxAge: 365*24*60*60*1000  }
+    },
+
 	'signin logo': '/images/logo-email.gif',
     'cloudinary secure': true
 });
