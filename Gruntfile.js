@@ -57,7 +57,7 @@ module.exports = function (grunt) {
                         if (src.indexOf('.min.css') < 0)
                             return (dst ? dst + '/' : '') + src.replace('.css', '.min.css');
                         else
-                            return null;
+                            return (dst ? dst + '/' : '') + src;
                     }
                 }]
             }
@@ -73,7 +73,7 @@ module.exports = function (grunt) {
                         if (src.indexOf('.min.css') < 0)
                             return (dst ? dst + '/' : '') + src.replace('.css', 'min.css');
                         else
-                            return src;
+                            return (dst ? dst + '/' : '') + src;
                     }
                 }]
             }
