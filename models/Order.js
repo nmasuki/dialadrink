@@ -167,7 +167,10 @@ Order.schema.methods.sendUserNotification = function (next) {
                             emailOptions.cc.push("simonkimari@gmail.com");
                         }
 
-                        console.log("Sending Order notification..")
+                        console.log("Sending Order notification!",
+                            "User", order.delivery.email,
+                            "Admins", emailOptions.cc.map(u => u.email || u).join()
+                        );
                         email.send(locals, emailOptions, (err, a) => {
                             console.log("Order notification Sent!", err, a)
 
