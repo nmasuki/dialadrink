@@ -12,6 +12,7 @@ function index(req, res) {
 		h1: "Today's Offers"
 	});
 
+    locals.page.canonical = '/index.html';
 	if (!locals.page.bannerImages)
 		locals.page.bannerImages = [
 			"/assets/twall.jpg", "/assets/twall1.jpg", "/assets/twall2.jpg",

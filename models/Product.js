@@ -270,20 +270,20 @@ Product.findByOption = function (filter, callback) {
 
 Product.search = function (query, next) {
 
-    var regex = new RegExp(query.trim().escapeRegExp(), "i");
-    var regex2 = new RegExp(query.cleanId().trim().escapeRegExp(), "i");
+    var nameRegex = new RegExp(query.trim().replace(/\-/g, " ").escapeRegExp(), "i");
+    var keyRegex = new RegExp(query.cleanId().trim().escapeRegExp(), "i");
 
     // Set locals
     var filters = {
         "$or": [
-            {key: regex2},
-            {href: regex},
-            {href: regex2},
-            {name: regex},
-            {name: regex2},
-            {quantity: regex},
-            {quantity: regex2},
-            //{description: regex}
+            {key: keyRegex},
+            {href: nameRegex},
+            {href: keyRegex},
+            {name: nameRegex},
+            {name: keyRegex},
+            {quantity: nameRegex},
+            {quantity: keyRegex},
+            //{description: nameRegex}
         ]
     };
 
@@ -296,7 +296,7 @@ Product.search = function (query, next) {
                         if (err || !products || !products.length)
                             Product.findByOption(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                    Product.findPublished(Object.assign({description: regex}, filters), function (err, products) {
+                                    Product.findPublished(Object.assign({description: nameRegex}, filters), function (err, products) {
                                         next(err, products)
                                     });
                                 else
