@@ -59,7 +59,7 @@ Product.schema.virtual("keyWords").get(function () {
 
     var sentence = (tags.concat([this.name, this.pageTitle, this.description]))
         .join(", ").replace(/(&nbsp;?)/g, " ")
-        .replace(/\W/g, function(x){
+        .replace(/\W/g, function (x) {
             return (x.trim() + " ");
         });
 
@@ -290,11 +290,11 @@ Product.search = function (query, next) {
     //Searching by brand then category then product
     Product.findByBrand(filters, function (err, products) {
         if (err || !products || !products.length)
-            Product.findByCategory(filters, function (err, products) {
+            Product.findByOption(filters, function (err, products) {
                 if (err || !products || !products.length)
-                    Product.findBySubCategory(filters, function (err, products) {
+                    Product.findByCategory(filters, function (err, products) {
                         if (err || !products || !products.length)
-                            Product.findByOption(filters, function (err, products) {
+                            Product.findBySubCategory(filters, function (err, products) {
                                 if (err || !products || !products.length)
                                     Product.findPublished(Object.assign({description: nameRegex}, filters), function (err, products) {
                                         next(err, products)
