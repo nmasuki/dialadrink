@@ -24,14 +24,15 @@ var cartUtil = function () {
     function fillIn(cartItem) {
         var priceOption = cartItem.product.priceOptions.find(function (po) {
             return po.option.quantity === cartItem.quantity
-        })
+        });
+
+        var price = cartItem.price || (priceOption.offerPrice && priceOption.price > priceOption.offerPrice
+            ? priceOption.offerPrice : priceOption.price);
 
         cartItem._id = cartItem._id || cartItem.product._id + "|" + cartItem.quantity;
         cartItem.image = cartItem.image || cartItem.product.image;
         cartItem.currency = cartItem.currency || priceOption.currency;
-        cartItem.price = cartItem.price || priceOption.offerPrice && priceOption.price > priceOption.offerPrice
-            ? priceOption.offerPrice
-            : priceOption.price;
+        cartItem.price = price;
 
         return cartItem;
     }

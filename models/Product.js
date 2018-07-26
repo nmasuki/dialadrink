@@ -261,7 +261,7 @@ Product.findByOption = function (filter, callback) {
                     if (err || !options)
                         return console.log(err, options);
 
-                    filter = {option: {"$in": options.map(b => b._id)}};
+                    filter = {priceOptions: {"$in": options.map(b => b._id)}};
                     Product.findPublished(filter, callback);
                 })
 
