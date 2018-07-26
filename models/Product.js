@@ -180,8 +180,7 @@ Product.schema.pre('save', function (next) {
     next();
 });
 
-CartItem.schema.set('toObject', {
-    virtual: true,
+Product.schema.set('toObject', {
     transform: function (doc, ret, options) {
         var whitelist = [
             'href','name','priceOptions','onOffer','inStock',
@@ -196,7 +195,7 @@ CartItem.schema.set('toObject', {
     }
 });
 
-CartItem.schema.set('toJSON', {
+Product.schema.set('toJSON', {
     transform: function (doc, ret, options) {
         return doc.toObject();
     }

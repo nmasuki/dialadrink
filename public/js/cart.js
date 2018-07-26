@@ -315,7 +315,7 @@ $(function () {
             street = $('#street').val(),
             building = $('#building').val(),
             houseno = $('#houseno').val(),
-            _csrf = $('#_csrf').val(),
+            _csrf = app.csrf_token,
             email = $("#email").val();
 
         // var btn = $('check-out');
@@ -330,11 +330,10 @@ $(function () {
                 location: location,
                 email: email,
                 _csrf: _csrf
-            }
-            console.log(data)
+            };
 
             $.ajax({
-                headers: {'X-CSRF-Token': csrf_token},
+                headers: {'X-CSRF-Token': app.csrf_token},
                 type: 'get',
                 url: '/cart/checkout/' + name + "/" + location + "/" + cell + "/" + email + "/" + street + "/" + building + "/" + houseno,
                 data: data,
@@ -343,7 +342,7 @@ $(function () {
                     if (data.state) {
                         window.location.href = "/order-placed";
                     }
-                },//seccuss ajax
+                },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log(XMLHttpRequest, textStatus, errorThrown)
                 }

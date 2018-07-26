@@ -334,8 +334,10 @@
                         app.hideModal();
                         var responseText = xhr.responseText || "Unknown error on '" + that.text() + "'";
 
-                        $(".alert-danger").find(".msg-text").html("<strong>{0}!</strong> {1}. Please try again later..", error, responseText);
+                        $(".alert-danger").find(".msg-text").html("<strong>{0}!</strong> {1}. Please try again later..".format(error, responseText));
                         $(".alert-danger").slideDown();
+
+                        $(that).attr("disabled", false).removeAttr("disabled");
                     }
                 });
 

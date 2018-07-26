@@ -99,9 +99,11 @@ Order.schema.methods.placeOrder = function (next) {
             next(err);
 
         //popularity goes up 100x
-        keystone.list("Product").findOnePublished({_id: this.cart.product._id}, (err, product) => {
-            if (product)
-                product.addPopularity(100);
+        this.cart.forEach(c => {
+            keystone.list("Product").findOnePublished({_id: c.product._id}, (err, product) => {
+                if (product)
+                    product.addPopularity(100);
+            });
         });
     });
 };

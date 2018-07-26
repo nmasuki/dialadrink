@@ -23,7 +23,7 @@ router.get('/', function (req, res) {
 	return view.render('checkout');
 });
 
-router.post("/", function (req, res) {
+router.post("/", function (req, res, next) {
 	if (req.body.saveInfo) {//Save option for next cashout
 		req.session.userData = req.body;
 		req.session.save((err, a) => {
@@ -56,7 +56,7 @@ router.post("/", function (req, res) {
 
 			order.placeOrder((err) => {
 				if (err)
-					next(err);
+					console.warn(err);
 
 				if (!err) {
 					delete req.session.promo;

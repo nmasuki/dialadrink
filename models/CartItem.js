@@ -9,23 +9,19 @@ var Types = keystone.Field.Types;
 var CartItem = new keystone.List('CartItem', {
     hidden: true,
     //map: {name: 'quantity'},
-    //autokey: {path: 'key', unique: true},
+    autokey: {path: 'key', unique: true, from: '_id'},
 });
 
 CartItem.add({
     date: {type: Types.Date, index: true, default: Date.now, noedit: true},
-
     pieces: {type: Number},
-
     state: {
         type: Types.Select,
         options: 'placed, dispatched, delivered, paid, completed',
         default: 'placed',
         index: true
     },
-
     product: {type: Types.Relationship, ref: 'Product'},
-
     quantity: {type: String}
 });
 
