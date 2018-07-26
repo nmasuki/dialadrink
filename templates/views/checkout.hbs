@@ -91,8 +91,9 @@
 
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Total (<span class="cart-currency">KES</span>)</span>
-                        <strong class="cart-total">{{formatNumber
-                                (sumEvals cartItems 'c=>c.pieces*c.price')}}</strong>
+                        <strong class="cart-total">
+                            {{formatNumber (sumEvals cartItems 'c=>c.pieces*c.price')}}
+                        </strong>
                     </li>
                 {{else}}
                     <li class="list-group-item d-flex justify-content-between">

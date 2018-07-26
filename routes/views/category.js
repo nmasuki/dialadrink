@@ -35,7 +35,7 @@ router.get("/:category", function (req, res) {
                     }
 
                     if (!locals.page.meta)
-                        locals.page.meta = meta + "all available at " + keystone.get("name");
+                        locals.page.meta = meta + " all available at " + keystone.get("name");
 
                     if (!locals.page.title || locals.page.title == keystone.get("name"))
                         locals.page.title = title + " | " + keystone.get("name");

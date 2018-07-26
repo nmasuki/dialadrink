@@ -16231,3 +16231,43 @@ a .fa:hover, .home_featured_wrapper a {
     background-color: #2f93a3 !important;;
     border-color: #2f93a3 !important;
 }
+
+.monospaced {
+    font-family: 'Ubuntu Mono', monospaced;
+}
+
+.add-to-cart-wrapper .btn {
+    padding: 10px;
+    border: 1px solid gray;
+    height: 44px;
+    margin: 10px 0px 0 0;
+    border-radius: 2px;
+}
+
+#product-section .row {
+    padding-bottom: 10px;
+}
+
+.product-thumbnails > div {
+    margin: 3px;
+    cursor: pointer;
+}
+
+.tab-pane {
+    /* border-top: 1px solid #3093a3; */
+    padding: 6px;
+    font-size: 15px;
+}
+
+.rated .glyphicon, .unrated .glyphicon {
+    font-size: 24px;
+}
+
+.unrated .glyphicon {
+    cursor: pointer;
+}
+
+.more-details .tab-pane {
+    height: 180px;
+    overflow: auto;
+}

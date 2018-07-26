@@ -94,5 +94,5 @@ ProductPriceOption.schema.pre('save', function (next) {
     }
 });
 
-ProductPriceOption.defaultColumns = 'option, product, price, currency';
+ProductPriceOption.defaultColumns = 'option, product, currency, price, offerPrice';
 ProductPriceOption.register();

@@ -7,30 +7,30 @@ var Types = keystone.Field.Types;
  */
 
 var CartItem = new keystone.List('CartItem', {
-	hidden: true,
-	//map: {name: 'quantity'},
-	//autokey: {path: 'key', unique: true},
+    hidden: true,
+    //map: {name: 'quantity'},
+    //autokey: {path: 'key', unique: true},
 });
 
 CartItem.add({
-	date: {type: Types.Date, index: true, default: Date.now, noedit: true},
+    date: {type: Types.Date, index: true, default: Date.now, noedit: true},
 
     pieces: {type: Number},
 
-	state: {
-		type: Types.Select,
-		options: 'placed, dispatched, delivered, paid, completed',
-		default: 'placed',
-		index: true
-	},
+    state: {
+        type: Types.Select,
+        options: 'placed, dispatched, delivered, paid, completed',
+        default: 'placed',
+        index: true
+    },
 
-	product: {type: Types.Relationship, ref: 'Product'},
+    product: {type: Types.Relationship, ref: 'Product'},
 
-	quantity: {type: String}
+    quantity: {type: String}
 });
 
 CartItem.schema.virtual("productName").get(function () {
-    return this.product? this.product.name: null;
+    return this.product ? this.product.name : null;
 });
 
 CartItem.schema.virtual("image").get(function () {
@@ -38,21 +38,25 @@ CartItem.schema.virtual("image").get(function () {
 });
 
 CartItem.schema.virtual("price").get(function () {
-	var priceOption = this.product.options.find(o => o.quantity === this.quantity);
-	return (priceOption || {}).price;
+    var priceOption = this.product.options.find(o => o.quantity === this.quantity) || {};
+    var price = priceOption.offerPrice && priceOption.price > priceOption.offerPrice
+        ? priceOption.offerPrice
+        : priceOption.price;
+
+    return price;
 });
 
 CartItem.schema.virtual("currency").get(function () {
-	var priceOption = this.product.options.find(o => o.quantity === this.quantity);
-	return (priceOption || {}).currency;
+    var priceOption = this.product.options.find(o => o.quantity === this.quantity);
+    return (priceOption || {}).currency;
 });
 
 CartItem.schema.virtual("total").get(function () {
-	return this.price * this.pieces;
+    return this.price * this.pieces;
 });
 
 CartItem.schema.virtual("cartId").get(function () {
-	return (this.product._id || this.product) + "|" + this.quantity;
+    return (this.product._id || this.product) + "|" + this.quantity;
 });
 
 CartItem.schema.set('toObject', {

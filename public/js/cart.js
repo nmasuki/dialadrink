@@ -25,10 +25,14 @@ var cartUtil = function () {
         var priceOption = cartItem.product.priceOptions.find(function (po) {
             return po.option.quantity === cartItem.quantity
         })
-        cartItem.image = cartItem.product.image;
-        cartItem.currency = priceOption.currency;
-        cartItem.price = priceOption.price;
-        cartItem._id = cartItem.product._id + "|" + cartItem.quantity;
+
+        cartItem._id = cartItem._id || cartItem.product._id + "|" + cartItem.quantity;
+        cartItem.image = cartItem.image || cartItem.product.image;
+        cartItem.currency = cartItem.currency || priceOption.currency;
+        cartItem.price = cartItem.price || priceOption.offerPrice && priceOption.price > priceOption.offerPrice
+            ? priceOption.offerPrice
+            : priceOption.price;
+
         return cartItem;
     }
 
@@ -208,8 +212,8 @@ var cartUtil = function () {
                 return po.option.quantity === item.quantity
             });
 
-            view.find(".cart-currency").html(priceOption.currency || "KES");
-            view.find(".cart-price").html((item.pieces * priceOption.price).formatNumber(2));
+            view.find(".cart-currency").html(item.currency || priceOption.currency || "KES");
+            view.find(".cart-price").html((item.pieces * item.price).formatNumber(2));
         },
 
         updateTotals: function () {

@@ -43,7 +43,7 @@ router.get("/:product", function (req, res) {
 
                 locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
                 locals.page.keyWords = product.keyWords.join(", ");
-                locals.page.meta = locals.page.meta || product.keyWords.join(" ") + ".";
+                locals.page.meta = locals.page.meta || product.keyWords.join(" ").truncate(160, ".");
 
                 product.findSimilar((err, products) => {
                     if (products)

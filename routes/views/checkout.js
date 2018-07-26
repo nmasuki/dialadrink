@@ -58,7 +58,7 @@ router.post("/", function (req, res) {
 				if (err)
 					console.log(err);
 
-				if (!err && keystone.get("env") != "development") {
+				if (!err) {
 					delete req.session.promo;
 					delete req.session.cart;
 

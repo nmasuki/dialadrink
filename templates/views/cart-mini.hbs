@@ -8,7 +8,7 @@
 					</div>
 					<div class="col-md-8">
 						<h6 class="my-0"><a href="/product/{{product.href}}">{{product.name}}&nbsp;{{quantity}}</a></h6>
-						<small class="text-muted">{{truncate description 50}}</small>
+						<small class="text-muted">{{truncate (cleanHtml product.description) 50}}</small>
 						<small class="text-muted">
 							<span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
 							@<span class="cart-currency">KES</span>

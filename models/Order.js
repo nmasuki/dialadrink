@@ -61,7 +61,7 @@ Order.schema.virtual("discount").get(function () {
 });
 
 Order.schema.virtual("subtotal").get(function () {
-    return this.cart.sum(c => c.pieces * c.price);
+    return this.cart.sum(c => c.pieces * (c.offerPrice && c.price > c.offerPrice ? c.offerPrice : c.price));
 });
 
 Order.schema.virtual("total").get(function () {

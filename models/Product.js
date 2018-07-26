@@ -57,7 +57,7 @@ Product.schema.virtual("keyWords").get(function () {
     if (this.options)
         this.options.forEach(po => tags.push(po.quantity));
 
-    var sentence = ([this.name, this.pageTitle, this.description].concat(tags))
+    var sentence = (tags.concat([this.name, this.pageTitle, this.description]))
         .join(", ").replace(/(&nbsp;?)/g, " ")
         .replace(/\W/g, function(x){
             return (x.trim() + " ");
@@ -152,6 +152,8 @@ Product.schema.virtual('tags').get(function () {
 Product.schema.methods.findSimilar = function (callback) {
     var filter = {_id: {"$ne": this._id}, "$or": []};
 
+    if (this.brand)
+        filter.$or.push({brand: this.brand._id || this.brand});
     if (this.subCategory)
         filter.$or.push({subCategory: this.subCategory._id || this.subCategory});
     if (this.category)
@@ -172,6 +174,7 @@ keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', function (next) {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
     this.price = cheapestOption.price;
+    this.offerPrice = cheapestOption.offerPrice;
     this.quantity = cheapestOption.quantity;
     this.modifiedDate = new Date();
     next();

@@ -1,45 +1,5 @@
 <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
-<style>
-    .monospaced {
-        font-family: 'Ubuntu Mono', monospaced;
-    }
 
-    .add-to-cart-wrapper .btn {
-        padding: 10px;
-        border: 1px solid gray;
-        height: 44px;
-        margin: 10px 0px 0 0;
-        border-radius: 2px;
-    }
-
-    #product-section .row {
-        padding-bottom: 10px;
-    }
-
-    .product-thumbnails > div {
-        margin: 3px;
-        cursor: pointer;
-    }
-
-    .tab-pane {
-        /* border-top: 1px solid #3093a3; */
-        padding: 6px;
-        font-size: 15px;
-    }
-
-    .rated .glyphicon, .unrated .glyphicon {
-        font-size: 24px;
-    }
-
-    .unrated .glyphicon {
-        cursor: pointer;
-    }
-
-    .more-details .tab-pane {
-        height: 180px;
-        overflow: auto;
-    }
-</style>
 {{#with product}}
     <div class="container" id="product-section"
          data-product="{{_id}}"
@@ -133,7 +93,21 @@
 
                 <div class="row">
                     <div class="col-md-5 bottom-rule">
-                        <h2>{{currency}} <span class="product-price" id="product-price">{{price}}</span></h2>
+                        <h2>
+                            {{currency}}
+                            {{#ifgt price offerPrice}}
+                                <span>
+                                    <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                        <span itemprop="price" id="product-offerPrice">{{formatNumber price}}</span>
+                                    </span>
+                                    <span itemprop="offerPrice" class="product-price" id="product-price">
+                                        {{formatNumber offerPrice}}
+                                    </span>
+                                </span>
+                            {{else}}
+                                <span class="product-price" id="product-price">{{formatNumber price}}</span>
+                            {{/ifgt}}
+                        </h2>
                     </div>
 
                     {{#ifgt options.length 1}}
@@ -141,7 +115,7 @@
                         <div class="col-md-3" style="padding-top: 15px;">
                             <select id="change-quantity" class="quantity" style="width: 134px; height: 40px;">
                                 {{#each options}}
-                                    <option value="{{price}}" {{#ifeq ../price price}}selected{{/ifeq}}>
+                                    <option data-offer="{{offerPrice}}" value="{{price}}" {{#ifeq ../price price}}selected{{/ifeq}}>
                                         {{quantity}}
                                     </option>
                                 {{/each}}
@@ -167,8 +141,8 @@
                             Add to Cart
                         </button>
                         <!--<button onclick="window.location='/checkout'" data-product="{{_id}}" style="width: 121px;"-->
-                                <!--class="btn btn-lg btn-brand btn-full-width">-->
-                            <!--Checkout-->
+                        <!--class="btn btn-lg btn-brand btn-full-width">-->
+                        <!--Checkout-->
                         <!--</button>-->
                     </div>
                 </div><!-- end row -->

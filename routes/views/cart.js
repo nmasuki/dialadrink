@@ -15,7 +15,7 @@ function addToCart(req, res, callback) {
 		cart[cartId].pieces += pieces;
 
 		//popularity goes up 10x
-		Product.findOnePublished({_id:cart[cartId].product._id }, (err, product)=>{
+		Product.findOnePublished({_id: cart[cartId].product._id }, (err, product)=>{
 			if(err)
 				console.err(err);
 			product.addPopularity(10);
@@ -33,12 +33,13 @@ function addToCart(req, res, callback) {
 				if (err || !product)
 					return res.send({state: false, msg: "Product not found", err: err});
 
-				var option = product.options.find(o => o.quantity == opt || product.quantity);
+				var option = product.options.find(o => o.quantity === (opt || product.quantity));
+				var price = option.offerPrice && option.price > option.offerPrice? option.offerPrice: option.price;
 
 				cart[cartId] = new CartItem.model({
 					_id: cartId,
 					product: product,
-					price: option.price,
+					price: price,
 					quantity: option.quantity,
 					pieces: pieces
 				});
