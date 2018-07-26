@@ -180,6 +180,28 @@ Product.schema.pre('save', function (next) {
     next();
 });
 
+CartItem.schema.set('toObject', {
+    virtual: true,
+    transform: function (doc, ret, options) {
+        var whitelist = [
+            'href','name','priceOptions','onOffer','inStock',
+            'state','image','altImages','pageTitle','description',
+            'publishedDate','modifiedDate','popularity','category',
+            'subCategory','brand','ratings',
+            'options','cheapestOption','avgRatings', 'ratingCount',
+            'quantity', 'currency', 'price', 'offerPrice', 'tags'
+        ];
+        whitelist.forEach(i => ret[i] = doc[i]);
+        return ret;
+    }
+});
+
+CartItem.schema.set('toJSON', {
+    transform: function (doc, ret, options) {
+        return doc.toObject();
+    }
+});
+
 Product.register();
 
 Product.findPublished = function (filter, callback) {

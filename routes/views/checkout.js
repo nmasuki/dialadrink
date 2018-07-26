@@ -52,11 +52,11 @@ router.post("/", function (req, res) {
 
 		order.save((err) => {
 			if (err)
-				console.warn(err);
+                return next(err);
 
 			order.placeOrder((err) => {
 				if (err)
-					console.log(err);
+					next(err);
 
 				if (!err) {
 					delete req.session.promo;
@@ -67,7 +67,7 @@ router.post("/", function (req, res) {
 
 				return res.send({
 					state: !!err,
-					msg: err ? err.msg || err.message || err : "Order placed successfully! We will contact you shortly with details of your dispatch."
+					msg: err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
 				});
 			});
 		})

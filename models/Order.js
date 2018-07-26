@@ -8,7 +8,7 @@ var Types = keystone.Field.Types;
 
 var Order = new keystone.List('Order', {
     map: {name: 'orderNumber'},
-    //autokey: {path: 'key', from: 'orderNumber', unique: true},
+    autokey: {path: 'key', from: 'orderNumber', unique: true},
 });
 
 Order.add({
@@ -80,7 +80,7 @@ Order.schema.virtual("deliveryAddress").get(function () {
     return address;
 });
 
-Order.schema.methods.placeOrder = function (callback) {
+Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!")
     this.sendUserNotification((err, data) => {
         console.log("Updating order state='placed'!")
@@ -95,8 +95,8 @@ Order.schema.methods.placeOrder = function (callback) {
                 console.log("Order updated!")
         });
 
-        if (typeof callback == "function")
-            callback(err);
+        if (typeof next == "function")
+            next(err);
 
         //popularity goes up 100x
         keystone.list("Product").findOnePublished({_id: this.cart.product._id}, (err, product) => {
@@ -106,72 +106,83 @@ Order.schema.methods.placeOrder = function (callback) {
     });
 };
 
-Order.schema.methods.sendUserNotification = function (callback) {
+Order.schema.methods.sendUserNotification = function (next) {
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
 
+    var that = this;
     var email = new keystone.Email('templates/email/order');
 
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
     var subject = "Your order at " + keystone.get("name");
-    //if (keystone.get("env") == "development")
-    //	subject = "(Testing)" + subject;
+    if (keystone.get("env") == "development")
+        subject = "(Testing)" + subject;
 
     var orderId = this._id;
     Order.model.findOne({_id: orderId})
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
-            if (err)
-                return console.warn(err);
+                if (err)
+                    return next(err);
 
-            if (!order)
-                return console.warn(`Order [${orderId}}] not found!`);
+                if (!order)
+                    return next(`Order [${orderId}}] not found!`);
 
-            var locals = {
-                layout: 'email',
-                page: {title: keystone.get("name") + " Order"},
-                order: order
-            };
-
-            var emailOptions = {
-                subject: subject,
-                to: {name: order.delivery.firstName, email: order.delivery.email},
-                cc: [],
-                from: {
-                    name: keystone.get("name"),
-                    email: process.env.EMAIL_FROM
+                if (!order.cart.length) {
+                    if (that.cart.length)
+                        order.cart = that.cart;
+                    else
+                        return next("Error while getting cart Items");
                 }
-            };
 
-            keystone.list("User").model.find({receivesOrders: true})
-                .exec((err, users) => {
-                    if (err)
-                        return console.log(err)
+                var locals = {
+                    layout: 'email',
+                    page: {title: keystone.get("name") + " Order"},
+                    order: order
+                };
 
-                    if (users && users.length)
-                        users.forEach(u => emailOptions.cc.push(u.toObject()));
-                    else {
-                        console.warn("No users have the receivesOrders right!");
-                        emailOptions.cc.push("simonkimari@gmail.com");
+                var emailOptions = {
+                    subject: subject,
+                    to: {name: order.delivery.firstName, email: order.delivery.email},
+                    cc: [],
+                    from: {
+                        name: keystone.get("name"),
+                        email: process.env.EMAIL_FROM
                     }
+                };
 
-                    console.log("Sending Order notification..")
-                    email.send(locals, emailOptions, (err, a) => {
-                        console.log("Order notification Sent!", err, a)
-
+                keystone.list("User").model.find({receivesOrders: true})
+                    .exec((err, users) => {
                         if (err)
-                            console.warn(err);
+                            return console.log(err)
 
-                        if (typeof callback == "function")
-                            callback(err)
+                        if (users && users.length)
+                            users.forEach(u => emailOptions.cc.push(u.toObject()));
+                        else {
+                            console.warn("No users have the receivesOrders right!");
+                            emailOptions.cc.push("simonkimari@gmail.com");
+                        }
+
+                        console.log("Sending Order notification..")
+                        email.send(locals, emailOptions, (err, a) => {
+                            console.log("Order notification Sent!", err, a)
+
+                            if (err)
+                                console.warn(err);
+
+                            if (typeof next == "function")
+                                next(err)
+                        });
+
                     });
+            }
+        )
+    ;
 
-                });
-        });
-
-};
+}
+;
 
 keystone.deepPopulate(Order.schema);
 
