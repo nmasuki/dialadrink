@@ -38,8 +38,6 @@ var routes = {
 exports = module.exports = function (app) {
 	
 	// Views
-
-	//app.use('/order-template', routes.views['order-template']);
 	app.use('/brand', routes.views.brand);
 	app.use('/blog', routes.views.blog);
 	app.use('/contact-us', routes.views.contact);
@@ -53,8 +51,9 @@ exports = module.exports = function (app) {
 	app.use('/', routes.views.products);
 	app.use('/', routes.views.index);
 
-	
-	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
+	app.use('/order-template', routes.views['order-template']);
+
+    // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
 
 };

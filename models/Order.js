@@ -147,7 +147,7 @@ Order.schema.methods.sendUserNotification = function (next) {
 
                 var emailOptions = {
                     subject: subject,
-                    to: {name: order.delivery.firstName, email: order.delivery.email},
+                    to: {name: order.delivery.firstName, email: order.delivery.email || "simonkimari@gmail.com"},
                     cc: [],
                     from: {
                         name: keystone.get("name"),

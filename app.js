@@ -12,8 +12,8 @@ require('./helpers/polyfills');
 // and documentation.
 
 keystone.init({
-	'name': 'Dial a Drink Kenya',
-	'brand': 'Dial a Drink Kenya',
+	'name': 'Dial A Drink Kenya',
+	'brand': 'Dial A Drink Kenya',
 	'port': 4000,
 	'less': 'public',
 	'static': 'public',
