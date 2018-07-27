@@ -29,16 +29,16 @@ router.get("/:category", function (req, res) {
 
                     var i = -1, meta = title.replace(/\ \-\ /g, ", ");
                     while (products[++i] && meta.length < 120) {
-                        meta += (meta ? ", " : "") + products[i].name;
+                        meta += (meta ? ", " : "") + products[i].name.trim();
                         if (title.length < 40)
-                            title += (title ? ", " : "") + products[i].name;
+                            title += (title ? " - " : "") + products[i].name.trim();
                     }
 
                     if (!locals.page.meta)
                         locals.page.meta = meta + " all available at " + keystone.get("name");
 
                     if (!locals.page.title || locals.page.title == keystone.get("name"))
-                        locals.page.title = title + " | " + keystone.get("name");
+                        locals.page.title = title.trim() + " | " + keystone.get("name");
 
                     locals.products = products;
                     next();
