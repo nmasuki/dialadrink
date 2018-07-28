@@ -3,7 +3,7 @@ var Enquiry = keystone.list('Enquiry');
 var router = keystone.express.Router();
 
 router.route("/")
-	.post(function (req, res) {
+	.post(function (req, res, next) {
 		var view = new keystone.View(req, res);
 		var locals = res.locals;
 

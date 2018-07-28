@@ -18,6 +18,8 @@ var keystone = require("keystone");
  or replace it with your own templates / logic.
  */
 exports.initLocals = function (req, res, next) {
+	//CSRF
+    res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
 	//Cart items
 	res.locals.cartItems = Object.values(req.session.cart || {}).orderBy(c => c.product.name);
 	//Promo code applied
@@ -53,7 +55,7 @@ exports.initLocals = function (req, res, next) {
 exports.initPageLocals = function (req, res, next) {
 	//Load Page details
 	res.locals.page = {
-		title: keystone.get("name").toProperCase(),
+		title: keystone.get("name"),
         canonical: "https://www.dialadrinkkenya.com" + req.originalUrl
 	};
 

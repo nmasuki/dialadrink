@@ -44,6 +44,8 @@ keystone.init({
     'cloudinary secure': true
 });
 
+keystone.pre('routes', keystone.security.csrf.middleware.init);
+
 // Assists with mongoose deepPopullate
 keystone.deepPopulate = require('mongoose-deep-populate')(keystone.mongoose);
 
