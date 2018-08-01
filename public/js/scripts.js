@@ -1,5 +1,11 @@
 var touch = false, clickEv = 'click';
 
+$.ajaxSetup({
+    beforeSend: function (xhr) {
+        xhr.setRequestHeader('X-CSRF-Token', $('meta[name="_csrf"]').attr('content'));
+    }
+});
+
 /*Slider main*/
 function slider_main() {
     $('.carousel').carousel({
@@ -390,6 +396,7 @@ function updateScrollThumbsQS() {
                     _index = key;
                 }
             });
+
             $.fancybox(_items, {
                 closeBtn: true,
                 index: _index,

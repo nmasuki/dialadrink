@@ -42,9 +42,10 @@ exports = module.exports = function (app) {
 	app.use('/blog', routes.views.blog);
 	app.use('/contact-us', routes.views.contact);
 	app.use('/gallery', routes.views.gallery);
-		
-	app.use('/category', routes.views.category);
-	app.use('/product', routes.views.product);
+
+    app.use('/product', routes.views.product);
+    app.use('/category', routes.views.category);
+    app.use('/product', routes.views.category);
 	app.use('/checkout', routes.views.checkout);
 	app.use('/cart', routes.views.cart);
 

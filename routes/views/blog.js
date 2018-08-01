@@ -212,12 +212,14 @@ router.get("/cat/:category", function (req, res) {
         q.exec(function (err, results) {
 
             locals.data.blogs = results;
+            var cat;
             if (results) {
-                locals.page.title = (results.first() || {}).title || locals.data.category.toProperCase();
-                locals.meta = (results.first() || {}).title || locals.data.category.toProperCase();
+                cat = (locals.data.category.name || locals.data.category);
+                locals.page.title = (results.results.first() || {}).title || cat.toProperCase();
+                locals.meta = (results.results.first() || {}).title || cat.toProperCase();
             }
             if (locals.data.category)
-                locals.page.h1 = locals.data.category.toProperCase();
+                locals.page.h1 = (cat || locals.data.category.name || locals.data.category).toProperCase();
 
             next(err);
         });

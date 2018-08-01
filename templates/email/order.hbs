@@ -33,27 +33,26 @@
                             </thead>
                             <tbody>
                             {{#each cart}}
-                                <tr class="order-order_item">
-                                    <td class="order-td"
-                                        style="text-align:left;vertical-align:middle;border:1px solid #eee;word-wrap:break-word;color:#737373;padding:12px">
-                                        {{product.name}} {{quantity}}
-                                    </td>
-                                    <td class="order-td"
-                                        style="text-align:left;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
-                                        {{pieces}} *
-                                        {{#ifgt price offerPrice}}
-                                            <span>
+                                {{#ifgt pieces 0}}
+                                    <tr class="order-order_item">
+                                        <td class="order-td" style="text-align:left;vertical-align:middle;border:1px solid #eee;word-wrap:break-word;color:#737373;padding:12px">
+                                            {{product.name}} {{quantity}}
+                                        </td>
+                                        <td class="order-td" style="text-align:left;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
+                                            {{pieces}} *
+                                            {{#ifgt price offerPrice}}
+                                                <span>
                                                 <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                                     <span itemprop="price">{{price}}</span>
                                                 </span>
                                                 <span itemprop="offerPrice">{{offerPrice}}</span>
                                             </span>
-                                        {{else}}
-                                            <span itemprop="price">{{price}}</span>
-                                        {{/ifgt}}
-                                    </td>
-                                    <td class="order-td" align="right"
-                                        style="text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
+                                            {{else}}
+                                                <span itemprop="price">{{price}}</span>
+                                            {{/ifgt}}
+                                        </td>
+                                        <td class="order-td" align="right"
+                                            style="text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
 										<span class="order-amount amount">
 											<span class="order-currencySymbol">{{currency}}</span>
                                             {{#ifgt price offerPrice}}
@@ -69,8 +68,9 @@
                                                 <span itemprop="price">{{formatNumber (prod pieces price)}}</span>
                                             {{/ifgt}}
 										</span>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                {{/ifgt}}
                             {{else}}
                                 <tr class="order-order_item">
                                     <td class="order-td" colspan="3" align="center">

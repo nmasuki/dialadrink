@@ -13,7 +13,7 @@ var cartUtil = function () {
             self.view().each(function (i, a) {
                 var _html = $(html);
                 _html.find("li").data("cartId", cartId);
-                $(a).append(_html);
+                $(a).prepend(_html);
             });
             view = self.view().find("[data-cartid='" + cartId + "']");
         }
