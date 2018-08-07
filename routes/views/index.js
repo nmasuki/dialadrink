@@ -20,7 +20,7 @@ function search(req, res, next) {
         h1: ((req.params.query || "").toProperCase() + " drinks").trim()
     });
 
-    locals.page.canonical = "/" + (req.params.query || "Search Results").cleanId()
+    locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId()
 
     if (req.originalUrl.startsWith("/search"))
         locals.breadcrumbs.push({
