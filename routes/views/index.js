@@ -29,7 +29,7 @@ function search(req, res, next) {
         });
     else
         locals.breadcrumbs.push({
-            label: (req.params.query || "Search Results").toLowerCase(),
+            label: (req.params.query || "Search Results").toProperCase(),
             href: req.originalUrl
         });
 

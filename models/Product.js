@@ -291,7 +291,7 @@ Product.findByOption = function (filter, callback) {
 
 Product.search = function (query, next) {
 
-    var nameRegex = new RegExp(query.trim().replace(/\-/g, " ").escapeRegExp(), "i");
+    var nameRegex = new RegExp(query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, ".*?"), "i");
     var keyRegex = new RegExp(query.cleanId().trim().escapeRegExp(), "i");
 
     // Set locals

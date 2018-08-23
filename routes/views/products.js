@@ -2,33 +2,34 @@ var keystone = require('keystone');
 var router = keystone.express.Router();
 
 function index(req, res) {
-	var view = new keystone.View(req, res);
-	var locals = res.locals;
+    var view = new keystone.View(req, res);
+    var locals = res.locals;
 
-	// Set locals
-	locals.section = 'store';
-	locals.page = Object.assign(locals.page, {
-		title: "Alcohol Delivery Nairobi | Dial A Drink Kenya - Fast, Free delivery",
-		h1: "Today's Offers"
-	});
+    // Set locals
+    locals.section = 'store';
+    locals.page = Object.assign(locals.page, {
+        title: "Alcohol Delivery Nairobi | Dial A Drink Kenya - Fast, Free delivery",
+        h1: "Today's Offers"
+    });
 
     locals.page.canonical = 'https://www.dialadrinkkenya.com/index.html';
-	if (!locals.page.bannerImages)
-		locals.page.bannerImages = [
-			"/assets/twall.jpg", "/assets/twall1.jpg", "/assets/twall2.jpg",
-			"/assets/twall3.jpg", "/assets/twall4.jpg"
-		];
+    if (!locals.page.bannerImages)
+        locals.page.bannerImages = [
+            "/assets/twall.jpg", "/assets/twall1.jpg", "/assets/twall2.jpg",
+            "/assets/twall3.jpg", "/assets/twall4.jpg"
+        ];
 
-	// Load Products
-	view.on('init', function (next) {
-		keystone.list('Product').findPublished({onOffer: true, state: 'published'}, (err, products) => {
-			locals.products = products;
-			next();
-		});
-	});
+    // Load Products
+    view.on('init', function (next) {
+        keystone.list('Product').findPublished({onOffer: true, state: 'published'}, (err, products) => {
+            locals.products = products;
+            locals.brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+            next();
+        });
+    });
 
-	// Render View
-	view.render('products');
+    // Render View
+    view.render('products');
 }
 
 router.get("/", index);

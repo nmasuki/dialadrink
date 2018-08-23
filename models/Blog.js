@@ -45,12 +45,15 @@ Blog.schema.pre("save", function (next) {
             return regex.test(this.title) || regex.test(this.content.brief) || regex.test(this.content.extended)
         });
 
-        var $ = docParser.load(this.content.extended);
-        var tagElems = ["h1", "h2", "strong", "b"].map(t => "#site-content " + t).join(", ");
-        var tags = $(tagElems).text().split("\t").map(t => t.trim());
-        var newTags = tags.filter(t => this.tags.any(t1 => t1.toLowerCase().trim() == t.toLowerCase().trim()));
+        if(!this.tags || !this.tags.length) {
+            var $ = docParser.load(this.content.extended);
+            var tagElems = ["h1", "h2", "strong", "b"].map(t => "#site-content " + t).join(", ");
+            var tags = $(tagElems).text().split("\t").map(t => t.trim());
+            var newTags = tags.filter(t => this.tags.any(t1 => t1.toLowerCase().trim() == t.toLowerCase().trim()));
 
-        this.tags = this.tags.concat(newTags);
+            this.tags = this.tags.concat(newTags);
+        }
+
         next();
     })
 })

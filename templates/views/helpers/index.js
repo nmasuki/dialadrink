@@ -343,6 +343,11 @@ module.exports = function () {
         return (str || "").replace(/<(?:.|\n)*?>/gm, '');
     };
 
+    // Direct url link to a specific brand
+    _helpers.brandUrl = function (brandSlug, options) {
+        return ('/brand/' + brandSlug);
+    };
+
     // Direct url link to a specific product
     _helpers.productUrl = function (productSlug, options) {
         return ('/product/' + productSlug);

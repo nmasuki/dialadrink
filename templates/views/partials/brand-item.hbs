@@ -1,0 +1,23 @@
+<a href="{{brandUrl key}}" title="{{name}}" style="display :block; color: black;">
+    <div class="featured-image" style="text-align :center; boarder-radius: 2px; margin: 5px">
+        <div class="item-name"
+             style="text-align:center; justify-content :center; color: black;min-height: 120px">
+
+            {{#if logo.secure_url}}
+                <img src="{{cloudinaryUrl logo crop='fit'}}" alt="{{{name}}}"
+                     class="img-responsive-brand" itemprop="image"
+                     style="margin: auto;"/>
+            {{/if}}
+
+            <div class="brand-details">
+                <a href="{{brandUrl key}}" title="{{name}}">
+                    <div itemprop="name" class="brand-name"
+                         style="bottom: 0;position: absolute; font-size: 12px!important; color: black;white-space: nowrap; height: auto">
+                        <div style="margin: 0 auto">{{{truncate name 15}}}</div>
+                    </div>
+                </a>
+                <!--<div style="font-size: 12px !important;">{{company.name}}</div>-->
+            </div>
+        </div>
+    </div>
+</a>
