@@ -45,11 +45,32 @@ router.get("/:product", function (req, res) {
                 locals.page.keyWords = product.keyWords.join(", ");
                 locals.page.meta = locals.page.meta || product.keyWords.join(" ").truncate(160, ".");
 
+                var lastRemovedKey, lastRemoved;
+                Object.keys(res.locals.groupedBrands).forEach(k => {
+                    if (product.category && k != product.category.name)
+                    {
+                        lastRemovedKey = k;
+                        lastRemoved = res.locals.groupedBrands[k];
+                        delete res.locals.groupedBrands[k];
+                    }
+                });
+
+                if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+                    res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
+
+                if (!Object.keys(res.locals.groupedBrands).length)
+                    delete res.locals.groupedBrands;
+
                 product.findSimilar((err, products) => {
                     if (products)
                         locals.similar = products
                             .orderBy(p => Math.abs(p.popularity - product.popularity))
                             .slice(0, 10);
+
+                    var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+                    var brand = brands.first();
+
+                    if (brands.length == 1) locals.brand = brands.first();
 
                     //popularity goes up
                     product.addPopularity(1);

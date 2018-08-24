@@ -1,12 +1,12 @@
 <a href="{{brandUrl key}}" title="{{name}}" style="display :block; color: black;">
-    <div class="featured-image" style="text-align :center; boarder-radius: 2px; margin: 5px">
+    <div class="featured-brand" style="text-align :center; boarder-radius: 2px; margin: 5px">
         <div class="item-name"
              style="text-align:center; justify-content :center; color: black;min-height: 120px">
 
             {{#if logo.secure_url}}
                 <img src="{{cloudinaryUrl logo crop='fit'}}" alt="{{{name}}}"
-                     class="img-responsive-brand" itemprop="image"
-                     style="margin: auto;"/>
+                     class="img-responsive" itemprop="image"
+                     style="margin: auto;max-height: 100px;"/>
             {{/if}}
 
             <div class="brand-details">

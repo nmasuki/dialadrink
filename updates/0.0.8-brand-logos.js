@@ -22,6 +22,8 @@ var googleKeyUsage = {
     }
 };
 
+
+
 function googleSearch(content, callback) {
     (function apiCal() {
         var api_key = Object.keys(googleKeyUsage.usage).orderBy(k => googleKeyUsage.usage[k]).first();
@@ -70,17 +72,37 @@ exports = module.exports = function (done) {
                     return logo;
                 }
 
+                function pickLogoFromProducts(){
+                    console.log("Picking logo from product!")
+                    keystone.list('Product').findPublished({brand: brand._id}, (err, products)=>{
+                        var first = products.first();
+                        if(first){
+                            brand.logo = first.image;
+                            brand.save(err => {
+                                if (err)
+                                    return console.log(err, brand);
+                                console.log("Added brand logo " + brand.name);
+                            });
+                        }
+                    });
+                }
+
                 function searchLogos(surFix) {
                     var search = brand.company.name + " " +  brand.name + " " + (surFix || "logo");
                     googleSearch(search.trim(), (err, data) => {
-                        var logos = (data.items || data.data)
-                            .map(i => i.pagemap && i.pagemap.cse_image && i.pagemap.cse_image.flatten(t => t.src))
-                            .filter(s => !!s)
-                            .map(s => s[0]);
-                        if (!pickLogo(logos))
+                        var logos;
+                        if(data){
+                            logos = (data.items || data.data)
+                                .map(i => i.pagemap && i.pagemap.cse_image && i.pagemap.cse_image.flatten(t => t.src))
+                                .filter(s => !!s)
+                                .map(s => s[0]);
+                        }else
+                            logos = null
+
+                        if (logos && !pickLogo(logos))
                             brand.save();
                         else
-                            console.log("No matching log found for '" + brand.name + "'")
+                            pickLogoFromProducts()
                     });
                 }
 
@@ -90,6 +112,7 @@ exports = module.exports = function (done) {
                      var logo = pickLogo(brand.logos);
                      if (!logo)
                          searchLogos("brand logo");
+
                 }
 
                 if (isLast) done();

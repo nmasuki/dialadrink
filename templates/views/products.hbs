@@ -8,13 +8,11 @@
     <div class="row">
         <div class="col-md-12 col-lg-12">
 
-            {{#ifeq brands.length 1}}
-                {{#with brands.0.}}
-                    <div class="row">
-                        {{>brand}}
-                    </div>
-                {{/with}}
-            {{/ifeq}}
+            {{#if brand}}
+                <div class="row">
+                    {{>brand }}
+                </div>
+            {{/if}}
 
             <div class="row">
                 {{#each products}}
@@ -31,20 +29,6 @@
                     </div>
                 {{/each}}
             </div>
-            {{#if (and brands (gt brands.length 1))}}
-                <div class="row">
-                    <h2 style="font-size: 18px">SHOP BY BRAND</h2>
-                    {{#each brands}}
-                        <div class="col-md-1 col-lg-1"
-                             itemscope itemtype="http://schema.org/Brand"
-                             style="box-shadow:3px 3px 3px #CFD8DC; margin:15px 5px;">
-                            {{>brand-item}}
-                        </div>
-                    {{else}}
-
-                    {{/each}}
-                </div>
-            {{/if}}
         </div>
     </div>
 </div>

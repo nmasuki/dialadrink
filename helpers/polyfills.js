@@ -344,7 +344,7 @@ String.prototype.truncate = function (length, ending) {
     ending = ending || '...';
     var str = (this || ""), index = length - ending.length;
 
-    while(index > 0 && str[index] && /\w/.test(str[index]))
+    while (index > 0 && str[index] && /\w/.test(str[index]))
         index--;
 
     if (this.length > length) {
@@ -509,7 +509,7 @@ if (!Array.prototype.flatten)
         return this.reduce(function (a, b) {
             return a.concat(typeof map === "function" ? map(b) : b);
         }, []);
-    }
+    };
 
 //
 if (!Math.sequence)

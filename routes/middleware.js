@@ -27,7 +27,7 @@ exports.initLocals = function (req, res, next) {
 
     if (req.xhr) {
         var csrf_token = req.body.csrf || req.body.csrf_token || req.get('X-CSRF-Token');
-        if(!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
+        if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
             res.send({
                 success: true,
                 msg: "CSRF validation failed!"
@@ -51,8 +51,10 @@ exports.initLocals = function (req, res, next) {
             exports.initBreadCrumbsLocals(req, res, function () {
                 //Load Page
                 exports.initPageLocals(req, res, function () {
-                    next();
-                })
+                    exports.initBrandsLocals(req, res, function () {
+                        next();
+                    })
+                });
             })
         })
     }
@@ -75,6 +77,22 @@ exports.initPageLocals = function (req, res, next) {
             next(err);
         });
 
+};
+
+exports.initBrandsLocals = function (req, res, next) {
+    keystone.list('ProductBrand').findPopularBrands((err, brands) => {
+        if (!err) {
+            groups = brands.groupBy(b => b.category && b.category.name || "_delete");
+            delete groups["_delete"];
+            delete groups["Others"];
+
+            for (var i in groups)
+                groups[i] = groups[i].orderByDescending(b => b.popularity).slice(0, 5);
+
+            res.locals.groupedBrands = groups;
+        }
+        next(err);
+    });
 }
 
 exports.initBreadCrumbsLocals = function (req, res, next) {

@@ -39,6 +39,28 @@ router.get("/:category", function (req, res) {
                         locals.page.title = title.trim() + " | " + keystone.get("name");
 
                     locals.products = products;
+
+                    var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+                    if(brands.length == 1) locals.brand = brand;
+
+                    var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
+                    var lastRemovedKey, lastRemoved;
+                    Object.keys(res.locals.groupedBrands).forEach(k => {
+                        if (!categories.find(c=> c && k == c.name))
+                        {
+                            lastRemovedKey = k;
+                            lastRemoved = res.locals.groupedBrands[k];
+                            delete res.locals.groupedBrands[k];
+                        }
+                    });
+
+                    if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+                        res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
+
+                    if(!Object.keys(res.locals.groupedBrands).length)
+                        delete res.locals.groupedBrands;
+
+
                     next();
                 });
             });
@@ -82,7 +104,29 @@ router.get("/:category/:subcategory", function (req, res) {
 
                     if (subCategories.first(a => !!a))
                         locals.page.h1 = subCategories.first(a => !!a).name;
+
                     locals.products = products;
+
+                    var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+                    if(brands.length == 1) locals.brand = brand;
+
+                    var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
+                    var lastRemovedKey, lastRemoved;
+                    Object.keys(res.locals.groupedBrands).forEach(k => {
+                        if (!categories.find(c=> c && k == c.name))
+                        {
+                            lastRemovedKey = k;
+                            lastRemoved = res.locals.groupedBrands[k];
+                            delete res.locals.groupedBrands[k];
+                        }
+                    });
+
+                    if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+                        res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
+
+                    if(!Object.keys(res.locals.groupedBrands).length)
+                        delete res.locals.groupedBrands;
+
                     next();
                 });
             });
