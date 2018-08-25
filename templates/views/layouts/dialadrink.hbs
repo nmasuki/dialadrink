@@ -43,9 +43,9 @@
 
 {{#if page.canonical}}
     <link rel="canonical" href="{{page.canonical}}"/>{{/if}}
-<link rel="stylesheet" type="text/css"
+<link rel="preload" type="text/css"
       href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300"/>
-<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+<link rel="alternate stylesheet" onload="this.rel='stylesheet'" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
 <link href="/styles/site{{dotmin}}.css" rel="stylesheet">
 
 <body class="07_MediaCenter">

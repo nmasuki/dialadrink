@@ -6,14 +6,16 @@
             {{#if logo.secure_url}}
                 <img src="{{cloudinaryUrl logo crop='fit'}}" alt="{{{name}}}"
                      class="img-responsive" itemprop="image"
-                     style="margin: auto;max-height: 100px;"/>
+                     style="margin: auto;max-width: 100%;"/>
+            {{else}}
+                
             {{/if}}
 
             <div class="brand-details">
                 <a href="{{brandUrl key}}" title="{{name}}">
                     <div itemprop="name" class="brand-name"
-                         style="bottom: 0;position: absolute; font-size: 12px!important; color: black;white-space: nowrap; height: auto">
-                        <div style="margin: 0 auto">{{{truncate name 15}}}</div>
+                         style="bottom: 0;position: absolute; left: 35%; font-size: 12px!important; color: black;white-space: nowrap; height: auto">
+                        <div style="">{{{truncate name 15}}}</div>
                     </div>
                 </a>
                 <!--<div style="font-size: 12px !important;">{{company.name}}</div>-->

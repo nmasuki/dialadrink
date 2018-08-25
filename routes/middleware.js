@@ -80,14 +80,16 @@ exports.initPageLocals = function (req, res, next) {
 };
 
 exports.initBrandsLocals = function (req, res, next) {
-    keystone.list('ProductBrand').findPopularBrands((err, brands) => {
+    keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
         if (!err) {
             groups = brands.groupBy(b => b.category && b.category.name || "_delete");
             delete groups["_delete"];
             delete groups["Others"];
 
             for (var i in groups)
-                groups[i] = groups[i].orderByDescending(b => b.popularity).slice(0, 5);
+                groups[i] = groups[i].orderByDescending(b => products
+                    .filter(p => p.brand && b.popularity == (p.brand._id || p.brand))
+                    .sum(p => p.popularity)).slice(0, 5);
 
             res.locals.groupedBrands = groups;
         }
