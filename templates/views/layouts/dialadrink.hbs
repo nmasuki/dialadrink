@@ -50,18 +50,18 @@
     </style>
 </head>
 
+<body class="07_MediaCenter">
+
     {{!-- This file provides the default styling for the KeystoneJS Content Editor only renders when user is logged in and admin--}}
     {{{isAdminEditorCSS user}}}
 
     {{!--PWA setups and js regestry--}}
     {{>pwaheaders}}
     
-<link rel="preload" type="text/css"
-      href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300"/>
-<link rel="alternate stylesheet" onload="this.rel='stylesheet'" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
-<link href="/styles/site{{dotmin}}.css" rel="stylesheet">
-
-<body class="07_MediaCenter">
+    <link rel="preload" type="text/css"
+        href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300"/>
+    <link rel="alternate stylesheet" onload="this.rel='stylesheet'" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    <link href="/styles/site{{dotmin}}.css" rel="stylesheet">
 
 {{>jsscripts1}}
 <!-- nav -->
