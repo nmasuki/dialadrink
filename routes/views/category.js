@@ -21,7 +21,7 @@ router.get("/:category", function (req, res) {
     view.on('init', function (next) {
         keystone.list('ProductCategory').model.find({key: locals.filters.category.cleanId()})
             .exec((err, categories) => {
-                var title = categories.map(c => c.name).join(" - ");
+                var title = categories.map(c => (c.pageTitle || "").replace("I", "|")).first() || categories.map(c => c.name).join(" - ");
                 var filter = {category: {"$in": categories.map(c => c._id)}};
                 keystone.list('Product').findPublished(filter, (err, products) => {
 
