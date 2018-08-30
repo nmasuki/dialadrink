@@ -20,7 +20,7 @@
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="Dial A Drink Kenya"/>
     <meta property="og:description" content="{{page.meta}}"/>
-    
+
     {{#if product}}
         {{#each product.altImages}}
             <meta property="og:image" content="{{cloudinaryUrl this crop='fit'}}"/>
@@ -41,9 +41,6 @@
     <meta name="twitter:description" content="{{page.meta}}"/>
     {{#if page.canonical}}<link rel="canonical" href="{{page.canonical}}"/>{{/if}}
 
-    {{!-- This file provides the default styling for the KeystoneJS Content Editor only renders when user is logged in and admin--}}
-    {{{isAdminEditorCSS user}}}
-
     <style>
         @media (max-width: 400px) {
             .collection-heading-inner.heading-group.item {
@@ -53,7 +50,10 @@
     </style>
 </head>
 
-{{!--PWA setups and js regestry--}}
+    {{!-- This file provides the default styling for the KeystoneJS Content Editor only renders when user is logged in and admin--}}
+    {{{isAdminEditorCSS user}}}
+
+    {{!--PWA setups and js regestry--}}
     {{>pwaheaders}}
     
 <link rel="preload" type="text/css"
