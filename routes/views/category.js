@@ -21,7 +21,9 @@ router.get("/:category", function (req, res) {
     view.on('init', function (next) {
         keystone.list('ProductCategory').model.find({key: locals.filters.category.cleanId()})
             .exec((err, categories) => {
-                var title = categories.map(c => (c.pageTitle || "").replace("I", "|")).first() || categories.map(c => c.name).join(" - ");
+                var title = categories.map(c => c.name).join(" - ");
+                locals.page.title = categories.map(c => (c.pageTitle || "").replace(/I/g, "|")).first();
+
                 var filter = {category: {"$in": categories.map(c => c._id)}};
                 keystone.list('Product').findPublished(filter, (err, products) => {
 
@@ -37,6 +39,9 @@ router.get("/:category", function (req, res) {
 
                     if (!locals.page.title || locals.page.title == keystone.get("name"))
                         locals.page.title = title.trim() + " | " + keystone.get("name");
+
+                    while (locals.page.title.contains("  "))
+                        locals.page.title = locals.page.title.replace(/\ \ /g, " ");
 
                     locals.products = products;
 
