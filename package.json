@@ -19,6 +19,7 @@
     "grunt-css-clean": "^0.1.0",
     "handlebars": "4.0.6",
     "html-pdf": "^2.2.0",
+    "is-mobile": "^1.0.0",
     "keystone": "4.0.0-beta.5",
     "keystone-email": "^1.0.5",
     "keyword-extractor": "0.0.15",

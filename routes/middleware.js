@@ -9,6 +9,7 @@
  */
 var _ = require('lodash');
 var keystone = require("keystone");
+var mobile = require('is-mobile');
 
 /**
  Initialises the standard view locals
@@ -72,6 +73,11 @@ exports.initPageLocals = function (req, res, next) {
         .find({key: regex})
         .exec((err, pages) => {
             var page = pages.orderBy(m => m.href.length).first();
+
+            if(page && page.mobileBannerImages && mobile(req)){
+                var bannerImages = page.bannerImages;
+                page.bannerImages = page.mobileBannerImages;
+            }
 
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
             next(err);

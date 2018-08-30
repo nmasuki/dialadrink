@@ -22,6 +22,7 @@ ProductBrand.add({
 });
 
 ProductBrand.relationship({ref: 'Product', path: 'product', refPath: 'brand'});
+ProductBrand.defaultColumns = 'name, logo, h1, state';
 
 ProductBrand.register();
 

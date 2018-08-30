@@ -20,7 +20,7 @@ Page.add({
 	h1: {type: String},
 	h1s: {type: Types.TextArray},
     bannerImages: {type: Types.CloudinaryImages },
-    bannerImagesMobile: {type: Types.CloudinaryImages },
+    mobileBannerImages: {type: Types.CloudinaryImages },
 	content: { type: Types.Html, wysiwyg: true, height: 500, width: 500 },
 });
 
