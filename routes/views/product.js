@@ -65,7 +65,7 @@ router.get("/:product", function (req, res) {
                     if (products)
                         locals.similar = products
                             .orderBy(p => Math.abs(p.popularity - product.popularity))
-                            .slice(0, 8);
+                            .slice(0, 6);
 
                     var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
                     var brand = brands.first();
