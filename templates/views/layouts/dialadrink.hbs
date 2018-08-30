@@ -170,13 +170,11 @@
                         <div class="mobile-top-navigation visible-xs">
                             <button id="showLeftPush" class="visible-xs"><i class="fa fa-bars fa-2x"></i></button>
                             <ul class="list-inline">
-
                                 <li class="is-mobile-login">
                                     <div class="btn-group">
                                         <div class="dropdown-toggle" data-toggle="dropdown">
                                             <i class="fa fa-user"></i>
                                         </div>
-
                                     </div>
                                 </li>
 
@@ -239,7 +237,7 @@
                     <div class="row owl-carousel offset-0" data-items="1" data-autoplay="true">
                         {{#each page.bannerImages}}
                             <div class="collection-heading-inner heading-group item inset-2"
-                                 style="background-image:url({{{cloudinaryUrl this}}})">
+                                 style="background-image:url({{{cloudinaryUrl this height=200 width=1140 crop='fit'}}})">
                             </div>
                         {{/each}}
                     </div>
