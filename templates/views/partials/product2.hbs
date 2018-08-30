@@ -1,21 +1,22 @@
-<a href="{{productUrl href}}" title="{{name}}" style="display :block; color: black;">
-	<div class="featured-image" style="text-align :center; box-shadow:3px 3px 3px #CFD8DC; boarder-radius: 3px; margin: 5px">
-		<div class="item-name"
-			 style="text-align:center; justify-content :center; color: black;min-height: 154px">
+<div class="featured-image"
+     style="text-align :center; box-shadow:3px 3px 3px #CFD8DC; boarder-radius: 3px; margin: 5px">
+    <a href="{{productUrl href}}" title="{{name}}" style="display :block; color: black;">
+        <div class="item-name"
+             style="text-align:center; justify-content :center; color: black;min-height: 154px">
 
-			<img src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
-				 class="img-responsive" itemprop="image"
-				 style="margin: auto; max-height: 83px;"/>
+            <img src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
+                 class="img-responsive" itemprop="image"
+                 style="margin: auto; max-height: 83px;"/>
 
-			<div class="product-details">
-				<a href="{{productUrl href}}" title="{{name}}">
-					<div itemprop="name" class="drinks-name"
-						 style="font-size: 12px!important; color: black;white-space: nowrap; height: auto">
-						{{{truncate name 15}}}
-					</div>
-				</a>
-				<div style="font-size: 12px !important;">{{quantity}}</div>
-				<div style="font-size: 12px !important;">
+            <div class="product-details">
+                <a href="{{productUrl href}}" title="{{name}}">
+                    <div itemprop="name" class="drinks-name"
+                         style="font-size: 12px!important; color: black;white-space: nowrap; height: auto">
+                        {{{truncate name 15}}}
+                    </div>
+                </a>
+                <div style="font-size: 12px !important;">{{quantity}}</div>
+                <div style="font-size: 12px !important;">
                     <meta itemprop="priceCurrency" content="{{currency}}"/>
                     {{currency}}
                     {{#ifgt price offerPrice}}
@@ -28,8 +29,8 @@
                     {{else}}
                         <span itemprop="price">{{formatNumber price}}</span>
                     {{/ifgt}}
-				</div>
-			</div>
-		</div>
-	</div>
-</a>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
