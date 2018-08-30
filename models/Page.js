@@ -19,7 +19,8 @@ Page.add({
 	meta: {type: String },
 	h1: {type: String},
 	h1s: {type: Types.TextArray},
-	bannerImages: {type: Types.CloudinaryImages },
+    bannerImages: {type: Types.CloudinaryImages },
+    bannerImagesMobile: {type: Types.CloudinaryImages },
 	content: { type: Types.Html, wysiwyg: true, height: 500, width: 500 },
 });
 
