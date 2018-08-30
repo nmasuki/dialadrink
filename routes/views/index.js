@@ -172,7 +172,7 @@ router.get('/sitemap', function (req, res) {
     var xml = require('xml');
 
     Page.model.find({})
-        .exec((err, pages) => locals.pages = pages)
+        .exec((err, pages) => locals.pages = pages.filter(p=>p.href && p.content))
         .then(Product.findPublished({})
             .exec((err, products) => locals.products = products)
             .then(() => ProductCategory.model.find({})
