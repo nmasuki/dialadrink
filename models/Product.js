@@ -183,11 +183,11 @@ Product.schema.pre('save', function (next) {
 Product.schema.set('toObject', {
     transform: function (doc, ret, options) {
         var whitelist = [
-            'href','name','priceOptions','onOffer','inStock',
-            'state','image','altImages','pageTitle','description',
-            'publishedDate','modifiedDate','popularity','category',
-            'subCategory','brand','ratings',
-            'options','cheapestOption','avgRatings', 'ratingCount',
+            'href', 'name', 'priceOptions', 'onOffer', 'inStock',
+            'state', 'image', 'altImages', 'pageTitle', 'description',
+            'publishedDate', 'modifiedDate', 'popularity', 'category',
+            'subCategory', 'brand', 'ratings',
+            'options', 'cheapestOption', 'avgRatings', 'ratingCount',
             'quantity', 'currency', 'price', 'offerPrice', 'tags'
         ];
         whitelist.forEach(i => ret[i] = doc[i]);
@@ -304,7 +304,12 @@ Product.search = function (query, next) {
             {name: keyRegex},
             {quantity: nameRegex},
             {quantity: keyRegex},
-            //{description: nameRegex}
+            {
+                "$or": [
+                    {'company.name': keyRegex},
+                    {'company.name': nameRegex}
+                ]
+            }
         ]
     };
 
