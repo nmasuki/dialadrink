@@ -38,7 +38,13 @@
 
     {{!--PWA setups and js regestry--}}
     {{>pwaheaders}}
-
+    <style>
+        @media (max-width: 400px) {
+            .heading-group {
+                min-height: 377px !important;
+            }
+        }
+    </style>
 </head>
 
 {{#if page.canonical}}
