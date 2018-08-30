@@ -290,9 +290,11 @@ Product.findByOption = function (filter, callback) {
 };
 
 Product.search = function (query, next) {
+    var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, ".*?");
+    var keyStr = query.cleanId().trim().escapeRegExp();
 
-    var nameRegex = new RegExp(query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, ".*?"), "i");
-    var keyRegex = new RegExp(query.cleanId().trim().escapeRegExp(), "i");
+    var nameRegex = new RegExp(nameStr, "i");
+    var keyRegex = new RegExp(keyStr, "i");
 
     // Set locals
     var filters = {
@@ -322,7 +324,7 @@ Product.search = function (query, next) {
                         if (err || !products || !products.length)
                             Product.findBySubCategory(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                    Product.findPublished(Object.assign({description: nameRegex}, filters), function (err, products) {
+                                    Product.findPublished(filters, function (err, products) {
                                         next(err, products)
                                     });
                                 else

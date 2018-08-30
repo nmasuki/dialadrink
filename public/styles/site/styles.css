@@ -16271,3 +16271,11 @@ a .fa:hover, .home_featured_wrapper a {
     height: 180px;
     overflow: auto;
 }
+
+.label{
+    margin: 3px;
+}
+
+.label a {
+    color: #fff !important;
+}

@@ -58,9 +58,9 @@ function search(req, res, next) {
         Product.search(req.params.query, function (err, products) {
             if (err || !products || !products.length) {
                 if (req.originalUrl.startsWith("/search"))
-                    res.status(404).render('errors/404');
+                    view.render('search');
                 else
-                    next();
+                    res.status(404).render('errors/404');
             } else {
                 renderResults(products, req.params.query.toProperCase())
             }
