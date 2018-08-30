@@ -235,11 +235,19 @@
             <div class="container" style="padding-bottom: 0">
                 {{#if page.bannerImages }}
                     <div class="row owl-carousel offset-0" data-items="1" data-autoplay="true">
+                        {{#if page.isMobile}}
+                            {{#each page.mobileBannerImages}}
+                                <div class="collection-heading-inner heading-group item inset-2"
+                                    style="height: 377px; background-image:url({{{cloudinaryUrl this height=377 width=377 crop='fit'}}})">
+                                </div>
+                            {{/each}}
+                        {{else}}
                         {{#each page.bannerImages}}
                             <div class="collection-heading-inner heading-group item inset-2"
                                  style="background-image:url({{{cloudinaryUrl this height=200 width=1140 crop='fit'}}})">
                             </div>
                         {{/each}}
+                        {{/if}}
                     </div>
                 {{/if}}
             </div>
