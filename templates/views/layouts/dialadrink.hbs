@@ -61,8 +61,9 @@
     <link rel="preload" type="text/css"
         href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300"/>
     <link rel="alternate stylesheet" onload="this.rel='stylesheet'" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    <link rel="alternate stylesheet" onload="this.rel='stylesheet'" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  
     <link href="/styles/site{{dotmin}}.css" rel="stylesheet">
-
 {{>jsscripts1}}
 <!-- nav -->
 <!-- Header -->
@@ -235,7 +236,7 @@
             <div class="container" style="padding-bottom: 0">
                 {{#if page.bannerImages }}
                     <div class="row owl-carousel offset-0" data-items="1" data-autoplay="true">
-                        {{#if page.isMobile}}
+                        {{#if isMobile}}
                             {{#each page.mobileBannerImages}}
                                 <div class="collection-heading-inner heading-group item inset-2"
                                     style="height: 377px; background-image:url({{{cloudinaryUrl this height=377 width=377 crop='fit'}}})">

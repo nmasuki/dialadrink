@@ -293,8 +293,8 @@ Product.search = function (query, next) {
     var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, ".*?");
     var keyStr = query.cleanId().trim().escapeRegExp();
 
-    var nameRegex = new RegExp(nameStr, "i");
-    var keyRegex = new RegExp(keyStr, "i");
+    var nameRegex = new RegExp(nameStr + ".*?", "i");
+    var keyRegex = new RegExp(keyStr + ".*?", "i");
 
     // Set locals
     var filters = {

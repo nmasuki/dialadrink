@@ -12,28 +12,37 @@ function search(req, res, next) {
     var locals = res.locals;
 
     // Skip to page if valid
-    if (locals.page._id && locals.page.content)
+    if (locals.page && locals.page._id && locals.page.content)
         return next();
 
     //Searching h1 title
-    locals.page = Object.assign(locals.page, {
+    locals.page = Object.assign(locals.page | {}, {
         h1: ((req.params.query || "").toProperCase() + " drinks").trim()
     });
 
     locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId()
 
-    if (req.originalUrl.startsWith("/search"))
-        locals.breadcrumbs.push({
-            label: "Search Results",
-            href: req.originalUrl
-        });
-    else
-        locals.breadcrumbs.push({
-            label: (req.params.query || "Search Results").toProperCase(),
-            href: req.originalUrl
-        });
+    if(locals.breadcrumbs){
+        if (req.originalUrl.startsWith("/search"))
+            locals.breadcrumbs.push({
+                label: "Search Results",
+                href: req.originalUrl
+            });
+        else
+            locals.breadcrumbs.push({
+                label: (req.params.query || "Search Results").toProperCase(),
+                href: req.originalUrl
+            });
+    }
 
     function renderResults(products, title) {
+        
+        if (req.xhr) 
+            return res.send({
+                success: true,
+                results: products.map(p=>p.name)
+            });
+
         title = title || "";
 
         var i = -1, meta = title.replace(/\ \-\ /g, ", ");
@@ -50,7 +59,6 @@ function search(req, res, next) {
             locals.page.title = title + " | " + keystone.get("name");
 
         locals.products = products;
-
         view.render('search');
     }
 
@@ -58,11 +66,11 @@ function search(req, res, next) {
         Product.search(req.params.query, function (err, products) {
             if (err || !products || !products.length) {
                 if (req.originalUrl.startsWith("/search"))
-                    view.render('search');
+                    renderResults(products, req.params.query.toProperCase());
                 else
                     res.status(404).render('errors/404');
             } else {
-                renderResults(products, req.params.query.toProperCase())
+                renderResults(products, req.params.query.toProperCase());
             }
         });
     else

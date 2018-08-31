@@ -75,7 +75,7 @@ exports.initPageLocals = function (req, res, next) {
             var page = pages.orderBy(m => m.href.length).first();
 
             if(page && page.mobileBannerImages && mobile(req))
-                page.isMobile = true;
+                res.locals.isMobile = true;
 
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
             next(err);
