@@ -40,6 +40,7 @@ router.get("/:product", function (req, res) {
                     product.subCategory && product.subCategory.name,
                     product.brand && product.brand.name,
                 ].filter(a => !!a).join(" - ") + " | " + keystone.get("name");
+                locals.page.canonical = "https://www.dialadrinkkenya.com/" + product.href;
 
                 locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
                 locals.page.keyWords = product.keyWords.join(", ");
