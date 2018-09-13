@@ -23,7 +23,7 @@
     //- them specifically here, instead of bootstrap-3.3.5.min.js
 --}}
 <script src="/js/bootstrap/bootstrap-3.3.5.min.js" async></script>
-   {{#ifne env 'development'}}
-    <script src="/sw-register{{dotmin}}.js"></script>
-   {{/ifne}}
+{{#ifne env 'development'}}
+<script src="/sw-register{{dotmin}}.js" async></script>
+{{/ifne}}
 
