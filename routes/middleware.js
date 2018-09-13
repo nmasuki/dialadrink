@@ -26,6 +26,8 @@ exports.initLocals = function (req, res, next) {
     //Promo code applied
     res.locals.promocode = req.session.promo;
 
+    res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
+
     if (req.xhr) {
         var csrf_token = req.body.csrf || req.body.csrf_token || req.get('X-CSRF-Token');
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))

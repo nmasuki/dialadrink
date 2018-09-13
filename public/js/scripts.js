@@ -512,6 +512,39 @@ function handleProductRating(){
     });
 }
 
+
+function ioLazyLoad(){
+    var options = {
+        root: document.querySelector('.main-content'),
+        rootMargin: '0px',
+        threshold: 1.0
+    };
+
+    function loadImage(imageElement) {
+        setTimeout(function() {
+            var img = $(imageElement).is("img")? imageElement: imageElement.querySelector('img');
+            img.src = img.dataset.src;  
+        }, 1000);
+    }
+
+    var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry) {
+            // console.log('entry: ', entry);
+            if (entry.intersectionRatio > 0.9) {
+                loadImage(entry.target);
+	            entry.target.classList.add('active');
+                // console.log('Loaded: ', entry);
+	            io.unobserve(entry.target);
+            }
+        });
+    }, options);
+
+    var targetElements = $('img[data-src]');
+    targetElements.each(function(i, e){
+        io.observe(e);
+    });
+}
+
 $(window).resize(function () {
     toggleLeftMenu();
 });
@@ -519,6 +552,8 @@ $(window).resize(function () {
 $(window).ready(function ($) {
 
     $('[data-toggle="tooltip"]').tooltip();
+
+    ioLazyLoad();
 
     slider_main();
 
@@ -549,6 +584,8 @@ $(window).ready(function ($) {
     updateScrollThumbsQS();
 
     addClassFirst();
+
+
 });
 
 $(window).load(function () {

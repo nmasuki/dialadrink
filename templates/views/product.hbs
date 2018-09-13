@@ -6,7 +6,7 @@
          itemscope itemtype="http://schema.org/Product">
         <div class="row">
             <div class="col-md-4">
-                <img src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
+                <img src="{{placeholderImg}}" data-src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
                      class="image-responsive" style="max-height: 400px; margin: 0 auto"
                      itemprop="image"/>
                 <div class="row product-thumbnails">
@@ -19,9 +19,9 @@
                     {{else}}
                         <div class="col-md-1 ">
                             <div class="thumbnail">
-                                <img
-                                        data-img="{{cloudinaryUrl ../image crop='fill' crop='fit'}}"
-                                        src="{{cloudinaryUrl ../image  width=24 height=24 crop='fill' crop='fit'}}" alt="{{{../name}}}"/>
+                                <img alt="{{{../name}}}"
+                                     data-img="{{cloudinaryUrl ../image crop='fill' crop='fit'}}"
+                                     src="{{cloudinaryUrl ../image  width=24 height=24 crop='fill' crop='fit'}}"/>
                             </div>
                         </div>
                     {{/each}}

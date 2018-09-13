@@ -16279,3 +16279,7 @@ a .fa:hover, .home_featured_wrapper a {
 .label a {
     color: #fff !important;
 }
+
+img[src=""] {
+    visibility: hidden;
+}
