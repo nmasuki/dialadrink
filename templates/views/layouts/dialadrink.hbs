@@ -13,7 +13,7 @@
     <meta name="theme-color" content="#ffffff"/>
     {{!--PWA setups and js regestry--}}
     {{>pwaheaders}}
-    
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{page.meta}}"/>
@@ -44,15 +44,19 @@
     {{#if page.canonical}}<link rel="canonical" href="{{page.canonical}}"/>{{/if}}
 
     <style>
-        .brand-group{
-            padding-left: 30px;
-        }
+
         @media (max-width: 400px) {
             .collection-heading-inner.heading-group.item {
                 min-height: 377px !important;
             }
             .brand-group{
                 padding-left: 0;
+            }
+        }
+        
+        @media (min-width: 400px) {
+            .brand-group{
+                padding-left: 30px;
             }
         }
     </style>
