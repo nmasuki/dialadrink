@@ -58,13 +58,15 @@
     {{!--PWA setups and js regestry--}}
     {{>pwaheaders}}
     
-    <link rel="preload" type="text/css"
-        href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300"/>
+    <link rel="preload" type="text/css" href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300"/>
     <link rel="alternate stylesheet" onload="this.rel='stylesheet'" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
-    <link rel="alternate stylesheet" onload="this.rel='stylesheet'" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="alternate stylesheet" onload="this.rel='stylesheet'" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui-min.css">
   
     <link href="/styles/site{{dotmin}}.css" rel="stylesheet">
-{{>jsscripts1}}
+    {{>jsscripts1}}
+    {{#ifne env 'development'}}
+    <script src="/sw-register{{dotmin}}.js"></script>
+    {{/ifne}}
 <!-- nav -->
 <!-- Header -->
 <header id="top" class="home1_theme_header header clearfix">
