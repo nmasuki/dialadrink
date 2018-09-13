@@ -1,22 +1,27 @@
 @font-face {
     font-family: 'Helvetica Neue';
-    src: url("../../assets/HelveticaNeueCEfbfd.woff2?6371961774109439206") format("woff2"), url("../../assets/HelveticaNeueCEfbfd.ttf?6371961774109439206") format("truetype"), url("../../assets/HelveticaNeueCEfbfd.woff?6371961774109439206") format("woff");
+    font-display: auto;
+    src:    url("../../assets/HelveticaNeueCEfbfd.woff2?6371961774109439206") format("woff2"), 
+            url("../../assets/HelveticaNeueCEfbfd.ttf?6371961774109439206") format("truetype"), 
+            url("../../assets/HelveticaNeueCEfbfd.woff?6371961774109439206") format("woff");
     font-weight: normal;
-    font-style: normal
+    font-style: normal;
 }
 
 @font-face {
     font-family: "currencies";
+    font-display: auto;
     src: url("../../assets/HelveticaNeuefbfd.ttf?6371961774109439206") format("truetype");
     font-weight: normal;
-    font-style: normal
+    font-style: normal;
 }
 
 @font-face {
     font-family: "caudex";
+    font-display: auto;
     src: url("../../assets/Caudex-Regularfbfd.ttf?6371961774109439206") format("truetype");
     font-weight: normal;
-    font-style: normal
+    font-style: normal;
 }
 
 body {
