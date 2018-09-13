@@ -42,9 +42,15 @@
     {{#if page.canonical}}<link rel="canonical" href="{{page.canonical}}"/>{{/if}}
 
     <style>
+        .brand-group{
+            padding-left: 30px;
+        }
         @media (max-width: 400px) {
             .collection-heading-inner.heading-group.item {
                 min-height: 377px !important;
+            }
+            .brand-group{
+                padding-left: 0;
             }
         }
     </style>
@@ -297,7 +303,7 @@
                         {{#each groupedBrands}}
                             <div class="col-md-6 col-lg-6" style="border-right: 1px solid lightgray;">
                                 <h3 style="font-size: 15px;text-decoration: underline; margin-left: 40px; font-weight: bold;">{{@key}}</h3>
-                                <div classs="row" style="padding-left: 30px">
+                                <div classs="row" class="brand-group">
                                     {{#each this}}
                                         <div class="col-md-2 col-lg-2"
                                              itemscope itemtype="http://schema.org/Brand"
