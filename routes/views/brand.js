@@ -20,16 +20,19 @@ router.get("/:brand", function (req, res, next) {
             var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
             locals.brand = brands.first();
             if (locals.brand)
+            {
                 title += locals.brand.name;
+                locals.page.meta = locals.brand.description || locals.brand.company.description || title;
+            }
 
             var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
             var lastRemovedKey, lastRemoved;
             Object.keys(res.locals.groupedBrands).forEach(k => {
-                if (!categories.find(c=> k == c.name))
+                if (!categories.find(c => k == c.name))
                 {
                     lastRemovedKey = k;
                     lastRemoved = res.locals.groupedBrands[k];
-                    delete res.locals.groupedBrands[k];
+                    //delete res.locals.groupedBrands[k];
                 }
             });
 
@@ -47,7 +50,6 @@ router.get("/:brand", function (req, res, next) {
                 locals.page.title = title + " | " + keystone.get("name");
 
             locals.products = products;
-
             // Render View
             view.render('products');
         } else

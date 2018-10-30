@@ -2,7 +2,6 @@ var keystone = require('keystone');
 var najax = require('najax');
 var cloudinary = require("cloudinary");
 var ProductBrand = keystone.list('ProductBrand');
-var ProductCategory = keystone.list('ProductCategory');
 
 var docParser;
 try {

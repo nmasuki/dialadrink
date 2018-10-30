@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Dial a Drink Kenya",
-            "program": "${workspaceFolder}\\keystone.js"
+            "program": "${workspaceFolder}\\app.js"
         }
     ]
 }

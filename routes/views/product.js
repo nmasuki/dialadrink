@@ -52,7 +52,7 @@ router.get("/:product", function (req, res) {
                     {
                         lastRemovedKey = k;
                         lastRemoved = res.locals.groupedBrands[k];
-                        delete res.locals.groupedBrands[k];
+                        //delete res.locals.groupedBrands[k];
                     }
                 });
 
