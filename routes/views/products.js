@@ -32,7 +32,7 @@ function index(req, res) {
                 if (!categories.find(c => k == c.name)) {
                     lastRemovedKey = k;
                     lastRemoved = res.locals.groupedBrands[k];
-                    delete res.locals.groupedBrands[k];
+                    //delete res.locals.groupedBrands[k];
                 }
             });
 

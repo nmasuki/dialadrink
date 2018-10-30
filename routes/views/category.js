@@ -55,7 +55,7 @@ router.get("/:category", function (req, res) {
                         {
                             lastRemovedKey = k;
                             lastRemoved = res.locals.groupedBrands[k];
-                            delete res.locals.groupedBrands[k];
+                            //delete res.locals.groupedBrands[k];
                         }
                     });
 
