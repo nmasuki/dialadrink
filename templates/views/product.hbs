@@ -48,14 +48,16 @@
                     </div>
                 </div><!-- end row -->
 
+                {{#if brand.name}}
                 <div class="row">
                     <div class="col-md-12">
                         <p class="description">
-                            {{truncate (cleanHtml description) 70}}
+                            By <a href="/{{brand.name}}">{{brand.name}}</a>
                         </p>
                     </div>
                 </div><!-- end row -->
-
+                {{/if}}
+                
                 <div class="row"
                      itemprop="aggregateRating"
                      itemscope="" itemtype="http://schema.org/AggregateRating">
