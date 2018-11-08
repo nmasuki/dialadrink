@@ -336,7 +336,11 @@ module.exports = function () {
     }
 
     _helpers.truncate = function (str, length) {
-        return (str || "").truncate(length, '...')
+        return (str || "").truncate(length, '...');
+    };
+
+    _helpers.trim = function (str, charlist) {
+        return (str || "").trim(charlist);
     };
 
     _helpers.cleanHtml = function(str){

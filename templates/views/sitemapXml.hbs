@@ -4,13 +4,13 @@
 
 	{{#each pages}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com{{href}}</loc>
+			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
 		</url>
 	{{/each}}
 
 	{{#each products}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/product/{{href}}</loc>
+			<loc>https://www.dialadrinkkenya.com/product/{{trim href "/"}}</loc>
 		</url>
 	{{/each}}
 	
