@@ -35,15 +35,14 @@ function search(req, res, next) {
             });
     }
 
-    function renderResults(products, title) {
-        
+    function renderResults(products, title) {        
         if (req.xhr) 
             return res.send({
                 success: true,
                 results: products.map(p=>p.name)
             });
 
-        title = title || "";
+        title = (title || "").toProperCase();
 
         var i = -1, meta = title.replace(/\ \-\ /g, ", ");
         while (products[++i] && meta.length < 100) {
@@ -53,29 +52,97 @@ function search(req, res, next) {
         }
 
         if (!locals.page.meta)
-            locals.page.meta = meta + " all available at " + keystone.get("name");
+            locals.page.meta = meta + ", Best prices online, " + keystone.get("name");
 
         if (!locals.page.title || locals.page.title == keystone.get("name"))
-            locals.page.title = "{0} price in Kenya | Buy {0} online | {1}".format(title, keystone.get("name"));
+            locals.page.title = "{0} price in Kenya | Buy {0} online | {1}".format(title.split(",").first(), keystone.get("name"));
 
         if(products.length == 1){
-            locals.product = products.first();
-            view.render('product');
+            locals.breadcrumbs.pop();
+            renderSingleResults(products.first());
         }else{
             locals.products = products;
             view.render('search');
         }
     }
 
+    function renderSingleResults(product){
+        if (product) {
+            locals.product = product;
+
+            if (product.category && product.category.name) {
+                locals.breadcrumbs.push({
+                    label: product.category.name,
+                    href: ["/category", product.category.key].join("/")
+                });
+
+                if (product.subCategory && product.subCategory.name)
+                    locals.breadcrumbs.push({
+                        label: product.subCategory.name,
+                        href: ["/category", product.category.key, product.subCategory.key].join("/")
+                    });
+            }
+
+            locals.breadcrumbs.push({
+                label: product.name,
+                href: "/product/" + product.href
+            });
+
+            locals.page.title = product.pageTitle || [
+                product.name,
+                product.category && product.category.name,
+                product.subCategory && product.subCategory.name,
+                product.brand && product.brand.name,
+            ].filter(a => !!a).join(" - ") + " | " + keystone.get("name");
+            locals.page.canonical = "https://www.dialadrinkkenya.com/" + product.href;
+
+            locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
+            locals.page.keyWords = product.keyWords.join(", ");
+            locals.page.meta = (product.description || locals.page.meta || product.keyWords.join(" ").truncate(160, ".")).replace(/<(?:.|\n)*?>/gm, '');
+
+            var lastRemovedKey, lastRemoved;
+            Object.keys(res.locals.groupedBrands).forEach(k => {
+                if (product.category && k != product.category.name)
+                {
+                    lastRemovedKey = k;
+                    lastRemoved = res.locals.groupedBrands[k];
+                    //delete res.locals.groupedBrands[k];
+                }
+            });
+
+            if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+                res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
+
+            if (!Object.keys(res.locals.groupedBrands).length)
+                delete res.locals.groupedBrands;
+
+            product.findSimilar((err, products) => {
+                if (products)
+                    locals.similar = products
+                        .orderBy(p => Math.abs(p.popularity - product.popularity))
+                        .slice(0, 6);
+
+                var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+                var brand = brands.first();
+
+                if (brands.length == 1) locals.brand = brands.first();
+
+                //popularity goes up
+                product.addPopularity(1);
+                view.render('product');
+            });
+        } else
+            next(err);
+    }
     if (req.params.query)
         Product.search(req.params.query, function (err, products) {
             if (err || !products || !products.length) {
                 if (req.originalUrl.startsWith("/search"))
-                    renderResults(products, req.params.query.toProperCase());
+                    renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
                 else
                     res.status(404).render('errors/404');
             } else {
-                renderResults(products, req.params.query.toProperCase());
+                renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
             }
         });
     else
@@ -189,19 +256,18 @@ router.get('/sitemap', function (req, res) {
         .then(Product.findPublished({})
             .exec((err, products) => locals.products = products)
             .then(() => ProductCategory.model.find({})
-                .exec((err, categories) => locals.categories = categories
-                    .filter(b => locals.products.any(p => p.category && p.category._id == b._id)))
+                .exec((err, categories) => locals.categories = categories)
                 .then(() => ProductSubCategory.model.find({}).populate("category")
-                    .exec((err, subcategories) => locals.subcategories = subcategories
-                        .filter(b => locals.products.any(p => p.subCategory && p.subCategory._id == b._id)))
+                    .exec((err, subCategories) => locals.subCategories = subCategories)
                     .then(() => ProductBrand.model.find({})
-                        .exec((err, brands) => locals.brands = brands
-                            .filter(b => locals.products.any(p => p.brand && p.brand._id == b._id)))).then(() => {
-                        view.render('sitemapXml', {layout: false}, function (err, xmlText) {
-                            res.setHeader('Content-Type', 'text/xml');
-                            res.send(xmlText)
-                        });
-                    }))));
+                        .exec((err, brands) => locals.brands = brands)
+                        .then(() => {
+                                console.log(locals);
+                                view.render('sitemapXml', {layout: false}, function (err, xmlText) {
+                                    res.setHeader('Content-Type', 'text/xml');
+                                    res.send(xmlText)
+                                });
+                    })))));
 });
 
 router.get('/google81a0290a139b9339.html', function (req, res) {
