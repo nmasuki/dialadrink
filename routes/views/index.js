@@ -69,7 +69,7 @@ function search(req, res, next) {
     function renderSingleResults(product){
         if (product) {
             locals.product = product;
-
+            delete locals.page.h1;
             if (product.category && product.category.name) {
                 locals.breadcrumbs.push({
                     label: product.category.name,
