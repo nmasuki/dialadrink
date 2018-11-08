@@ -23,6 +23,7 @@ function index(req, res) {
     view.on('init', function (next) {
         keystone.list('Product').findPublished({onOffer: true, state: 'published'}, (err, products) => {
             locals.products = products;
+            
             var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
             if (brands.length == 1) locals.brand = brands.first();
 
