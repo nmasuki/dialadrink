@@ -16,12 +16,12 @@
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{page.meta}}"/>
+    <meta name="description" content="{{truncate  (cleanHtml page.meta) 500  ' '}}"/>
 
     {{#if page.keyWords}}<meta name="keywords" content="{{page.keyWords}}"/>{{/if}}
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="Dial A Drink Kenya"/>
-    <meta property="og:description" content="{{page.meta}}"/>
+    <meta property="og:description" content="{{{truncate  (cleanHtml page.meta) 500}}}"/>
 
     {{#if product}}
         {{#each product.altImages}}<meta property="og:image" content="{{cloudinaryUrl this crop='fit'}}"/>{{else}}<meta property="og:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>{{/each}}
@@ -33,8 +33,8 @@
 
     <meta name="twitter:site" content="@liqourdelivery"/>
     {{#if product}}<meta name="twitter:card" content="summary_large_image"/>{{/if}}
-    <meta name="twitter:title" content="{{page.title}}"/>
-    <meta name="twitter:description" content="{{page.meta}}"/>
+    <meta name="twitter:title" content="{{{cleanHtml page.title}}}"/>
+    <meta name="twitter:description" content="{{{truncate  (cleanHtml page.meta) 500}}}"/>
     {{#if page.canonical}}<link rel="canonical" href="{{page.canonical}}"/>{{/if}}
 
     <style>
