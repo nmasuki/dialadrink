@@ -95,7 +95,7 @@ exports.initBrandsLocals = function (req, res, next) {
             for (var i in groups)
                 groups[i] = groups[i].orderByDescending(b => products
                     .filter(p => p.brand && b._id == (p.brand._id || p.brand))
-                    .avg(p => p.popularity)).slice(0, 10);
+                    .max(p => p.popularity)).slice(0, 10);
 
             res.locals.groupedBrands = groups;
         }
