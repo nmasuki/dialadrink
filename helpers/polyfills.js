@@ -348,9 +348,9 @@ String.prototype.truncate = function (length, ending) {
         index--;
 
     if (this.length > length) {
-        return str.substring(0, index).trim().trim('.') + ending;
+        return (str.substring(0, index).trim().trim('.') + ending).trim();
     } else {
-        return str;
+        return (str || "").trim();
     }
 };
 

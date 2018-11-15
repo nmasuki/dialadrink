@@ -83,7 +83,7 @@
                             <span class="label label-success">
                                 <span itemprop="reviewCount">{{formatNumber avgRatings 1}}</span> *
                             </span>&nbsp;
-                            {{#if ratings.length}}
+                            {{#if reviewCount}}
                                 <span itemprop="reviewCount" class="monospaced">{{ratings.length}}</span> reviews.
                             {{/if}}
 
@@ -246,6 +246,39 @@
 
         </div>
     </div><!-- end container -->
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org/",
+  "@type": "Product",
+  "name": "{{{name}}}",
+  "image": [
+    "{{cloudinaryUrl image crop='fit'}}"
+   ],
+  "description": "{{{truncate (cleanHtml description) 500 ' '}}}",
+  "brand": {
+    "@type": "Thing",
+    "name": "{{{brand.name}}}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{avgRatings}}",
+    "reviewCount": "{{reviewCount}}"
+  },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "KES",
+    "price": "{{price}}",
+    "priceValidUntil": "2020-12-31",
+    "itemCondition": "http://schema.org/UsedCondition",
+    "availability": "http://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": "Dial A Drink Kenya"
+    }
+  }
+}
+</script>
+
 {{/with}}
 
 <script>

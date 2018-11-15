@@ -40,6 +40,13 @@ Product.add({
     brand: {type: Types.Relationship, ref: 'ProductBrand'},
 
     ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true}
+    
+});
+
+Product.schema.virtual("reviewCount").get(function () {
+    if(this.ratings && this.ratings.length)
+        return 5 + this.ratings.length;
+    return 5;
 });
 
 Product.schema.virtual("keyWords").get(function () {
@@ -61,7 +68,8 @@ Product.schema.virtual("keyWords").get(function () {
         .join(", ").replace(/(&nbsp;?)/g, " ")
         .replace(/\W/g, function (x) {
             return (x.trim() + " ");
-        });
+        })
+        .truncate(500);
 
     var keyWords = extractor.extract(sentence, {
         language: "english",
