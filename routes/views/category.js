@@ -126,9 +126,10 @@ router.get("/:category/:subcategory", function (req, res) {
                             delete res.locals.groupedBrands[k];
                         }
                     });
-*/
+                    
                     if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
                         res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
+*/
 
                     if(!Object.keys(res.locals.groupedBrands).length)
                         delete res.locals.groupedBrands;
