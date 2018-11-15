@@ -293,6 +293,12 @@
 
             {{{body}}}
 
+            {{#if page.content}}
+                <div class="container">
+                    {{{page.content}}}
+                </div>
+            {{/if}}
+
             <div class="container">
                 {{#if groupedBrands}}
                     <h2 style="font-size: 15px;text-transform: uppercase">SHOP BY BRAND</h2>                    
@@ -309,12 +315,6 @@
 
                 {{/if}}
             </div>
-
-            {{#if page.content}}
-                <div class="container">
-                    {{{page.content}}}
-                </div>
-            {{/if}}
         </div>
     </section>
 </main>
