@@ -343,6 +343,10 @@ module.exports = function () {
         return (str || "").trim(charlist);
     };
 
+    _helpers.cleanId = function(str){
+        return (str || "").cleanId();
+    }
+
     _helpers.cleanHtml = function(str){
         return (str || "").replace(/<(?:.|\n)*?>/gm, '');
     };
