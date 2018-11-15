@@ -116,8 +116,8 @@ router.get("/:category/:subcategory", function (req, res) {
                     if(brands.length == 1) 
                         locals.brand = brands.first();
 
-                    var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name)
-                        .orderBy(c => c && k == c.name? 0: 1);
+                    var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
+                        //.orderBy(c => c && k == c.name? 0: 1);
 
                     if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
                         res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
