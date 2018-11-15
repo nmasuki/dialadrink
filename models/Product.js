@@ -103,7 +103,7 @@ Product.schema.virtual('avgRatings').get(function () {
             return 4.4;
     }
     //Pic a random value
-    return 1 * Math.random() * 4.0;
+    return Math.round(1 + Math.random() * 4.0);
 });
 
 Product.schema.virtual('ratingCount').get(function () {
