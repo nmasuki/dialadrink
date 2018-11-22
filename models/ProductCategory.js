@@ -13,7 +13,7 @@ var ProductCategory = new keystone.List('ProductCategory', {
 ProductCategory.add({
     name: {type: String, required: true, initial: true},
     pageTitle: {type: String},
-    description: {type: Types.Html, wysiwyg: true, height: 300},
+    description: {type: Types.Html, wysiwyg: true, height: 150},
 });
 
 ProductCategory.relationship({ref: 'Product', path: 'category'});

@@ -30,6 +30,8 @@
     "najax": "^1.0.3",
     "nodemailer": "^4.6.7",
     "nodemailer-smtp-transport": "^2.7.4",
+    "pesapal": "0.0.4",
+    "pesapaljs": "^1.0.0",
     "underscore": "^1.9.1",
     "whacko": "^0.19.1",
     "xml": "^1.0.1"

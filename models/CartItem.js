@@ -35,7 +35,8 @@ CartItem.schema.virtual("image").get(function () {
 
 CartItem.schema.virtual("price").get(function () {
     if(!this.product || !this.product.options)
-        throw "Missing [product] in cart";
+        return 0;
+        //throw "Missing [product] in cart";
 
     var priceOption = this.product.options.find(o => o.quantity === this.quantity) || {};
     var price = priceOption.offerPrice && priceOption.price > priceOption.offerPrice

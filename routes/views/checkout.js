@@ -2,14 +2,52 @@ var keystone = require('keystone');
 var router = keystone.express.Router();
 var Order = keystone.list("Order");
 
+function getPasaPalUrl(order, total){
+	var PesaPal = require('pesapaljs').init({
+		key: 'InqWcWvl2RKMObEqVcbZrlCVsWi5HBBu',
+		secret: 'DORzlWHU4xXKpkM6xnbZBlc3bV4=',
+		debug: true // false in production!
+	});
+
+	var customer = new PesaPal.Customer(order.delivery.email, order.delivery.phoneNumber);
+	//customer.firstName = order.delivery.firstName;
+	//customer.lastName = order.delivery.lastName;
+
+	var _order = new PesaPal.Order(order.orderNumber, customer, 'Order #' + order.orderNumber, total, "KES", "MERCHANT");
+
+	// Redirect user to PesaPal
+	var url = PesaPal.getPaymentURL(_order, 'https://www.dialadrinkkenya.com/order/' + order.orderNumber);
+	// send it to an iframe ?
+	return url;
+}
+
+function getPasaPalUrl1(order, total){	
+	var pesapal = require('pesapal')({
+		consumerKey: 'InqWcWvl2RKMObEqVcbZrlCVsWi5HBBu',
+		consumerSecret: 'DORzlWHU4xXKpkM6xnbZBlc3bV4=',
+		testing: false,
+	});	
+	// post a direct order	   
+	var postParams = {
+		'oauth_callback': 'https://www.dialadrinkkenya.com/order/' + order.orderNumber
+	};
+
+	var requestData = {
+		'Type': 'MERCHANT',
+		'Amount': total,
+		'Reference': order.orderNumber,
+		'Description': 'Order #' + order.orderNumber,
+		'PhoneNumber': order.delivery? order.delivery.phoneNumber: ""
+	};
+
+	return pesapal.postDirectOrder(postParams, requestData);;
+}
 router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
 	var locals = res.locals;
 
 	locals.cart = req.session.cart || {};
-	locals.page = Object.assign(locals.page, {
-		h1: "Your Order Details"
-	});
+	locals.page = Object.assign(locals.page, { h1: "Your Order Details"	});
 
 	locals.userData = req.session.userData;
 	locals.breadcrumbs.push({
@@ -28,24 +66,27 @@ router.post("/", function (req, res, next) {
 		req.session.userData = req.body;
 		req.session.save((err, a) => {
 			if (err)
-				return res.send({state: false, msg: err.message})
+				return res.send({state: false, msg: err.message});
 		});
 	}
 
 	if (Object.keys(req.session.cart || {}).length) {
+		var cart = Object.values(req.session.cart);
 		var order = new Order.model({
-			cart: Object.values(req.session.cart).map(item => {
+			cart: cart.map(item => {
 				//console.log(item)
-				var cartItem = new (keystone.list("CartItem")).model({
-					date: item.date,
-					pieces: item.pieces,
-					state: item.state,
-					product: item.product,
-					quantity: item.quantity
-				});
+				var cartItem = new (keystone.list("CartItem")).model({});
+				
+				cartItem.date = item.date;
+				cartItem.state = item.state;
+				cartItem.pieces = item.pieces;
+				cartItem.quantity = item.quantity;		
+				cartItem.product = item.product;
+	
 				cartItem.save();
 				return cartItem;
 			}),
+			paymentMethod: req.body.paymentMethod,
 			promo: req.session.promo,
 			delivery: Object.assign({userId: req.session.userId}, req.body)
 		});
@@ -57,21 +98,39 @@ router.post("/", function (req, res, next) {
 			order.placeOrder((err) => {
 				if (err)
 					console.warn(err);
+				
+				var json = {
+					state: !!err,
+					msg: err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
+				};
 
 				if (!err) {
+
+					if(order.paymentMethod == "PesaPal"){
+						var cart = Object.values(req.session.cart);
+						var subtotal = cart.sum(function(c){
+							var price = c.pieces * c.price;
+							if(c.offerPrice && c.price > c.offerPrice)
+								price = c.pieces * c.offerPrice
+							return price;
+						});
+						var discount = Math.round(order.promo.discountType == "percent"
+							? cart.sum(c => c.pieces * c.price) * order.promo.discount / 100
+							: order.promo.discount || 0
+						);
+						json.redirect = getPasaPalUrl(order, subtotal - discount);
+						json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+					}
+
 					delete req.session.promo;
 					delete req.session.cart;
 
-					req.session.save();
+					req.session.save();				
 				}
 
-				return res.send({
-					state: !!err,
-					msg: err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
-				});
+				return res.send(json);							
 			});
-		})
-
+		});
 	} else if (req.body.saveInfo) {
 		return res.send({
 			state: true,

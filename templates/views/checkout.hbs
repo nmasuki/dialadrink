@@ -124,9 +124,9 @@
 
         <div class="col-md-8 order-md-1">
             <div class="row">
-                <h4 class="mb-3">Billing address</h4>
                 <form method="post" action="/checkout" class="needs-validation billing-address">
                     <div class="row">
+                        <h4 class="mb-3">Billing address</h4>
                         <div class="col-md-6 mb-3">
                             <label for="firstName">First name</label>
                             <input type="text" class="form-control" name="firstName" id="firstName" placeholder=""
@@ -187,7 +187,6 @@
                         </div>
                     </div>
 
-                    <hr class="mb-4">
                     {{!--
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="same-address">
@@ -196,33 +195,29 @@
                         </label>
                     </div>
                     --}}
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" checked {{#unless cartItems.length}}disabled{{/unless}}
-                               class="custom-control-input" id="saveInfo" name="saveInfo">
-                        <label class="custom-control-label" for="saveInfo">Save this information for next time</label>
-                    </div>
-
-                    {{!--
+                    {{#if cartItems.length}}
                     <hr class="mb-4">
                     <h4 class="mb-3">Payment</h4>
 
                     <div class="d-block my-3">
+                        <!--div class="custom-control custom-radio">
+                            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal" checked>
+                            <label class="custom-control-label" for="debit">Pay online</label>
+                        </div-->
                         <div class="custom-control custom-radio">
-                            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked=""
-                                   required="">
-                            <label class="custom-control-label" for="credit">Credit card</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input"
-                                   required="">
-                            <label class="custom-control-label" for="debit">Debit card</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input"
-                                   required="">
-                            <label class="custom-control-label" for="paypal">Paypal</label>
+                            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" value="Cash">
+                            <label class="custom-control-label" for="credit">Cash on Delivery</label>
                         </div>
                     </div>
+                    {{/if}}
+
+                    <hr class="mb-4">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" checked {{#unless cartItems.length}}disabled{{/unless}} class="custom-control-input" id="saveInfo" name="saveInfo">
+                        <label class="custom-control-label" for="saveInfo">Save this information for next time</label>
+                    </div>
+
+                    {{!--
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="cc-name">Name on card</label>
@@ -287,10 +282,7 @@
                                 app.cartUtil.updateView(null, data.promo);
                                 app.showNotification(data.msg)
                             } else {
-                                app.showModal({
-                                    title: "",
-                                    msg: data.msg
-                                })
+                                app.showModal({ title: "", msg: data.msg })
                             }
                         });
             }
@@ -320,15 +312,29 @@
                     dataType: "json",
                     type: "POST",
                     success: function (res) {
-                        app.showModal({
-                            msg: res.msg,
-                            ok: function (e) {
-                                window.location = "/";
-                            },
-                            close: function (e) {
-                                window.location = "/";
-                            }
-                        });
+                        if(res.redirect) {
+                            app.showLoading(res.msg, 1000);
+                            var iframe = $("<iframe src='" + res.redirect + "'/>");
+                            
+                            iframe.css({
+                                height: (form.height()*0.75) + 'px',
+                                width: form.width() + "px",
+                                border: "none"
+                            });
+
+                            form.html("").append(iframe);
+                        } else {
+                            app.showModal({
+                                msg: res.msg,
+                                ok: function (e) {
+                                    window.location = "/";
+                                },
+                                close: function (e) {
+                                    window.location = "/";
+                                }
+                            });
+                        }
+                        
                     },
                     error: function (xhr, status, error) {
                         app.hideModal();
