@@ -16,6 +16,7 @@ Order.add({
     orderDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     notificationSent: {type: Boolean, noedit: true},
+    paymentMethod: {type: String, noedit: true},
 
     state: {
         type: Types.Select,
@@ -43,7 +44,9 @@ Order.add({
         address: {type: String, noedit: true},
         building: {type: String, noedit: true},
         houseNumber: {type: String, noedit: true}
-    }
+    },
+
+    payment:  {type: String, noedit: true},
 });
 
 Order.schema.pre('save', function (next) {
@@ -54,14 +57,23 @@ Order.schema.pre('save', function (next) {
 });
 
 Order.schema.virtual("discount").get(function () {
-    return Math.round(this.promo.discountType == "percent"
-        ? this.cart.sum(c => c.pieces * c.price) * this.promo.discount / 100
-        : this.promo.discount || 0
-    );
+    if(this.cart)
+        return Math.round(this.promo.discountType == "percent"
+            ? this.cart.sum(c => c.pieces * c.price) * this.promo.discount / 100
+            : this.promo.discount || 0
+        );
+    return 0;
 });
 
 Order.schema.virtual("subtotal").get(function () {
-    return this.cart.sum(c => c.pieces * (c.offerPrice && c.price > c.offerPrice ? c.offerPrice : c.price));
+    if(this.cart)
+        return this.cart.sum(function(c){
+			var price = c.pieces * c.price;
+			if(c.offerPrice && c.price > c.offerPrice)
+				price = c.pieces * c.offerPrice
+			return price;
+		});
+    return 0;
 });
 
 Order.schema.virtual("total").get(function () {
@@ -73,8 +85,8 @@ Order.schema.virtual("deliveryAddress").get(function () {
     var address = "";
 
     for (var i in delivery) {
-        if (i != 'userId' && delivery[i])
-            address += "{0}:{1}<br>\r\n".format(i.toProperCase(), delivery[i].toProperCase())
+        if (i != 'userId' && delivery[i] && typeof delivery[i] != "function")
+            address += "{0}:{1}<br>\r\n".format(i.toProperCase(), delivery[i].toString().toProperCase())
     }
 
     return address;
@@ -83,7 +95,7 @@ Order.schema.virtual("deliveryAddress").get(function () {
 Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!")
     this.sendUserNotification((err, data) => {
-        console.log("Updating order state='placed'!")
+        console.log("Updating order state='placed'!", data)
 
         //Update order state
         this.state = 'placed';
@@ -92,7 +104,7 @@ Order.schema.methods.placeOrder = function (next) {
             if (err)
                 console.warn(err);
             else
-                console.log("Order updated!")
+                console.log("Order updated!");
         });
 
         if (typeof next == "function")
@@ -107,6 +119,69 @@ Order.schema.methods.placeOrder = function (next) {
         });
     });
 };
+
+Order.schema.methods.sendPaymentNotification = function(){
+    if (!this.orderNumber)
+        this.orderNumber = Order.getNextOrderId();
+
+    var that = this;
+    var email = new keystone.Email('templates/email/paid');
+    
+    //Hack to make use of nodemailer..
+    email.transport = require("../helpers/mailer");
+
+    var subject = "Your order at " + keystone.get("name");
+    if (keystone.get("env") == "development")
+        subject = "(Testing)" + subject;
+
+    var locals = {
+        layout: 'email',
+        page: {title: keystone.get("name") + " Order"},
+        order: order
+    };
+
+    var emailOptions = {
+        subject: subject,
+        to: {
+            name: order.delivery.firstName,
+            email: order.delivery.email || "simonkimari@gmail.com"
+        },
+        cc: [],
+        from: {
+            name: keystone.get("name"),
+            email: process.env.EMAIL_FROM
+        }
+    };
+
+    keystone.list("User").model.find({receivesOrders: true})
+        .exec((err, users) => {
+            if (err)
+                return console.log(err)
+
+            if (users && users.length)
+                users.forEach(u => emailOptions.cc.push(u.toObject()));
+            else {
+                console.warn("No users have the receivesOrders right!");
+                emailOptions.cc.push("simonkimari@gmail.com");
+            }
+
+            console.log(
+                "Sending Payment notification!",
+                "User", order.delivery.email,
+                "Admins", emailOptions.cc.map(u => u.email || u).join()
+            );
+
+            email.send(locals, emailOptions, (err, a) => {
+                console.log("Order notification Sent!", err, a)
+
+                if (err)
+                    console.warn(err);
+
+                if (typeof next == "function")
+                    next(err)
+            });
+        });
+}
 
 Order.schema.methods.sendUserNotification = function (next) {
     if (!this.orderNumber)
@@ -147,7 +222,10 @@ Order.schema.methods.sendUserNotification = function (next) {
 
                 var emailOptions = {
                     subject: subject,
-                    to: {name: order.delivery.firstName, email: order.delivery.email || "simonkimari@gmail.com"},
+                    to: {
+                        name: order.delivery.firstName,
+                        email: order.delivery.email || "simonkimari@gmail.com"
+                    },
                     cc: [],
                     from: {
                         name: keystone.get("name"),
@@ -167,10 +245,12 @@ Order.schema.methods.sendUserNotification = function (next) {
                             emailOptions.cc.push("simonkimari@gmail.com");
                         }
 
-                        console.log("Sending Order notification!",
+                        console.log(
+                            "Sending Order notification!",
                             "User", order.delivery.email,
                             "Admins", emailOptions.cc.map(u => u.email || u).join()
                         );
+
                         email.send(locals, emailOptions, (err, a) => {
                             console.log("Order notification Sent!", err, a)
 

@@ -35,8 +35,7 @@ var routes = {
 };
 
 // Setup Route Bindings
-exports = module.exports = function (app) {
-	
+exports = module.exports = function (app) {	
 	// Views
 	app.use('/brand', routes.views.brand);
 	app.use('/blog', routes.views.blog);
@@ -53,8 +52,8 @@ exports = module.exports = function (app) {
 	app.use('/', routes.views.index);
 
 	app.use('/order-template', routes.views['order-template']);
+	app.use('/order', routes.views['order-template']);
 
     // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
-
 };
