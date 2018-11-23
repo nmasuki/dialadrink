@@ -178,7 +178,6 @@ Product.schema.methods.addPopularity = function (factor) {
 Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
 keystone.deepPopulate(Product.schema);
-
 Product.schema.pre('save', function (next) {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
     this.price = cheapestOption.price;

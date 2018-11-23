@@ -250,11 +250,15 @@ var app = {
 			modal.find(".btn-primary").on("click", function () {
 				option.ok.apply(this, arguments);
 			});
+		else if(option.ok == false)
+			modal.find(".btn-primary").hide();
 
 		if (typeof option.close === "function")
 			modal.find(".btn-secondary, .close").on("click", function () {
 				option.close.apply(this, arguments);
 			});
+		else if(option.ok == false)
+			modal.find(".btn-secondary, .close").hide();
 
 		modal.on('hidden.bs.modal', function () {
 			$(".modal.loading").modal('hide');
@@ -263,6 +267,10 @@ var app = {
 		});
 
 		modal.find(".modal-body").html(msg);
+
+		if(option.css)
+			modal.css(option.css);
+
 		modal.modal({
 			keyboard: false,
 			backdrop: 'static'

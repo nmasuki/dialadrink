@@ -4,14 +4,14 @@ var Order = keystone.list("Order");
 
 function getPasaPalUrl(order, total){
 	var PesaPal = require('pesapaljs').init({
-		key: 'InqWcWvl2RKMObEqVcbZrlCVsWi5HBBu',
-		secret: 'DORzlWHU4xXKpkM6xnbZBlc3bV4=',
-		debug: true // false in production!
+		key: process.env.PESAPAL_KEY,
+		secret: process.env.PESAPAL_SECRET,
+		debug: false,//process.env.NODE_ENV != "production" // false in production!
 	});
 
 	var customer = new PesaPal.Customer(order.delivery.email, order.delivery.phoneNumber);
-	//customer.firstName = order.delivery.firstName;
-	//customer.lastName = order.delivery.lastName;
+	customer.firstName = order.delivery.firstName;
+	customer.lastName = order.delivery.lastName;
 
 	var _order = new PesaPal.Order(order.orderNumber, customer, 'Order #' + order.orderNumber, total, "KES", "MERCHANT");
 
@@ -23,9 +23,9 @@ function getPasaPalUrl(order, total){
 
 function getPasaPalUrl1(order, total){	
 	var pesapal = require('pesapal')({
-		consumerKey: 'InqWcWvl2RKMObEqVcbZrlCVsWi5HBBu',
-		consumerSecret: 'DORzlWHU4xXKpkM6xnbZBlc3bV4=',
-		testing: false,
+		consumerKey: process.env.PESAPAL_KEY,
+		consumerSecret: process.env.PESAPAL_SECRET,
+		testing: false,//process.env.NODE_ENV != "production",
 	});	
 	// post a direct order	   
 	var postParams = {
