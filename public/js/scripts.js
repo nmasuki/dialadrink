@@ -8,10 +8,11 @@ $.ajaxSetup({
 
 /*Slider main*/
 function slider_main() {
-    $('.carousel').carousel({
-        interval: false,
-        pause: false
-    })
+    if($.fn.carousel)
+        $('.carousel').carousel({
+            interval: false,
+            pause: false
+        });
 }
 
 /* slider product*/
