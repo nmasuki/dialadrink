@@ -200,10 +200,10 @@
                     <h4 class="mb-3">Payment</h4>
 
                     <div class="d-block my-3">
-                        <!--div class="custom-control custom-radio">
+                        <div class="custom-control custom-radio">
                             <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal" checked>
                             <label class="custom-control-label" for="debit">Pay online</label>
-                        </div-->
+                        </div>
                         <div class="custom-control custom-radio">
                             <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" value="Cash">
                             <label class="custom-control-label" for="credit">Cash on Delivery</label>
@@ -317,12 +317,12 @@
                             var iframe = $("<iframe src='" + res.redirect + "'/>");
                             
                             iframe.css({
-                                height: (form.height()*0.75) + 'px',
-                                width: form.width() + "px",
-                                border: "none"
+                                border: "none",
+                                width:  (form.width()) + 'px',
+                                height: (form.height()) + 'px'
                             });
 
-                            form.html("").append(iframe);
+                            form.replaceWith(iframe);
                         } else {
                             app.showModal({
                                 msg: res.msg,
