@@ -552,7 +552,8 @@ $(window).resize(function () {
 
 $(window).ready(function ($) {
 
-    $('[data-toggle="tooltip"]').tooltip();
+    if($.fn.tooltip)
+        $('[data-toggle="tooltip"]').tooltip();
 
     ioLazyLoad();
 
