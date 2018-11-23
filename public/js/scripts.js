@@ -261,28 +261,29 @@ function handleSearchingAndPaging(){
 }
 
 function handleSearchAutoComplete(){
-    $("#search_box").autocomplete({
-        source: function( request, response ) {
-          $.ajax( {
-            url: "/search/" + request.term,
-            dataType: "json",
-            data: {
-              term: request.term
+    if($.fn.autocomplete)
+        $("#search_box").autocomplete({
+            source: function( request, response ) {
+            $.ajax( {
+                url: "/search/" + request.term,
+                dataType: "json",
+                data: {
+                term: request.term
+                },
+                success: function( data ) {
+                response( data.results );
+                }
+            });
             },
-            success: function( data ) {
-              response( data.results );
+            minLength: 2,
+            select: function( event, ui ) {
+                var query = ui.item.value || ui.item;
+                if (query !== "") {
+                    console.log(query)
+                    window.location.href = "/search/" + query;
+                }
             }
-          });
-        },
-        minLength: 2,
-        select: function( event, ui ) {
-            var query = ui.item.value || ui.item;
-            if (query !== "") {
-                console.log(query)
-                window.location.href = "/search/" + query;
-            }
-        }
-      })
+        });
 }
 
 function checkcookie() {
