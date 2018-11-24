@@ -49,10 +49,6 @@ keystone.pre('routes', keystone.security.csrf.middleware.init);
 // Assists with mongoose deepPopullate
 keystone.deepPopulate = require('mongoose-deep-populate')(keystone.mongoose);
 
-//Mongoose caching
-keystone.cachegoose = require('cachegoose');
-keystone.cachegoose(keystone.mongoose);
-
 // Load your project's Models
 keystone.import('models');
 

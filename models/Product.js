@@ -214,7 +214,6 @@ Product.findPublished = function (filter, callback) {
     filter = Object.assign(filter || {}, {state: 'published'});
     var a = keystone.list('Product').model.find(filter)
         .sort({popularity: -1})
-        //.cache(5 * 60)
         .populate('brand')
         .populate('category')
         .populate('subCategory')
@@ -232,7 +231,6 @@ Product.findOnePublished = function (filter, callback) {
     filter = Object.assign({state: 'published'}, filter || {});
     var a = keystone.list('Product').model.findOne(filter)
         .sort({popularity: -1})
-        //.cache(5 * 60)
         .populate('brand')
         .populate('category')
         .populate('subCategory')
@@ -248,7 +246,6 @@ Product.findOnePublished = function (filter, callback) {
 
 Product.findByBrand = function (filter, callback) {
     keystone.list('ProductBrand').model.find(filter)
-        .cache(10 * 60) // Cache for 10 min 
         .exec((err, brands) => {
             if (err || !brands)
                 return console.log(err);
@@ -260,7 +257,6 @@ Product.findByBrand = function (filter, callback) {
 
 Product.findByCategory = function (filter, callback) {
     keystone.list('ProductCategory').model.find(filter)
-    .cache(10 * 60) // Cache for 10 min 
     .exec((err, categories) => {
             if (err || !categories)
                 return console.log(err);
@@ -272,7 +268,6 @@ Product.findByCategory = function (filter, callback) {
 
 Product.findBySubCategory = function (filter, callback) {
     keystone.list('ProductSubCategory').model.find(filter)
-    .cache(10 * 60) // Cache for 10 min 
     .exec((err, subCategories) => {
             if (err || !subCategories)
                 return console.log(err);
@@ -284,7 +279,6 @@ Product.findBySubCategory = function (filter, callback) {
 
 Product.findByOption = function (filter, callback) {
     keystone.list('ProductOption').model.find(filter)
-    .cache(10 * 60) // Cache for 10 min 
     .exec((err, options) => {
             if (err || !options)
                 return console.log(err);

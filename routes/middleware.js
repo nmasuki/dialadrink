@@ -73,7 +73,6 @@ exports.initPageLocals = function (req, res, next) {
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
     keystone.list('Page').model
         .find({key: regex})
-        .cache(0) // Explicitly passing in 0 will cache the results indefinitely.
         .exec((err, pages) => {
             var page = pages.orderBy(m => m.href.length).first();
 
@@ -111,7 +110,6 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     keystone.list('MenuItem').model
         .find({key: regex})
         .deepPopulate("parent.parent")
-        //.cache(10 * 60) // Cache for 10 min
         .exec((err, menus) => {
             var menu = menus.orderBy(m => m.href.length).first();
 
@@ -137,7 +135,6 @@ exports.initTopMenuLocals = function (req, res, next) {
         .find({level: 1, type: "top"})
         .sort({index: 1})
         .populate('submenus')
-        .cache(10 * 60) // Cache for 10 min
         .exec((err, menu) => {
             if (err)
                 throw err;
