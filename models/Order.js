@@ -55,7 +55,7 @@ Order.add({
         state: {
             type: Types.Select,
             options: 'Pending, Submited, Cancelled, Paid',
-            default: 'pending',
+            default: 'Pending',
             index: true
         },
     },
