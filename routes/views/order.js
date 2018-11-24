@@ -11,7 +11,6 @@ router.get("/:orderNo", function (req, res) {
     view.on('init', function (next) {
         Order.model.findOne({orderNumber: req.params.orderNo})
             .deepPopulate('cart.product.priceOptions.option')
-            //.cache(5 * 60)
             .exec((err, order) => {
                 if (!order)
                     return res.status(404).render('errors/404');

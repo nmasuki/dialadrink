@@ -167,7 +167,6 @@ Order.schema.methods.sendPaymentNotification = function(next){
     };
 
     keystone.list("User").model.find({receivesOrders: true})
-        .cache(0)
         .exec((err, users) => {
             if (err)
                 return console.log(err)
@@ -217,7 +216,6 @@ Order.schema.methods.sendUserNotification = function (next) {
     var orderId = this._id;
     Order.model.findOne({_id: orderId})
         .deepPopulate('cart.product.priceOptions.option')
-        //.cache(10 * 60)
         .exec((err, order) => {
                 if (err)
                     return next(err);
@@ -252,7 +250,6 @@ Order.schema.methods.sendUserNotification = function (next) {
                 };
 
                 keystone.list("User").model.find({receivesOrders: true})
-                    .cache(0)
                     .exec((err, users) => {
                         if (err)
                             return console.log(err)
