@@ -122,8 +122,8 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
 
             if (breadcrumbs.length)
                 res.locals.breadcrumbs = breadcrumbs.orderBy(m => m.level);
-            //else
-            //    res.locals.breadcrumbs = [{"label": "Home", "href": "/"}];
+            else
+                res.locals.breadcrumbs = [{"label": "Home", "href": "/"}];
 
             next(err);
         })
