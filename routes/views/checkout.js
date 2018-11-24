@@ -20,7 +20,7 @@ function getPasaPalUrl(order, host){
 	);
 
 	// Redirect user to PesaPal
-	var url = PesaPal.getPaymentURL(_order, host + '/receipt/' + order.orderNumber);
+	var url = PesaPal.getPaymentURL(_order, host + '/pesapal/' + order.orderNumber);
 	// send it to an iframe ?
 	return url;
 }
@@ -33,7 +33,7 @@ function getPasaPalUrl1(order, host){
 	});	
 	// post a direct order	   
 	var postParams = {
-		'oauth_callback': host + '/receipt/' + order.orderNumber
+		'oauth_callback': host + '/pesapal/' + order.orderNumber
 	};
 
 	var requestData = {
@@ -64,7 +64,6 @@ router.get('/', function (req, res) {
 	});
 
 	locals.enablePaypal = process.env.PESAPAL_ENABLED;
-
 	return view.render('checkout');
 });
 

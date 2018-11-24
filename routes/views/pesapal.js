@@ -2,23 +2,78 @@ var keystone = require('keystone');
 var CartItem = keystone.list("CartItem");
 var Order = keystone.list("Order");
 var PesaPal = require('pesapaljs').init({
-		key: process.env.PESAPAL_KEY,
-		secret: process.env.PESAPAL_SECRET,
-		debug: false, //process.env.NODE_ENV != "production" // false in production!
-    });
+	key: process.env.PESAPAL_KEY,
+	secret: process.env.PESAPAL_SECRET,
+	debug: false, //process.env.NODE_ENV != "production" // false in production!
+});
 
 var PesaPalStatusMap = {"COMPLETED": "Paid", "PENDING": "Pending", "INVALID": "Cancelled", "FAILED": "Cancelled" };
-
 var router = keystone.express.Router();
 
 router.get("/ipn", function (req, res) {
-	var payment = req.payment;
-	if (payment) {
-		console.log("IPN received!", req.body);
-	} else {
-		console.log("IPN no!", req.body);
-	}
-});
+    var transactionId = "", referenceId = "", notificationType = "";
+    [req.body, req.query].forEach(payload => {
+        var payloadKeys = Object.keys(payload || {});
+        var transactionIdKey = payloadKeys.find(k => k.toLowerCase().contains("transaction"));
+        var referenceIdKey   = payloadKeys.find(k => k.toLowerCase().contains("reference") || k.toLowerCase().contains("reciept"));
+        var notificationTypeKey = payloadKeys.find(k => k.toLowerCase().contains("notification"));
+        
+        if (transactionIdKey)
+            transactionId = payload[transactionIdKey];
+        if (referenceIdKey)
+            referenceId = payload[referenceIdKey];
+        if (notificationTypeKey)
+            notificationType = payload[notificationTypeKey];
+    });
+
+	Order.model.findOne({ orderNumber: referenceId })
+        .deepPopulate('cart.product.priceOptions.option')
+        .exec((err, order) => {
+            if (!order)
+                return res.status(404).render('errors/404');
+                
+            var options = {
+                reference: referenceId,
+                transaction: transactionId
+            };
+
+            PesaPal.getPaymentDetails(options).then(function (payment) {
+                //payment -> {transaction, method, status, reference}
+                //console.log(payment);
+
+                if (payment) {
+					if(payment.reference)
+                    	order.payment.referenceId = payment.reference;
+					if(payment.transaction)
+                    	order.payment.transactionId = payment.transaction;
+					if(notificationType)
+                    	order.payment.notificationType = notificationType;
+
+					order.payment.method = (payment.method.split("_").first()||"");
+                    order.payment.state = PesaPalStatusMap[payment.status] || "unexpected_" + payment.status;
+                    order.state = order.payment.state.toLowerCase();
+                }
+
+                if (payment.status == "COMPLETED") {
+                    order.sendPaymentNotification(function () {
+                        order.payment.notificationSent = true;
+                        order.save();
+                    });
+                } else {
+					order.payment.notificationSent = false;
+                    order.save();
+				}
+            })
+            .catch (function (error) {
+                /* do stuff*/
+                console.warn(error);
+			});
+		});
+		
+		res.send(`pesapal_notification_type=${notificationType}` +
+			`&pesapal_transaction_tracking_id=${transactionId}` + 
+			`&pesapal_merchant_reference=${referenceId}`);
+	});
 
 router.get("/:orderNo", function (req, res) {
 	var view = new keystone.View(req, res);
@@ -55,11 +110,6 @@ router.get("/:orderNo", function (req, res) {
 		if (!order)
 			return res.status(404).render('errors/404');
             
-		if (!order.payment.method) {
-			order.payment.method = order.payment.method || "Paypal";
-			order.payment.amount = order.payment.amount || order.total;
-		}
-
 		[req.body, req.query].forEach(payload => {
 			var transactionIdKey = Object.keys(payload || {}).find(k => k.toLowerCase().contains("transaction"));
 			var referenceIdKey   = Object.keys(payload || {}).find(k => k.toLowerCase().contains("reference"));

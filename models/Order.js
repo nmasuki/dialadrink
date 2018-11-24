@@ -51,7 +51,7 @@ Order.add({
         method: {type: String, noedit: true},
         amount: {type: Number, noedit: true},
         notificationSent: {type: Boolean, noedit: true},
-        //pending_payment, paid
+        notificationType: {type: String, noedit: true},
         state: {
             type: Types.Select,
             options: 'Pending, Submited, Cancelled, Paid',

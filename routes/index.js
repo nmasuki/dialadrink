@@ -52,7 +52,7 @@ exports = module.exports = function (app) {
 	app.use('/', routes.views.index);
 
 	app.use('/order', routes.views.order);
-	app.use('/receipt', routes.views.receipt);
+	app.use('/pesapal', routes.views.pesapal);
 
     // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
