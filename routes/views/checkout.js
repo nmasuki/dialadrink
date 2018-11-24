@@ -80,15 +80,16 @@ router.post("/", function (req, res, next) {
 
 	if (Object.keys(req.session.cart || {}).length) {
 		var cart = Object.values(req.session.cart);
+		var promo = req.session.promo || {};
 		var subtotal = cart.sum(function(c){
 			var price = c.pieces * c.price;
 			if(c.offerPrice && c.price > c.offerPrice)
 				price = c.pieces * c.offerPrice
 			return price;
 		});
-		var discount = Math.round(order.promo.discountType == "percent"
-			? cart.sum(c => c.pieces * c.price) * order.promo.discount / 100
-			: order.promo.discount || 0
+		var discount = Math.round(promo.discountType == "percent"
+			? cart.sum(c => c.pieces * c.price) * promo.discount / 100
+			: promo.discount || 0
 		);
 
 		var order = new Order.model({
