@@ -8,9 +8,15 @@
                         style="color:#737373;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:14px;line-height:150%;text-align:left">
                         {{#with order}}
                             <p style="margin:0 0 16px">Hi {{delivery.firstName}} {{delivery.lastName}}</p>
-                            <p style="margin:0 0 16px">
-                                Your order has been received and will be dispatched shortly. The order is as follows:
-                            </p>
+                            {{#ifeq payment.state 'Paid'}}
+                                <p style="margin:0 0 16px">
+                                    Your payment of KES {{formatNumber payment.amount}} via {{payment.method}} has been received. Your order will be dispatched shortly. The order is as follows:
+                                </p>
+                            {{else}}
+                                <p style="margin:0 0 16px; color: red">
+                                    Your <b>{{payment.method}}</b> payment is <b>{{payment.state}}</b>! You can however still pay <em style="font-weight:bold">Cash</em> on delivery. The order is as follows:
+                                </p>
+                            {{/ifeq}}
 
                             <h2 style="color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
                                 Order #{{orderNumber}} {{formatDate orderDate 'MMM Do, YYYY'}}
@@ -129,7 +135,6 @@
                                             </span>
                                         </td>
                                     </tr>
-                                    {{#ifeq state 'paid'}}
                                         <tr>
                                             <th class="order-td" scope="row" colspan="2"
                                                 style="text-align:right;color:#737373;border:1px solid #e4e4e4;padding:12px">
@@ -137,13 +142,16 @@
                                             </th>
                                             <td class="order-td"
                                                 style="text-align:right;color:#737373;border:1px solid #e4e4e4;padding:12px">
-                                                <span class="order-amount order-amount">
-                                                    <span class="order-currencySymbol">{{currency}}</span>
-                                                    {{{formatNumber payment.amount}}}
-                                                </span>
+                                                {{#ifeq payment.state 'Paid'}}
+                                                    <span class="order-amount order-amount">
+                                                        <span class="order-currencySymbol">{{currency}}</span>
+                                                        {{{formatNumber payment.amount}}}
+                                                    </span>
+                                                {{else}}
+                                                    <h4 style="color: red">{{payment.state}}</h4>
+                                                {{/ifeq}}   
                                             </td>
                                         </tr>
-                                    {{/ifeq}}
                                     </tfoot>
                                 </table>
                             </div>

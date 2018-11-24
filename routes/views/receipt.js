@@ -1,67 +1,107 @@
 var keystone = require('keystone');
 var CartItem = keystone.list("CartItem");
 var Order = keystone.list("Order");
+var PesaPal = require('pesapaljs').init({
+		key: process.env.PESAPAL_KEY,
+		secret: process.env.PESAPAL_SECRET,
+		debug: false, //process.env.NODE_ENV != "production" // false in production!
+    });
+
+var PesaPalStatusMap = {"COMPLETED": "Paid", "PENDING": "Pending", "INVALID": "Cancelled", "FAILED": "Cancelled" };
+
 var router = keystone.express.Router();
 
-router.get("/ipn", function (req, res){
-    var payment = req.payment;
-    if(payment){
-        console.log("IPN received!", req.body);
-    }else{
-        console.log("IPN no!", req.body);
-    }
+router.get("/ipn", function (req, res) {
+	var payment = req.payment;
+	if (payment) {
+		console.log("IPN received!", req.body);
+	} else {
+		console.log("IPN no!", req.body);
+	}
 });
 
 router.get("/:orderNo", function (req, res) {
-    var view = new keystone.View(req, res);
+	var view = new keystone.View(req, res);
+	var locals = res.locals;
 
-    // Load the current page
-    view.on('init', function (next) {
-        var locals = res.locals;
-        if (!locals.page)
-            return res.status(404).render('errors\\404');
+	function showReceipt(err, order) {
+        locals.order = order.toObject({ virtuals: true });
+        locals.order.total = locals.order.total || order.subtotal - (order.discount || 0);
+		locals.order.cart = order.cart.map(c => c.toObject({ virtuals: true }));
 
-        Order.model.findOne({orderNumber: req.params.orderNo})
-            .deepPopulate('cart.product.priceOptions.option')
-            .exec((err, order) => {
-                if (!order)
-                    return res.status(404).render('errors/404');
-                
-                if(!order.payment.method){
-                    order.payment.method = order.payment.method || "Paypal";
-                    order.payment.amount = order.payment.amount || order.total;
-                }
+		if (locals.order.cart && locals.order.cart.length) {
+			if (locals.order.cart.first())
+				locals.order.currency = locals.order.cart.first().currency;
+		}
 
-                [req.body, req.query].forEach(payload=>{
-                    var paymentIdKey = Object.keys(payload || {}).find(k=>k.toLowerCase().contains("id"));
-                    if(paymentIdKey)
-                        order.payment.paymentId = payload[paymentIdKey];
-                });
+		delete locals.groupedBrands;
 
-                order.state = "paid";
-                order.save();   
+		// Render the view
+		view.render('receipt');
+	}
 
-                locals.order = order.toObject({virtuals: true});
-                locals.order.total = locals.order.total || order.subtotal - (order.discount || 0);
-                locals.order.cart = order.cart.map(c => c.toObject({virtuals: true}));
-                
-                if (locals.order.cart && locals.order.cart.length) {
-                    if (locals.order.cart.first())
-                        locals.order.currency = locals.order.cart.first().currency;
-                }
-                
-                order.sendPaymentNotification(function(){
-                    order.payment.notificationSent = true;
-                    order.save();
-                });
+	function showPendingPayment(err, order) {
+		showReceipt(err, order);
+	}
 
-                delete locals.groupedBrands;    
-                next(err);
-            });
-    });
- 
-    // Render the view
-    view.render('receipt');
+	if (!locals.page)
+		return res.status(404).render('errors\\404');
+
+	Order.model.findOne({
+		orderNumber: req.params.orderNo
+	})
+	.deepPopulate('cart.product.priceOptions.option')
+	.exec((err, order) => {
+		if (!order)
+			return res.status(404).render('errors/404');
+            
+		if (!order.payment.method) {
+			order.payment.method = order.payment.method || "Paypal";
+			order.payment.amount = order.payment.amount || order.total;
+		}
+
+		[req.body, req.query].forEach(payload => {
+			var transactionIdKey = Object.keys(payload || {}).find(k => k.toLowerCase().contains("transaction"));
+			var referenceIdKey   = Object.keys(payload || {}).find(k => k.toLowerCase().contains("reference"));
+			if (transactionIdKey)
+				order.payment.transactionId = payload[transactionIdKey];
+			if (referenceIdKey)
+				order.payment.referenceId = payload[referenceIdKey];
+		});
+
+		var options = {
+			reference: order.payment.referenceId || order.orderNumber,
+			transaction: order.payment.transactionId
+		};
+
+		PesaPal.getPaymentDetails(options).then(function (payment) {
+			//payment -> {transaction, method, status, reference}
+			console.log(payment);
+
+			if (payment) {
+				order.payment.referenceId = payment.reference;
+				order.payment.transactionId = payment.transaction;
+				order.payment.method = (payment.method.split("_").first()||"");
+				order.payment.state = PesaPalStatusMap[payment.status] || "unexpected_" + payment.status;
+				order.state = order.payment.state.toLowerCase();
+			}
+
+			if (payment.status == "COMPLETED") {
+				order.sendPaymentNotification(function () {
+					order.payment.notificationSent = true;
+					order.save();
+					showReceipt(null, order);
+				});
+			} else {
+				order.save();
+				showPendingPayment(null, order);
+			}
+		})
+		.catch (function (error) {
+			/* do stuff*/
+			console.warn(error);
+		});
+	});
 });
 
 exports = module.exports = router;

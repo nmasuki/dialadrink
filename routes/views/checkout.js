@@ -1,14 +1,13 @@
 var keystone = require('keystone');
 var router = keystone.express.Router();
 var Order = keystone.list("Order");
+var PesaPal = require('pesapaljs').init({
+	key: process.env.PESAPAL_KEY,
+	secret: process.env.PESAPAL_SECRET,
+	debug: false,//process.env.NODE_ENV != "production" // false in production!
+});
 
 function getPasaPalUrl(order, host){
-	var PesaPal = require('pesapaljs').init({
-		key: process.env.PESAPAL_KEY,
-		secret: process.env.PESAPAL_SECRET,
-		debug: false,//process.env.NODE_ENV != "production" // false in production!
-	});
-
 	var customer = new PesaPal.Customer(order.delivery.email, order.delivery.phoneNumber);
 	customer.firstName = order.delivery.firstName;
 	customer.lastName = order.delivery.lastName;

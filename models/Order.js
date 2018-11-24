@@ -19,7 +19,7 @@ Order.add({
 
     state: {
         type: Types.Select,
-        options: 'created, placed, dispatched, delivered, paid',
+        options: 'created, place, dispatched, delivered, pending, cancelled, paid',
         default: 'created',
         index: true
     },
@@ -46,10 +46,18 @@ Order.add({
     },
 
     payment:  {
-        paymentId: {type: String, noedit: true},
+        referenceId: {type: String, noedit: true},
+        transactionId: {type: String, noedit: true},
         method: {type: String, noedit: true},
         amount: {type: Number, noedit: true},
         notificationSent: {type: Boolean, noedit: true},
+        //pending_payment, paid
+        state: {
+            type: Types.Select,
+            options: 'Pending, Submited, Cancelled, Paid',
+            default: 'pending',
+            index: true
+        },
     },
 });
 
