@@ -214,6 +214,7 @@ Product.findPublished = function (filter, callback) {
     filter = Object.assign(filter || {}, {state: 'published'});
     var a = keystone.list('Product').model.find(filter)
         .sort({popularity: -1})
+        //.cache(5 * 60)
         .populate('brand')
         .populate('category')
         .populate('subCategory')
@@ -222,8 +223,7 @@ Product.findPublished = function (filter, callback) {
         .deepPopulate("priceOptions.option");
 
     if (typeof callback == "function")
-        a.cache(5 * 60) // Cache for 5 min 
-        .exec(callback);       
+        a.exec(callback);       
 
     return a;
 };
@@ -232,6 +232,7 @@ Product.findOnePublished = function (filter, callback) {
     filter = Object.assign({state: 'published'}, filter || {});
     var a = keystone.list('Product').model.findOne(filter)
         .sort({popularity: -1})
+        //.cache(5 * 60)
         .populate('brand')
         .populate('category')
         .populate('subCategory')
@@ -240,8 +241,7 @@ Product.findOnePublished = function (filter, callback) {
         .deepPopulate("priceOptions.option");
 
     if (typeof callback == "function")
-        a.cache(5 * 60) // Cache for 5 min 
-        .exec(callback);
+        a.exec(callback);
 
     return a;
 };

@@ -35,7 +35,6 @@ MenuItem.relationship({ ref: 'MenuItem', path: 'parent' });
 
 MenuItem.defaultColumns = 'label, level, parent, href|20%, show|20%';
 
-
 keystone.deepPopulate(MenuItem.schema);
 
 MenuItem.register();

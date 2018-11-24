@@ -265,7 +265,7 @@ router.get('/sitemap', function (req, res) {
                                 console.log(locals);
                                 view.render('sitemapXml', {layout: false}, function (err, xmlText) {
                                     res.setHeader('Content-Type', 'text/xml');
-                                    res.send(xmlText)
+                                    res.send(xmlText);
                                 });
                     })))));
 });
