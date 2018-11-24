@@ -222,7 +222,8 @@ Product.findPublished = function (filter, callback) {
         .deepPopulate("priceOptions.option");
 
     if (typeof callback == "function")
-        a.exec(callback).cache(5 * 60); // Cache for 5 min        
+        a.cache(5 * 60) // Cache for 5 min 
+        .exec(callback);       
 
     return a;
 };
@@ -239,7 +240,8 @@ Product.findOnePublished = function (filter, callback) {
         .deepPopulate("priceOptions.option");
 
     if (typeof callback == "function")
-        a.exec(callback).cache(5 * 60); // Cache for 5 min 
+        a.cache(5 * 60) // Cache for 5 min 
+        .exec(callback);
 
     return a;
 };
