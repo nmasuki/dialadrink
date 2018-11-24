@@ -230,9 +230,10 @@ var app = {
 
 		timeout = timeout || 10000;
 		x = setTimeout(function () {
-			modal.modal("hide")
+			modal.modal("hide");
 		}, timeout, 'hide')
 
+		return modal;
 	},
 
 	showModal: function (option) {
