@@ -28,7 +28,6 @@ ProductBrand.register();
 
 ProductBrand.findPopularBrands = function (callback) {
     keystone.list('Product').findPublished({})
-        .cache(0) // Explicitly passing in 0 will cache the results indefinitely.         
         .exec((err, _products) => {
             var brands = _products.map(p => {
                 if(p.brand && p.category && p.brand.category != p.category._id){

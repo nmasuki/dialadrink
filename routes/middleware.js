@@ -111,7 +111,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     keystone.list('MenuItem').model
         .find({key: regex})
         .deepPopulate("parent.parent")
-        .cache(10 * 60) // Cache for 10 min
+        //.cache(10 * 60) // Cache for 10 min
         .exec((err, menus) => {
             var menu = menus.orderBy(m => m.href.length).first();
 

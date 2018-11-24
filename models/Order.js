@@ -138,7 +138,7 @@ Order.schema.methods.sendPaymentNotification = function(next){
         return;  
     }
 
-    var email = new keystone.Email('templates/receipt');
+    var email = new keystone.Email('templates/views/receipt');
     
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
@@ -167,6 +167,7 @@ Order.schema.methods.sendPaymentNotification = function(next){
     };
 
     keystone.list("User").model.find({receivesOrders: true})
+        .cache(0)
         .exec((err, users) => {
             if (err)
                 return console.log(err)
@@ -216,7 +217,7 @@ Order.schema.methods.sendUserNotification = function (next) {
     var orderId = this._id;
     Order.model.findOne({_id: orderId})
         .deepPopulate('cart.product.priceOptions.option')
-        .cache(10 * 60)
+        //.cache(10 * 60)
         .exec((err, order) => {
                 if (err)
                     return next(err);
@@ -251,6 +252,7 @@ Order.schema.methods.sendUserNotification = function (next) {
                 };
 
                 keystone.list("User").model.find({receivesOrders: true})
+                    .cache(0)
                     .exec((err, users) => {
                         if (err)
                             return console.log(err)
@@ -295,7 +297,8 @@ var autoId = 72490002;
 
 Order.getNextOrderId = () => (autoId = (autoId + 100));
 
-Order.model.find().sort({'orderNumber': -1})//.limit(1)
+Order.model.find().sort({'orderNumber': -1})
+    //.limit(1)
     .exec(function (err, data) {
         if (data[0] && data[0].orderNumber)
             autoId = data[0].orderNumber;
