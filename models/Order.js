@@ -19,7 +19,7 @@ Order.add({
 
     state: {
         type: Types.Select,
-        options: 'created, place, dispatched, delivered, pending, cancelled, paid',
+        options: 'created, placed, dispatched, delivered, pending, cancelled, paid',
         default: 'created',
         index: true
     },
@@ -55,7 +55,7 @@ Order.add({
         state: {
             type: Types.Select,
             options: 'Pending, Submited, Cancelled, Paid',
-            default: 'pending',
+            default: 'Pending',
             index: true
         },
     },
