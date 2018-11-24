@@ -332,18 +332,18 @@ Product.search = function (query, next) {
                             Product.findBySubCategory(filters, function (err, products) {
                                 if (err || !products || !products.length)
                                     Product.findPublished(filters, function (err, products) {
-                                        next(err, products)
+                                        next(err, products);
                                     });
                                 else
-                                    next(err, products)
+                                    next(err, products);
                             });
                         else
-                            next(err, products)
+                            next(err, products);
                     });
                 else
-                    next(err, products)
+                    next(err, products);
             });
         else
-            next(err, products)
+            next(err, products);
     });
 };

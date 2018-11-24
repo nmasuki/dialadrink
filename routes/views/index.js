@@ -58,7 +58,8 @@ function search(req, res, next) {
             locals.page.title = "{0} price in Kenya | Buy {0} online | {1}".format(title.split(",").first(), keystone.get("name"));
 
         if(products.length == 1){
-            locals.breadcrumbs.pop();
+            if(locals.breadcrumbs && locals.breadcrumbs.length)
+                locals.breadcrumbs.pop();
             renderSingleResults(products.first());
         }else{
             locals.products = products;
