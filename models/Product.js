@@ -222,7 +222,7 @@ Product.findPublished = function (filter, callback) {
         .deepPopulate("priceOptions.option");
 
     if (typeof callback == "function")
-        a.exec(callback);
+        a.exec(callback).cache(5 * 60); // Cache for 5 min        
 
     return a;
 };
@@ -239,13 +239,14 @@ Product.findOnePublished = function (filter, callback) {
         .deepPopulate("priceOptions.option");
 
     if (typeof callback == "function")
-        a.exec(callback);
+        a.exec(callback).cache(5 * 60); // Cache for 5 min 
 
     return a;
 };
 
 Product.findByBrand = function (filter, callback) {
     keystone.list('ProductBrand').model.find(filter)
+        .cache(10 * 60) // Cache for 10 min 
         .exec((err, brands) => {
             if (err || !brands)
                 return console.log(err);
@@ -257,7 +258,8 @@ Product.findByBrand = function (filter, callback) {
 
 Product.findByCategory = function (filter, callback) {
     keystone.list('ProductCategory').model.find(filter)
-        .exec((err, categories) => {
+    .cache(10 * 60) // Cache for 10 min 
+    .exec((err, categories) => {
             if (err || !categories)
                 return console.log(err);
 
@@ -268,7 +270,8 @@ Product.findByCategory = function (filter, callback) {
 
 Product.findBySubCategory = function (filter, callback) {
     keystone.list('ProductSubCategory').model.find(filter)
-        .exec((err, subCategories) => {
+    .cache(10 * 60) // Cache for 10 min 
+    .exec((err, subCategories) => {
             if (err || !subCategories)
                 return console.log(err);
 
@@ -279,7 +282,8 @@ Product.findBySubCategory = function (filter, callback) {
 
 Product.findByOption = function (filter, callback) {
     keystone.list('ProductOption').model.find(filter)
-        .exec((err, options) => {
+    .cache(10 * 60) // Cache for 10 min 
+    .exec((err, options) => {
             if (err || !options)
                 return console.log(err);
 

@@ -2,7 +2,7 @@ var keystone = require('keystone');
 var router = keystone.express.Router();
 var Order = keystone.list("Order");
 
-function getPasaPalUrl(order, total){
+function getPasaPalUrl(order, host){
 	var PesaPal = require('pesapaljs').init({
 		key: process.env.PESAPAL_KEY,
 		secret: process.env.PESAPAL_SECRET,
@@ -13,15 +13,20 @@ function getPasaPalUrl(order, total){
 	customer.firstName = order.delivery.firstName;
 	customer.lastName = order.delivery.lastName;
 
-	var _order = new PesaPal.Order(order.orderNumber, customer, 'Order #' + order.orderNumber, total, "KES", "MERCHANT");
+	var _order = new PesaPal.Order(
+		order.orderNumber, 
+		customer, 'Order #' + order.orderNumber, 
+		order.payment.amount, 
+		"KES", "MERCHANT"
+	);
 
 	// Redirect user to PesaPal
-	var url = PesaPal.getPaymentURL(_order, 'https://www.dialadrinkkenya.com/order/' + order.orderNumber);
+	var url = PesaPal.getPaymentURL(_order, host + '/receipt/' + order.orderNumber);
 	// send it to an iframe ?
 	return url;
 }
 
-function getPasaPalUrl1(order, total){	
+function getPasaPalUrl1(order, host){	
 	var pesapal = require('pesapal')({
 		consumerKey: process.env.PESAPAL_KEY,
 		consumerSecret: process.env.PESAPAL_SECRET,
@@ -29,18 +34,19 @@ function getPasaPalUrl1(order, total){
 	});	
 	// post a direct order	   
 	var postParams = {
-		'oauth_callback': 'https://www.dialadrinkkenya.com/order/' + order.orderNumber
+		'oauth_callback': host + '/receipt/' + order.orderNumber
 	};
 
 	var requestData = {
 		'Type': 'MERCHANT',
-		'Amount': total,
+		'Amount': order.payment.amount,
 		'Reference': order.orderNumber,
 		'Description': 'Order #' + order.orderNumber,
 		'PhoneNumber': order.delivery? order.delivery.phoneNumber: ""
 	};
 
-	return pesapal.postDirectOrder(postParams, requestData);;
+	var url = pesapal.postDirectOrder(postParams, requestData);;
+	return url;
 }
 router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
@@ -58,6 +64,8 @@ router.get('/', function (req, res) {
 		label: "Checkout"
 	});
 
+	locals.enablePaypal = process.env.PESAPAL_ENABLED;
+
 	return view.render('checkout');
 });
 
@@ -72,6 +80,17 @@ router.post("/", function (req, res, next) {
 
 	if (Object.keys(req.session.cart || {}).length) {
 		var cart = Object.values(req.session.cart);
+		var subtotal = cart.sum(function(c){
+			var price = c.pieces * c.price;
+			if(c.offerPrice && c.price > c.offerPrice)
+				price = c.pieces * c.offerPrice
+			return price;
+		});
+		var discount = Math.round(order.promo.discountType == "percent"
+			? cart.sum(c => c.pieces * c.price) * order.promo.discount / 100
+			: order.promo.discount || 0
+		);
+
 		var order = new Order.model({
 			cart: cart.map(item => {
 				//console.log(item)
@@ -86,7 +105,10 @@ router.post("/", function (req, res, next) {
 				cartItem.save();
 				return cartItem;
 			}),
-			paymentMethod: req.body.paymentMethod,
+			payment:{
+				method: req.body.paymentMethod,
+				amount: subtotal - discount
+			},
 			promo: req.session.promo,
 			delivery: Object.assign({userId: req.session.userId}, req.body)
 		});
@@ -106,19 +128,8 @@ router.post("/", function (req, res, next) {
 
 				if (!err) {
 
-					if(order.paymentMethod == "PesaPal"){
-						var cart = Object.values(req.session.cart);
-						var subtotal = cart.sum(function(c){
-							var price = c.pieces * c.price;
-							if(c.offerPrice && c.price > c.offerPrice)
-								price = c.pieces * c.offerPrice
-							return price;
-						});
-						var discount = Math.round(order.promo.discountType == "percent"
-							? cart.sum(c => c.pieces * c.price) * order.promo.discount / 100
-							: order.promo.discount || 0
-						);
-						json.redirect = getPasaPalUrl(order, subtotal - discount);
+					if(order.payment.method == "PesaPal"){						
+						json.redirect = getPasaPalUrl(order, req.headers.origin);
 						json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
 					}
 

@@ -16,7 +16,6 @@ Order.add({
     orderDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     notificationSent: {type: Boolean, noedit: true},
-    paymentMethod: {type: String, noedit: true},
 
     state: {
         type: Types.Select,
@@ -46,7 +45,12 @@ Order.add({
         houseNumber: {type: String, noedit: true}
     },
 
-    payment:  {type: String, noedit: true},
+    payment:  {
+        paymentId: {type: String, noedit: true},
+        method: {type: String, noedit: true},
+        amount: {type: Number, noedit: true},
+        notificationSent: {type: Boolean, noedit: true},
+    },
 });
 
 Order.schema.pre('save', function (next) {
@@ -120,19 +124,28 @@ Order.schema.methods.placeOrder = function (next) {
     });
 };
 
-Order.schema.methods.sendPaymentNotification = function(){
+Order.schema.methods.sendPaymentNotification = function(next){
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
 
-    var that = this;
-    var email = new keystone.Email('templates/email/paid');
+    var order = this;
+    if(order.payment.notificationSent)
+    {
+        console.log("Payment notification already sent.");
+        if (typeof next == "function")
+            next("Payment notification already sent.");
+
+        return;  
+    }
+
+    var email = new keystone.Email('templates/receipt');
     
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
-    var subject = "Your order at " + keystone.get("name");
+    var subject = "Paymeny received #" + order.orderNumber + " - " + keystone.get("name");
     if (keystone.get("env") == "development")
-        subject = "(Testing)" + subject;
+        subject = "(Testing) " + subject;
 
     var locals = {
         layout: 'email',
@@ -162,7 +175,10 @@ Order.schema.methods.sendPaymentNotification = function(){
                 users.forEach(u => emailOptions.cc.push(u.toObject()));
             else {
                 console.warn("No users have the receivesOrders right!");
-                emailOptions.cc.push("simonkimari@gmail.com");
+                if (keystone.get("env") == "development")
+                    emailOptions.cc.push("nmasuki@gmail.com");
+                else
+                    emailOptions.cc.push("simonkimari@gmail.com");
             }
 
             console.log(
@@ -172,13 +188,13 @@ Order.schema.methods.sendPaymentNotification = function(){
             );
 
             email.send(locals, emailOptions, (err, a) => {
-                console.log("Order notification Sent!", err, a)
+                console.log("Payment notification Sent!", err, a)
 
                 if (err)
                     console.warn(err);
 
                 if (typeof next == "function")
-                    next(err)
+                    next(err);
             });
         });
 }
@@ -193,13 +209,14 @@ Order.schema.methods.sendUserNotification = function (next) {
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
-    var subject = "Your order at " + keystone.get("name");
+    var subject = "Your order #" + this.orderNumber + " - " + keystone.get("name");
     if (keystone.get("env") == "development")
         subject = "(Testing)" + subject;
 
     var orderId = this._id;
     Order.model.findOne({_id: orderId})
         .deepPopulate('cart.product.priceOptions.option')
+        .cache(10 * 60)
         .exec((err, order) => {
                 if (err)
                     return next(err);
@@ -266,8 +283,7 @@ Order.schema.methods.sendUserNotification = function (next) {
         )
     ;
 
-}
-;
+};
 
 keystone.deepPopulate(Order.schema);
 

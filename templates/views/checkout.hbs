@@ -200,10 +200,12 @@
                     <h4 class="mb-3">Payment</h4>
 
                     <div class="d-block my-3">
-                        <!--div class="custom-control custom-radio">
+                        {{#if enablePaypal}}
+                        <div class="custom-control custom-radio">
                             <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal" checked>
                             <label class="custom-control-label" for="debit">Pay online</label>
-                        </div-->
+                        </div>
+                        {{/if}}
                         <div class="custom-control custom-radio">
                             <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" value="Cash">
                             <label class="custom-control-label" for="credit">Cash on Delivery</label>
