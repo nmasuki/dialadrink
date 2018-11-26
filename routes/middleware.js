@@ -12,10 +12,10 @@ var keystone = require("keystone");
 var mobile = require('is-mobile');
 var memCache = require("memory-cache");
 
-exports.cache = function (duration){
+exports.cache = function (duration, _key){
     duration = duration || 30;
     return (req, res, next) => {
-        let key =  '__express__' + req.session.id + "[" + (req.originalUrl || req.url) + "]";
+        let key =  '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
         let cacheContent = memCache.get(key);
         if(cacheContent){
             res.send(cacheContent);

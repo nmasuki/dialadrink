@@ -36,16 +36,17 @@ var routes = {
 
 // Setup Route Bindings
 exports = module.exports = function (app) {	
-	var cacheMiddleware = middleware.cache((process.env.CACHE_TIME || 30) * 60);
+	var globalCacheMiddleware = middleware.cache((process.env.CACHE_TIME || 30) * 60, "/");
+	var userCacheMiddleware = middleware.cache((process.env.CACHE_TIME || 30) * 60);
 	// Views
-	app.use('/brand', cacheMiddleware, routes.views.brand);
-	app.use('/blog', cacheMiddleware, routes.views.blog);
-	app.use('/contact-us', cacheMiddleware, routes.views.contact);
-	app.use('/gallery', cacheMiddleware, routes.views.gallery);
+	app.use('/brand', globalCacheMiddleware, routes.views.brand);
+	app.use('/blog', globalCacheMiddleware, routes.views.blog);
+	app.use('/contact-us', globalCacheMiddleware, routes.views.contact);
+	app.use('/gallery', globalCacheMiddleware, routes.views.gallery);
 
-    app.use('/product', cacheMiddleware, routes.views.product);
-    app.use('/category', cacheMiddleware, routes.views.category);
-    app.use('/product', cacheMiddleware, routes.views.category);
+    app.use('/product', globalCacheMiddleware, routes.views.product);
+    app.use('/category', globalCacheMiddleware, routes.views.category);
+    app.use('/product', globalCacheMiddleware, routes.views.category);
 	app.use('/checkout', routes.views.checkout);
 	app.use('/cart', routes.views.cart);
 
