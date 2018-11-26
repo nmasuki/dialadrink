@@ -50,8 +50,8 @@ exports = module.exports = function (app) {
 	app.use('/checkout', routes.views.checkout);
 	app.use('/cart', routes.views.cart);
 
-	app.use('/', cacheMiddleware, routes.views.products);
-	app.use('/', cacheMiddleware,  routes.views.index);
+	app.use('/', userCacheMiddleware, routes.views.products);
+	app.use('/', userCacheMiddleware,  routes.views.index);
 
 	app.use('/order', routes.views.order);
 	app.use('/pesapal', routes.views.pesapal);
