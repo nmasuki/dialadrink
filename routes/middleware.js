@@ -17,7 +17,7 @@ exports.cache = function (duration){
     return (req, res, next) => {
         let key =  '__express__' + req.session.id + "[" + (req.originalUrl || req.url) + "]";
         let cacheContent = memCache.get(key);
-        if(cacheContent && !key.contains("/api/")){
+        if(cacheContent){
             res.send(cacheContent);
             return;
         }else{
