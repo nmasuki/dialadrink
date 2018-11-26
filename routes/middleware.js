@@ -19,7 +19,6 @@ exports.cache = function (duration){
         let cacheContent = memCache.get(key);
         if(cacheContent && !key.contains("/api/")){
             res.send(cacheContent);
-            console.log("Using cache for:", key);
             return;
         }else{
             res.sendResponse = res.send;
