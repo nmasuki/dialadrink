@@ -15,9 +15,9 @@ var memCache = require("memory-cache");
 exports.cache = function (duration){
     duration = duration || 30;
     return (req, res, next) => {
-        let key =  '__express__' + (req.originalUrl || req.url)
+        let key =  '__express__' + req.session.id + "[" + (req.originalUrl || req.url) + "]";
         let cacheContent = memCache.get(key);
-        if(cacheContent){
+        if(cacheContent && !key.contains("/api/")){
             res.send(cacheContent);
             console.log("Using cache for:", key);
             return;
