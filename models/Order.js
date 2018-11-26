@@ -16,6 +16,7 @@ Order.add({
     orderDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     notificationSent: {type: Boolean, noedit: true},
+    paymentMethod: {type: String, noedit: true},
 
     state: {
         type: Types.Select,
@@ -56,6 +57,7 @@ Order.add({
             type: Types.Select,
             options: 'Pending, Submited, Cancelled, Paid',
             default: 'Pending',
+            noedit: true,
             index: true
         },
     },
@@ -241,8 +243,13 @@ Order.schema.methods.sendUserNotification = function (next) {
                 var locals = {
                     layout: 'email',
                     page: {title: keystone.get("name") + " Order"},
-                    order: order
+                    order: order.toObject({virtual: true})
                 };
+
+                if (locals.order.cart && locals.order.cart.length) {
+                    if (locals.order.cart.first())
+                        locals.order.currency = locals.order.cart.first().currency;
+                }
 
                 var emailOptions = {
                     subject: subject,
