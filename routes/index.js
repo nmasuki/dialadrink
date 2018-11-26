@@ -26,7 +26,6 @@ var importRoutes = keystone.importer(__dirname);
 keystone.set('admin path', "admin");
 
 // Common Middleware
-keystone.pre('routes', middleware.cache((process.env.CACHE_TIME || 30) * 60));
 keystone.pre('routes', middleware.initLocals);
 keystone.pre('render', middleware.flashMessages);
 
@@ -37,20 +36,22 @@ var routes = {
 
 // Setup Route Bindings
 exports = module.exports = function (app) {	
+	var globalCacheMiddleware = middleware.cache((process.env.CACHE_TIME || 30) * 60, "/");
+	var userCacheMiddleware = middleware.cache((process.env.CACHE_TIME || 30) * 60);
 	// Views
-	app.use('/brand', routes.views.brand);
-	app.use('/blog', routes.views.blog);
-	app.use('/contact-us', routes.views.contact);
-	app.use('/gallery', routes.views.gallery);
+	app.use('/brand', globalCacheMiddleware, routes.views.brand);
+	app.use('/blog', globalCacheMiddleware, routes.views.blog);
+	app.use('/contact-us', globalCacheMiddleware, routes.views.contact);
+	app.use('/gallery', globalCacheMiddleware, routes.views.gallery);
 
-    app.use('/product', routes.views.product);
-    app.use('/category', routes.views.category);
-    app.use('/product', routes.views.category);
+    app.use('/product', globalCacheMiddleware, routes.views.product);
+    app.use('/category', globalCacheMiddleware, routes.views.category);
+    app.use('/product', globalCacheMiddleware, routes.views.category);
 	app.use('/checkout', routes.views.checkout);
 	app.use('/cart', routes.views.cart);
 
-	app.use('/', routes.views.products);
-	app.use('/', routes.views.index);
+	app.use('/', userCacheMiddleware, routes.views.products);
+	app.use('/', userCacheMiddleware,  routes.views.index);
 
 	app.use('/order', routes.views.order);
 	app.use('/pesapal', routes.views.pesapal);
