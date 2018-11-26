@@ -10,7 +10,7 @@
 var _ = require('lodash');
 var keystone = require("keystone");
 var mobile = require('is-mobile');
-var memCache = require("momery-cache");
+var memCache = require("memory-cache");
 
 exports.cache = function (duration){
     duration = duration || 30;
