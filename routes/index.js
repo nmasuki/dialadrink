@@ -26,6 +26,7 @@ var importRoutes = keystone.importer(__dirname);
 keystone.set('admin path', "admin");
 
 // Common Middleware
+keystone.pre('routes', middleware.cache(60));
 keystone.pre('routes', middleware.initLocals);
 keystone.pre('render', middleware.flashMessages);
 

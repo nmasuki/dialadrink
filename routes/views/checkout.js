@@ -93,8 +93,7 @@ router.post("/", function (req, res, next) {
 		var order = new Order.model({
 			cart: cart.map(item => {
 				//console.log(item)
-				var cartItem = new (keystone.list("CartItem")).model({});
-				
+				var cartItem = new (keystone.list("CartItem")).model({});				
 				cartItem.date = item.date;
 				cartItem.state = item.state;
 				cartItem.pieces = item.pieces;
@@ -104,6 +103,7 @@ router.post("/", function (req, res, next) {
 				cartItem.save();
 				return cartItem;
 			}),
+			paymentMethod: req.body.paymentMethod == "Cash"? "Cash on Delivery": req.body.paymentMethod,
 			payment:{
 				method: req.body.paymentMethod,
 				amount: subtotal - discount

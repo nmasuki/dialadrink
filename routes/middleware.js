@@ -10,7 +10,27 @@
 var _ = require('lodash');
 var keystone = require("keystone");
 var mobile = require('is-mobile');
+var memCache = require("momery-cache");
 
+exports.cache = function (duration){
+    duration = duration || 30;
+    return (req, res, next) => {
+        let key =  '__express__' + (req.originalUrl || req.url)
+        let cacheContent = memCache.get(key);
+        if(cacheContent){
+            res.send(cacheContent);
+            console.log("Using cache for:", key);
+            return;
+        }else{
+            res.sendResponse = res.send;
+            res.send = (body) => {
+                memCache.put(key, body, duration*1000);
+                res.sendResponse(body);
+            };
+            next();
+        }
+    }
+}
 /**
  Initialises the standard view locals
 
@@ -150,6 +170,7 @@ exports.initTopMenuLocals = function (req, res, next) {
             next();
         });
 }
+
 
 
 /**
