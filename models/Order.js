@@ -214,7 +214,7 @@ Order.schema.methods.sendUserNotification = function (next) {
         this.orderNumber = Order.getNextOrderId();
 
     var that = this;
-    var email = new keystone.Email('templates/email/order');
+    var email = new keystone.Email('templates/order');
 
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
@@ -239,17 +239,20 @@ Order.schema.methods.sendUserNotification = function (next) {
                     else
                         return next("Error while getting cart Items");
                 }
-
+                
                 var locals = {
                     layout: 'email',
                     page: {title: keystone.get("name") + " Order"},
                     order: order.toObject({virtual: true})
                 };
 
+                locals.order.total = order.subtotal - (order.discount || 0);
                 if (locals.order.cart && locals.order.cart.length) {
                     if (locals.order.cart.first())
                         locals.order.currency = locals.order.cart.first().currency;
                 }
+
+                locals.order.cart = order.cart.map(c => c.toObject({virtuals: true}));
 
                 var emailOptions = {
                     subject: subject,

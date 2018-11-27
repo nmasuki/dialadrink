@@ -15,17 +15,22 @@ var memCache = require("memory-cache");
 exports.cache = function (duration, _key){
     duration = duration || 30;
     return (req, res, next) => {
-        let key =  '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
-        let cacheContent = memCache.get(key);
-        if(cacheContent){
-            res.send(cacheContent);
-            return;
-        }else{
-            res.sendResponse = res.send;
-            res.send = (body) => {
-                memCache.put(key, body, duration*1000);
-                res.sendResponse(body);
-            };
+        try{
+            let key =  '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
+            let cacheContent = memCache.get(key);
+            if(cacheContent){
+                res.send(cacheContent);
+                return;
+            }else{
+                res.sendResponse = res.send;
+                res.send = (body) => {
+                    memCache.put(key, body, duration*1000);
+                    res.sendResponse(body);
+                };
+                next();
+            }
+        }catch(e){
+            memCache.clear()
             next();
         }
     }
