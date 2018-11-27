@@ -36,8 +36,9 @@ var routes = {
 
 // Setup Route Bindings
 exports = module.exports = function (app) {	
-	var globalCacheMiddleware = middleware.cache((process.env.CACHE_TIME || 30) * 60, "/");
-	var userCacheMiddleware = middleware.cache((process.env.CACHE_TIME || 30) * 60);
+	var noopMiddleware = (req, res, next) => next();
+	var globalCacheMiddleware = noopMiddleware ||  middleware.cache((process.env.CACHE_TIME || 30) * 60, "/");
+	var userCacheMiddleware = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30) * 60);
 	// Views
 	app.use('/brand', globalCacheMiddleware, routes.views.brand);
 	app.use('/blog', globalCacheMiddleware, routes.views.blog);

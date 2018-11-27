@@ -30,7 +30,7 @@ exports.cache = function (duration, _key){
                 next();
             }
         }catch(e){
-            memCache.clear()
+            memCache.clear();
             next();
         }
     }
