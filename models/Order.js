@@ -214,7 +214,7 @@ Order.schema.methods.sendUserNotification = function (next) {
         this.orderNumber = Order.getNextOrderId();
 
     var that = this;
-    var email = new keystone.Email('templates/order');
+    var email = new keystone.Email('templates/views/order');
 
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
