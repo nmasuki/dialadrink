@@ -199,15 +199,16 @@ Order.schema.methods.sendPaymentNotification = function(next){
 
             email.send(locals, emailOptions, (err, a) => {
                 console.log("Payment notification Sent!", err, a)
-
                 if (err)
                     console.warn(err);
 
-                if (typeof next == "function")
-                    next(err);
+
             });
+
+            if (typeof next == "function")
+                next(err);        
         });
-}
+};
 
 Order.schema.methods.sendUserNotification = function (next) {
     if (!this.orderNumber)
@@ -227,79 +228,75 @@ Order.schema.methods.sendUserNotification = function (next) {
     Order.model.findOne({_id: orderId})
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
-                if (err)
-                    return next(err);
+            if (err)
+                return next(err);
 
-                if (!order)
-                    return next(`Order [${orderId}}] not found!`);
+            if (!order)
+                return next(`Order [${orderId}}] not found!`);
 
-                if (!order.cart.length) {
-                    if (that.cart.length)
-                        order.cart = that.cart;
-                    else
-                        return next("Error while getting cart Items");
-                }
-                
-                var locals = {
-                    layout: 'email',
-                    page: {title: keystone.get("name") + " Order"},
-                    order: order.toObject({virtual: true})
-                };
-
-                locals.order.total = order.subtotal - (order.discount || 0);
-                if (locals.order.cart && locals.order.cart.length) {
-                    if (locals.order.cart.first())
-                        locals.order.currency = locals.order.cart.first().currency;
-                }
-
-                locals.order.cart = order.cart.map(c => c.toObject({virtuals: true}));
-
-                var emailOptions = {
-                    subject: subject,
-                    to: {
-                        name: order.delivery.firstName,
-                        email: order.delivery.email || "simonkimari@gmail.com"
-                    },
-                    cc: [],
-                    from: {
-                        name: keystone.get("name"),
-                        email: process.env.EMAIL_FROM
-                    }
-                };
-
-                keystone.list("User").model.find({receivesOrders: true})
-                    .exec((err, users) => {
-                        if (err)
-                            return console.log(err)
-
-                        if (users && users.length)
-                            users.forEach(u => emailOptions.cc.push(u.toObject()));
-                        else {
-                            console.warn("No users have the receivesOrders right!");
-                            emailOptions.cc.push("simonkimari@gmail.com");
-                        }
-
-                        console.log(
-                            "Sending Order notification!",
-                            "User", order.delivery.email,
-                            "Admins", emailOptions.cc.map(u => u.email || u).join()
-                        );
-
-                        email.send(locals, emailOptions, (err, a) => {
-                            console.log("Order notification Sent!", err, a)
-
-                            if (err)
-                                console.warn(err);
-
-                            if (typeof next == "function")
-                                next(err)
-                        });
-
-                    });
+            if (!order.cart.length) {
+                if (that.cart.length)
+                    order.cart = that.cart;
+                else
+                    return next("Error while getting cart Items");
             }
-        )
-    ;
+            
+            var locals = {
+                layout: 'email',
+                page: {title: keystone.get("name") + " Order"},
+                order: order.toObject({virtual: true})
+            };
 
+            locals.order.total = order.subtotal - (order.discount || 0);
+            if (locals.order.cart && locals.order.cart.length) {
+                if (locals.order.cart.first())
+                    locals.order.currency = locals.order.cart.first().currency;
+            }
+
+            locals.order.cart = order.cart.map(c => c.toObject({virtuals: true}));
+
+            var emailOptions = {
+                subject: subject,
+                to: {
+                    name: order.delivery.firstName,
+                    email: order.delivery.email || "simonkimari@gmail.com"
+                },
+                cc: [],
+                from: {
+                    name: keystone.get("name"),
+                    email: process.env.EMAIL_FROM
+                }
+            };
+
+            keystone.list("User").model.find({receivesOrders: true})
+                .exec((err, users) => {
+                    if (err)
+                        return console.log(err)
+
+                    if (users && users.length)
+                        users.forEach(u => emailOptions.cc.push(u.toObject()));
+                    else {
+                        console.warn("No users have the receivesOrders rights!");
+                        emailOptions.cc.push("simonkimari@gmail.com");
+                    }
+
+                    console.log(
+                        "Sending order notification!",
+                        "User", order.delivery.email,
+                        "Admins", "\"" + emailOptions.cc.map(u => u.email || u).join() + "\""
+                    );
+
+                    email.send(locals, emailOptions, (err, a) => {
+                        console.log("Order notification Sent!", err, a)
+
+                        if (err)
+                            console.warn(err);
+                    });
+
+                    if (typeof next == "function")
+                        next(err);
+                });
+        });
 };
 
 keystone.deepPopulate(Order.schema);
