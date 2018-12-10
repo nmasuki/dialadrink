@@ -174,7 +174,9 @@
                                             {{delivery.firstName}} {{delivery.lastName}}<br>
                                             {{delivery.address}}, {{delivery.building}}<br>
                                             {{delivery.houseNumber}}<br>
-                                            {{delivery.phoneNumber}}
+                                            {{#if delivery.phoneNumber}}
+                                            <a href="tel:{{delivery.phoneNumber}}">{{delivery.phoneNumber}}</a>
+                                            {{/if}}
                                             <p style="margin:0 0 16px">
                                                 <a href="mailto:{{delivery.email}}" target="_blank">{{delivery.email}}</a>
                                             </p>

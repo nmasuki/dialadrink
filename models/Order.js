@@ -201,8 +201,6 @@ Order.schema.methods.sendPaymentNotification = function(next){
                 console.log("Payment notification Sent!", err, a)
                 if (err)
                     console.warn(err);
-
-
             });
 
             if (typeof next == "function")
@@ -214,7 +212,6 @@ Order.schema.methods.sendUserNotification = function (next) {
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
 
-    var that = this;
     var email = new keystone.Email('templates/views/order');
 
     //Hack to make use of nodemailer..
@@ -224,15 +221,14 @@ Order.schema.methods.sendUserNotification = function (next) {
     if (keystone.get("env") == "development")
         subject = "(Testing)" + subject;
 
-    var orderId = this._id;
-    Order.model.findOne({_id: orderId})
+    Order.model.findOne({_id: this._id})
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
             if (err)
                 return next(err);
 
             if (!order)
-                return next(`Order [${orderId}}] not found!`);
+                return next(`Order [${order._id}}] not found!`);
 
             if (!order.cart.length) {
                 if (that.cart.length)
@@ -244,16 +240,8 @@ Order.schema.methods.sendUserNotification = function (next) {
             var locals = {
                 layout: 'email',
                 page: {title: keystone.get("name") + " Order"},
-                order: order.toObject({virtual: true})
+                order: order
             };
-
-            locals.order.total = order.subtotal - (order.discount || 0);
-            if (locals.order.cart && locals.order.cart.length) {
-                if (locals.order.cart.first())
-                    locals.order.currency = locals.order.cart.first().currency;
-            }
-
-            locals.order.cart = order.cart.map(c => c.toObject({virtuals: true}));
 
             var emailOptions = {
                 subject: subject,
