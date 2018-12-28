@@ -11,11 +11,7 @@ router.get("/:category", function (req, res) {
 
     locals.page = Object.assign(locals.page, {h1: locals.filters.category.toProperCase()});
     if (!locals.page.bannerImages)
-        locals.page.bannerImages = [
-            "/assets/twall.jpg", "/assets/twall1.jpg", "/assets/twall2.jpg",
-            "/assets/twall3.jpg", "/assets/twall4.jpg"
-        ];
-
+        locals.page.bannerImages = [];
 
     // Load Products
     view.on('init', function (next) {
