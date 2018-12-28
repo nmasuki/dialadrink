@@ -14,10 +14,7 @@ function index(req, res) {
 
     locals.page.canonical = 'https://www.dialadrinkkenya.com/index.html';
     if (!locals.page.bannerImages)
-        locals.page.bannerImages = [
-            "/assets/twall.jpg", "/assets/twall1.jpg", "/assets/twall2.jpg",
-            "/assets/twall3.jpg", "/assets/twall4.jpg"
-        ];
+        locals.page.bannerImages = [];
 
     // Load Products
     view.on('init', function (next) {
