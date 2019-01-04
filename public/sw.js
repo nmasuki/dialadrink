@@ -37,11 +37,11 @@ self.addEventListener('fetch', function (event) {
 
     var fetchCached = function (request, dofetch) {
         return caches.open('pwa-offline').then(function (cache) {
-            return cache.match(event.request).then(function (matching) {
+            return cache.match(request).then(function (matching) {
                 //Check to see if you have it in the cache, Return response
                 //If not in the cache, fetch online
                 return !matching || matching.status == 404 
-                    ? (dofetch? fetchOnline(request): Promise.reject('no-match'))
+                    ? (dofetch || dofetch == undefined? fetchOnline(request): Promise.reject('no-match'))
                     : matching;
             }).catch(function (err) {
                 console.warn(err)
@@ -54,21 +54,18 @@ self.addEventListener('fetch', function (event) {
 
     var fetchOnline = function(request, docache){
         return fetch(request).then(function(response){
-            if (event.request.url.toLowerCase().indexOf(location.origin.toLowerCase()) >= 0)
+            if (request.url.toLowerCase().indexOf(location.origin.toLowerCase()) >= 0)
                 event.waitUntil(updateCache(request, response));
-                       
-            return Promise.accept(response);
+
+            return Promise.resolve(response);
         }).catch(function (error) {
             console.log('[PWA] Network request Failed. Serving content from cache: ' + error);
-            if(docache)
+            if(docache || docache == undefined)
                 return fetchCached(request, false);
 
             return Promise.reject('no-match');
-        }).catch(function (err) {
-            console.warn(err);
-            return fetchCached(request, false)
         });
     };
 
-    event.respondWith(fetchCached(event.request));
+    event.respondWith(fetchCached(event.request, true));
 })
