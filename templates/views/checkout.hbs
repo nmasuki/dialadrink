@@ -204,6 +204,12 @@
                             <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" value="Cash" checked>
                             <label class="custom-control-label" for="credit">Cash on Delivery</label>
                         </div>
+                        
+                        <div class="custom-control custom-radio">
+                            <input id="swipeOnDelivery" name="paymentMethod" type="radio" class="custom-control-input" value="Swipe on delivery">
+                            <label class="custom-control-label" for="swipeOnDelivery">Swipe on Delivery</label>
+                        </div>
+
                         {{#if enablePaypal}}
                         <div class="custom-control custom-radio">
                             <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
