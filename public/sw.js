@@ -23,44 +23,48 @@ self.addEventListener('install', function (event) {
 
 //If any fetch fails, it will look for the request in the cache and serve it from there first
 self.addEventListener('fetch', function (event) {
-    var updateCache = function (request) {
+            
+    var fetchCached = function (request, dofetch) {
         return caches.open('pwa-offline').then(function (cache) {
-            return fetch(request).then(function (response) {
+            return cache.match(event.request).then(function (matching) {
+                //Check to see if you have it in the cache, Return response
+                //If not in the cache, fetch online
+                return !matching || matching.status == 404 
+                    ? (dofetch? fetchOnline(request): Promise.reject('no-match'))
+                    : matching;
+            }).catch(function (err) {
+                console.warn(err)
+            });
+        }).catch(function (err) {
+            console.warn(err);
+            return fetch(request);
+        });
+    };
+
+    var fetchOnline = function(request, docache){
+        return fetch(request).then(function(response){
+            event.waitUntil(caches.open('pwa-offline').then(function (cache) {
                 try {
                     return cache.put(request, response);
                 } catch (e) {
                     console.warn(e);
                 }
-                return null;
             }).catch(function (err) {
-                console.warn(err)
-            });
+                console.warn(err);
+            }));
+            
+            return response;
+        }).catch(function (error) {
+            console.log('[PWA] Network request Failed. Serving content from cache: ' + error);
+            if(docache)
+                return fetchCached(request, false);
+
+            return Promise.reject('no-match');
         }).catch(function (err) {
-            console.warn(err)
+            console.warn(err);
+            return fetchCached(request, false)
         });
     };
 
-    if (event.request.url.toLowerCase().indexOf(location.origin.toLowerCase()) >= 0) {
-        //if (event.request.url.indexOf("/admin") < 0)
-        event.waitUntil(updateCache(event.request));
-
-        event.respondWith(
-            fetch(event.request).catch(function (error) {
-                console.log('[PWA] Network request Failed. Serving content from cache: ' + error);
-
-                //Check to see if you have it in the cache
-                //Return response
-                //If not in the cache, then return error page
-                return caches.open('pwa-offline').then(function (cache) {
-                    return cache.match(event.request).then(function (matching) {
-                        return !matching || matching.status == 404 ? Promise.reject('no-match') : matching;
-                    });
-                }).catch(function (err) {
-                    console.warn(err)
-                });
-            }).catch(function (err) {
-                console.warn(err)
-            })
-        );
-    }
+    event.respondWith(fetchOnline(event.request));
 })
