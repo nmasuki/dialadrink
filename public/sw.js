@@ -23,7 +23,18 @@ self.addEventListener('install', function (event) {
 
 //If any fetch fails, it will look for the request in the cache and serve it from there first
 self.addEventListener('fetch', function (event) {
-            
+    
+    var updateCache = function (request, response) {
+        return caches.open('pwa-offline').then(function(cache){
+            try {
+                return cache.put(request, response);
+            } catch (e) {
+                console.warn(e);
+            }
+            return null;
+        });
+    };
+
     var fetchCached = function (request, dofetch) {
         return caches.open('pwa-offline').then(function (cache) {
             return cache.match(event.request).then(function (matching) {
@@ -43,17 +54,8 @@ self.addEventListener('fetch', function (event) {
 
     var fetchOnline = function(request, docache){
         return fetch(request).then(function(response){
-            event.waitUntil(caches.open('pwa-offline').then(function (cache) {
-                try {
-                    return cache.put(request, response);
-                } catch (e) {
-                    console.warn(e);
-                }
-            }).catch(function (err) {
-                console.warn(err);
-            }));
-            
-            return response;
+            event.waitUntil(updateCache(request, response));            
+            return Promise.accept(response);
         }).catch(function (error) {
             console.log('[PWA] Network request Failed. Serving content from cache: ' + error);
             if(docache)
@@ -66,5 +68,5 @@ self.addEventListener('fetch', function (event) {
         });
     };
 
-    event.respondWith(fetchOnline(event.request));
+    event.respondWith(fetchCached(event.request));
 })
