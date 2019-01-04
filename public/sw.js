@@ -54,7 +54,9 @@ self.addEventListener('fetch', function (event) {
 
     var fetchOnline = function(request, docache){
         return fetch(request).then(function(response){
-            event.waitUntil(updateCache(request, response));            
+            if (event.request.url.toLowerCase().indexOf(location.origin.toLowerCase()) >= 0)
+                event.waitUntil(updateCache(request, response));
+                       
             return Promise.accept(response);
         }).catch(function (error) {
             console.log('[PWA] Network request Failed. Serving content from cache: ' + error);
