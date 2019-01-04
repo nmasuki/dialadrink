@@ -14,16 +14,16 @@ self.addEventListener('install', function (event) {
                 }
                 return null;
             }).catch(function (err) {
-                console.warn(err);
+                console.warn(err)
             });
         }).catch(function (err) {
-            console.warn(err);
+            console.warn(err)
         }));
 });
 
 //If any fetch fails, it will look for the request in the cache and serve it from there first
 self.addEventListener('fetch', function (event) {
-    var fetcheCached = function (request) {
+    var updateCache = function (request) {
         return caches.open('pwa-offline').then(function (cache) {
             return fetch(request).then(function (response) {
                 try {
@@ -33,22 +33,34 @@ self.addEventListener('fetch', function (event) {
                 }
                 return null;
             }).catch(function (err) {
+                console.warn(err)
+            });
+        }).catch(function (err) {
+            console.warn(err)
+        });
+    };
+
+    if (event.request.url.toLowerCase().indexOf(location.origin.toLowerCase()) >= 0) {
+        //if (event.request.url.indexOf("/admin") < 0)
+        event.waitUntil(updateCache(event.request));
+
+        event.respondWith(
+            fetch(event.request).catch(function (error) {
                 console.log('[PWA] Network request Failed. Serving content from cache: ' + error);
 
                 //Check to see if you have it in the cache
                 //Return response
                 //If not in the cache, then return error page
-                return cache.match(event.request).then(function (matching) {
-                    return !matching || matching.status == 404 ? Promise.reject('no-match') : matching;
+                return caches.open('pwa-offline').then(function (cache) {
+                    return cache.match(event.request).then(function (matching) {
+                        return !matching || matching.status == 404 ? Promise.reject('no-match') : matching;
+                    });
+                }).catch(function (err) {
+                    console.warn(err)
                 });
-            });
-        });
-    };
-
-    if (event.request.url.toLowerCase().indexOf(location.origin.toLowerCase()) >= 0 && 
-        //event.request.url.indexOf(".js") >= 0 && 
-        event.request.url.indexOf("/admin") < 0){    
-
-        event.respondWith(fetcheCached(event.request));
+            }).catch(function (err) {
+                console.warn(err)
+            })
+        );
     }
 })
