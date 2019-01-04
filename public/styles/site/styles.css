@@ -1761,7 +1761,7 @@ body header.home1_theme_header .navigation_area ul.navigation_links > li.active 
 
 body header.home1_theme_header .navigation_area ul.navigation_links > li.dropdown .dropdown-menu {
     border-radius: 0;
-    margin-top: 0;
+    margin-top: -4px;
     padding: 0;
     border: 0
 }
@@ -16237,7 +16237,7 @@ a .fa:hover, .home_featured_wrapper a {
 }
 
 .add-to-cart-wrapper .btn {
-    padding: 10px;
+    padding: 3px 10px;
     border: 1px solid gray;
     height: 44px;
     margin: 10px 0px 0 0;

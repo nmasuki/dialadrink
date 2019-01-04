@@ -587,8 +587,6 @@ $(window).ready(function ($) {
     updateScrollThumbsQS();
 
     addClassFirst();
-
-
 });
 
 $(window).load(function () {

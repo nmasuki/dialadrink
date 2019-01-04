@@ -43,6 +43,19 @@ module.exports = function (grunt) {
                 dest: 'public/js/all.scripts.min.js',
             }
         },
+        purifycss: {
+            options: {},
+            target: {
+                src: ['templates/**/*.hbs' , 'public/js/**/*.js'],
+                css: [
+                    'public/styles/site/global.less',
+                    'public/styles/site/layout.less',
+                    'public/styles/site/styles.less',
+                    '!public/styles/site/all.less'
+                ],
+                dest: 'public/styles/site/all.less'
+            },
+        },        
         cssmin: {
             options: {
                 mergeIntoShorthands: true,
@@ -77,16 +90,17 @@ module.exports = function (grunt) {
                     }
                 }]
             }
-        },
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-css-clean');
+    grunt.loadNpmTasks('grunt-purifycss');
 
     grunt.registerTask('build', [
         'uglify', 'concat',
-        'cssmin', 'css_clean'
+        'purifycss', 'cssmin', 'css_clean'
     ]);
 }
