@@ -24,9 +24,6 @@ self.addEventListener('install', function (event) {
 //If any fetch fails, it will look for the request in the cache and serve it from there first
 self.addEventListener('fetch', function (event) {    
     var updateCache = function (request, response) {
-        if(request.url.indexOf("/admin"))
-            return Promise.resolve();
-            
         return caches.open('pwa-offline').then(function(cache){
             try {
                 return cache.put(request, response.clone()).catch(console.log);
@@ -66,7 +63,8 @@ self.addEventListener('fetch', function (event) {
     var fetchOnline = function(request, docache){
         docache = docache || docache == undefined;
         return fetch(request).then(function(response){
-            event.waitUntil(updateCache(request, response));
+            if(request.url.indexOf("/admin") < 0)
+                event.waitUntil(updateCache(request, response));
             return Promise.resolve(response.clone());
         }).catch(function (error) {
             console.log('[PWA] Network request Failed. ' + error);
@@ -80,8 +78,5 @@ self.addEventListener('fetch', function (event) {
         });
     };
 
-    if (event.request.url.indexOf("/admin") < 0)
-        event.respondWith(fetch(request));
-    else
-        event.respondWith(fetchCached(event.request, true));
+    event.respondWith(fetchCached(event.request, true));
 })

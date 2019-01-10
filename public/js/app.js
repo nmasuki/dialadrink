@@ -173,9 +173,28 @@ var app = {
 		marker.setMap(map);
 	},
 
-    hideModal: function(){
-        $(".modal:visible").modal("hide");
-    },
+	showToast: function(msg, timer, color){
+		timer = timer || 1500;
+		var that = this;
+		
+		if(that.$toastInstance){
+			clearTimeout(that.$toastInstance);
+			that.$toastContainer.find(".showToastCon").html(msg);
+			that.$toastInstance = setTimeout(function(){
+				that.$toastContainer.remove();
+				that.$toastInstance=false;
+			}, timer);
+		}else{
+			that.$toastContainer=$('<div class="showToast"><div class="showToastInner"><div class="showToastTips fieldTipBounceIn"><div class="showToastCon">'+msg+'</div></div></div></div>');
+			that.$toastContainer.appendTo($("body"));
+			that.$toastInstance = setTimeout(function(){
+				that.$toastContainer.remove();
+				that.$toastInstance=false;
+			}, timer);
+		}
+
+		that.$toastContainer.find(".showToastCon").css("background-color", color || "black");
+	},
 
 	showLoading: function (msg, timeout) {
         app.hideModal();
@@ -236,6 +255,10 @@ var app = {
 		return modal;
 	},
 
+    hideModal: function(){
+        $(".modal:visible").modal("hide");
+	},
+	
 	showModal: function (option) {
         app.hideModal();
 

@@ -32,7 +32,7 @@
             })
             .progress(function (instance, image) {
                 var result = image.isLoaded ? 'loaded' : 'broken';
-                if (!image.isLoaded)
+                if (!image.isLoaded && location.href != image.img.src)
                     console.warn('image is ' + result + ' for ' + image.img.src);
             });
 

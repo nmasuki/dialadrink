@@ -3,10 +3,13 @@
         <div class="item-name"
              style="text-align:center; justify-content :center; color: black">
 
-            <img src="{{placeholderImg}}" data-src="{{cloudinaryUrl image width=250 height=250 crop='fill'}}" alt="{{{name}}}"
-                 class="img-responsive" title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
-                 style="margin: auto"
-                 itemprop="image"/>
+            <img src="{{cloudinaryUrl image width=100 height=100 crop='fill'}}" 
+                data-src="{{cloudinaryUrl image width=250 height=250 crop='fill'}}" 
+                title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
+                class="img-responsive" 
+                style="margin: auto"
+                itemprop="image"
+                alt="{{{name}}}"/>
 
             <a href="{{productUrl href}}" style="font-size: 15px; color: black; ">
                 <div itemprop="name" class="drinks-name">

@@ -2702,7 +2702,7 @@ body header.home1_theme_header.affix .megamenu-container.megamenu-container-2 .c
         margin-left: -4px;
         font-size: 10px;
         line-height: 14px;
-        top: 0;
+        top: 1px;
         margin-top: 0
     }
 
@@ -16180,7 +16180,7 @@ body footer.home6_theme_footer .footer_contact_group > div .fa {
 .float-right-icon {
     position: fixed;
     right: 20px;
-    bottom: 120px;
+    bottom: 24px;
     overflow: hidden;
     z-index: 100;
 }

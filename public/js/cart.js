@@ -55,7 +55,7 @@ var cartUtil = function () {
                     _cart[i] = fillIn(_cart[i])
 
                 self.updateView();
-            })
+            });
         },
 
         getCart: function () {
@@ -71,12 +71,14 @@ var cartUtil = function () {
             qty = qty || "";
             var cartId = productId + "|" + qty;
             var cartItem = _cart[cartId] || (_cart[cartId] = {})
-
+            
+            app.showToast("Adding to cart!");
             return $.ajax({
                 url: _url + 'cart/add/' + productId + '/' + qty + '/' + (pieces || 1),
                 type: 'get',
                 success: function (data) {
-                    console.log(data, pieces);
+                    console.log("Added to cart", data, pieces);                    
+                    app.showToast(pieces + " " + data.item.product.name + " added to cart!", 1500, "green");
                     _cart[cartId] = fillIn(Object.assign(cartItem, data.item));
                     self.updateView();
                 }
@@ -114,7 +116,7 @@ var cartUtil = function () {
                         console.log("Failed to remove cart item " + cartId, data.msg);
                     }
                 }
-            })
+            });
         },
 
         piecesCount: function () {
