@@ -81,6 +81,10 @@ var cartUtil = function () {
                     app.showToast(pieces + " " + data.item.product.name + " added to cart!", 1500, "green");
                     _cart[cartId] = fillIn(Object.assign(cartItem, data.item));
                     self.updateView();
+                },
+                fail: function(){
+                    console.warn("Added to cart fails. Could not reach Server");                    
+                    app.showToast("Added to cart fails. Could not reach Server!", 1500, "red");
                 }
             });
         },
