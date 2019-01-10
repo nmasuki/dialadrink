@@ -70,8 +70,9 @@ var cartUtil = function () {
             var view = self.view('.number');
             qty = qty || "";
             var cartId = productId + "|" + qty;
-            var cartItem = _cart[cartId] || (_cart[cartId] = {})
-            
+            var cartItem = _cart[cartId] || (_cart[cartId] = {});
+            self.updateView(cartItem);
+
             app.showToast("Adding to cart!");
             return $.ajax({
                 url: _url + 'cart/add/' + productId + '/' + qty + '/' + (pieces || 1),
@@ -255,7 +256,7 @@ $(function () {
 
             app.cartUtil.addItem(id, pieces, qty);
         } else {
-            console.warn("Could not add to cart, [data-product] attribute missing on", $(this))
+            console.warn("Could not add to cart, [data-product] attribute missing on.", $(this));
         }
     });
 
