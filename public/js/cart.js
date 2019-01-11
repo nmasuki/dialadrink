@@ -165,7 +165,7 @@ var cartUtil = function () {
         productCount: function () {
             var productIds = Object.values(_cart)
                 .distinct(function (item) {
-                    return item.product._id;
+                    return item.product && item.product._id;
                 });
             return productIds.length;
         },
@@ -242,7 +242,7 @@ var cartUtil = function () {
             view.find(".cart-price").html((item.pieces * item.price).formatNumber(2));
             view.find(".cart-pieces").html(item.pieces);
 
-            item.product = item.product;// || getProductFromView(item._id);
+            item.product = item.product; || getProductFromView(item._id);
             if(item.product){
                 view.find(".cart-image").attr("src", item.product.image.secure_url);
                 view.find(".cart-product-link")
