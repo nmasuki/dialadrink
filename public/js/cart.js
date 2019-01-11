@@ -5,6 +5,10 @@ var cartUtil = function () {
     var _cart = {}, _promo = null;
     var _url = "/";
 
+    function getProductFromView(id){
+
+    }
+
     function getItemView(cartId) {
         var view = self.view().find("[data-cartid='" + cartId + "']");
 
@@ -70,8 +74,9 @@ var cartUtil = function () {
             var view = self.view('.number');
             qty = qty || "";
             var cartId = productId + "|" + qty;
-            var cartItem = _cart[cartId] || (_cart[cartId] = {});
-            self.updateView(cartItem);
+            var cartItem = _cart[cartId] || (_cart[cartId] = {_id:cartId, pieces:0});
+            cartItem.pieces += pieces;            
+            self.updateView();
 
             app.showToast("Adding to cart!");
             return $.ajax({
@@ -86,12 +91,15 @@ var cartUtil = function () {
                 fail: function(){
                     console.warn("Added to cart fails. Could not reach Server");                    
                     app.showToast("Added to cart fails. Could not reach Server!", 1500, "red");
+                    cartItem.pieces -= pieces;
+                    self.updateView();
                 }
             });
         },
 
         updateItem: function (cartId, pieces) {
-            var cartItem = _cart[cartId] || (_cart[cartId] = {})
+            var cartItem = _cart[cartId] || (_cart[cartId] = {_id: cartId, pieces: pieces});
+            self.updateView();
 
             return $.ajax({
                 url: _url + 'cart/update/' + cartId + '/' + pieces,
@@ -109,16 +117,18 @@ var cartUtil = function () {
                 throw "Cart item not found! " + cartId;
             }
 
+            var view  = self.view("li[data-cartid='" + cartId + "']");
+            view.hide();
             return $.ajax({
                 url: _url + 'cart/remove/' + cartId,
                 type: 'get',
                 success: function (data) {
                     if (data.state) {
-                        self.view("li[data-cartid='" + cartId + "']").hide();
                         delete _cart[cartId];
-                        self.updateTotals();
+                        self.updateView();
                     } else {
-                        console.log("Failed to remove cart item " + cartId, data.msg);
+                        view.show();
+                        app.showToast("Failed to remove cart item " + data.msg, 1500, "red");
                     }
                 }
             });
@@ -209,10 +219,14 @@ var cartUtil = function () {
             // item = fillIn(item);
 
             var view = getItemView(item._id);
-            view.find(".cart-image").attr("src", item.product.image.secure_url);
-            view.find(".cart-product-link")
-                .attr("href", item.product.href)
-                .html(item.product.name + " " + item.quantity);
+            item.product = item.product || getProductFromView(item._id);
+            if(item.product){
+                view.find(".cart-image").attr("src", item.product.image.secure_url);
+                view.find(".cart-product-link")
+                    .attr("href", item.product.href)
+                    .html(item.product.name + " " + item.quantity);
+            }
+            
             view.find(".cart-description").html((item.description || "").truncate(50));
             view.find(".cart-pieces").html(item.pieces);
 

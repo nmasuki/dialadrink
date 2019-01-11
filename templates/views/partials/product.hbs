@@ -1,8 +1,6 @@
-<a href="{{productUrl href}}" style="display :block; color: black;">
+<a href="{{productUrl href}}" id="product{{_id}}" style="display :block; color: black;">
     <div class="featured-image" style="text-align :center ;">
-        <div class="item-name"
-             style="text-align:center; justify-content :center; color: black">
-
+        <div class="item-name" style="text-align:center; justify-content :center; color: black">
             <img src="{{cloudinaryUrl image width=100 height=100 crop='fill'}}" 
                 data-src="{{cloudinaryUrl image width=250 height=250 crop='fill'}}" 
                 title="{{{name}}}..{{truncate (cleanHtml description) 100}}"

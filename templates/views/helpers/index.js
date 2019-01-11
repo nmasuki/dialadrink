@@ -209,13 +209,17 @@ module.exports = function () {
     _helpers.cartItemCount = function (locals) {
         if (locals.cartItems) {
             var count = Object.values(locals.cartItems || {})
-                .sum(c => c.pieces)
+                .sum(c => c.pieces);
 
             return count || "";
         } else {
             return "";
         }
     };
+
+    _helpers.json = function(context){
+        return JSON.stringify(context);
+    }
 
     _helpers.formatNumber = function (n, d) {
         return parseFloat(n).format(d || 2);
