@@ -5,8 +5,24 @@ var cartUtil = function () {
     var _cart = {}, _promo = null;
     var _url = "/";
 
-    function getProductFromView(id){
-
+    function getProductFromView(cartId){
+        var id = cartId.split('|').first();
+        var product = { 
+            _id: id,
+            href:"",
+            name: "",
+            currency: "",
+            priceOptions:[{
+                option:{
+                    quantity: cartId.split('|').last(),
+                    currency: ""
+                }
+            }],
+            image: {
+                secure_url: null
+            }
+        };
+        return product;
     }
 
     function getItemView(cartId) {
@@ -42,6 +58,7 @@ var cartUtil = function () {
     }
 
     var self = Object.assign(this, {
+        
         view: function (selector) {
             var view = $('#cart-content-main, #cart-content-mini');
             if (selector) {
@@ -79,6 +96,7 @@ var cartUtil = function () {
             self.updateView();
 
             app.showToast("Adding to cart!");
+            self.viewNotUpdated = true;
             return $.ajax({
                 url: _url + 'cart/add/' + productId + '/' + qty + '/' + (pieces || 1),
                 type: 'get',
@@ -93,6 +111,7 @@ var cartUtil = function () {
                     app.showToast("Added to cart fails. Could not reach Server!", 1500, "red");
                     cartItem.pieces -= pieces;
                     self.updateView();
+                    self.viewNotUpdated = false;
                 }
             });
         },
@@ -219,23 +238,26 @@ var cartUtil = function () {
             // item = fillIn(item);
 
             var view = getItemView(item._id);
-            item.product = item.product || getProductFromView(item._id);
+            view.find(".cart-description").html((item.description || "").truncate(50));
+            view.find(".cart-price").html((item.pieces * item.price).formatNumber(2));
+            view.find(".cart-pieces").html(item.pieces);
+
+            item.product = item.product;// || getProductFromView(item._id);
             if(item.product){
                 view.find(".cart-image").attr("src", item.product.image.secure_url);
                 view.find(".cart-product-link")
                     .attr("href", item.product.href)
                     .html(item.product.name + " " + item.quantity);
-            }
-            
-            view.find(".cart-description").html((item.description || "").truncate(50));
-            view.find(".cart-pieces").html(item.pieces);
-
-            var priceOption = item.product.priceOptions.find(function (po) {
-                return po.option.quantity === item.quantity
-            });
-
-            view.find(".cart-currency").html(item.currency || priceOption.currency || "KES");
-            view.find(".cart-price").html((item.pieces * item.price).formatNumber(2));
+                
+                if(item.product.priceOptions){
+                    var priceOption = item.product.priceOptions.find(function (po) {
+                        return po.option.quantity === item.quantity
+                    }); 
+                    view.find(".cart-currency").html(item.currency || (priceOption && priceOption.currency) || "KES");
+                    view.find(".cart-price").html((item.pieces * item.price).formatNumber(2));
+                }           
+            }else
+                app.cartUtil.viewNotUpdated = true;
         },
 
         updateTotals: function () {
@@ -257,6 +279,7 @@ var cartUtil = function () {
 
 window.app = window.app || {cartUtil: new cartUtil()};
 
+
 $(function () {
     $(document).on('click', '.add-to-cart', function (e) {
         e.preventDefault();
@@ -271,6 +294,20 @@ $(function () {
             app.cartUtil.addItem(id, pieces, qty);
         } else {
             console.warn("Could not add to cart, [data-product] attribute missing on.", $(this));
+        }
+    });
+
+    $(document).on("mouseover", ".num-items-in-cart", function (e) {
+        var that = $(this);
+        if (app.cartUtil.viewNotUpdated || (!window.cartXHR || window.cartXHR.state() == "resolved")){
+            window.cartXHR = $.ajax("/cart/mini").then(function (html, b, c) {
+                if (typeof html === "string") {
+                    that.data("loadedAt", new Date().getTime());
+                    $("#cart-info").html(html);
+                    app.cartUtil.viewNotUpdated = false;
+                } else
+                    app.cartUtil.updateView(window.cart = html);
+            });
         }
     });
 
