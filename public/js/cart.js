@@ -117,9 +117,12 @@ var cartUtil = function () {
         },
 
         updateItem: function (cartId, pieces) {
+            if(pieces <= 0)
+                return self.removeItem(cartId);
+
             var cartItem = _cart[cartId] || (_cart[cartId] = {_id: cartId, pieces: pieces});
             self.updateView();
-
+            
             return $.ajax({
                 url: _url + 'cart/update/' + cartId + '/' + pieces,
                 type: 'get',
@@ -137,7 +140,7 @@ var cartUtil = function () {
             }
 
             var view  = self.view("li[data-cartid='" + cartId + "']");
-            view.hide();
+            view.slideUp();
             return $.ajax({
                 url: _url + 'cart/remove/' + cartId,
                 type: 'get',
@@ -146,7 +149,7 @@ var cartUtil = function () {
                         delete _cart[cartId];
                         self.updateView();
                     } else {
-                        view.show();
+                        view.slideDown();
                         app.showToast("Failed to remove cart item " + data.msg, 1500, "red");
                     }
                 }
@@ -203,17 +206,18 @@ var cartUtil = function () {
             Object.values(cart).forEach(self.updateCartItemView);
             //Remove missing
             Object.keys(_cart).forEach(function (cartId) {
-                if (!cart[cartId]) {
-                    self.view("li[data-cartid='" + cartId + "']").hide();
+                if (!cart[cartId] || cart[cartId].pieces <= 0) {
+                    self.view("li[data-cartid='" + cartId + "']").slideUp();
                 }
             });
 
-            var promoView = $(".promo-code-wrapper").slideDown();
+            var promoView = $(".promo-code-wrapper");
             if (promo && promo.discountType && self.discount(null, promo)) {
                 promoView.find(".promo-code").text(promo.code);
-                promoView.find(".promo-code-amount").text(self.discount(null, promo).formatNumber(2))
+                promoView.find(".promo-code-amount").text(self.discount(null, promo).formatNumber(2));
+                promoView.slideDown();
             } else {
-                promoView.hide()
+                promoView.hide();
             }
 
             //Update variable
@@ -238,6 +242,11 @@ var cartUtil = function () {
             // item = fillIn(item);
 
             var view = getItemView(item._id);
+            if(item.pieces <= 0) 
+                view.slideUp();
+            else 
+                view.slideDown();
+
             view.find(".cart-description").html((item.description || "").truncate(50));
             view.find(".cart-price").html((item.pieces * item.price).formatNumber(2));
             view.find(".cart-pieces").html(item.pieces);
