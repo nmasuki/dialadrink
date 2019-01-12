@@ -35,6 +35,9 @@ self.addEventListener('fetch', function (event) {
     };
 
     var fetchCached = function (request, dofetch) {
+        if(request.headers.get("X-Requested-With"))
+            return fetch(request);
+
         docache = dofetch || dofetch == undefined;
         
         return caches.open('pwa-offline').then(function (cache) {
