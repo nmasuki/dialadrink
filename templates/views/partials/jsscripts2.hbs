@@ -20,7 +20,8 @@
 {{/ifeq}}
 
 <script>
-    $('body').imagesLoaded()
+    $(document).ready(function () {
+        $('body').imagesLoaded()
             .always(function (instance) {
                 //console.log('all images loaded');
             })
@@ -37,7 +38,6 @@
             });
 
 
-    $(document).ready(function () {
         {{#if (contains page.h1 'Offer')}}
             $("#countDownTimer").startCountDown();
         {{/if}}
