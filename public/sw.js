@@ -49,7 +49,7 @@ self.addEventListener('fetch', function (event) {
                 if(dofetch)
                 {
                     console.log('[PWA] No cache match. Serving content from http!', request.url);
-                    return fetchOnline(request, false);
+                    return fetchOnline(request);
                 }
                 else 
                     return Promise.reject('no-match');
