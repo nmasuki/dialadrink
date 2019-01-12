@@ -44,9 +44,13 @@ function fetchOnline(request, docache, event){
             return Promise.resolve(response.clone());
 
         if(event)
+        {
             event.waitUntil(updateCache(request, response));
+            return Promise.resolve(response.clone());
+        }   
         else
             return updateCache(request, response).then(function(){ response.clone(); });
+        
     }).catch(function (error) {
         console.log('[PWA] Network request Failed. ' + error);
         if(docache)
