@@ -16,7 +16,7 @@ function updateCache(request, response) {
 }
 
 function fetchCached(request, dofetch) {
-    if(request.headers.get("X-Requested-With"))
+    if(request.headers.get("X-CSRF-Token"))//Don't use cached ajax requests
         return fetchOnline(request, false);
 
     return caches.open(getCacheName(request.destination)).then(function (cache) {
@@ -44,17 +44,15 @@ function fetchCached(request, dofetch) {
 
 function fetchOnline(request, docache, event){
     return fetch(request).then(function(response){
-        if(request.url.indexOf("/admin") < 0 && !request.headers.get("X-Requested-With"))
-        {
-            if(event)
-                event.waitUntil(updateCache(request, response));
-            else
-                return updateCache(request, response).then(function(){
-                    response.clone();
-                });
-        }
+        if(request.headers.get("X-CSRF-Token"))//Don't cache ajax requests
+            return Promise.resolve(response.clone());
+        else if(request.url.indexOf("/admin") < 0) //Don't cache admin requests
+            return Promise.resolve(response.clone());
 
-        return Promise.resolve(response.clone());
+        if(event)
+            event.waitUntil(updateCache(request, response));
+        else
+            return updateCache(request, response).then(function(){ response.clone(); });
     }).catch(function (error) {
         console.log('[PWA] Network request Failed. ' + error);
         if(docache)
