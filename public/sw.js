@@ -46,7 +46,7 @@ function fetchOnline(request, docache, event){
     return fetch(request).then(function(response){
         if(request.headers.get("X-CSRF-Token"))//Don't cache ajax requests
             return Promise.resolve(response.clone());
-        else if(request.url.indexOf("/admin") < 0) //Don't cache admin requests
+        else if(request.url.indexOf("/admin") >= 0) //Don't cache admin requests
             return Promise.resolve(response.clone());
 
         if(event)
