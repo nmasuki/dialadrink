@@ -36,7 +36,7 @@ self.addEventListener('fetch', function (event) {
 
     var fetchCached = function (request, dofetch) {
         if(request.headers.get("X-Requested-With"))
-            return fetch(request);
+            return fetchOnline(request, false);
 
         docache = dofetch || dofetch == undefined;
         
@@ -49,7 +49,7 @@ self.addEventListener('fetch', function (event) {
                 if(dofetch)
                 {
                     console.log('[PWA] No cache match. Serving content from http!', request.url);
-                    return fetchOnline(request);
+                    return fetchOnline(request, false);
                 }
                 else 
                     return Promise.reject('no-match');
@@ -66,7 +66,7 @@ self.addEventListener('fetch', function (event) {
     var fetchOnline = function(request, docache){
         docache = docache || docache == undefined;
         return fetch(request).then(function(response){
-            if(request.url.indexOf("/admin") < 0)
+            if(request.url.indexOf("/admin") < 0 && !request.headers.get("X-Requested-With"))
                 event.waitUntil(updateCache(request, response));
             return Promise.resolve(response.clone());
         }).catch(function (error) {
