@@ -1,4 +1,4 @@
-var CACHE_VERSION = 2;
+var CACHE_VERSION = 3;
 
 function getCacheName(destination){
     return destination + "s-v" + CACHE_VERSION;
@@ -15,7 +15,7 @@ function updateCache(request, response) {
     });
 }
 
-function fetchCached(request, dofetch) {
+function fetchCached(request) {
     if(request.headers.get("X-CSRF-Token"))//Don't use cached ajax requests
         return fetchOnline(request, false);
 
@@ -25,14 +25,8 @@ function fetchCached(request, dofetch) {
             if(matching && matching.status != 404 )
                 return matching.clone();
             //If not in the cache, fetch online
-            if(dofetch)
-            {
-                console.log('[PWA] No cache match. Serving content from http!', request.url);
-                return fetchOnline(request, false);
-            }
-            else 
-                return Promise.reject('no-match');
-
+            console.log('[PWA] No cache match. Serving content from http!', request.url);
+            return fetchOnline(request, true);
         }).catch(function (err) {
             console.warn(err)
         });
