@@ -1,14 +1,14 @@
 <a href="{{productUrl href}}" id="product{{_id}}" style="display :block; color: black;">
     <div class="featured-image" style="text-align :center ;">
-        <div class="item-name" style="text-align:center; justify-content :center; color: black">
-            {{#ifgt price offerPrice}}
+        {{#ifgt price offerPrice}}
             <div class="product-promo">
                 <span>
                     {{{percentOffer}}}%
                 </span>
             </div>
-            {{/ifgt}}
+        {{/ifgt}}
 
+        <div class="item-name" style="text-align:center; justify-content :center; color: black">
             <img src="{{cloudinaryUrl image width=100 height=100 crop='fill'}}" 
                 data-src="{{cloudinaryUrl image width=250 height=250 crop='fill'}}" 
                 title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
@@ -41,9 +41,9 @@
             <br>
             <div class="dropdown">
                 {{#if inStock}}
-                    <button class="btn btn-1" style="font-size:14px !important; padding: 0 15px;">
+                    <button class="btn btn-1" style="font-size: 14px !important; padding: 0 15px; text-transform: none;">
                         <span data-qty="{{quantity}}" data-product="{{_id}}" class="add-to-cart">
-                        Add to cart
+                        Buy now
                         </span>
                         {{#ifgt options.length 1}}
                             <span class="dropdown">
