@@ -140,6 +140,16 @@ Product.schema.virtual('offerPrice').get(function () {
     return cheapestOption ? cheapestOption.offerPrice : null;
 });
 
+Product.schema.virtual('percentOffer').get(function () {
+    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
+    if(cheapestOption && cheapestOption.price > cheapestOption.offerPrice){
+        var discount = cheapestOption.price - cheapestOption.offerPrice;
+        var percent = Math.round(100 * discount  / cheapestOption.price);
+        return percent;
+    }
+    return null;
+});
+
 Product.schema.virtual('tags').get(function () {
     var tags = [];
 
