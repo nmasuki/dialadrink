@@ -1,12 +1,12 @@
 
         {{#ifgt price offerPrice}}
-            <div class="product-promo">
+            <div class="product-promo" style="position: absolute">
                 <span>
                     {{{percentOffer}}}%
                 </span>
             </div>
         {{/ifgt}}
-        
+
 <a href="{{productUrl href}}" id="product{{_id}}" style="display :block; color: black;">
     <div class="featured-image" style="text-align :center ;">
         <div class="item-name" style="text-align:center; justify-content :center; color: black">
