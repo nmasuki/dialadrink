@@ -43,9 +43,9 @@
             <div class="dropdown">
                 {{#if inStock}}
                     <image src="/images/buynow.png" 
-                        class="btn btn-1 add-to-cart" 
+                        class="add-to-cart" 
                         data-qty="{{quantity}}" data-product="{{_id}}" 
-                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;">
+                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
                         {{#ifgt options.length 1}}
                             <span class="dropdown">
                                 <i class="fa fa-angle-down"></i>
