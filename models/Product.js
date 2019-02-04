@@ -23,6 +23,7 @@ Product.add({
 
     onOffer: {type: Types.Boolean},
     inStock: {type: Types.Boolean},
+    isGiftPack: {type: Types.Boolean},
 
     state: {type: Types.Select, options: 'draft, published, archived', default: 'draft', index: true},
     image: {type: Types.CloudinaryImage},

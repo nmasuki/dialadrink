@@ -39,7 +39,7 @@ function search(req, res, next) {
         if (req.xhr) 
             return res.send({
                 success: true,
-                results: products.map(p=>p.name)
+                results: products.map(p => p.name)
             });
 
         title = (title || "").toProperCase();
@@ -135,17 +135,25 @@ function search(req, res, next) {
         } else
             next(err);
     }
-    if (req.params.query)
-        Product.search(req.params.query, function (err, products) {
-            if (err || !products || !products.length) {
-                if (req.originalUrl.startsWith("/search"))
+    
+    if (req.params.query){
+        if(req.params.query.toLowerCase() == "giftpacks"){
+            Product.findPublished({isGiftPack: true}, function (err, products) {
+                renderResults(products, "Gift Packs");
+            });
+        }else{            
+            Product.search(req.params.query, function (err, products) {
+                if (err || !products || !products.length) {
+                    if (req.originalUrl.startsWith("/search"))
+                        renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
+                    else
+                        res.status(404).render('errors/404');
+                } else {
                     renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
-                else
-                    res.status(404).render('errors/404');
-            } else {
-                renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
-            }
-        });
+                }
+            });
+        }
+    }        
     else
         next();
 }
@@ -163,6 +171,11 @@ router.get("/home", function (req, res) {
 
     // Render the view
     view.render('index');
+});
+
+router.get("/giftpacks", function(req, res, next){
+    req.query = "giftpacks";
+    search(req, res, next);
 });
 
 router.get("/pricelist", function (req, res) {
