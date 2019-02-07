@@ -53,10 +53,16 @@
                 padding-left: 30px;
             }
         }
+
+        canvas.particles-js-canvas-el {
+            position: fixed;
+            top: 0;
+            z-index: -1;
+        }
     </style>
 </head>
 
-<body class="07_MediaCenter">
+<body class="07_MediaCenter" id="dad_Body">
 
     {{!-- This file provides the default styling for the KeystoneJS Content Editor only renders when user is logged in and admin--}}
     {{{isAdminEditorCSS user}}}

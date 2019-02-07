@@ -553,13 +553,14 @@ Date.prototype.addYears = function (value) {
 Date.prototype.addMonths = function (value) {
     var months = value % 12;
     var years = Math.floor(value / 12);
+    var date = new Date(this.toISOString());
 
-    this.setDate(1);
-    this.setMonth(this.getMonth() + months);
-    this.setDate(Math.min(this.getDate(), this.getDaysInMonth()));
+    date.setDate(1);
+    date.setMonth(this.getMonth() + months);
+    date.setDate(Math.min(date.getDate(), date.getDaysInMonth()));
 
-    if (years) this.addYears(years);
-    return this;
+    if (years) date.addYears(years);
+    return date;
 };
 
 Date.prototype.addDays = function (value) {
@@ -575,6 +576,7 @@ Date.prototype.addMinutes = function (value) {
 };
 
 Date.prototype.addSeconds = function (value) {
-    this.setTime(this.getTime() + (value * 1000));
-    return this;
+    var date = new Date(this.toISOString());
+    date.setTime(date.getTime() + (value * 1000));
+    return date;
 };

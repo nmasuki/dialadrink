@@ -510,10 +510,35 @@ function handleProductRating(){
         var src = $(this).find("img").attr("src");
         $(this).parents(".row.product-thumbnails")
             .siblings("img.image-responsive")
-            .attr("src", src)
+            .attr("src", src);
     });
 }
 
+function loadParticles(){
+    var thisSeason = null;
+    var seasons = {
+        random: "22 Feb",
+        valentines: "14 Feb",
+        chrismass: "25 Dec",
+    };
+
+    for(var i in seasons){
+        var today = new Date();
+        var year = new Date().getFullYear();
+        var date = new Date(seasons[i] + " " + year);
+        
+        if(today > date.addDays(-8) && today < date.addDays(5)){
+            thisSeason = i;
+            break;
+        }
+    }
+
+    if(thisSeason)
+        $.getScript("/js/particles/particles.js").then(function(){
+            if(window.particlesJS)
+                window.particlesJS.load('dad_Body', '/js/particles/data/'+thisSeason+'.json');
+        });
+}
 
 function ioLazyLoad(){
     var options = {
@@ -567,6 +592,8 @@ $(window).ready(function ($) {
         zoomer.style.backgroundPosition = x + '% ' + y + '%';
     });
     
+    loadParticles();
+
     ioLazyLoad();
 
     slider_main();
