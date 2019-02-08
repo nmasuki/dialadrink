@@ -517,7 +517,6 @@ function handleProductRating(){
 function loadParticles(){
     var thisSeason = null;
     var seasons = {
-        random: "22 Feb",
         valentines: "14 Feb",
         chrismass: "25 Dec",
     };

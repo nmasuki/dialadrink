@@ -1,4 +1,4 @@
-var CACHE_VERSION = 4.8;
+var CACHE_VERSION = 5.0;
 
 function getCacheName(destination){
     return destination + "s-v" + CACHE_VERSION;
