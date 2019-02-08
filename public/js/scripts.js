@@ -517,7 +517,6 @@ function handleProductRating(){
 function loadParticles(){
     var thisSeason = null;
     var seasons = {
-        random: "22 Feb",
         valentines: "14 Feb",
         chrismass: "25 Dec",
     };
@@ -527,16 +526,16 @@ function loadParticles(){
         var year = new Date().getFullYear();
         var date = new Date(seasons[i] + " " + year);
         
-        if(today > date.addDays(-8) && today < date.addDays(5)){
+        if(today > date.addDays(-7) && today < date.addDays(5)){
             thisSeason = i;
             break;
         }
     }
 
     if(thisSeason)
-        $.getScript("/js/particles/particles.js").then(function(){
+        $.getScript("/js/particles/particles.min.js").then(function(){
             if(window.particlesJS)
-                window.particlesJS.load('dad_Body', '/js/particles/data/'+thisSeason+'.json');
+                window.particlesJS.load('dad_Body', '/js/particles/data/' + thisSeason + '.json');
         });
 }
 
