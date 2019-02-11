@@ -26,8 +26,8 @@ Product.add({
     isGiftPack: {type: Types.Boolean},
 
     state: {type: Types.Select, options: 'draft, published, archived', default: 'draft', index: true},
-    image: {type: Types.CloudinaryImage},
-    altImages: {type: Types.CloudinaryImages},
+    image: {type: Types.CloudinaryImage, folder: "products"},
+    altImages: {type: Types.CloudinaryImages, folder: "products"},
 
     pageTitle: {type: String},
     description: {type: Types.Html, wysiwyg: true, height: 150},
