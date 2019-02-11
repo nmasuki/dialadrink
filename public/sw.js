@@ -26,7 +26,7 @@ function fetchCached(request) {
                 return matching.clone();
             //If not in the cache, fetch online
             console.log('[PWA] No cache match. Serving content from http!', request.url);
-            return fetchOnline(request, true);
+            return fetchOnline(request, false);
         }).catch(function (err) {
             console.warn(err)
         });
