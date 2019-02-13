@@ -548,38 +548,40 @@ Date.prototype.getDaysInMonth = function () {
 };
 
 Date.prototype.addYears = function (value) {
-	var years = Math.floor(value);
-	var months = (value - years) * 12;
-	this.setYear(this.getYear() + years);
-	if (months) this.addMonths(months);
-	return this;
+    var years = Math.floor(value);
+    var months = (value - years) * 12;
+    this.setYear(this.getYear() + years);
+    if (months) this.addMonths(months);
+    return this;
 }
 
 Date.prototype.addMonths = function (value) {
-	var months = value % 12;
-	var years = Math.floor(value / 12);
+    var months = value % 12;
+    var years = Math.floor(value / 12);
+    var date = new Date(this.toISOString());
 
-	this.setDate(1);
-	this.setMonth(this.getMonth() + months);
-	this.setDate(Math.min(this.getDate(), this.getDaysInMonth()));
+    date.setDate(1);
+    date.setMonth(this.getMonth() + months);
+    date.setDate(Math.min(date.getDate(), date.getDaysInMonth()));
 
-	if (years) this.addYears(years);
-	return this;
+    if (years) date.addYears(years);
+    return date;
 };
 
 Date.prototype.addDays = function (value) {
-	return this.addHours(24 * value);
+    return this.addHours(24 * value);
 };
 
 Date.prototype.addHours = function (value) {
-	return this.addMinutes(value * 60);
+    return this.addMinutes(value * 60);
 };
 
 Date.prototype.addMinutes = function (value) {
-	return this.addSeconds(value * 60);
+    return this.addSeconds(value * 60);
 };
 
 Date.prototype.addSeconds = function (value) {
-	this.setTime(this.getTime() + (value * 1000));
-	return this;
+    var date = new Date(this.toISOString());
+    date.setTime(date.getTime() + (value * 1000));
+    return date;
 };

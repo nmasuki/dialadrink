@@ -11,7 +11,7 @@ var ProductBrand = new keystone.List('ProductBrand', {
 
 ProductBrand.add({
     name: {type: String, required: true, initial: true},
-    logo: {type: Types.CloudinaryImage},
+    logo: {type: Types.CloudinaryImage, folder: "brands"},
     pageTitle: {type: String},
     category: {type: Types.Relationship, ref: 'ProductCategory', many: false},
     description: {type: Types.Html, wysiwyg: true, height: 150},
