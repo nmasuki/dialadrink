@@ -2,7 +2,7 @@ var CACHE_VERSION = 10.1;
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
 function getCacheName(destination, inc) {
-    return destination + "s-v" + (CACHE_VERSION + (inc/10.0));
+    return destination + "s-v" + (CACHE_VERSION + (inc/10.0);
 }
 
 workbox.precaching.precacheAndRoute([
@@ -45,7 +45,8 @@ workbox.precaching.precacheAndRoute([
     "cacheId": "dialadinkkenya",
     "directoryIndex": "/",
     "cleanUrls": false
-});
+})
+
 
 workbox.clientsClaim();
 workbox.skipWaiting();
