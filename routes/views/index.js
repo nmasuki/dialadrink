@@ -161,7 +161,6 @@ function search(req, res, next) {
 router.get("/search/:query", search);
 
 router.get("/home", function (req, res) {
-
     var view = new keystone.View(req, res);
     var locals = res.locals;
 
