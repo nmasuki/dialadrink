@@ -186,25 +186,30 @@ router.get("/pricelist", function (req, res) {
         locals.lastUpdated = products.map(p => p.modifiedDate).orderBy().first();
         locals.categories = products.map(p => p.category && p.category.name).filter(c => !!c).distinct().orderBy();
 
-        function printPdf(err, html) {
-            var pdf = require('html-pdf');
+        function printPdf(err, html, next) {
+            if(html){
+                var pdf = require('html-pdf');
 
-            let filename = encodeURIComponent("DIAL A DRINK PRICELIST") + '.pdf';
-            // Setting response to 'attachment' (download).
-            // If you use 'inline/attachment' here it will automatically open/download the PDF
-            res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
-            res.setHeader('Content-type', 'application/pdf');
+                let filename = encodeURIComponent("DIAL A DRINK PRICELIST") + '.pdf';
 
-            pdf.create(html, {
-                //8.27 × 11.69 in
-                "height": (11.69) + "in",        // allowed units: mm, cm, in, px
-                "width": (8.27) + "in",            // allowed units: mm, cm, in, px
+                // Setting response to 'attachment' (download).
+                // If you use 'inline/attachment' here it will automatically open/download the PDF
+                res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
+                res.setHeader('Content-type', 'application/pdf');
 
-                //"format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
-                //"orientation": "landscape", // portrait or landscape
-            }).toStream(function (err, stream) {
-                stream.pipe(res);
-            });
+                pdf.create(html, {
+                    //8.27 × 11.69 in
+                    //"height": (11.69) + "in",        // allowed units: mm, cm, in, px
+                    //"width": (8.27) + "in",            // allowed units: mm, cm, in, px
+
+                    "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+                    //"orientation": "landscape", // portrait or landscape
+                }).toStream(function (err, stream) {
+                    stream.pipe(res);
+                });
+            } else if(next){
+                next(err)
+            }
         }
 
         view.render('pricelist', {layout: 'newsletter'}, printPdf);
