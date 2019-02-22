@@ -25,7 +25,7 @@
                         <div class="col-md-1 col-xs-1 col-sm-1">
                             <div class="thumbnail">
                                 <img height="24" width="24" data-img="{{cloudinaryUrl image crop='fit'}}"
-                                     src="{{cloudinaryUrl image  width=24 height=24 crop='fit'}}"/>
+                                     src="{{cloudinaryUrl image width=24 height=24 crop='fit'}}"/>
                             </div>
                         </div>
                     {{/each}}
@@ -86,8 +86,7 @@
                         </div>
                     {{/ifgt}}
                 </div>
-
-                                <div class="row">
+                <div class="row">
                     <div class="col-md-4 text-left">
                         {{#if inStock}}
                             <span class="monospaced label label-success">In Stock</span>
@@ -182,6 +181,14 @@
                 </div><!-- end row -->
             </div>
             <div class="col-md-12 more-details">
+                <!-- Youtube video-->
+                <iframe 
+                    src="https://www.youtube.com/embed/KluI-xZWNtQ" 
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    frameborder="0" allowfullscreen>
+                </iframe>
+                <!-- End youtube video-->
+
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
                     {{#if description}}

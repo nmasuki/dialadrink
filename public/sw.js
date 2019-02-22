@@ -31,10 +31,10 @@ workbox.precaching.precacheAndRoute([
         url: "/styles/site.min.css",
         version: getCacheName("styles")
     },{
-        url: "/owlcarousel/assets/owl.carousel.min.css",
+        url: "/js/owlcarousel/assets/owl.carousel.min.css",
         version: getCacheName("styles")
     },{
-        url: "/owlcarousel/assets/owl.theme.default.min.css",
+        url: "/js/owlcarousel/assets/owl.theme.default.min.css",
         version: getCacheName("styles")
     },{
         url: "/js/all.scripts.min.js",
