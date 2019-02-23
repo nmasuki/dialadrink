@@ -40,7 +40,7 @@ function index(req, res) {
             if (!Object.keys(res.locals.groupedBrands).length)
                 delete res.locals.groupedBrands;
 
-              next();
+            next();
         });
     });
 

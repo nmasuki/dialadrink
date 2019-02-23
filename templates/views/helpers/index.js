@@ -337,12 +337,24 @@ module.exports = function () {
 
     _helpers.lowerCase = function (str) {
         return (str || "").toLowerCase();
-    }
+    };
+
+    _helpers.urlencode = function(str){
+        return encodeURIComponent(str);
+    };
 
     _helpers.truncate = function (str, length) {
         return (str || "").truncate(length, '...');
     };
 
+    _helpers.trimRight = function (str, charlist) {
+        return (str || "").trimRight(charlist);
+    };
+    
+    _helpers.trimLeft = function (str, charlist) {
+        return (str || "").trimLeft(charlist);
+    };
+    
     _helpers.trim = function (str, charlist) {
         return (str || "").trim(charlist);
     };

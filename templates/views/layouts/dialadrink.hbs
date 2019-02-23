@@ -265,11 +265,11 @@
                                 </div>
                             {{/each}}
                         {{else}}
-                        {{#each page.bannerImages}}
-                            <div class="collection-heading-inner heading-group item inset-2"
-                                 style="background-image:url({{{cloudinaryUrl this height=200 width=1140 crop='fit'}}})">
-                            </div>
-                        {{/each}}
+                            {{#each page.bannerImages}}
+                                <div class="collection-heading-inner heading-group item inset-2"
+                                    style="background-image:url({{{cloudinaryUrl this height=200 width=1140 crop='fit'}}})">
+                                </div>
+                            {{/each}}
                         {{/if}}
                     </div>
                 {{/if}}
@@ -473,17 +473,16 @@
         </li>
 
         <li class="mobile-only">
-            <a href="tel:0723688108" title="Call to order">
+            <a href="tel:{{contactNumber}}" title="Call to order">
                 <img src="/images/phoneicon.png" width="48px" alt="Call to order">
             </a>
         </li>  
 
         <li class="mobile-only">
-            <a href="https://api.whatsapp.com/send?l=en&phone=254723688108" title="Whatsup">
+            <a target="_blank" href="https://api.whatsapp.com/send?l=en&phone=254{{trimLeft contactNumber '0'}}&text=I%20am%20interested%20in%20a%20drink%20from%20your%20site.%20{{urlencode page.canonical}}" title="Whatsup">
                 <img src="/images/whatsapp.png" width="48px" alt="Call to order">
             </a>
         </li> 
-              
     </ul>
 </div>
 

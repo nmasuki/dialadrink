@@ -28,6 +28,7 @@ Product.add({
     state: {type: Types.Select, options: 'draft, published, archived', default: 'draft', index: true},
     image: {type: Types.CloudinaryImage, folder: "products"},
     altImages: {type: Types.CloudinaryImages, folder: "products"},
+    youtubeUrl: {type: String},
 
     pageTitle: {type: String},
     description: {type: Types.Html, wysiwyg: true, height: 150},

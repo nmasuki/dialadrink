@@ -99,10 +99,7 @@ exports.initPageLocals = function (req, res, next) {
         .find({key: regex})
         .exec((err, pages) => {
             var page = pages.orderBy(m => m.href.length).first();
-
-            if(page && page.mobileBannerImages && mobile(req))
-                res.locals.isMobile = true;
-
+            res.locals.isMobile = mobile(req);
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
             next(err);
         });

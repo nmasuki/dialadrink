@@ -182,11 +182,21 @@
             </div>
             <div class="col-md-12 more-details">
                 <!-- Youtube video-->
-                <iframe 
-                    src="https://www.youtube.com/embed/KluI-xZWNtQ" 
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                    frameborder="0" allowfullscreen>
-                </iframe>
+                {{#if youtubeUrl}}
+                    {{#if ../isMobile}}
+                        <iframe width="320" height="180" 
+                            src="{{youtubeUrl}}" 
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            frameborder="0" allowfullscreen>
+                        </iframe>
+                    {{else}}
+                        <iframe width="560" height="315" 
+                            src="{{youtubeUrl}}" 
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            frameborder="0" allowfullscreen>
+                        </iframe>
+                    {{/if}}
+                {{/if}}
                 <!-- End youtube video-->
 
                 <!-- Nav tabs -->
