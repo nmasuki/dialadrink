@@ -10,26 +10,17 @@
 
 	{{#each products}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
-		</url>
-		<url>
 			<loc>https://www.dialadrinkkenya.com/product/{{trim href "/"}}</loc>
 		</url>
 	{{/each}}
 	
 	{{#each brands}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/{{lowerCase key}}</loc>
-		</url>
-		<url>
 			<loc>https://www.dialadrinkkenya.com/brand/{{lowerCase key}}</loc>
 		</url>
 	{{/each}}
 	
 	{{#each categories}}
-		<url>
-			<loc>https://www.dialadrinkkenya.com/{{lowerCase key}}</loc>
-		</url>
 		<url>
 			<loc>https://www.dialadrinkkenya.com/category/{{lowerCase key}}</loc>
 		</url>
