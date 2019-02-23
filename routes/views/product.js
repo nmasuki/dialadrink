@@ -77,12 +77,13 @@ router.get("/:product", function (req, res) {
                     product.addPopularity(1);
                     next(err);
                 });
-            } else
-                next(err);
+            } else {
+                res.status(404).render('errors/404');
+            }       
         });
     });
 
-// Render View
+    // Render View
     view.render('product');
 });
 
@@ -111,8 +112,9 @@ router.get("/rate/:product/:rating", function (req, res, next) {
                 }
 
                 return res.send({state: true, rating: userRating})
-            }
-            next(err);
+            } else {
+                res.status(404);
+            }   
         });
 });
 

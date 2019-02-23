@@ -265,11 +265,11 @@
                                 </div>
                             {{/each}}
                         {{else}}
-                        {{#each page.bannerImages}}
-                            <div class="collection-heading-inner heading-group item inset-2"
-                                 style="background-image:url({{{cloudinaryUrl this height=200 width=1140 crop='fit'}}})">
-                            </div>
-                        {{/each}}
+                            {{#each page.bannerImages}}
+                                <div class="collection-heading-inner heading-group item inset-2"
+                                    style="background-image:url({{{cloudinaryUrl this height=200 width=1140 crop='fit'}}})">
+                                </div>
+                            {{/each}}
                         {{/if}}
                     </div>
                 {{/if}}

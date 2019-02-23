@@ -209,6 +209,8 @@ router.get("/pricelist", function (req, res) {
                 });
             } else if(next){
                 next(err)
+            } else {
+                res.status(404).render('errors/404');
             }
         }
 
