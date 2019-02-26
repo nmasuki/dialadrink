@@ -236,6 +236,16 @@ Order.schema.methods.sendUserNotification = function (next) {
                 else
                     return next("Error while getting cart Items");
             }
+
+            if(!order.delivery.email){
+                if(order.delivery.phoneNumber){
+                    var number = order.delivery.phoneNumber;
+                    if(number.startsWith('0'))
+                        number = "254" + number.trimLeft('0');
+                    
+                    order.delivery.email = number + "@safaricomsms.com";
+                }
+            }
             
             var locals = {
                 layout: 'email',
@@ -267,6 +277,7 @@ Order.schema.methods.sendUserNotification = function (next) {
                         console.warn("No users have the receivesOrders rights!");
                         emailOptions.cc.push("simonkimari@gmail.com");
                     }
+
 
                     console.log(
                         "Sending order notification!",

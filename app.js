@@ -20,13 +20,13 @@ keystone.init({
 	'favicon': 'public/favicon.ico',
 	'views': 'templates/views',
 	'view engine': '.hbs',
+	'view cache': true,
 
 	'custom engine': handlebars.create({
+		helpers: new require('./templates/views/helpers')(),
 		layoutsDir: 'templates/views/layouts',
 		partialsDir: 'templates/views/partials',
 		defaultLayout: 'dialadrink',
-		//defaultLayout: 'default',
-		helpers: new require('./templates/views/helpers')(),
 		extname: '.hbs',
 	}).engine,
 

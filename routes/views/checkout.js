@@ -8,7 +8,7 @@ var PesaPal = require('pesapaljs').init({
 });
 
 function getPasaPalUrl(order, host){
-	var customer = new PesaPal.Customer(order.delivery.email, order.delivery.phoneNumber);
+	var customer = new PesaPal.Customer(order.delivery.email || "anonymoususer@dialadrink.com", order.delivery.phoneNumber);
 	customer.firstName = order.delivery.firstName;
 	customer.lastName = order.delivery.lastName;
 
@@ -29,7 +29,7 @@ function getPasaPalUrl1(order, host){
 	var pesapal = require('pesapal')({
 		consumerKey: process.env.PESAPAL_KEY,
 		consumerSecret: process.env.PESAPAL_SECRET,
-		testing: false,//process.env.NODE_ENV != "production",
+		testing: process.env.NODE_ENV != "production",
 	});	
 	// post a direct order	   
 	var postParams = {
@@ -44,9 +44,10 @@ function getPasaPalUrl1(order, host){
 		'PhoneNumber': order.delivery? order.delivery.phoneNumber: ""
 	};
 
-	var url = pesapal.postDirectOrder(postParams, requestData);;
+	var url = pesapal.postDirectOrder(postParams, requestData);
 	return url;
 }
+
 router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
 	var locals = res.locals;
