@@ -1,5 +1,7 @@
+var MoveSms = require("../helpers/movesms");
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
+var sms = new MoveSms();
 
 /**
  * Order Model
@@ -7,8 +9,14 @@ var Types = keystone.Field.Types;
  */
 
 var Order = new keystone.List('Order', {
-    map: {name: 'orderNumber'},
-    autokey: {path: 'key', from: 'orderNumber', unique: true},
+    map: {
+        name: 'orderNumber'
+    },
+    autokey: {
+        path: 'key',
+        from: 'orderNumber',
+        unique: true
+    },
 });
 
 Order.add({
@@ -47,6 +55,8 @@ Order.add({
     },
 
     payment:  {
+        url: {type: String, noedit: true},
+        shortUrl: {type: String, noedit: true},
         referenceId: {type: String, noedit: true},
         transactionId: {type: String, noedit: true},
         method: {type: String, noedit: true},
@@ -71,22 +81,28 @@ Order.schema.pre('save', function (next) {
 });
 
 Order.schema.virtual("discount").get(function () {
-    if(this.cart)
-        return Math.round(this.promo.discountType == "percent"
-            ? this.cart.sum(c => c.pieces * c.price) * this.promo.discount / 100
-            : this.promo.discount || 0
+    if (this.cart)
+        return Math.round(this.promo.discountType == "percent" ?
+            this.cart.sum(c => c.pieces * c.price) * this.promo.discount / 100 :
+            this.promo.discount || 0
         );
     return 0;
 });
 
+Order.schema.virtual("currency").get(function () {
+    if (this.cart)
+        return this.cart.map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
+    return 0;
+})
+
 Order.schema.virtual("subtotal").get(function () {
-    if(this.cart)
-        return this.cart.sum(function(c){
-			var price = c.pieces * c.price;
-			if(c.offerPrice && c.price > c.offerPrice)
-				price = c.pieces * c.offerPrice
-			return price;
-		});
+    if (this.cart)
+        return this.cart.sum(function (c) {
+            var price = c.pieces * c.price;
+            if (c.offerPrice && c.price > c.offerPrice)
+                price = c.pieces * c.offerPrice
+            return price;
+        });
     return 0;
 });
 
@@ -108,7 +124,7 @@ Order.schema.virtual("deliveryAddress").get(function () {
 
 Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!")
-    this.sendUserNotification((err, data) => {
+    this.sendOrderNotification((err, data) => {
         console.log("Updating order state='placed'!", data)
 
         //Update order state
@@ -126,7 +142,9 @@ Order.schema.methods.placeOrder = function (next) {
 
         //popularity goes up 100x
         this.cart.forEach(c => {
-            keystone.list("Product").findOnePublished({_id: c.product._id}, (err, product) => {
+            keystone.list("Product").findOnePublished({
+                _id: c.product._id
+            }, (err, product) => {
                 if (product)
                     product.addPopularity(100);
             });
@@ -134,22 +152,21 @@ Order.schema.methods.placeOrder = function (next) {
     });
 };
 
-Order.schema.methods.sendPaymentNotification = function(next){
+Order.schema.methods.sendPaymentNotification = function (next) {
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
 
     var order = this;
-    if(order.payment.notificationSent)
-    {
+    if (order.payment.notificationSent) {
         console.log("Payment notification already sent.");
         if (typeof next == "function")
             next("Payment notification already sent.");
 
-        return;  
+        return;
     }
 
     var email = new keystone.Email('templates/views/receipt');
-    
+
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
@@ -159,7 +176,9 @@ Order.schema.methods.sendPaymentNotification = function(next){
 
     var locals = {
         layout: 'email',
-        page: {title: keystone.get("name") + " Order"},
+        page: {
+            title: keystone.get("name") + " Order"
+        },
         order: order
     };
 
@@ -176,19 +195,26 @@ Order.schema.methods.sendPaymentNotification = function(next){
         }
     };
 
-    keystone.list("User").model.find({receivesOrders: true})
+    keystone.list("User").model.find({
+            receivesOrders: true
+        })
         .exec((err, users) => {
             if (err)
                 return console.log(err)
 
             if (users && users.length)
-                users.forEach(u => emailOptions.cc.push(u.toObject()));
+                users.forEach(u => {
+                    if (!emailOptions.to.email)
+                        emailOptions.to.email = u.email;
+                    if (emailOptions.to.email != u.email)
+                        emailOptions.cc.push(u.toObject());
+                });            
             else {
                 console.warn("No users have the receivesOrders right!");
-                if (keystone.get("env") == "development")
-                    emailOptions.cc.push("nmasuki@gmail.com");
-                else
+                if (keystone.get("env") == "production")
                     emailOptions.cc.push("simonkimari@gmail.com");
+                else
+                    emailOptions.cc.push("nmasuki@gmail.com");
             }
 
             console.log(
@@ -204,11 +230,27 @@ Order.schema.methods.sendPaymentNotification = function(next){
             });
 
             if (typeof next == "function")
-                next(err);        
+                next(err);
+        });
+
+        this.cart.forEach(c => {
+            keystone.list("Product").findOnePublished({
+                _id: c.product._id
+            }, (err, product) => {
+                if (product)
+                    product.addPopularity(100);
+            });
         });
 };
 
-Order.schema.methods.sendUserNotification = function (next) {
+Order.schema.methods.sendSMSNotification = function (next, message) {
+    message = message || `Dial a Drink: Your order #${this.orderNumber} has been received. ` +
+        `Please pay ${this.currency||''} ${this.total} ${this.payment.method? 'in ' + this.payment.method: ''}. ${this.payment.shortUrl?' via ' + this.payment.shortUrl:''}`;
+
+    sms.send(this.delivery.phoneNumber, message.trim(), next);
+};
+
+Order.schema.methods.sendOrderNotification = function (next) {
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
 
@@ -221,7 +263,7 @@ Order.schema.methods.sendUserNotification = function (next) {
     if (keystone.get("env") == "development")
         subject = "(Testing)" + subject;
 
-    Order.model.findOne({_id: this._id})
+    Order.model.findOne({ _id: this._id })
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
             if (err)
@@ -237,19 +279,11 @@ Order.schema.methods.sendUserNotification = function (next) {
                     return next("Error while getting cart Items");
             }
 
-            if(!order.delivery.email){
-                if(order.delivery.phoneNumber){
-                    var number = order.delivery.phoneNumber;
-                    if(number.startsWith('0'))
-                        number = "254" + number.trimLeft('0');
-                    
-                    order.delivery.email = number + "@safaricomsms.com";
-                }
-            }
-            
             var locals = {
                 layout: 'email',
-                page: {title: keystone.get("name") + " Order"},
+                page: {
+                    title: keystone.get("name") + " Order"
+                },
                 order: order
             };
 
@@ -257,7 +291,7 @@ Order.schema.methods.sendUserNotification = function (next) {
                 subject: subject,
                 to: {
                     name: order.delivery.firstName,
-                    email: order.delivery.email || "simonkimari@gmail.com"
+                    email: order.delivery.email
                 },
                 cc: [],
                 from: {
@@ -266,22 +300,38 @@ Order.schema.methods.sendUserNotification = function (next) {
                 }
             };
 
-            keystone.list("User").model.find({receivesOrders: true})
+            if (!order.delivery.email && order.delivery.phoneNumber) {
+                setTimeout(function(){
+                    message = `Dial a Drink: Your order #${order.orderNumber} has been received. ` +
+                    `Please pay ${order.currency||''}${order.total} ${order.payment.method? 'in ' + order.payment.method: ''}` +
+                    `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
+                
+                    order.sendSMSNotification(message);
+                }, 5000);                
+            }
+
+            keystone.list("User").model.find({ receivesOrders: true })
                 .exec((err, users) => {
                     if (err)
-                        return console.log(err)
+                        return console.log(err);
 
-                    if (users && users.length)
-                        users.forEach(u => emailOptions.cc.push(u.toObject()));
-                    else {
+                    if (users && users.length) {
+                        users.forEach(u => {
+                            if (!emailOptions.to.email)
+                                emailOptions.to.email = u.email;
+                            if (emailOptions.to.email != u.email)
+                                emailOptions.cc.push(u.toObject());
+                        });
+                    } else {
                         console.warn("No users have the receivesOrders rights!");
-                        emailOptions.cc.push("simonkimari@gmail.com");
-                    }
-
+                        if (keystone.get("env") == "production")
+                            emailOptions.cc.push("simonkimari@gmail.com");
+                        else
+                            emailOptions.cc.push("nmasuki@gmail.com");                    }
 
                     console.log(
                         "Sending order notification!",
-                        "User", order.delivery.email,
+                        "User", emailOptions.to.email,
                         "Admins", "\"" + emailOptions.cc.map(u => u.email || u).join() + "\""
                     );
 
@@ -308,10 +358,11 @@ var autoId = 72490002;
 
 Order.getNextOrderId = () => (autoId = (autoId + 100));
 
-Order.model.find().sort({'orderNumber': -1})
-    //.limit(1)
+Order.model.find().sort({
+        'orderNumber': -1
+    })
+    .limit(1)
     .exec(function (err, data) {
         if (data[0] && data[0].orderNumber)
             autoId = data[0].orderNumber;
     });
-

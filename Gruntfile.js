@@ -3,7 +3,9 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         uglify: {
             dev: {
-                options: {mangle: true},
+                options: {
+                    mangle: true
+                },
                 files: [{
                     expand: true,
                     src: ['public/js/**/*.js', 'public/*.js', '!public/**/*min.js'],
@@ -46,7 +48,7 @@ module.exports = function (grunt) {
         purifycss: {
             options: {},
             target: {
-                src: ['templates/**/*.hbs' , 'public/js/**/*.js'],
+                src: ['templates/**/*.hbs', 'public/js/**/*.js'],
                 css: [
                     'public/styles/site/global.less',
                     'public/styles/site/layout.less',
@@ -55,7 +57,7 @@ module.exports = function (grunt) {
                 ],
                 dest: 'public/styles/site/all.less'
             },
-        },        
+        },
         cssmin: {
             options: {
                 mergeIntoShorthands: true,
@@ -90,6 +92,19 @@ module.exports = function (grunt) {
                     }
                 }]
             }
+        },
+        handlebars: {
+            compile: {
+                options: {
+                    namespace: function (filename) {
+                        var names = filename.replace(/modules\/(.*)(\/\w+\.hbs)/, '$1');
+                        return names.split('/').join('.');
+                    },
+                },
+                files: {
+                    'templates.js': ['templates/**/*.hbs']
+                }
+            }
         }
     });
 
@@ -98,9 +113,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-css-clean');
     grunt.loadNpmTasks('grunt-purifycss');
+    grunt.loadNpmTasks('grunt-contrib-handlebars');
 
     grunt.registerTask('build', [
         'uglify', 'concat',
-        'purifycss', 'cssmin', 'css_clean'
+        'purifycss', 'cssmin', 'css_clean', 'handlebars'
     ]);
 }
