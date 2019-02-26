@@ -1,8 +1,8 @@
-var CACHE_VERSION = 10.1;
+var CACHE_VERSION = 11.1;
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
 function getCacheName(destination, inc) {
-    return destination + "s-v" + (CACHE_VERSION + (inc/10.0));
+    return destination + "s-v" + (CACHE_VERSION + ((inc || 0)/10.0));
 }
 
 workbox.precaching.precacheAndRoute([
@@ -39,8 +39,16 @@ workbox.precaching.precacheAndRoute([
     },{
         url: "/js/all.scripts.min.js",
         version: getCacheName("script")
+    },{
+        url: "//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300",
+        version: getCacheName("styles")
+    },{
+        url: "//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css",
+        version: getCacheName("styles")
+    },{
+        url: "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
+        version: getCacheName("styles")
     }
-
 ], {
     "cacheId": "dialadinkkenya",
     "directoryIndex": "/",
@@ -62,7 +70,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     new RegExp('.*\.css'),
     workbox.strategies.cacheFirst({
-        "cacheName": "styles",
+        "cacheName": getCacheName("styles"),
         "cacheableResponse": {
             "statuses": [0, 200]
         }
@@ -71,7 +79,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     new RegExp('https://maxcdn.bootstrapcdn.com/.*'),
     workbox.strategies.cacheFirst({
-        "cacheName": "fontawsomeiconfonts",
+        "cacheName": getCacheName("fontawsomeiconfonts"),
         "cacheableResponse": {
             "statuses": [0, 200]
         }
@@ -80,16 +88,16 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     new RegExp('https://fonts.googleapis.com/.*'),
     workbox.strategies.cacheFirst({
-        "cacheName": "googlefontscache",
+        "cacheName": getCacheName("googlefontscache"),
         "cacheableResponse": {
             "statuses": [0, 200]
         }
     }), 'GET');
 
 workbox.routing.registerRoute(
-    /.*\.(?:png|jpg|jpeg|svg|gif)/,
+    /(https).*\.(?:png|jpg|jpeg|svg|gif)/,
     workbox.strategies.cacheFirst({
-        cacheName: 'images',
+        cacheName: getCacheName('images'),
         plugins: [
             new workbox.expiration.Plugin({
                 // Cache only 200 images
