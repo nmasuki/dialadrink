@@ -36,6 +36,9 @@ var routes = {
 
 // Setup Route Bindings
 exports = module.exports = function (app) {	
+	
+	app.enable('view cache')
+
 	var noopMiddleware = (req, res, next) => next();
 	var globalCacheMiddleware = noopMiddleware ||  middleware.cache((process.env.CACHE_TIME || 30) * 60, "/");
 	var userCacheMiddleware = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30) * 60);

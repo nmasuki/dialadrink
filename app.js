@@ -4,7 +4,18 @@ require('dotenv').config();
 
 // Require keystone
 var keystone = require('keystone');
-var handlebars = require('express-handlebars');
+global.Handlebars = require('handlebars');
+var handlebars = require('express-handlebars').create({
+	handlebars: global.Handlebars,
+	helpers: new require('./templates/views/helpers')(),
+	layoutsDir: 'templates/views/layouts',
+	partialsDir: 'templates/views/partials',
+	defaultLayout: 'dialadrink',
+	extname: '.hbs',
+	cache: true,
+});
+
+var templates = require('./templates');
 require('./helpers/polyfills');
 
 // Initialise Keystone with your project's configuration.
@@ -21,15 +32,7 @@ keystone.init({
 	'views': 'templates/views',
 	'view engine': '.hbs',
 	'view cache': true,
-
-	'custom engine': handlebars.create({
-		helpers: new require('./templates/views/helpers')(),
-		layoutsDir: 'templates/views/layouts',
-		partialsDir: 'templates/views/partials',
-		defaultLayout: 'dialadrink',
-		extname: '.hbs',
-	}).engine,
-
+	'custom engine': handlebars.engine,
 	'compress': true,
 	'auto update': true,
 	'auth': true,
