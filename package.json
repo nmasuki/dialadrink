@@ -11,6 +11,7 @@
     "crawler": "^1.1.4",
     "dotenv": "4.0.0",
     "express-handlebars": "3.0.0",
+    "express-handlebars-precompiler": "0.0.6",
     "express-minify": "^1.0.0",
     "express-minify-html": "^0.12.0",
     "goo.gl": "^0.1.4",

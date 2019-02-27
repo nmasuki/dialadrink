@@ -9,7 +9,7 @@ var PesaPal = require('pesapaljs').init({
 	debug: process.env.NODE_ENV != "production" // false in production!
 });
 
-function shoternUrl1(longUrl, next) {
+function shoternUrl(longUrl, next) {
 	var googl = require('goo.gl');
 
 	// Set a developer key (_required by Google_; see http://goo.gl/4DvFk for more info.)
@@ -25,7 +25,7 @@ function shoternUrl1(longUrl, next) {
 		});
 }
 
-function shoternUrl(longUrl, next) {
+function shoternUrl2(longUrl, next) {
 	var url = `https://4h.net/api.php?url=${longUrl}`;
 	najax.get({
 		url: url,
@@ -185,15 +185,7 @@ router.post("/", function (req, res, next) {
 
 				if (!err) {
 					if (order.payment.method == "PesaPal") {
-						order.payment.url = getPasaPalUrl(order, req.headers.origin);
-						shoternUrl(order.payment.url, function (err, url) {
-							if (err)
-								return console.warn(err);
-							order.payment.shortUrl = url || order.payment.url;
-							order.save();
-						});
-
-						json.redirect = order.payment.url;
+						json.redirect = getPasaPalUrl(order, req.headers.origin);
 						json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
 					}
 
