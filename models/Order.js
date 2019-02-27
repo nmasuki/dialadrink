@@ -165,6 +165,15 @@ Order.schema.methods.sendPaymentNotification = function (next) {
         return;
     }
 
+    //Send SMS notification
+    if (order.delivery.phoneNumber) {
+        message = `Dial a Drink: Your payment of ${order.currency||''}${order.payment.amount} ` + 
+            `for order #${order.orderNumber} has been received. Your order will be dispatched shortly. `+
+            `Thank You for using http://dialadrinkkenya.com`;
+        
+        order.sendSMSNotification(message);                
+    }
+
     var email = new keystone.Email('templates/views/receipt');
 
     //Hack to make use of nodemailer..
@@ -233,7 +242,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
                 next(err);
         });
 
-        this.cart.forEach(c => {
+    this.cart.forEach(c => {
             keystone.list("Product").findOnePublished({
                 _id: c.product._id
             }, (err, product) => {
@@ -244,9 +253,12 @@ Order.schema.methods.sendPaymentNotification = function (next) {
 };
 
 Order.schema.methods.sendSMSNotification = function (next, message) {
-    message = message || `Dial a Drink: Your order #${this.orderNumber} has been received. ` +
-        `Please pay ${this.currency||''} ${this.total} ${this.payment.method? 'in ' + this.payment.method: ''}. ${this.payment.shortUrl?' via ' + this.payment.shortUrl:''}`;
-
+    message = message || `Dial a Drink: Your order #${this.orderNumber} has been received.`;
+    if(this.payment.method == "PesaPal")
+        message += ` Please proceed to pay ${this.currency||''} ${this.total} online ${this.payment.shortUrl?' via ' + this.payment.shortUrl:''}`;
+    else
+        message += ` You will be required to pay ${this.currency||''} ${this.total} on delivery`;
+        
     sms.send(this.delivery.phoneNumber, message.trim(), next);
 };
 
@@ -255,7 +267,6 @@ Order.schema.methods.sendOrderNotification = function (next) {
         this.orderNumber = Order.getNextOrderId();
 
     var email = new keystone.Email('templates/views/order');
-
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
@@ -300,16 +311,6 @@ Order.schema.methods.sendOrderNotification = function (next) {
                 }
             };
 
-            if (!order.delivery.email && order.delivery.phoneNumber) {
-                setTimeout(function(){
-                    message = `Dial a Drink: Your order #${order.orderNumber} has been received. ` +
-                    `Please pay ${order.currency||''}${order.total} ${order.payment.method? 'in ' + order.payment.method: ''}` +
-                    `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
-                
-                    order.sendSMSNotification(message);
-                }, 5000);                
-            }
-
             keystone.list("User").model.find({ receivesOrders: true })
                 .exec((err, users) => {
                     if (err)
@@ -327,7 +328,8 @@ Order.schema.methods.sendOrderNotification = function (next) {
                         if (keystone.get("env") == "production")
                             emailOptions.cc.push("simonkimari@gmail.com");
                         else
-                            emailOptions.cc.push("nmasuki@gmail.com");                    }
+                            emailOptions.cc.push("nmasuki@gmail.com");                    
+                    }
 
                     console.log(
                         "Sending order notification!",
@@ -344,6 +346,14 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
                     if (typeof next == "function")
                         next(err);
+
+                    if (order.delivery.phoneNumber) {
+                        message = `Dial a Drink: Your order #${order.orderNumber} has been received. ` +
+                            `Please pay ${order.currency||''}${order.total} ${order.payment.method? 'in ' + order.paymentMethod: ''}` +
+                            `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
+                        
+                        order.sendSMSNotification(message);                
+                    }
                 });
         });
 };

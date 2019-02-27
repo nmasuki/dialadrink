@@ -174,29 +174,43 @@ router.post("/", function (req, res, next) {
 			if (err)
 				return next(err);
 
-			order.placeOrder((err) => {
-				if (err)
-					console.warn(err);
-
-				var json = {
-					state: !!err,
-					msg: err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
-				};
-
-				if (!err) {
-					if (order.payment.method == "PesaPal") {
-						json.redirect = getPasaPalUrl(order, req.headers.origin);
-						json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+			var placeOrder = function(){
+				order.placeOrder((err) => {
+					if (err)
+						console.warn(err);
+	
+					var json = {
+						state: !!err,
+						msg: err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
+					};
+	
+					if (!err) {
+						if (order.payment.method == "PesaPal") {
+							json.redirect = getPasaPalUrl(order, req.headers.origin);
+							json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+						}
+	
+						delete req.session.promo;
+						delete req.session.cart;
+	
+						req.session.save();
 					}
+	
+					return res.send(json);
+				});
+			};
 
-					delete req.session.promo;
-					delete req.session.cart;
+			if (order.payment.method == "PesaPal") {
+				var paymentUrl = `http://${req.headers.origin}/payment/${order.orderNumber}`;
+				shoternUrl2(paymentUrl, function(shortUrl){
+					order.payment.url = paymentUrl;
+					order.payment.shortUrl = shortUrl;
+					order.save(placeOrder);
+				});
+			}else{
+				placeOrder();
+			}
 
-					req.session.save();
-				}
-
-				return res.send(json);
-			});
 		});
 	} else if (req.body.saveInfo) {
 		return res.send({
