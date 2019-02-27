@@ -1,7 +1,10 @@
 var keystone = require('keystone');
+var pesapalHelper = require('../../helpers/pesapal');
+
 var router = keystone.express.Router();
 
 var Page = keystone.list("Page");
+var Order = keystone.list("Order");
 var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
 var ProductSubCategory = keystone.list("ProductSubCategory");
@@ -160,16 +163,39 @@ function search(req, res, next) {
 
 router.get("/search/:query", search);
 
-router.get("/home", function (req, res) {
+router.get("/payment/:orderNo", function (req, res) {
+    require('./checkout');
     var view = new keystone.View(req, res);
-    var locals = res.locals;
 
-    // locals.section is used to set the currently selected
-    // item in the header navigation.
-    locals.section = 'home';
+    Order.model.findOne({orderNumber: req.params.orderNo})
+        .deepPopulate('cart.product.priceOptions.option')
+        .exec((err, order) => {
+            if (!order)
+                return res.status(404).render('errors/404');
 
-    // Render the view
-    view.render('index');
+            var locals = res.locals;            
+            if (order.cart && order.cart.length){
+                locals.cartItems = (order.cart || []).orderBy(c => c.product.name);
+            }else                
+            locals.cartItems = [];
+
+            locals.order = order;
+            locals.page = Object.assign(locals.page, {
+                h1: `Order #${order.orderNumber} Payment. (by ${order.delivery.firstName} ${order.delivery.lastName})`
+            });
+
+            locals.userData = req.session.userData;
+            locals.breadcrumbs.push({
+                href: "/cart",
+                label: "My Cart"
+            }, {
+                href: "/payment/" + order.orderNumber,
+                label: "Payment"
+            });
+
+            locals.orderUrl = pesapalHelper.getPasaPalUrl(order, req.headers.origin)
+            return view.render('checkout');
+        });
 });
 
 router.get("/giftpacks", function(req, res, next){
