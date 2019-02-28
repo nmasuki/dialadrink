@@ -206,11 +206,11 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
 },"15":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "                            <span itemprop=\"reviewCount\" class=\"monospaced\">"
+  return "                            <span itemprop=\"ratingCount\" class=\"monospaced\">"
     + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1), depth0))
     + "</span> reviews.\r\n";
 },"17":function(container,depth0,helpers,partials,data) {
-    return "                            <span style=\"display:none\" itemprop=\"reviewCount\" class=\"monospaced\">1</span>\r\n";
+    return "                            <span style=\"display:none\" itemprop=\"ratingCount\" class=\"monospaced\">1</span>\r\n";
 },"19":function(container,depth0,helpers,partials,data) {
     return "                            <span class=\"monospaced right\">Rate "
     + container.escapeExpression((helpers.truncate || (depth0 && depth0.truncate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.name : depth0),25,{"name":"truncate","hash":{},"data":data}))
@@ -322,17 +322,17 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + "\r\n                    </p>\r\n                </div>\r\n            </div><!-- end row -->\r\n\r\n            <div class=\"row\">\r\n                <div class=\"col-md-12 "
     + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"if","hash":{},"fn":container.program(9, data, 0, blockParams, depths),"inverse":container.program(11, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\">\r\n                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,0,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,0,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                            aria-hidden=\"true\">\r\n                    </span>\r\n                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,1,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,1,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                        aria-hidden=\"true\">\r\n                    </span>\r\n                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,2,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,2,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                        aria-hidden=\"true\">\r\n                    </span>\r\n                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,3,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,3,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                        aria-hidden=\"true\">\r\n                    </span>\r\n                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,4,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,4,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                        aria-hidden=\"true\">\r\n                    </span>\r\n\r\n                    <span itemscope = \"\" itemtype=\"http://schema.org/AggregateRating\">\r\n                        <span class=\"label label-success\">\r\n                            <span itemprop=\"aggregateRating\">"
-    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.avgRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.averageRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
     + "</span> *\r\n                        </span>&nbsp;\r\n"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(15, data, 0, blockParams, depths),"inverse":container.program(17, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\r\n"
@@ -1565,19 +1565,19 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + "                    <!-- End youtube video-->\r\n\r\n                    <div role=\"tabpanel\" class=\"tab-pane\" id=\"reviews\">\r\n                        <div class=\"row\"\r\n                            itemprop=\"aggregateRating\"\r\n                            itemscope=\"\" itemtype=\"http://schema.org/AggregateRating\">\r\n                            <div class=\"col-md-12 "
     + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"if","hash":{},"fn":container.program(43, data, 0, blockParams, depths),"inverse":container.program(45, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\">\r\n                                <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,0,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,0,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n                                <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,1,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,1,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n                                <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,2,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,2,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n                                <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,3,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,3,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n                                <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,4,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n\r\n                                <span itemprop=\"aggregateRating\" itemscope itemtype=\"http://schema.org/AggregateRating\">\r\n                                    <span class=\"label label-success\">\r\n                                        <span itemprop=\"reviewCount\">"
-    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.avgRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,4,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n\r\n                                <span itemprop=\"aggregateRating\" itemscope itemtype=\"http://schema.org/AggregateRating\">\r\n                                    <span class=\"label label-success\">\r\n                                        <span itemprop=\"ratingCount\">"
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.averageRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
     + "</span> *\r\n                                    </span>&nbsp;\r\n\r\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviewCount : depth0),{"name":"if","hash":{},"fn":container.program(49, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.ratingCount : depth0),{"name":"if","hash":{},"fn":container.program(49, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\r\n"
     + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(51, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                                </span>\r\n\r\n                            </div>\r\n                        </div><!-- end row -->\r\n                        \r\n                        "
@@ -1593,9 +1593,9 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + "\",\r\n  \"brand\": {\r\n    \"@type\": \"Thing\",\r\n    \"name\": \""
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1), depth0)) != null ? stack1 : "")
     + "\"\r\n  },\r\n  \"aggregateRating\": {\r\n    \"@type\": \"AggregateRating\",\r\n    \"ratingValue\": \""
-    + alias4(((helper = (helper = helpers.avgRatings || (depth0 != null ? depth0.avgRatings : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"avgRatings","hash":{},"data":data}) : helper)))
-    + "\",\r\n    \"reviewCount\": \""
-    + alias4(((helper = (helper = helpers.reviewCount || (depth0 != null ? depth0.reviewCount : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reviewCount","hash":{},"data":data}) : helper)))
+    + alias4(((helper = (helper = helpers.averageRatings || (depth0 != null ? depth0.averageRatings : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"averageRatings","hash":{},"data":data}) : helper)))
+    + "\",\r\n    \"ratingCount\": \""
+    + alias4(((helper = (helper = helpers.ratingCount || (depth0 != null ? depth0.ratingCount : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"ratingCount","hash":{},"data":data}) : helper)))
     + "\"\r\n  },\r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"if","hash":{},"fn":container.program(57, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "}\r\n</script>\r\n\r\n";
@@ -1746,7 +1746,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
 },"49":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "                                        <span itemprop=\"reviewCount\" class=\"monospaced\">"
+  return "                                        <span itemprop=\"ratingCount\" class=\"monospaced\">"
     + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1), depth0))
     + "</span> reviews.\r\n";
 },"51":function(container,depth0,helpers,partials,data) {

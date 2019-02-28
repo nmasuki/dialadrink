@@ -229,25 +229,25 @@
                     <div role="tabpanel" class="tab-pane" id="reviews">
                         <div class="row">
                             <div class="col-md-12 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
-                                <span class="glyphicon glyphicon-star{{#ifgte 0 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 0 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
-                                <span class="glyphicon glyphicon-star{{#ifgte 1 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 1 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
-                                <span class="glyphicon glyphicon-star{{#ifgte 2 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 2 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
-                                <span class="glyphicon glyphicon-star{{#ifgte 3 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 3 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
-                                <span class="glyphicon glyphicon-star{{#ifgte 4 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 4 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
 
                                 <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
                                     <span class="label label-success">
-                                        <span itemprop="ratingValue">{{formatNumber avgRatings 1}}</span> *
+                                        <span itemprop="ratingValue">{{formatNumber averageRatings 1}}</span> *
                                     </span>&nbsp;
 
                                     {{#if ratingCount}}
@@ -295,8 +295,8 @@
   "aggregateRating": {
     "@type": "AggregateRating",
     "bestRating": "5"
-    "ratingValue": "{{#if avgRatings}}{{avgRatings}}{{else}}4{{/if}}",
-    "ratingCount": "{{#if reviewCount}}{{reviewCount}}{{else}}0{{/if}}"
+    "ratingValue": "{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}",
+    "ratingCount": "{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}"
   },
   {{#if price}}
   "offers": {
