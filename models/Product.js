@@ -196,6 +196,10 @@ Product.schema.pre('save', function (next) {
     this.offerPrice = cheapestOption.offerPrice;
     this.quantity = cheapestOption.quantity;
     this.modifiedDate = new Date();
+
+    if(this.youtubeUrl)
+        this.youtubeUrl =  this.youtubeUrl.replace(/\/watch(\/|\?v=)/, "/embed/");
+        
     next();
 });
 

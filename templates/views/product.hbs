@@ -52,7 +52,7 @@
                 <div class="row">
                     <div class="col-md-5 bottom-rule">
                         <h2 style="margin-top:5px">
-                            {{currency}}
+                            <span itemprop="priceCurrency"> {{currency}}</span>
                             {{#ifgt price offerPrice}}
                                 <span>
                                     <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
@@ -63,7 +63,7 @@
                                     </span>
                                 </span>
                             {{else}}
-                                <span class="product-price" id="product-price">{{formatNumber price}}</span>
+                                <span itemprop="price" class="product-price" id="product-price">{{formatNumber price}}</span>
                             {{/ifgt}}
                         </h2>
                     </div>
@@ -307,6 +307,7 @@
     "ratingValue": "{{avgRatings}}",
     "reviewCount": "{{reviewCount}}"
   },
+  {{#if price}}
   "offers": {
     "@type": "Offer",
     "priceCurrency": "KES",
@@ -319,6 +320,7 @@
       "name": "Dial A Drink Kenya"
     }
   }
+  {{/if}}
 }
 </script>
 
