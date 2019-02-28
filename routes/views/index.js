@@ -121,16 +121,18 @@ function search(req, res, next) {
                 delete res.locals.groupedBrands;
 
             product.findSimilar((err, products) => {
-                if (products)
+                if (products){
                     locals.similar = products
                         .orderBy(p => Math.abs(p.popularity - product.popularity))
                         .slice(0, 6);
 
-                var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
-                var brand = brands.first();
+                    var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+                    var brand = brands.first();
 
-                if (brands.length == 1) locals.brand = brands.first();
-
+                    if (brands.length == 1) locals.brand = brands.first();
+                }else{
+                    locals.similar = [];
+                }
                 //popularity goes up
                 product.addPopularity(1);
                 view.render('product');
