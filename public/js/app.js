@@ -208,7 +208,7 @@ var app = {
 			if(x) clearTimeout(x);
 		});
 
-		modal.find(".lading-msg").html(msg);
+		modal.find(".loading-msg").html(msg);
 
 		function setModalMaxHeight(element) {
 			this.$element     = $(element);

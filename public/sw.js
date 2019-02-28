@@ -97,8 +97,11 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     /(https).*\.(?:png|jpg|jpeg|svg|gif)/,
     workbox.strategies.cacheFirst({
-        cacheName: getCacheName('images'),
-        plugins: [
+        "cacheName": getCacheName("fontawsomeiconfonts"),
+        "cacheableResponse": {
+            "statuses": [0, 200]
+        },
+        "plugins" : [
             new workbox.expiration.Plugin({
                 // Cache only 200 images
                 maxEntries: 200,

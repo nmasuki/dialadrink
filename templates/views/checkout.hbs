@@ -91,7 +91,7 @@
 
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Total (<span class="cart-currency">KES</span>)</span>
-                        <strong class="cart-total">
+                        <strong class="cart-total-2">
                             {{formatNumber (sumEvals cartItems 'c=>c.pieces*c.price')}}
                         </strong>
                     </li>
@@ -287,7 +287,7 @@
 
 {{#if orderUrl}}
         console.log('Option called!');        
-        var iframe = $("<iframe src='{{orderUrl}}'/>");        
+        var iframe = $("<iframe style='min-height: 670px' src='{{orderUrl}}'/>");        
         iframe.css({
             border: "none",
             width:  '100%',
