@@ -44,7 +44,7 @@ keystone.init({
         cookie: { secure: false, maxAge: 365*24*60*60*1000  }
     },
 
-	'signin logo': '/images/logo-email.gif',
+	'signin logo': 'https://res.cloudinary.com/nmasuki/image/upload/c_fill/logo-email.gif',
     'cloudinary secure': true
 });
 
