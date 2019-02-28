@@ -45,12 +45,6 @@ Product.add({
     
 });
 
-Product.schema.virtual("reviewCount").get(function () {
-    if(this.ratings && this.ratings.length)
-        return 5 + this.ratings.length;
-    return 5;
-});
-
 Product.schema.virtual("keyWords").get(function () {
     var tags = [];
 
@@ -97,7 +91,7 @@ Product.schema.virtual('cheapestOption').get(function () {
     return this.options.orderBy(o => o.price).first();
 });
 
-Product.schema.virtual('avgRatings').get(function () {
+Product.schema.virtual('averageRatings').get(function () {
     if (this.ratings && this.ratings.length)
         return Math.round((this.ratings || []).avg(r => r.rating));
     else if (this.onOffer)
@@ -116,12 +110,11 @@ Product.schema.virtual('avgRatings').get(function () {
     return Math.round(1 + Math.random() * 4.0);
 });
 
-Product.schema.virtual('ratingCount').get(function () {
-    if (this.ratings && this.ratings.length)
-        return (this.ratings || []).avg(r => r.rating);
-    return 0;
+Product.schema.virtual("ratingCount").get(function () {
+    if(this.ratings && this.ratings.length)
+        return 5 + this.ratings.length;
+    return 5;
 });
-
 Product.schema.virtual('quantity').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
     return cheapestOption ? cheapestOption.quantity : null;
@@ -213,7 +206,7 @@ Product.schema.set('toObject', {
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
             'subCategory', 'brand', 'ratings',
-            'options', 'cheapestOption', 'avgRatings', 'ratingCount',
+            'options', 'cheapestOption', 'averageRatings', 'ratingCount',
             'quantity', 'currency', 'price', 'offerPrice', 'tags'
         ];
         whitelist.forEach(i => ret[i] = doc[i]);

@@ -1,6 +1,6 @@
 <li data-cartid="{{cartId}}" class="list-group-item d-flex justify-content-between lh-condensed row">
     <div style="float: left; width: auto;">
-        <img class="cart-image" src="{{cloudinaryUrl image crop='fit'}}" style="max-height: 52px">
+        <img class="cart-image" src="{{cloudinaryUrl image crop='fit' height=52}}" style="max-height: 52px">
     </div>
     <div class="col-md-8">
         <h6 class="my-0"><a href="/product/{{product.href}}">{{product.name}}&nbsp;{{quantity}}</a></h6>
@@ -11,10 +11,10 @@
             <stan class="cart-cost">{{price}}</stan>
         </small>
         <div class="right">
-							<span class="text-muted">
-								<span class="cart-currency">KES</span>
-								<stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
-							</span>
+            <span class="text-muted">
+                <span class="cart-currency">KES</span>
+                <stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
+            </span>
         </div>
     </div>
     <a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>

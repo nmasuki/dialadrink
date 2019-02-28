@@ -121,16 +121,16 @@ function search(req, res, next) {
                 delete res.locals.groupedBrands;
 
             product.findSimilar((err, products) => {
-                if (products)
+                if (products){
                     locals.similar = products
                         .orderBy(p => Math.abs(p.popularity - product.popularity))
                         .slice(0, 6);
 
-                var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
-                var brand = brands.first();
-
-                if (brands.length == 1) locals.brand = brands.first();
-
+                    var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+                    if (brands.length == 1) locals.brand = brands.first();
+                }else{
+                    locals.similar = [];
+                }
                 //popularity goes up
                 product.addPopularity(1);
                 view.render('product');
@@ -257,7 +257,8 @@ router.get("/products.json", function (req, res) {
                 category: d.category ? d.category.name : null,
                 categories: d.onOffer ? d.category ? [d.category.name, "offer"] : ["offer"] : d.category ? [d.category.name] : [],
                 subcategory: d.subCategory ? d.subCategory.name : null,
-                ratings: d.avgRatings,
+                ratings: d.averageRatings,
+                ratingCount: d.ratingCount,
                 quantity: d.quantity,
                 brand: d.brand? d.brand.name: null,
                 company: d.brand && d.brand.company? d.brand.company.name: null,

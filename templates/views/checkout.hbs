@@ -55,7 +55,7 @@
                         <li data-cartid="{{_id}}"
                             class="list-group-item d-flex justify-content-between lh-condensed row">
                             <div style="float: left; width: auto; min-width: 53px;">
-                                <img class="cart-image" src="{{cloudinaryUrl image crop='fit'}}"
+                                <img class="cart-image" src="{{cloudinaryUrl image crop='fit' height=52}}"
                                      style="max-height: 52px;">
                             </div>
                             <div class="col-md-8">
@@ -98,7 +98,7 @@
                 {{else}}
                     <li class="list-group-item d-flex justify-content-between">
                         <div class="loading cart-loading">
-                            <img src="/images/empty-cart.png" alt="Empty!" style="height: 50px;"> You have no items in
+                            <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart.png" alt="Empty!" style="height: 50px;"> You have no items in
                             your cart!!
                         </div>
                         <a href="/">Continue shopping.</a>
@@ -113,10 +113,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-8 col-sm-8">
                                     <input id="promocode" type="text" class="form-control" placeholder="Promo code" style="width: 100%; float: left;">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 col-sm-4">
                                     <button type="submit" class="btn btn-secondary" style="margin-top: 0;">Redeem</button>
                                 </div>
                             </div>                            

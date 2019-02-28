@@ -73,8 +73,7 @@
                         <div class="col-md-3">
                             <select id="change-quantity" class="quantity" style="width: 134px; height: 40px;">
                                 {{#each options}}
-                                    <option data-offer="{{offerPrice}}" value="{{price}}"
-                                            {{#ifeq ../price price}}selected{{/ifeq}}>
+                                    <option data-offer="{{offerPrice}}" value="{{price}}" {{#ifeq ../price price}}selected{{/ifeq}}>
                                         {{quantity}}
                                     </option>
                                 {{/each}}
@@ -82,7 +81,7 @@
                         </div>
                     {{else}}
                         <div class="col-md-5">
-                            <h2 style="margin: 5px 0 0 0;" itemprop="name">{{{quantity}}}</h1>
+                            <h2 style="margin: 5px 0 0 0;">{{{quantity}}}</h1>
                         </div>
                     {{/ifgt}}
                 </div>
@@ -139,27 +138,27 @@
                         {{#if ../page.canonical}}	
                             <!-- Facebook -->
                             <a href="http://www.facebook.com/sharer.php?u={{../page.canonical}}" target="_blank">
-                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
+                                <img style="width: 42px;" src="https://simplesharebuttons.comhttps://res.cloudinary.com/nmasuki/image/upload/c_fill/somacro/facebook.png" alt="Facebook" />
                             </a>
                             
                             <!-- Twitter -->
                             <a href="https://twitter.com/share?url={{../page.canonical}}&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" target="_blank">
-                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
+                                <img style="width: 42px;" src="https://simplesharebuttons.comhttps://res.cloudinary.com/nmasuki/image/upload/c_fill/somacro/twitter.png" alt="Twitter" />
                             </a>
                             
                             <!-- Google+ -->
                             <a href="https://plus.google.com/share?url={{../page.canonical}}" target="_blank">
-                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/google.png" alt="Google" />
+                                <img style="width: 42px;" src="https://simplesharebuttons.comhttps://res.cloudinary.com/nmasuki/image/upload/c_fill/somacro/google.png" alt="Google" />
                             </a>	
                                                 
                             <!-- LinkedIn -->
                             <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{../page.canonical}}" target="_blank">
-                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
+                                <img style="width: 42px;" src="https://simplesharebuttons.comhttps://res.cloudinary.com/nmasuki/image/upload/c_fill/somacro/linkedin.png" alt="LinkedIn" />
                             </a>
                             
                             <!-- Pinterest
                             <a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());">
-                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/pinterest.png" alt="Pinterest" />
+                                <img style="width: 42px;" src="https://simplesharebuttons.comhttps://res.cloudinary.com/nmasuki/image/upload/c_fill/somacro/pinterest.png" alt="Pinterest" />
                             </a>
                              -->
                              
@@ -228,33 +227,31 @@
                     <!-- End youtube video-->
 
                     <div role="tabpanel" class="tab-pane" id="reviews">
-                        <div class="row"
-                            itemprop="aggregateRating"
-                            itemscope="" itemtype="http://schema.org/AggregateRating">
+                        <div class="row">
                             <div class="col-md-12 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
-                                <span class="glyphicon glyphicon-star{{#ifgte 0 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 0 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
-                                <span class="glyphicon glyphicon-star{{#ifgte 1 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 1 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
-                                <span class="glyphicon glyphicon-star{{#ifgte 2 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 2 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
-                                <span class="glyphicon glyphicon-star{{#ifgte 3 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 3 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
-                                <span class="glyphicon glyphicon-star{{#ifgte 4 avgRatings}}-empty{{/ifgte}}"
+                                <span class="glyphicon glyphicon-star{{#ifgte 4 averageRatings}}-empty{{/ifgte}}"
                                     aria-hidden="true">
                                 </span>
 
                                 <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
                                     <span class="label label-success">
-                                        <span itemprop="reviewCount">{{formatNumber avgRatings 1}}</span> *
+                                        <span itemprop="ratingValue">{{formatNumber averageRatings 1}}</span> *
                                     </span>&nbsp;
 
-                                    {{#if reviewCount}}
-                                        <span itemprop="reviewCount" class="monospaced">{{ratings.length}}</span> reviews.
+                                    {{#if ratingCount}}
+                                        <span itemprop="ratingCount" class="monospaced">{{ratings.length}}</span> reviews.
                                     {{/if}}
 
                                     {{#unless ../userRating}}
@@ -297,13 +294,18 @@
   },
   "aggregateRating": {
     "@type": "AggregateRating",
-    "ratingValue": "{{avgRatings}}",
-    "reviewCount": "{{reviewCount}}"
+    "bestRating": "5"
+    "ratingValue": "{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}",
+    "ratingCount": "{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}"
   },
   {{#if price}}
   "offers": {
     "@type": "Offer",
     "priceCurrency": "KES",
+    {{#if offerPrice}}
+    "highPrice": "{{price}}",
+    "lowPrice": "{{offerPrice}}",
+    {{/if}}
     "price": "{{price}}",
     "priceValidUntil": "2020-12-31",
     "itemCondition": "http://schema.org/UsedCondition",

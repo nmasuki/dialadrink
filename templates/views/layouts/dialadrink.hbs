@@ -9,7 +9,7 @@
 
     {{!--PWA meta--}}
     <meta name="msapplication-TileColor" content="#ffffff"/>
-    <meta name="msapplication-TileImage" content="/images/icons/ms-icon-144x144.png"/>
+    <meta name="msapplication-TileImage" content="https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/ms-icon-144x144.png"/>
     <meta name="theme-color" content="#ffffff"/>
     {{!--PWA setups and js regestry--}}
     {{>pwaheaders}}
@@ -28,7 +28,7 @@
         <meta property='product:price:amount' content='{{product.price}}'/>
         <meta property='product:price:currency' content='{{product.currency}}'/>
     {{else}}
-        <meta property="og:image" content="/images/icons/apple-icon-152x152.png"/>
+        <meta property="og:image" content="https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-152x152.png"/>
     {{/if}}
 
     <meta name="twitter:site" content="@liqourdelivery"/>
@@ -84,7 +84,7 @@
                         <div class="left-area hidden-xs">
                             <div class="currency_group hidden-xs currencies-switcher">
                                 <a>
-                                    <img src="/images/logo.png" height="50px" alt="Dial a Drink logo">
+                                    <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_70/logo.png" height="50px" alt="Dial a Drink logo">
                                     <span style="padding-left: 10px; color: white;  font-size: 18px;">
                                         <span>CALL</span>
                                         <span><strong>{{contactNumber}}</strong></span>
@@ -221,7 +221,7 @@
                             <ul class="navigation_links">
                                 <li class="nav-item" style="margin: 0">
                                     <a href="/giftpacks" title="Gift Packs">
-                                        <img src="/images/giftpack.png" style="width: 32px"/>
+                                        <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill,w_32/giftpack.png" alt="Gify Park" style="width: 32px"/>
                                         <span class="hide_affix">Gift Pack</span>
                                     </a>
                                 </li>
@@ -397,15 +397,15 @@
                     <li>Cash On Delivery</li>
                     <p>
                     <li>
-                        <img src="/images/mpesa.png" alt="Pay via MPESA" height="30px">
+                        <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/mpesa.png" alt="Pay via MPESA" height="30px">
                     </li>
                     <p>
                     <li>
-                        <img src="/images/visa.png" alt="Pay via VISA" height="30px">
+                        <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/visa.png" alt="Pay via VISA" height="30px">
                     </li>
                     <p>
                     <li>
-                        <img src="/images/mastercard.png" alt="Pay Via Master Card" height="30px">
+                        <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/mastercard.png" alt="Pay Via Master Card" height="30px">
                     </li>
                 </ul>
             </div>
@@ -468,19 +468,19 @@
         <li class="mobile-only">
             <a href="/cart" title="My cart">
                 <span class="badge badge-secondary badge-pill cart-total-pieces" style="position: absolute;left: 18px;background-color: red;">0</span>
-                <img src="/images/empty-cart-2.png" width="48px" alt="My cart">
+                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart-2.png" width="48px" alt="My cart">
             </a>
         </li>
 
         <li class="mobile-only">
             <a href="tel:{{contactNumber}}" title="Call to order">
-                <img src="/images/phoneicon.png" width="48px" alt="Call to order">
+                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/phoneicon.png" width="48px" alt="Call to order">
             </a>
         </li>  
 
         <li class="mobile-only">
             <a target="_blank" href="https://api.whatsapp.com/send?l=en&phone=254{{trimLeft contactNumber '0'}}&text=I%20am%20interested%20in%20a%20drink%20from%20your%20site.%20{{urlencode page.canonical}}" title="Whatsup">
-                <img src="/images/whatsapp.png" width="48px" alt="Whatsup to order">
+                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/whatsapp.png" width="48px" alt="Whatsup to order">
             </a>
         </li> 
     </ul>
