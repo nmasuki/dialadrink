@@ -210,10 +210,12 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1), depth0))
     + "</span> reviews.\n";
 },"17":function(container,depth0,helpers,partials,data) {
+    return "                            <span style=\"display:none\" itemprop=\"reviewCount\" class=\"monospaced\">1</span>\n";
+},"19":function(container,depth0,helpers,partials,data) {
     return "                            <span class=\"monospaced right\">Rate "
     + container.escapeExpression((helpers.truncate || (depth0 && depth0.truncate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.name : depth0),25,{"name":"truncate","hash":{},"data":data}))
     + "!</span>\n";
-},"19":function(container,depth0,helpers,partials,data) {
+},"21":function(container,depth0,helpers,partials,data) {
     var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "                            <span>\n                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                        <span itemprop=\"price\" id=\"product-offerPrice\">"
@@ -221,17 +223,17 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + "</span>\n                                    </span>\n                                    <span itemprop=\"offerPrice\" class=\"product-price\" id=\"product-price\">\n                                        "
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "\n                                    </span>\n                                </span>\n";
-},"21":function(container,depth0,helpers,partials,data) {
+},"23":function(container,depth0,helpers,partials,data) {
     return "                            <span class=\"product-price\" id=\"product-price\">"
     + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
-},"23":function(container,depth0,helpers,partials,data,blockParams,depths) {
+},"25":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1;
 
   return "                    <div class=\"col-md-2\" style=\"padding-top: 23px;\">Option:</div>\n                    <div class=\"col-md-3\" style=\"padding-top: 15px;\">\n                        <select id=\"change-quantity\" class=\"quantity\" style=\"width: 134px; height: 40px;\">\n"
-    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(24, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(26, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                        </select>\n                    </div>\n";
-},"24":function(container,depth0,helpers,partials,data,blockParams,depths) {
+},"26":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "                                <option data-offer=\""
@@ -239,17 +241,17 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + "\" value=\""
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
     + "\"\n                                        "
-    + ((stack1 = (helpers.ifeq || (depth0 && depth0.ifeq) || alias2).call(alias1,(depths[1] != null ? depths[1].price : depths[1]),(depth0 != null ? depth0.price : depth0),{"name":"ifeq","hash":{},"fn":container.program(25, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifeq || (depth0 && depth0.ifeq) || alias2).call(alias1,(depths[1] != null ? depths[1].price : depths[1]),(depth0 != null ? depth0.price : depth0),{"name":"ifeq","hash":{},"fn":container.program(27, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ">\n                                    "
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "\n                                </option>\n";
-},"25":function(container,depth0,helpers,partials,data) {
-    return "selected";
 },"27":function(container,depth0,helpers,partials,data) {
-    return "                        <span class=\"monospaced label label-success\">In Stock</span>\n";
+    return "selected";
 },"29":function(container,depth0,helpers,partials,data) {
+    return "                        <span class=\"monospaced label label-success\">In Stock</span>\n";
+},"31":function(container,depth0,helpers,partials,data) {
     return "                        <span class=\"monospaced label label-warning\">Out of Stock</span>\n";
-},"31":function(container,depth0,helpers,partials,data,blockParams,depths) {
+},"33":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var alias1=container.lambda, alias2=container.escapeExpression;
 
   return "                    <div class=\"col-md-12 top-10\">\n                        <p>\n                            <span class=\"glyphicon glyphicon-phone\" aria-hidden=\"true\"></span>\n                            To order by telephone, please call\n                            <a href=\"tel:"
@@ -257,43 +259,43 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + "\">"
     + alias2(alias1((depths[1] != null ? depths[1].contactNumber : depths[1]), depth0))
     + "</a>\n                        </p>\n                    </div>\n";
-},"33":function(container,depth0,helpers,partials,data) {
-    return "                    <li role=\"presentation\" class=\"active\">\n                        <a href=\"#description\"\n                           aria-controls=\"description\"\n                           role=\"tab\"\n                           data-toggle=\"tab\">Description</a>\n                    </li>\n";
 },"35":function(container,depth0,helpers,partials,data) {
-    return "                    <li role=\"presentation\">\n                        <a href=\"#features\"\n                           aria-controls=\"features\"\n                           role=\"tab\"\n                           data-toggle=\"tab\"\n                        >Features</a>\n                    </li>\n";
+    return "                    <li role=\"presentation\" class=\"active\">\n                        <a href=\"#description\"\n                           aria-controls=\"description\"\n                           role=\"tab\"\n                           data-toggle=\"tab\">Description</a>\n                    </li>\n";
 },"37":function(container,depth0,helpers,partials,data) {
-    return "                    <li role=\"presentation\">\n                        <a href=\"#reviews\"\n                           aria-controls=\"reviews\"\n                           role=\"tab\"\n                           data-toggle=\"tab\"\n                        >Reviews</a>\n                    </li>\n";
+    return "                    <li role=\"presentation\">\n                        <a href=\"#features\"\n                           aria-controls=\"features\"\n                           role=\"tab\"\n                           data-toggle=\"tab\"\n                        >Features</a>\n                    </li>\n";
 },"39":function(container,depth0,helpers,partials,data) {
+    return "                    <li role=\"presentation\">\n                        <a href=\"#reviews\"\n                           aria-controls=\"reviews\"\n                           role=\"tab\"\n                           data-toggle=\"tab\"\n                        >Reviews</a>\n                    </li>\n";
+},"41":function(container,depth0,helpers,partials,data) {
     var stack1, helper;
 
   return "                    <div role=\"tabpanel\" class=\"tab-pane active\" id=\"description\">\n                        "
     + ((stack1 = ((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"description","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\n                    </div>\n";
-},"41":function(container,depth0,helpers,partials,data) {
+},"43":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                    <div role=\"tabpanel\" class=\"tab-pane top-10\" id=\"features\">\n                        <ul>\n"
-    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.feature : depth0),{"name":"each","hash":{},"fn":container.program(42, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.feature : depth0),{"name":"each","hash":{},"fn":container.program(44, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                        </ul>\n                    </div>\n";
-},"42":function(container,depth0,helpers,partials,data) {
+},"44":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                                <li>"
     + ((stack1 = container.lambda(depth0, depth0)) != null ? stack1 : "")
     + "</li>\n";
-},"44":function(container,depth0,helpers,partials,data) {
+},"46":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                    <div role=\"tabpanel\" class=\"tab-pane\" id=\"reviews\">\n"
     + ((stack1 = container.invokePartial(partials.productReview,depth0,{"name":"productReview","data":data,"indent":"                        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "                    </div>\n";
-},"46":function(container,depth0,helpers,partials,data) {
+},"48":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                <div class=\"col-md-1\">\n"
     + ((stack1 = container.invokePartial(partials.product2,depth0,{"name":"product2","data":data,"indent":"                    ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "                </div>\n";
-},"48":function(container,depth0,helpers,partials,data) {
+},"50":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "            var index = Math.min(5,"
@@ -317,30 +319,30 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.no : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-12\">\n                    <p class=\"description\">\n                        "
     + alias4((helpers.truncate || (depth0 && depth0.truncate) || alias2).call(alias1,(helpers.cleanHtml || (depth0 && depth0.cleanHtml) || alias2).call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"cleanHtml","hash":{},"data":data}),70,{"name":"truncate","hash":{},"data":data}))
-    + "\n                    </p>\n                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\"\n                 itemprop=\"aggregateRating\"\n                 itemscope=\"\" itemtype=\"http://schema.org/AggregateRating\">\n                <div class=\"col-md-12 "
+    + "\n                    </p>\n                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-12 "
     + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"if","hash":{},"fn":container.program(9, data, 0, blockParams, depths),"inverse":container.program(11, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
-    + "\">\n						<span class=\"glyphicon glyphicon-star"
+    + "\">\n                    <span class=\"glyphicon glyphicon-star"
     + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,0,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                              aria-hidden=\"true\">\n                        </span>\n                    <span class=\"glyphicon glyphicon-star"
+    + "\"\n                            aria-hidden=\"true\">\n                    </span>\n                    <span class=\"glyphicon glyphicon-star"
     + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,1,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                          aria-hidden=\"true\">\n                        </span>\n                    <span class=\"glyphicon glyphicon-star"
+    + "\"\n                        aria-hidden=\"true\">\n                    </span>\n                    <span class=\"glyphicon glyphicon-star"
     + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,2,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                          aria-hidden=\"true\">\n                        </span>\n                    <span class=\"glyphicon glyphicon-star"
+    + "\"\n                        aria-hidden=\"true\">\n                    </span>\n                    <span class=\"glyphicon glyphicon-star"
     + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,3,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                          aria-hidden=\"true\">\n                        </span>\n                    <span class=\"glyphicon glyphicon-star"
+    + "\"\n                        aria-hidden=\"true\">\n                    </span>\n                    <span class=\"glyphicon glyphicon-star"
     + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,4,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                          aria-hidden=\"true\">\n                        </span>\n\n                    <span itemprop=\"aggregateRating\" itemscope\n                          itemtype=\"http://schema.org/AggregateRating\">\n                            <span class=\"label label-success\">\n                                <span itemprop=\"reviewCount\">"
+    + "\"\n                        aria-hidden=\"true\">\n                    </span>\n\n                    <span itemscope = \"\" itemtype=\"http://schema.org/AggregateRating\">\n                        <span class=\"label label-success\">\n                            <span itemprop=\"aggregateRating\">"
     + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.avgRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
-    + "</span> *\n                            </span>&nbsp;\n"
-    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(15, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</span> *\n                        </span>&nbsp;\n"
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(15, data, 0, blockParams, depths),"inverse":container.program(17, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\n"
-    + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(17, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                        </span>\n\n                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-5 bottom-rule\">\n                    <h2>\n                        "
+    + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(19, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                    </span>\n                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-5 bottom-rule\">\n                    <h2>\n                        "
     + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
     + "\n"
-    + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(19, data, 0, blockParams, depths),"inverse":container.program(21, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(21, data, 0, blockParams, depths),"inverse":container.program(23, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "                    </h2>\n                </div>\n\n"
-    + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.options : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(23, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.options : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(25, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </div>\n\n            <div class=\"row add-to-cart-wrapper\">\n                <div class=\"col-md-5 product-qty\">\n						<span id=\"pieces-plus\" class=\"pieces-plus btn btn-default btn-lg btn-qty\" style=\"width: 46px;\">\n						  <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n						</span>\n                    <input id=\"pieces\" class=\"pieces btn btn-default btn-lg btn-qty\" style=\"width: 48px\" value=\"1\"/>\n                    <span id=\"pieces-minus\" class=\"pieces-minus btn btn-default btn-lg btn-qty\"\n                          style=\"width: 46px;\">\n							<span class=\"glyphicon glyphicon-minus\" aria-hidden=\"true\"></span>\n						</span>\n                </div>\n                <div class=\"col-md-5\" style=\"margin-top: 5px\">\n                    <button data-qty=\""
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "\" data-product=\""
@@ -348,21 +350,21 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + "\"\n                            class=\"btn btn-lg btn-brand btn-full-width add-to-cart\">\n                        Add to Cart\n                    </button>\n                    <!--<button onclick=\"window.location='/checkout'\" data-product=\""
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
     + "\" style=\"width: 121px;\"-->\n                    <!--class=\"btn btn-lg btn-brand btn-full-width\">-->\n                    <!--Checkout-->\n                    <!--</button>-->\n                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-4 text-left\">\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(27, data, 0, blockParams, depths),"inverse":container.program(29, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(29, data, 0, blockParams, depths),"inverse":container.program(31, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "                </div>\n            </div>\n            <!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-12 bottom-rule top-10\"></div>\n            </div>\n            <!-- end row -->\n\n            <div class=\"row\">\n"
-    + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].contactNumber : depths[1]),{"name":"if","hash":{},"fn":container.program(31, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].contactNumber : depths[1]),{"name":"if","hash":{},"fn":container.program(33, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </div><!-- end row -->\n        </div>\n        <div class=\"col-md-12 more-details\">\n            <!-- Nav tabs -->\n            <ul class=\"nav nav-tabs\" role=\"tablist\">\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(33, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.features : depth0),{"name":"if","hash":{},"fn":container.program(35, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(37, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(35, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.features : depth0),{"name":"if","hash":{},"fn":container.program(37, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(39, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </ul>\n            <!-- Tab panes -->\n            <div class=\"tab-content\">\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(39, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.features : depth0),{"name":"if","hash":{},"fn":container.program(41, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(44, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(41, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.features : depth0),{"name":"if","hash":{},"fn":container.program(43, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(46, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </div>\n        </div>\n        <div style=\"border-top: 1px solid lightgray;\" class=\"similar-products col-md-12\">\n            <h2 style=\"font-size: 15px;\">You may also like..</h2>\n"
-    + ((stack1 = helpers.each.call(alias1,(depths[1] != null ? depths[1].similar : depths[1]),{"name":"each","hash":{},"fn":container.program(46, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,(depths[1] != null ? depths[1].similar : depths[1]),{"name":"each","hash":{},"fn":container.program(48, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "        </div>\n    </div><!-- end row -->\n    <div class=\"row\">\n\n    </div>\n</div><!-- end container -->\n\n<script>\n    window.minifiedMenu = true;\n    $(document).ready(function () {\n        if (addaffix) addaffix();\n        //$('.tab-content .tab-pane').scrollbar();\n        //$(\".similar-products\").owlCarousel({items:12})\n\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(48, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(50, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "    })\n</script>\n";
 },"usePartial":true,"useData":true,"useDepths":true});
 
@@ -1534,9 +1536,9 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</h1>\n                    </div>\n                </div><!-- end row-->\n\n"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1),{"name":"if","hash":{},"fn":container.program(6, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                \n                <div class=\"row\">\n                    <div class=\"col-md-5 bottom-rule\">\n                        <h2 style=\"margin-top:5px\">\n                            "
+    + "                \n                <div class=\"row\">\n                    <div class=\"col-md-5 bottom-rule\">\n                        <h2 style=\"margin-top:5px\">\n                            <span itemprop=\"priceCurrency\"> "
     + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
-    + "\n"
+    + "</span>\n"
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(8, data, 0, blockParams, depths),"inverse":container.program(10, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "                        </h2>\n                    </div>\n\n"
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.options : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(12, data, 0, blockParams, depths),"inverse":container.program(16, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
@@ -1553,36 +1555,35 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depths[1] != null ? depths[1].page : depths[1])) != null ? stack1.canonical : stack1),{"name":"if","hash":{},"fn":container.program(28, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                    </div>\n                </div>\n                <!-- end row -->\n\n                <div class=\"row\">\n"
     + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].contactNumber : depths[1]),{"name":"if","hash":{},"fn":container.program(30, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                </div><!-- end row -->\n            </div>\n            <div class=\"col-md-12 more-details\">\n                <!-- Youtube video-->\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.youtubeUrl : depth0),{"name":"if","hash":{},"fn":container.program(32, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                <!-- End youtube video-->\n\n                <!-- Nav tabs -->\n                <ul class=\"nav nav-tabs\" role=\"tablist\">\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(37, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.features : depth0),{"name":"if","hash":{},"fn":container.program(39, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                </div><!-- end row -->\n            </div>\n            <div class=\"col-md-12 more-details\">\n                <!-- Nav tabs -->\n                <ul class=\"nav nav-tabs\" role=\"tablist\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(32, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.youtubeUrl : depth0),{"name":"if","hash":{},"fn":container.program(34, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                    <li role=\"presentation\">\n                        <a href=\"#reviews\" aria-controls=\"reviews\" role=\"tab\" data-toggle=\"tab\">Reviews</a>\n                    </li>\n                </ul>\n                <!-- Tab panes -->\n                <div class=\"tab-content\">\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(41, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.features : depth0),{"name":"if","hash":{},"fn":container.program(43, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                        <div role=\"tabpanel\" class=\"tab-pane\" id=\"reviews\">\n                            <div class=\"row\"\n                                itemprop=\"aggregateRating\"\n                                itemscope=\"\" itemtype=\"http://schema.org/AggregateRating\">\n                                <div class=\"col-md-12 "
-    + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"if","hash":{},"fn":container.program(46, data, 0, blockParams, depths),"inverse":container.program(48, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
-    + "\">\n                                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,0,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(50, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                                        aria-hidden=\"true\">\n                                    </span>\n                                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,1,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(50, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                                        aria-hidden=\"true\">\n                                    </span>\n                                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,2,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(50, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                                        aria-hidden=\"true\">\n                                    </span>\n                                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,3,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(50, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                                        aria-hidden=\"true\">\n                                    </span>\n                                    <span class=\"glyphicon glyphicon-star"
-    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,4,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(50, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\n                                        aria-hidden=\"true\">\n                                    </span>\n\n                                    <span itemprop=\"aggregateRating\" itemscope itemtype=\"http://schema.org/AggregateRating\">\n                                        <span class=\"label label-success\">\n                                            <span itemprop=\"reviewCount\">"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(36, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                    <!-- Youtube video-->\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.youtubeUrl : depth0),{"name":"if","hash":{},"fn":container.program(38, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                    <!-- End youtube video-->\n\n                    <div role=\"tabpanel\" class=\"tab-pane\" id=\"reviews\">\n                        <div class=\"row\"\n                            itemprop=\"aggregateRating\"\n                            itemscope=\"\" itemtype=\"http://schema.org/AggregateRating\">\n                            <div class=\"col-md-12 "
+    + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"if","hash":{},"fn":container.program(43, data, 0, blockParams, depths),"inverse":container.program(45, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + "\">\n                                <span class=\"glyphicon glyphicon-star"
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,0,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\"\n                                    aria-hidden=\"true\">\n                                </span>\n                                <span class=\"glyphicon glyphicon-star"
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,1,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\"\n                                    aria-hidden=\"true\">\n                                </span>\n                                <span class=\"glyphicon glyphicon-star"
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,2,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\"\n                                    aria-hidden=\"true\">\n                                </span>\n                                <span class=\"glyphicon glyphicon-star"
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,3,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\"\n                                    aria-hidden=\"true\">\n                                </span>\n                                <span class=\"glyphicon glyphicon-star"
+    + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,4,(depth0 != null ? depth0.avgRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\"\n                                    aria-hidden=\"true\">\n                                </span>\n\n                                <span itemprop=\"aggregateRating\" itemscope itemtype=\"http://schema.org/AggregateRating\">\n                                    <span class=\"label label-success\">\n                                        <span itemprop=\"reviewCount\">"
     + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.avgRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
-    + "</span> *\n                                        </span>&nbsp;\n\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviewCount : depth0),{"name":"if","hash":{},"fn":container.program(52, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</span> *\n                                    </span>&nbsp;\n\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviewCount : depth0),{"name":"if","hash":{},"fn":container.program(49, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n"
-    + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(54, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                                    </span>\n\n                                </div>\n                            </div><!-- end row -->\n                            \n                            "
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(56, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n                        </div>\n                </div>\n            </div>\n            <div style=\"border-top: 1px solid lightgray;\" class=\"similar-products col-md-12\">\n            <h2 style=\"font-size: 15px;\">You may also like..</h2>\n"
-    + ((stack1 = helpers.each.call(alias1,(depths[1] != null ? depths[1].similar : depths[1]),{"name":"each","hash":{},"fn":container.program(58, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(51, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                                </span>\n\n                            </div>\n                        </div><!-- end row -->\n                        \n                        "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(53, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\n                    </div>\n                </div>\n            </div>\n            <div style=\"border-top: 1px solid lightgray;\" class=\"similar-products col-md-12\">\n            <h2 style=\"font-size: 15px;\">You may also like..</h2>\n"
+    + ((stack1 = helpers.each.call(alias1,(depths[1] != null ? depths[1].similar : depths[1]),{"name":"each","hash":{},"fn":container.program(55, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </div>\n        </div><!-- end row -->\n        <div class=\"row\">\n\n        </div>\n    </div><!-- end container -->\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"http://schema.org/\",\n  \"@type\": \"Product\",\n  \"name\": \""
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\",\n  \"image\": [\n    \""
@@ -1595,9 +1596,9 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + alias4(((helper = (helper = helpers.avgRatings || (depth0 != null ? depth0.avgRatings : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"avgRatings","hash":{},"data":data}) : helper)))
     + "\",\n    \"reviewCount\": \""
     + alias4(((helper = (helper = helpers.reviewCount || (depth0 != null ? depth0.reviewCount : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reviewCount","hash":{},"data":data}) : helper)))
-    + "\"\n  },\n  \"offers\": {\n    \"@type\": \"Offer\",\n    \"priceCurrency\": \"KES\",\n    \"price\": \""
-    + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "\",\n    \"priceValidUntil\": \"2020-12-31\",\n    \"itemCondition\": \"http://schema.org/UsedCondition\",\n    \"availability\": \"http://schema.org/InStock\",\n    \"seller\": {\n      \"@type\": \"Organization\",\n      \"name\": \"Dial A Drink Kenya\"\n    }\n  }\n}\n</script>\n\n";
+    + "\"\n  },\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"if","hash":{},"fn":container.program(57, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "}\n</script>\n\n";
 },"2":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
@@ -1633,7 +1634,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "\n                                    </span>\n                                </span>\n";
 },"10":function(container,depth0,helpers,partials,data) {
-    return "                                <span class=\"product-price\" id=\"product-price\">"
+    return "                                <span itemprop=\"price\" class=\"product-price\" id=\"product-price\">"
     + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
 },"12":function(container,depth0,helpers,partials,data,blockParams,depths) {
@@ -1708,71 +1709,67 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + "\">"
     + alias2(alias1((depths[1] != null ? depths[1].contactNumber : depths[1]), depth0))
     + "</a>\n                            </p>\n                        </div>\n";
-},"32":function(container,depth0,helpers,partials,data,blockParams,depths) {
-    var stack1;
-
-  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depths[1] != null ? depths[1].isMobile : depths[1]),{"name":"if","hash":{},"fn":container.program(33, data, 0, blockParams, depths),"inverse":container.program(35, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "");
-},"33":function(container,depth0,helpers,partials,data) {
-    var helper;
-
-  return "                        <iframe width=\"320\" height=\"180\" \n                            src=\""
-    + container.escapeExpression(((helper = (helper = helpers.youtubeUrl || (depth0 != null ? depth0.youtubeUrl : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"youtubeUrl","hash":{},"data":data}) : helper)))
-    + "\" \n                            allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\"\n                            frameborder=\"0\" allowfullscreen>\n                        </iframe>\n";
-},"35":function(container,depth0,helpers,partials,data) {
-    var helper;
-
-  return "                        <iframe width=\"560\" height=\"315\" \n                            src=\""
-    + container.escapeExpression(((helper = (helper = helpers.youtubeUrl || (depth0 != null ? depth0.youtubeUrl : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"youtubeUrl","hash":{},"data":data}) : helper)))
-    + "\" \n                            allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\"\n                            frameborder=\"0\" allowfullscreen>\n                        </iframe>\n";
-},"37":function(container,depth0,helpers,partials,data) {
+},"32":function(container,depth0,helpers,partials,data) {
     return "                        <li role=\"presentation\" class=\"active\">\n                            <a href=\"#description\"\n                               aria-controls=\"description\"\n                               role=\"tab\"\n                               data-toggle=\"tab\">Description</a>\n                        </li>\n";
-},"39":function(container,depth0,helpers,partials,data) {
-    return "                        <li role=\"presentation\">\n                            <a href=\"#features\" aria-controls=\"features\" role=\"tab\" data-toggle=\"tab\">Features</a>\n                        </li>\n";
-},"41":function(container,depth0,helpers,partials,data) {
+},"34":function(container,depth0,helpers,partials,data) {
+    return "                        <li role=\"presentation\">\n                            <a href=\"#youtube\" aria-controls=\"youtube\" role=\"tab\" data-toggle=\"tab\">Youtube</a>\n                        </li>\n";
+},"36":function(container,depth0,helpers,partials,data) {
     var stack1, helper;
 
   return "                        <div role=\"tabpanel\" class=\"tab-pane active\" id=\"description\">\n                            "
     + ((stack1 = ((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"description","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\n                        </div>\n";
+},"38":function(container,depth0,helpers,partials,data,blockParams,depths) {
+    var stack1;
+
+  return "                        <div role=\"tabpanel\" class=\"tab-pane top-10\" id=\"youtube\">\n"
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depths[1] != null ? depths[1].isMobile : depths[1]),{"name":"if","hash":{},"fn":container.program(39, data, 0, blockParams, depths),"inverse":container.program(41, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + "                        </div>\n";
+},"39":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "                                <iframe width=\"320\" height=\"180\" \n                                    src=\""
+    + container.escapeExpression(((helper = (helper = helpers.youtubeUrl || (depth0 != null ? depth0.youtubeUrl : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"youtubeUrl","hash":{},"data":data}) : helper)))
+    + "\" \n                                    allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\"\n                                    frameborder=\"0\" allowfullscreen>\n                                </iframe>\n";
+},"41":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "                                <iframe width=\"560\" height=\"315\" \n                                    src=\""
+    + container.escapeExpression(((helper = (helper = helpers.youtubeUrl || (depth0 != null ? depth0.youtubeUrl : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"youtubeUrl","hash":{},"data":data}) : helper)))
+    + "\" \n                                    allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\"\n                                    frameborder=\"0\" allowfullscreen>\n                                </iframe>\n";
 },"43":function(container,depth0,helpers,partials,data) {
-    var stack1;
-
-  return "                        <div role=\"tabpanel\" class=\"tab-pane top-10\" id=\"features\">\n                            <ul>\n"
-    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.feature : depth0),{"name":"each","hash":{},"fn":container.program(44, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                            </ul>\n                        </div>\n";
-},"44":function(container,depth0,helpers,partials,data) {
-    var stack1;
-
-  return "                                    <li>"
-    + ((stack1 = container.lambda(depth0, depth0)) != null ? stack1 : "")
-    + "</li>\n";
-},"46":function(container,depth0,helpers,partials,data) {
     return "rated";
-},"48":function(container,depth0,helpers,partials,data) {
+},"45":function(container,depth0,helpers,partials,data) {
     return "unrated";
-},"50":function(container,depth0,helpers,partials,data) {
+},"47":function(container,depth0,helpers,partials,data) {
     return "-empty";
-},"52":function(container,depth0,helpers,partials,data) {
+},"49":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "                                            <span itemprop=\"reviewCount\" class=\"monospaced\">"
+  return "                                        <span itemprop=\"reviewCount\" class=\"monospaced\">"
     + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1), depth0))
     + "</span> reviews.\n";
-},"54":function(container,depth0,helpers,partials,data) {
-    return "                                            <span class=\"monospaced right\">Rate "
+},"51":function(container,depth0,helpers,partials,data) {
+    return "                                        <span class=\"monospaced right\">Rate "
     + container.escapeExpression((helpers.truncate || (depth0 && depth0.truncate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.name : depth0),25,{"name":"truncate","hash":{},"data":data}))
     + "!</span>\n";
-},"56":function(container,depth0,helpers,partials,data) {
+},"53":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return ((stack1 = container.invokePartial(partials.productReview,depth0,{"name":"productReview","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "");
-},"58":function(container,depth0,helpers,partials,data) {
+},"55":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                    <div class=\"col-md-2\">\n"
     + ((stack1 = container.invokePartial(partials.product2,depth0,{"name":"product2","data":data,"indent":"                        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "                    </div>\n";
-},"60":function(container,depth0,helpers,partials,data) {
+},"57":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "  \"offers\": {\n    \"@type\": \"Offer\",\n    \"priceCurrency\": \"KES\",\n    \"price\": \""
+    + container.escapeExpression(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"price","hash":{},"data":data}) : helper)))
+    + "\",\n    \"priceValidUntil\": \"2020-12-31\",\n    \"itemCondition\": \"http://schema.org/UsedCondition\",\n    \"availability\": \"http://schema.org/InStock\",\n    \"seller\": {\n      \"@type\": \"Organization\",\n      \"name\": \"Dial A Drink Kenya\"\n    }\n  }\n";
+},"59":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "            var index = Math.min(5,"
@@ -1784,7 +1781,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
   return "<link rel=\"preload\" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>\n\n"
     + ((stack1 = helpers["with"].call(alias1,(depth0 != null ? depth0.product : depth0),{"name":"with","hash":{},"fn":container.program(1, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n<script>\n    window.minifiedMenu = true;\n    $(document).ready(function () {\n        if (addaffix) addaffix();\n        //$('.tab-content .tab-pane').scrollbar();\n        //$(\".similar-products\").owlCarousel({items:12})\n\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(60, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(59, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "    })\n</script>\n";
 },"usePartial":true,"useData":true,"useDepths":true});
 
