@@ -69,10 +69,11 @@ router.get("/:product", function (req, res) {
                             .slice(0, 6);
 
                         var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
-                        var brand = brands.first();
-
                         if (brands.length == 1) locals.brand = brands.first();
+                    }else{
+                        locals.similar  = [];
                     }
+                    
                     //popularity goes up
                     product.addPopularity(1);
                     next(err);
