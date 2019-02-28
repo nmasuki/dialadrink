@@ -51,40 +51,38 @@
                 </div>
             </div><!-- end row -->
 
-            <div class="row"
-                 itemprop="aggregateRating"
-                 itemscope="" itemtype="http://schema.org/AggregateRating">
+            <div class="row">
                 <div class="col-md-12 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
-						<span class="glyphicon glyphicon-star{{#ifgte 0 avgRatings}}-empty{{/ifgte}}"
-                              aria-hidden="true">
-                        </span>
+                    <span class="glyphicon glyphicon-star{{#ifgte 0 avgRatings}}-empty{{/ifgte}}"
+                            aria-hidden="true">
+                    </span>
                     <span class="glyphicon glyphicon-star{{#ifgte 1 avgRatings}}-empty{{/ifgte}}"
-                          aria-hidden="true">
-                        </span>
+                        aria-hidden="true">
+                    </span>
                     <span class="glyphicon glyphicon-star{{#ifgte 2 avgRatings}}-empty{{/ifgte}}"
-                          aria-hidden="true">
-                        </span>
+                        aria-hidden="true">
+                    </span>
                     <span class="glyphicon glyphicon-star{{#ifgte 3 avgRatings}}-empty{{/ifgte}}"
-                          aria-hidden="true">
-                        </span>
+                        aria-hidden="true">
+                    </span>
                     <span class="glyphicon glyphicon-star{{#ifgte 4 avgRatings}}-empty{{/ifgte}}"
-                          aria-hidden="true">
-                        </span>
+                        aria-hidden="true">
+                    </span>
 
-                    <span itemprop="aggregateRating" itemscope
-                          itemtype="http://schema.org/AggregateRating">
-                            <span class="label label-success">
-                                <span itemprop="reviewCount">{{formatNumber avgRatings 1}}</span> *
-                            </span>&nbsp;
+                    <span itemscope = "" itemtype="http://schema.org/AggregateRating">
+                        <span class="label label-success">
+                            <span itemprop="aggregateRating">{{formatNumber avgRatings 1}}</span> *
+                        </span>&nbsp;
                         {{#if ratings.length}}
                             <span itemprop="reviewCount" class="monospaced">{{ratings.length}}</span> reviews.
+                        {{else}}
+                            <span style="display:none" itemprop="reviewCount" class="monospaced">1</span>
                         {{/if}}
 
                         {{#unless ../userRating}}
                             <span class="monospaced right">Rate {{truncate name 25}}!</span>
                         {{/unless}}
-                        </span>
-
+                    </span>
                 </div>
             </div><!-- end row -->
 
