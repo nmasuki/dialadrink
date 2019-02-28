@@ -10,9 +10,11 @@ var PesaPal = require('pesapaljs').init({
 function shortenUrlBitly(longUrl, next){
     var bitly = new Bitly.BitlyClient(process.env.BITLY_ACCESS_TOKEN, {});
     bitly.shorten(longUrl).then(function(result){
+		console.log("URL shortened: ", result.url, longUrl);
         next(null, result.url);
     })
     .catch(function(error) {
+		console.error("Error while doing URL shortening..", error);
         next(error);
     });
 }
