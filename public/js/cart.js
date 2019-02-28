@@ -288,7 +288,6 @@ var cartUtil = function () {
 
 window.app = window.app || {cartUtil: new cartUtil()};
 
-
 $(function () {
     $(document).on('click', '.add-to-cart', function (e) {
         e.preventDefault();
