@@ -42,12 +42,16 @@ module.exports = function MoveSMS(sender) {
                         dlr: 0
                     },
                     success: function (response) {
+                        console.log("SMS notification sent!", response);
+
                         var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
                         resolve(balance);
                         if (typeof next == "function")
                             next(null, balance);
                     },
                     error: function (error) {
+                        console.error("Error sending SMS!", error);
+
                         reject(error);
                         if (typeof next == "function")
                             next(error);

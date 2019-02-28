@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "async": "2.1.4",
+    "bitly": "^6.0.8",
     "body-parser-xml": "^1.1.0",
     "cheerio": "^1.0.0-rc.2",
     "cloudinary": "1.7.0",

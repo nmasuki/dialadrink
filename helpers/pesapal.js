@@ -1,12 +1,23 @@
 
 var najax = require('najax');
+var Bitly = require('bitly');
 var PesaPal = require('pesapaljs').init({
 	key: process.env.PESAPAL_KEY,
 	secret: process.env.PESAPAL_SECRET,
 	debug: process.env.NODE_ENV != "production" // false in production!
 });
 
-function shoternUrl(longUrl, next) {
+function shortenUrlBitly(longUrl, next){
+    var bitly = new Bitly.BitlyClient(process.env.BITLY_ACCESS_TOKEN, {});
+    bitly.shorten(longUrl).then(function(result){
+        next(null, result.url);
+    })
+    .catch(function(error) {
+        next(error);
+    });
+}
+
+function shoternUrlGoogle(longUrl, next) {
 	var googl = require('goo.gl');
 
 	// Set a developer key (_required by Google_; see http://goo.gl/4DvFk for more info.)
@@ -22,10 +33,14 @@ function shoternUrl(longUrl, next) {
 		});
 }
 
-function shoternUrl2(longUrl, next) {
-	var url = `https://4h.net/api.php?url=${longUrl}`;
-	najax.get({
+function shoternUrlGoogleOld(longUrl, next) {
+	var url = `https://www.googleapis.com/urlshortener/v1/url?key=${process.env.GOOGLE_API_KEY1}`;
+	najax.post({
 		url: url,
+		contentType: "application/json; charset=utf-8",
+		data: {
+			longUrl: longUrl
+		},
 		success: function (res) {
 			if (typeof next == "function")
 				next(null, res);
@@ -36,14 +51,10 @@ function shoternUrl2(longUrl, next) {
 	});
 }
 
-function shoternUrlOld(longUrl, next) {
-	var url = `https://www.googleapis.com/urlshortener/v1/url?key=${process.env.GOOGLE_API_KEY1}`;
-	najax.post({
+function shoternUrl24h(longUrl, next) {
+	var url = `https://4h.net/api.php?url=${longUrl}`;
+	najax.get({
 		url: url,
-		contentType: "application/json; charset=utf-8",
-		data: {
-			longUrl: longUrl
-		},
 		success: function (res) {
 			if (typeof next == "function")
 				next(null, res);
@@ -72,7 +83,7 @@ function getPasaPalUrl(order, host) {
 	return url;
 }
 
-function getPasaPalUrl1(order, host) {
+function getPasaPalUrlOld(order, host) {
 	var pesapal = require('pesapal')({
 		consumerKey: process.env.PESAPAL_KEY,
 		consumerSecret: process.env.PESAPAL_SECRET,
@@ -97,5 +108,5 @@ function getPasaPalUrl1(order, host) {
 
 module.exports = {
     getPasaPalUrl: getPasaPalUrl,
-    shoternUrl: shoternUrl2
+    shoternUrl: shortenUrlBitly
 }

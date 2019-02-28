@@ -110,7 +110,8 @@ router.post("/", function (req, res, next) {
 				var paymentUrl = `https://www.dialadrinkkenya.com/payment/${order.orderNumber}`;
 				pesapalHelper.shoternUrl(paymentUrl, function(err, shortUrl){
 					order.payment.url = paymentUrl;
-					order.payment.shortUrl = shortUrl;
+					if(!err)
+						order.payment.shortUrl = shortUrl;
 					order.save(placeOrder);
 				});
 			}else{

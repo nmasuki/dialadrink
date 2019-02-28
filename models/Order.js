@@ -259,7 +259,13 @@ Order.schema.methods.sendSMSNotification = function (next, message) {
     else
         message += ` You will be required to pay ${this.currency||''} ${this.total} on delivery`;
         
-    sms.send(this.delivery.phoneNumber, message.trim(), next);
+    sms.send(this.delivery.phoneNumber, message.trim(), function(err, res){
+        if(err)
+            console.error.apply(this, arguments);
+        
+        if(typeof next == "function")
+            next.apply(this, arguments);
+    });
 };
 
 Order.schema.methods.sendOrderNotification = function (next) {
@@ -349,7 +355,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
                     if (order.delivery.phoneNumber) {
                         message = `Dial a Drink: Your order #${order.orderNumber} has been received. ` +
-                            `Please pay ${order.currency||''}${order.total} ${order.payment.method? 'in ' + order.paymentMethod: ''}` +
+                            `Please pay ${order.currency||''} ${order.total} ${order.payment.method? 'in ' + order.paymentMethod: ''}` +
                             `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
                         
                         order.sendSMSNotification(message);                
