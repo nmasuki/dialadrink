@@ -73,8 +73,7 @@
                         <div class="col-md-3">
                             <select id="change-quantity" class="quantity" style="width: 134px; height: 40px;">
                                 {{#each options}}
-                                    <option data-offer="{{offerPrice}}" value="{{price}}"
-                                            {{#ifeq ../price price}}selected{{/ifeq}}>
+                                    <option data-offer="{{offerPrice}}" value="{{price}}" {{#ifeq ../price price}}selected{{/ifeq}}>
                                         {{quantity}}
                                     </option>
                                 {{/each}}
@@ -82,7 +81,7 @@
                         </div>
                     {{else}}
                         <div class="col-md-5">
-                            <h2 style="margin: 5px 0 0 0;" itemprop="name">{{{quantity}}}</h1>
+                            <h2 style="margin: 5px 0 0 0;">{{{quantity}}}</h1>
                         </div>
                     {{/ifgt}}
                 </div>
