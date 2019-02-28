@@ -130,7 +130,12 @@
                     </div>
 
                     <p style="margin:0 0 16px">
-                        <b>Payment Method:</b> {{#if payment.method}}{{payment.method}}{{else}}Cash on delivery{{/if}}
+                        <b>Payment Method:</b> {{#if paymentMethod}}{{paymentMethod}}{{else}}Cash on delivery{{/if}}
+                        {{#ifne payment.method 'PesaPal'}}
+                        <p>
+                            Note: You can still pay online at <a href="http://www.dialadrinkkenya.com/payment/{{orderNumber}}">dialadrinkkenya.com/payment/{{orderNumber}}</a>
+                        </p>
+                        {{/ifne}}
                     </p>
 
                     <table id="order-addresses"
