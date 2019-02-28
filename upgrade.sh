@@ -1,6 +1,6 @@
 cp .env /var/tmp/dialadrink.env
 git stash
-git reset HEAD 
+git reset HEAD .
 git pull -X theirs
 git stash pop
 
