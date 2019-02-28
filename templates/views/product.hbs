@@ -294,6 +294,7 @@
   },
   "aggregateRating": {
     "@type": "AggregateRating",
+    "bestRating": "5"
     "ratingValue": "{{#if avgRatings}}{{avgRatings}}{{else}}4{{/if}}",
     "ratingCount": "{{#if reviewCount}}{{reviewCount}}{{else}}0{{/if}}"
   },
@@ -301,6 +302,10 @@
   "offers": {
     "@type": "Offer",
     "priceCurrency": "KES",
+    {{#if offerPrice}}
+    "highPrice": "{{price}}",
+    "lowPrice": "{{offerPrice}}",
+    {{/if}}
     "price": "{{price}}",
     "priceValidUntil": "2020-12-31",
     "itemCondition": "http://schema.org/UsedCondition",
