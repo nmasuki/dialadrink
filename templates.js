@@ -874,7 +874,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=container.lambda, alias2=container.escapeExpression, alias3=depth0 != null ? depth0 : {}, alias4=helpers.helperMissing, alias5="function";
 
-  return "<!doctype html>\n<html class=\"no-js\">\n<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\"/>\n<head>\n    <title>"
+  return "<!doctype html>\n<html lang=\"en\" class=\"no-js\">\n<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\"/>\n<head>\n    <title>"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.title : stack1), depth0))
     + "</title>\n\n    <meta charset=\"utf-8\"/>\n    <meta name=\"_csrf\" content=\""
     + alias2(((helper = (helper = helpers.csrf_token_value || (depth0 != null ? depth0.csrf_token_value : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"csrf_token_value","hash":{},"data":data}) : helper)))
