@@ -292,7 +292,7 @@
         iframe.css({
             border: "none",
             width:  '100%',
-            height: (form.height()) + 'px'
+            height: ($("form.needs-validation").height()) + 'px'
         });
 
         $("form.needs-validation").replaceWith(iframe);
