@@ -575,17 +575,21 @@ $(window).resize(function () {
     toggleLeftMenu();
 });
 
+function onTouchStart(e){
+    //Do nothing
+}
 
 
 $(window).ready(function ($) {
+    document.addEventListener('touchstart', onTouchStart, {passive: true});
 
     if($.fn.tooltip)
         $('[data-toggle="tooltip"]').tooltip();
 
-    $(document).on("mousemove", "figure.zoom", function zoom(e){
+    $(document).on("mousemove, touchmove", "figure.zoom", function zoom(e){
         var zoomer = e.currentTarget;
-        e.offsetX ? offsetX = e.offsetX : offsetX = e.touches[0].pageX
-        e.offsetY ? offsetY = e.offsetY : offsetX = e.touches[0].pageX
+        var offsetX = e.offsetX || e.touches[0].pageX;
+        var offsetY = e.offsetY || e.touches[0].pageX;
         x = offsetX/zoomer.offsetWidth*100
         y = offsetY/zoomer.offsetHeight*100
         zoomer.style.backgroundPosition = x + '% ' + y + '%';
