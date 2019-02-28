@@ -181,24 +181,6 @@
                 </div><!-- end row -->
             </div>
             <div class="col-md-12 more-details">
-                <!-- Youtube video-->
-                {{#if youtubeUrl}}
-                    {{#if ../isMobile}}
-                        <iframe width="320" height="180" 
-                            src="{{youtubeUrl}}" 
-                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                            frameborder="0" allowfullscreen>
-                        </iframe>
-                    {{else}}
-                        <iframe width="560" height="315" 
-                            src="{{youtubeUrl}}" 
-                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                            frameborder="0" allowfullscreen>
-                        </iframe>
-                    {{/if}}
-                {{/if}}
-                <!-- End youtube video-->
-
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
                     {{#if description}}
@@ -209,9 +191,9 @@
                                data-toggle="tab">Description</a>
                         </li>
                     {{/if}}
-                    {{#if features}}
+                    {{#if youtubeUrl}}
                         <li role="presentation">
-                            <a href="#features" aria-controls="features" role="tab" data-toggle="tab">Features</a>
+                            <a href="#youtube" aria-controls="youtube" role="tab" data-toggle="tab">Youtube</a>
                         </li>
                     {{/if}}
                     <li role="presentation">
@@ -225,55 +207,66 @@
                             {{{description}}}
                         </div>
                     {{/if}}
-                    {{#if features}}
-                        <div role="tabpanel" class="tab-pane top-10" id="features">
-                            <ul>
-                                {{#each feature}}
-                                    <li>{{{this}}}</li>
-                                {{/each}}
-                            </ul>
+                    <!-- Youtube video-->
+                    {{#if youtubeUrl}}
+                        <div role="tabpanel" class="tab-pane top-10" id="youtube">
+                            {{#if ../isMobile}}
+                                <iframe width="320" height="180" 
+                                    src="{{youtubeUrl}}" 
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                    frameborder="0" allowfullscreen>
+                                </iframe>
+                            {{else}}
+                                <iframe width="560" height="315" 
+                                    src="{{youtubeUrl}}" 
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                    frameborder="0" allowfullscreen>
+                                </iframe>
+                            {{/if}}
                         </div>
                     {{/if}}
-                        <div role="tabpanel" class="tab-pane" id="reviews">
-                            <div class="row"
-                                itemprop="aggregateRating"
-                                itemscope="" itemtype="http://schema.org/AggregateRating">
-                                <div class="col-md-12 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
-                                    <span class="glyphicon glyphicon-star{{#ifgte 0 avgRatings}}-empty{{/ifgte}}"
-                                        aria-hidden="true">
-                                    </span>
-                                    <span class="glyphicon glyphicon-star{{#ifgte 1 avgRatings}}-empty{{/ifgte}}"
-                                        aria-hidden="true">
-                                    </span>
-                                    <span class="glyphicon glyphicon-star{{#ifgte 2 avgRatings}}-empty{{/ifgte}}"
-                                        aria-hidden="true">
-                                    </span>
-                                    <span class="glyphicon glyphicon-star{{#ifgte 3 avgRatings}}-empty{{/ifgte}}"
-                                        aria-hidden="true">
-                                    </span>
-                                    <span class="glyphicon glyphicon-star{{#ifgte 4 avgRatings}}-empty{{/ifgte}}"
-                                        aria-hidden="true">
-                                    </span>
+                    <!-- End youtube video-->
 
-                                    <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
-                                        <span class="label label-success">
-                                            <span itemprop="reviewCount">{{formatNumber avgRatings 1}}</span> *
-                                        </span>&nbsp;
+                    <div role="tabpanel" class="tab-pane" id="reviews">
+                        <div class="row"
+                            itemprop="aggregateRating"
+                            itemscope="" itemtype="http://schema.org/AggregateRating">
+                            <div class="col-md-12 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
+                                <span class="glyphicon glyphicon-star{{#ifgte 0 avgRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+                                <span class="glyphicon glyphicon-star{{#ifgte 1 avgRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+                                <span class="glyphicon glyphicon-star{{#ifgte 2 avgRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+                                <span class="glyphicon glyphicon-star{{#ifgte 3 avgRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+                                <span class="glyphicon glyphicon-star{{#ifgte 4 avgRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
 
-                                        {{#if reviewCount}}
-                                            <span itemprop="reviewCount" class="monospaced">{{ratings.length}}</span> reviews.
-                                        {{/if}}
+                                <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                                    <span class="label label-success">
+                                        <span itemprop="reviewCount">{{formatNumber avgRatings 1}}</span> *
+                                    </span>&nbsp;
 
-                                        {{#unless ../userRating}}
-                                            <span class="monospaced right">Rate {{truncate name 25}}!</span>
-                                        {{/unless}}
-                                    </span>
+                                    {{#if reviewCount}}
+                                        <span itemprop="reviewCount" class="monospaced">{{ratings.length}}</span> reviews.
+                                    {{/if}}
 
-                                </div>
-                            </div><!-- end row -->
-                            
-                            {{#if reviews}}{{>productReview}}{{/if}}
-                        </div>
+                                    {{#unless ../userRating}}
+                                        <span class="monospaced right">Rate {{truncate name 25}}!</span>
+                                    {{/unless}}
+                                </span>
+
+                            </div>
+                        </div><!-- end row -->
+                        
+                        {{#if reviews}}{{>productReview}}{{/if}}
+                    </div>
                 </div>
             </div>
             <div style="border-top: 1px solid lightgray;" class="similar-products col-md-12">

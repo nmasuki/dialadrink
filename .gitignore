@@ -4,3 +4,4 @@ routes/cache
 .env
 /.env
 /.*
+/templates.js
