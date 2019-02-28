@@ -394,7 +394,7 @@ this["templates"]["views"]["cart"]["hbs"]["templates/views/cart.hbs"] = Handleba
   return "				<li data-cartid=\""
     + alias4(((helper = (helper = helpers.cartId || (depth0 != null ? depth0.cartId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cartId","hash":{},"data":data}) : helper)))
     + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\r\n					<div style=\"float: left; width: auto;\">\r\n						<img class=\"cart-image\" src=\""
-    + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"crop":"fit"},"data":data}))
+    + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
     + "\" style=\"max-height: 52px\">\r\n					</div>\r\n					<div class=\"col-md-5\">\r\n						<h6 class=\"my-0\">\r\n							<a class=\"cart-product-link\" href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
     + "\">\r\n								"
@@ -469,7 +469,7 @@ this["templates"]["views"]["checkout"]["hbs"]["templates/views/checkout.hbs"] = 
   return "                        <li data-cartid=\""
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
     + "\"\r\n                            class=\"list-group-item d-flex justify-content-between lh-condensed row\">\r\n                            <div style=\"float: left; width: auto; min-width: 53px;\">\r\n                                <img class=\"cart-image\" src=\""
-    + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"crop":"fit"},"data":data}))
+    + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
     + "\"\r\n                                     style=\"max-height: 52px;\">\r\n                            </div>\r\n                            <div class=\"col-md-8\">\r\n                                <h6 class=\"my-0\"><a href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
     + "\">"
@@ -494,7 +494,7 @@ this["templates"]["views"]["checkout"]["hbs"]["templates/views/checkout.hbs"] = 
 },"13":function(container,depth0,helpers,partials,data) {
     return "                    <li class=\"list-group-item d-flex justify-content-between\">\r\n                        <div class=\"loading cart-loading\">\r\n                            <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart.png\" alt=\"Empty!\" style=\"height: 50px;\"> You have no items in\r\n                            your cart!!\r\n                        </div>\r\n                        <a href=\"/\">Continue shopping.</a>\r\n                        <p style=\"font-size: 13px\">\r\n                            You can proceed to filling in and saving your delivery details for future references.\r\n                        </p>\r\n                    </li>\r\n";
 },"15":function(container,depth0,helpers,partials,data) {
-    return "                <form class=\"card promo-redeem\">\r\n                    <div class=\"row\">\r\n                        <div class=\"col-md-12\">\r\n                            <div class=\"row\">\r\n                                <div class=\"col-md-8\">\r\n                                    <input id=\"promocode\" type=\"text\" class=\"form-control\" placeholder=\"Promo code\" style=\"width: 100%; float: left;\">\r\n                                </div>\r\n                                <div class=\"col-md-4\">\r\n                                    <button type=\"submit\" class=\"btn btn-secondary\" style=\"margin-top: 0;\">Redeem</button>\r\n                                </div>\r\n                            </div>                            \r\n                        </div>\r\n                    </div>\r\n                </form>\r\n";
+    return "                <form class=\"card promo-redeem\">\r\n                    <div class=\"row\">\r\n                        <div class=\"col-md-12\">\r\n                            <div class=\"row\">\r\n                                <div class=\"col-md-8 col-sm-8\">\r\n                                    <input id=\"promocode\" type=\"text\" class=\"form-control\" placeholder=\"Promo code\" style=\"width: 100%; float: left;\">\r\n                                </div>\r\n                                <div class=\"col-md-4 col-sm-4\">\r\n                                    <button type=\"submit\" class=\"btn btn-secondary\" style=\"margin-top: 0;\">Redeem</button>\r\n                                </div>\r\n                            </div>                            \r\n                        </div>\r\n                    </div>\r\n                </form>\r\n";
 },"17":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -916,7 +916,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + ((stack1 = helpers.each.call(alias3,(depth0 != null ? depth0.navLinks : depth0),{"name":"each","hash":{},"fn":container.program(14, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                    </ul>\r\n                </div>\r\n            </div>\r\n            <div class=\"container clearfix\">\r\n                <div class=\"row\">\r\n                    <div class=\"main-header-inner\">\r\n                        <div class=\"nav-top\">\r\n\r\n                            <div class=\"nav-search\">\r\n                                <form class=\"search\" action=\"#\">\r\n                                    <input type=\"hidden\" name=\"type\" value=\"product\"/>\r\n                                    <input type=\"image\" src=\"/assets/icon-search.png\" alt=\"Go\" id=\"search\">\r\n                                    <input type=\"text\" name=\"q\" class=\"search_box\" placeholder=\"Search for a drink...\"\r\n                                           value=\"\" id=\"search_box\"/>\r\n                                </form>\r\n                            </div>\r\n\r\n                            <div class=\"nav-logo\">\r\n                                <h style=\"font-size: 28px;\">\r\n                                    <a href=\"/\">\r\n                                        <strong><span style=\" color: #F44336\">Dial A Drink Kenya</span></strong>\r\n                                    </a>\r\n                                </h>\r\n                            </div>\r\n\r\n                            <div id=\"cart-target\" class=\"nav-cart \">\r\n                                <div class=\"cart-info-group\">\r\n                                    <a href=\"/cart\" class=\"cart dropdown-toggle dropdown-link\" data-toggle=\"dropdown\"\r\n                                       title=\"Shopping Cart\">\r\n                                        <i class=\"sub-dropdown1 visible-sm visible-md visible-lg\"></i>\r\n                                        <i class=\"sub-dropdown visible-sm visible-md visible-lg\"></i>\r\n                                        <div class=\"num-items-in-cart\">\r\n                                            <img class=\"cart_img\" src=\"/assets/bg-cart.png\" alt=\"My Cart\"/>\r\n                                            <span class=\"cart_text\">\r\n												<a href=\"/cart\">\r\n                                                    My Cart\r\n                                                    <span class=\"number cart-total-pieces\" id=\"number\">\r\n                                                        "
     + alias2((helpers.cartItemCount || (depth0 && depth0.cartItemCount) || alias4).call(alias3,depth0,{"name":"cartItemCount","hash":{},"data":data}))
-    + "\r\n                                                    </span>\r\n												</a>											  \r\n											</span>\r\n                                        </div>\r\n                                    </a>\r\n                                    <div id=\"cart-info\" class=\"dropdown-menu\">\r\n                                        <div id=\"cart-content\">\r\n                                            <div class=\"loading\">\r\n                                                <img src=\"/assets/loader.gif\" alt=\"Loading..\"/> Loading..\r\n                                            </div>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navigation_area\">\r\n                            <ul class=\"navigation_links\">\r\n                                <li class=\"nav-item\" style=\"margin: 0\">\r\n                                    <a href=\"/giftpacks\" title=\"Gift Packs\">\r\n                                        <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/giftpack.png\" style=\"width: 32px\"/>\r\n                                        <span class=\"hide_affix\">Gift Pack</span>\r\n                                    </a>\r\n                                </li>\r\n"
+    + "\r\n                                                    </span>\r\n												</a>											  \r\n											</span>\r\n                                        </div>\r\n                                    </a>\r\n                                    <div id=\"cart-info\" class=\"dropdown-menu\">\r\n                                        <div id=\"cart-content\">\r\n                                            <div class=\"loading\">\r\n                                                <img src=\"/assets/loader.gif\" alt=\"Loading..\"/> Loading..\r\n                                            </div>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"navigation_area\">\r\n                            <ul class=\"navigation_links\">\r\n                                <li class=\"nav-item\" style=\"margin: 0\">\r\n                                    <a href=\"/giftpacks\" title=\"Gift Packs\">\r\n                                        <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill,w_32/giftpack.png\" alt=\"Gify Park\" style=\"width: 32px\"/>\r\n                                        <span class=\"hide_affix\">Gift Pack</span>\r\n                                    </a>\r\n                                </li>\r\n"
     + ((stack1 = helpers.each.call(alias3,(depth0 != null ? depth0.navLinks : depth0),{"name":"each","hash":{},"fn":container.program(16, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                            </ul>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </section>\r\n</header>\r\n\r\n<div class=\"fix-sticky\"></div>\r\n\r\n<!-- Main Content -->\r\n<main class=\"main-content\" role=\"main\" style=\"min-height: 400px\">\r\n    <section class=\"collection-heading\">\r\n        <div class=\"collection-heading-wrapper\">\r\n            <div class=\"container\" style=\"padding-bottom: 0\">\r\n"
     + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.bannerImages : stack1),{"name":"if","hash":{},"fn":container.program(24, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -1101,13 +1101,11 @@ this["templates"]["views"]["order"]["hbs"]["templates/views/order.hbs"] = Handle
 },"27":function(container,depth0,helpers,partials,data) {
     return "Cash on delivery";
 },"29":function(container,depth0,helpers,partials,data) {
-    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+    var helper;
 
-  return "                        <p>\r\n                            Note: You can still pay online at <a href=\"http://www.dialadrinkkenya.com/payment/"
-    + alias4(((helper = (helper = helpers.orderNumber || (depth0 != null ? depth0.orderNumber : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"orderNumber","hash":{},"data":data}) : helper)))
-    + "\">dialadrinkkenya.com/payment/"
-    + alias4(((helper = (helper = helpers.orderNumber || (depth0 != null ? depth0.orderNumber : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"orderNumber","hash":{},"data":data}) : helper)))
-    + "</a>\r\n                        </p>\r\n";
+  return "                        <p style=\"cursor: pointer;\" onclick=\"goPay.click()\">\r\n                            Note: You can still pay via MPESA/Visa/Master Card <a name=\"goPay\" href=\"http://www.dialadrinkkenya.com/payment/"
+    + container.escapeExpression(((helper = (helper = helpers.orderNumber || (depth0 != null ? depth0.orderNumber : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"orderNumber","hash":{},"data":data}) : helper)))
+    + "\">here</a>\r\n                        </p>\r\n";
 },"31":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.lambda, alias2=container.escapeExpression;
 
@@ -1253,7 +1251,7 @@ this["templates"]["views"]["partials"]["mini-cart-item"]["hbs"]["templates/views
   return "<li data-cartid=\""
     + alias4(((helper = (helper = helpers.cartId || (depth0 != null ? depth0.cartId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cartId","hash":{},"data":data}) : helper)))
     + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\r\n    <div style=\"float: left; width: auto;\">\r\n        <img class=\"cart-image\" src=\""
-    + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"crop":"fit"},"data":data}))
+    + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
     + "\" style=\"max-height: 52px\">\r\n    </div>\r\n    <div class=\"col-md-8\">\r\n        <h6 class=\"my-0\"><a href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
     + "\">"
@@ -1268,9 +1266,9 @@ this["templates"]["views"]["partials"]["mini-cart-item"]["hbs"]["templates/views
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.pieces : depth0),1,{"name":"ifgt","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\r\n            @<span class=\"cart-currency\">KES</span>\r\n            <stan class=\"cart-cost\">"
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "</stan>\r\n        </small>\r\n        <div class=\"right\">\r\n							<span class=\"text-muted\">\r\n								<span class=\"cart-currency\">KES</span>\r\n								<stan class=\"cart-price\">"
+    + "</stan>\r\n        </small>\r\n        <div class=\"right\">\r\n            <span class=\"text-muted\">\r\n                <span class=\"cart-currency\">KES</span>\r\n                <stan class=\"cart-price\">"
     + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(helpers.prod || (depth0 && depth0.prod) || alias2).call(alias1,(depth0 != null ? depth0.pieces : depth0),(depth0 != null ? depth0.price : depth0),{"name":"prod","hash":{},"data":data}),{"name":"formatNumber","hash":{},"data":data}))
-    + "</stan>\r\n							</span>\r\n        </div>\r\n    </div>\r\n    <a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>\r\n</li>";
+    + "</stan>\r\n            </span>\r\n        </div>\r\n    </div>\r\n    <a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>\r\n</li>";
 },"useData":true});
 
 this["templates"]["views"]["partials"]["pagination"]["hbs"]["templates/views/partials/pagination.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -1312,7 +1310,7 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
 },"7":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "                    <image src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png\" \r\n                        class=\"add-to-cart\" \r\n                        data-qty=\""
+  return "                    <image src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png\" \r\n                        alt=\"Add to Cart\"\r\n                        class=\"add-to-cart\" \r\n                        data-qty=\""
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "\" data-product=\""
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
@@ -1425,7 +1423,7 @@ this["templates"]["views"]["partials"]["product2"]["hbs"]["templates/views/parti
 this["templates"]["views"]["partials"]["pwaheaders"]["hbs"]["templates/views/partials/pwaheaders.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "\r\n<link rel=\"manifest\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/manifest.json\"/>\r\n<link rel=\"shortcut icon\" href=\"/favicon.ico\" type=\"image/x-icon\"/>\r\n<link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\"/>\r\n\r\n<link rel=\"apple-touch-icon\" sizes=\"57x57\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-57x57.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"60x60\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-60x60.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"72x72\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-72x72.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"76x76\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-76x76.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"114x114\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-114x114.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"120x120\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-120x120.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"144x144\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-144x144.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"152x152\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-152x152.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-180x180.png\"/>\r\n\r\n<link rel=\"icon\" type=\"image/png\" sizes=\"192x192\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/favicon-192x192.png\"/>\r\n<link rel=\"icon\" type=\"image/png\" sizes=\"96x96\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/favicon-96x96.png\"/>\r\n<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/favicon-32x32.png\"/>\r\n<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/favicon-16x16.png\"/>\r\n\r\n<link rel=\"mask-icon\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/safari-pinned-tab.svg\" color=\"#5bbad5\"/>\r\n<meta name=\"theme-color\" content=\"#ffffff\">\r\n\r\n<script src=\"/sw-register"
+  return "\r\n<link rel=\"manifest\" href=\"/images/icons/manifest.json\"/>\r\n<link rel=\"shortcut icon\" href=\"/favicon.ico\" type=\"image/x-icon\"/>\r\n<link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\"/>\r\n\r\n<link rel=\"apple-touch-icon\" sizes=\"57x57\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-57x57.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"60x60\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-60x60.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"72x72\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-72x72.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"76x76\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-76x76.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"114x114\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-114x114.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"120x120\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-120x120.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"144x144\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-144x144.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"152x152\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-152x152.png\"/>\r\n<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-180x180.png\"/>\r\n\r\n<link rel=\"icon\" type=\"image/png\" sizes=\"192x192\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/favicon-192x192.png\"/>\r\n<link rel=\"icon\" type=\"image/png\" sizes=\"96x96\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/favicon-96x96.png\"/>\r\n<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/favicon-32x32.png\"/>\r\n<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/favicon-16x16.png\"/>\r\n\r\n<link rel=\"mask-icon\" href=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/safari-pinned-tab.svg\" color=\"#5bbad5\"/>\r\n<meta name=\"theme-color\" content=\"#ffffff\">\r\n\r\n<script src=\"/sw-register"
     + container.escapeExpression(((helper = (helper = helpers.dotmin || (depth0 != null ? depth0.dotmin : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"dotmin","hash":{},"data":data}) : helper)))
     + ".js\" async></script>\r\n\r\n";
 },"useData":true});
@@ -1562,7 +1560,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"if","hash":{},"fn":container.program(36, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                    <!-- Youtube video-->\r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.youtubeUrl : depth0),{"name":"if","hash":{},"fn":container.program(38, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                    <!-- End youtube video-->\r\n\r\n                    <div role=\"tabpanel\" class=\"tab-pane\" id=\"reviews\">\r\n                        <div class=\"row\"\r\n                            itemprop=\"aggregateRating\"\r\n                            itemscope=\"\" itemtype=\"http://schema.org/AggregateRating\">\r\n                            <div class=\"col-md-12 "
+    + "                    <!-- End youtube video-->\r\n\r\n                    <div role=\"tabpanel\" class=\"tab-pane\" id=\"reviews\">\r\n                        <div class=\"row\">\r\n                            <div class=\"col-md-12 "
     + ((stack1 = helpers["if"].call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"if","hash":{},"fn":container.program(43, data, 0, blockParams, depths),"inverse":container.program(45, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\">\r\n                                <span class=\"glyphicon glyphicon-star"
     + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,0,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -1574,7 +1572,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,3,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n                                <span class=\"glyphicon glyphicon-star"
     + ((stack1 = (helpers.ifgte || (depth0 && depth0.ifgte) || alias2).call(alias1,4,(depth0 != null ? depth0.averageRatings : depth0),{"name":"ifgte","hash":{},"fn":container.program(47, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n\r\n                                <span itemprop=\"aggregateRating\" itemscope itemtype=\"http://schema.org/AggregateRating\">\r\n                                    <span class=\"label label-success\">\r\n                                        <span itemprop=\"ratingCount\">"
+    + "\"\r\n                                    aria-hidden=\"true\">\r\n                                </span>\r\n\r\n                                <span itemprop=\"aggregateRating\" itemscope itemtype=\"http://schema.org/AggregateRating\">\r\n                                    <span class=\"label label-success\">\r\n                                        <span itemprop=\"ratingValue\">"
     + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.averageRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
     + "</span> *\r\n                                    </span>&nbsp;\r\n\r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.ratingCount : depth0),{"name":"if","hash":{},"fn":container.program(49, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -1592,12 +1590,12 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = (helpers.truncate || (depth0 && depth0.truncate) || alias2).call(alias1,(helpers.cleanHtml || (depth0 && depth0.cleanHtml) || alias2).call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"cleanHtml","hash":{},"data":data}),500," ",{"name":"truncate","hash":{},"data":data})) != null ? stack1 : "")
     + "\",\r\n  \"brand\": {\r\n    \"@type\": \"Thing\",\r\n    \"name\": \""
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1), depth0)) != null ? stack1 : "")
-    + "\"\r\n  },\r\n  \"aggregateRating\": {\r\n    \"@type\": \"AggregateRating\",\r\n    \"ratingValue\": \""
-    + alias4(((helper = (helper = helpers.averageRatings || (depth0 != null ? depth0.averageRatings : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"averageRatings","hash":{},"data":data}) : helper)))
+    + "\"\r\n  },\r\n  \"aggregateRating\": {\r\n    \"@type\": \"AggregateRating\",\r\n    \"bestRating\": \"5\"\r\n    \"ratingValue\": \""
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.averageRatings : depth0),{"name":"if","hash":{},"fn":container.program(57, data, 0, blockParams, depths),"inverse":container.program(59, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\",\r\n    \"ratingCount\": \""
-    + alias4(((helper = (helper = helpers.ratingCount || (depth0 != null ? depth0.ratingCount : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"ratingCount","hash":{},"data":data}) : helper)))
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.ratingCount : depth0),{"name":"if","hash":{},"fn":container.program(61, data, 0, blockParams, depths),"inverse":container.program(63, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\"\r\n  },\r\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"if","hash":{},"fn":container.program(57, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"if","hash":{},"fn":container.program(65, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "}\r\n</script>\r\n\r\n";
 },"2":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
@@ -1650,7 +1648,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
     + "\" value=\""
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "\"\r\n                                            "
+    + "\" "
     + ((stack1 = (helpers.ifeq || (depth0 && depth0.ifeq) || alias2).call(alias1,(depths[1] != null ? depths[1].price : depths[1]),(depth0 != null ? depth0.price : depth0),{"name":"ifeq","hash":{},"fn":container.program(14, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ">\r\n                                        "
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
@@ -1660,7 +1658,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
 },"16":function(container,depth0,helpers,partials,data) {
     var stack1, helper;
 
-  return "                        <div class=\"col-md-5\">\r\n                            <h2 style=\"margin: 5px 0 0 0;\" itemprop=\"name\">"
+  return "                        <div class=\"col-md-5\">\r\n                            <h2 style=\"margin: 5px 0 0 0;\">"
     + ((stack1 = ((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"quantity","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</h1>\r\n                        </div>\r\n";
 },"18":function(container,depth0,helpers,partials,data) {
@@ -1766,10 +1764,32 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
 },"57":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "  \"offers\": {\r\n    \"@type\": \"Offer\",\r\n    \"priceCurrency\": \"KES\",\r\n    \"price\": \""
-    + container.escapeExpression(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"price","hash":{},"data":data}) : helper)))
-    + "\",\r\n    \"priceValidUntil\": \"2020-12-31\",\r\n    \"itemCondition\": \"http://schema.org/UsedCondition\",\r\n    \"availability\": \"http://schema.org/InStock\",\r\n    \"seller\": {\r\n      \"@type\": \"Organization\",\r\n      \"name\": \"Dial A Drink Kenya\"\r\n    }\r\n  }\r\n";
+  return container.escapeExpression(((helper = (helper = helpers.averageRatings || (depth0 != null ? depth0.averageRatings : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"averageRatings","hash":{},"data":data}) : helper)));
 },"59":function(container,depth0,helpers,partials,data) {
+    return "4";
+},"61":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return container.escapeExpression(((helper = (helper = helpers.ratingCount || (depth0 != null ? depth0.ratingCount : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"ratingCount","hash":{},"data":data}) : helper)));
+},"63":function(container,depth0,helpers,partials,data) {
+    return "0";
+},"65":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+
+  return "  \"offers\": {\r\n    \"@type\": \"Offer\",\r\n    \"priceCurrency\": \"KES\",\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"if","hash":{},"fn":container.program(66, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    \"price\": \""
+    + container.escapeExpression(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\",\r\n    \"priceValidUntil\": \"2020-12-31\",\r\n    \"itemCondition\": \"http://schema.org/UsedCondition\",\r\n    \"availability\": \"http://schema.org/InStock\",\r\n    \"seller\": {\r\n      \"@type\": \"Organization\",\r\n      \"name\": \"Dial A Drink Kenya\"\r\n    }\r\n  }\r\n";
+},"66":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "    \"highPrice\": \""
+    + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\",\r\n    \"lowPrice\": \""
+    + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
+    + "\",\r\n";
+},"68":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "            var index = Math.min(5,"
@@ -1781,7 +1801,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
   return "<link rel=\"preload\" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>\r\n\r\n"
     + ((stack1 = helpers["with"].call(alias1,(depth0 != null ? depth0.product : depth0),{"name":"with","hash":{},"fn":container.program(1, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\r\n<script>\r\n    window.minifiedMenu = true;\r\n    $(document).ready(function () {\r\n        if (addaffix) addaffix();\r\n        //$('.tab-content .tab-pane').scrollbar();\r\n        //$(\".similar-products\").owlCarousel({items:12})\r\n\r\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(59, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(68, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "    })\r\n</script>\r\n";
 },"usePartial":true,"useData":true,"useDepths":true});
 
