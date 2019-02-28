@@ -191,15 +191,18 @@ Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
 keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', function (next) {
-    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    this.price = cheapestOption.price;
-    this.offerPrice = cheapestOption.offerPrice;
-    this.quantity = cheapestOption.quantity;
+    var cheapestOption = this.cheapestOption || this.priceOptions.first();
     this.modifiedDate = new Date();
+    
+    if(cheapestOption){
+        this.price = cheapestOption.price;
+        this.offerPrice = cheapestOption.offerPrice;
+        this.quantity = cheapestOption.quantity;
+    }
 
     if(this.youtubeUrl)
         this.youtubeUrl =  this.youtubeUrl.replace(/\/watch(\/|\?v=)/, "/embed/");
-        
+
     next();
 });
 
