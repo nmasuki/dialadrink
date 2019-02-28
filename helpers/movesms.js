@@ -36,7 +36,7 @@ module.exports = function MoveSMS(sender) {
                 najax.post({
                     url: url,
                     data: {
-                        to: (Array.isArray(to) ? to : [to]).join(','),
+                        to: (Array.isArray(to) ? to : [to]).map(t => t.startsWith('0')? '254' + t.trimLeft('0'): t).join(','),
                         message: message,
                         msgtype: 5,
                         dlr: 0
@@ -70,7 +70,7 @@ module.exports = function MoveSMS(sender) {
             najax.post({
                 url: url,
                 data: {
-                    to: (Array.isArray(to) ? to : [to]).join(','),
+                    to: (Array.isArray(to) ? to : [to]).map(t => t.startsWith('0')? '254' + t.trimLeft('0'): t).join(','),
                     scheduletime: date.toISOString(),
                     message: message,
                     msgtype: 5,

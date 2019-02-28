@@ -287,7 +287,6 @@
 
 {{#if orderUrl}}
         console.log('Option called!');        
-        var modal = app.showLoading("<span id='msgSpan'>Loading payment options! Please wait..</span>", 60000);
         var iframe = $("<iframe src='{{orderUrl}}'/>");        
         iframe.css({
             border: "none",
@@ -296,7 +295,12 @@
         });
 
         $("form.needs-validation").replaceWith(iframe);
-        iframe.get(0).onload = function(){ modal.modal("hide"); }
+        setTimeout(function(){
+            var modal = app.showLoading("<span id='msgSpan'>Loading payment options! Please wait..</span>", 60000);
+            iframe.get(0).onload = function(){ 
+                modal && modal.modal("hide"); 
+            }
+        }, 500)
 {{/if}}
 
         $(document).on("click", ".promo-redeem button", function (e) {
