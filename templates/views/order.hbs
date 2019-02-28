@@ -132,8 +132,8 @@
                     <p style="margin:0 0 16px">
                         <b>Payment Method:</b> {{#if paymentMethod}}{{paymentMethod}}{{else}}Cash on delivery{{/if}}
                         {{#ifne payment.method 'PesaPal'}}
-                        <p>
-                            Note: You can still pay online at <a href="http://www.dialadrinkkenya.com/payment/{{orderNumber}}">dialadrinkkenya.com/payment/{{orderNumber}}</a>
+                        <p style="cursor: pointer;" onclick="goPay.click()">
+                            Note: You can still pay with MPESA/Visa/Master Card <a name="goPay" href="http://www.dialadrinkkenya.com/payment/{{orderNumber}}">here</a>
                         </p>
                         {{/ifne}}
                     </p>
