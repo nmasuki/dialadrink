@@ -102,7 +102,7 @@ Product.schema.virtual('avgRatings').get(function () {
         return Math.round((this.ratings || []).avg(r => r.rating));
     else if (this.onOffer)
         return 4.5;
-    else if (this.category.name) { //Developers own ratings
+    else if (this.category && this.category.name) { //Developers own ratings
         if (this.category.name.toLowerCase().contains("whisky"))
             return 4.6;
         else if (this.category.name.toLowerCase().contains("beer"))

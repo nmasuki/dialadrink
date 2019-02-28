@@ -214,12 +214,12 @@ router.get("/cat/:category", function (req, res) {
             locals.data.blogs = results;
             var cat;
             if (results) {
-                cat = (locals.data.category.name || locals.data.category);
+                cat = locals.data.category && (locals.data.category.name || locals.data.category);
                 locals.page.title = (results.results.first() || {}).title || cat.toProperCase();
                 locals.meta = (results.results.first() || {}).title || cat.toProperCase();
             }
             if (locals.data.category)
-                locals.page.h1 = (cat || locals.data.category.name || locals.data.category).toProperCase();
+                locals.page.h1 = (cat || locals.data.category && (locals.data.category.name || locals.data.category)).toProperCase();
 
             next(err);
         });

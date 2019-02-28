@@ -7,7 +7,7 @@ router.get("/:category", function (req, res) {
 
     // Set locals
     locals.section = 'store';
-    locals.filters = {category: req.params.category};
+    locals.filters = {category: req.params.category || ""};
 
     locals.page = Object.assign(locals.page, {h1: locals.filters.category.toProperCase()});
     if (!locals.page.bannerImages)
