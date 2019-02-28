@@ -250,11 +250,11 @@
 
                                 <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
                                     <span class="label label-success">
-                                        <span itemprop="reviewCount">{{formatNumber avgRatings 1}}</span> *
+                                        <span itemprop="ratingValue">{{formatNumber avgRatings 1}}</span> *
                                     </span>&nbsp;
 
-                                    {{#if reviewCount}}
-                                        <span itemprop="reviewCount" class="monospaced">{{ratings.length}}</span> reviews.
+                                    {{#if ratingCount}}
+                                        <span itemprop="ratingCount" class="monospaced">{{ratings.length}}</span> reviews.
                                     {{/if}}
 
                                     {{#unless ../userRating}}
@@ -297,8 +297,8 @@
   },
   "aggregateRating": {
     "@type": "AggregateRating",
-    "ratingValue": "{{avgRatings}}",
-    "reviewCount": "{{reviewCount}}"
+    "ratingValue": "{{#if avgRatings}}{{avgRatings}}{{else}}4{{/if}}",
+    "ratingCount": "{{#if reviewCount}}{{reviewCount}}{{else}}0{{/if}}"
   },
   {{#if price}}
   "offers": {
