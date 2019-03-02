@@ -204,10 +204,10 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
 },"13":function(container,depth0,helpers,partials,data) {
     return "-empty";
 },"15":function(container,depth0,helpers,partials,data) {
-    var stack1;
+    var helper;
 
   return "                            <span itemprop=\"ratingCount\" class=\"monospaced\">"
-    + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1), depth0))
+    + container.escapeExpression(((helper = (helper = helpers.ratingCount || (depth0 != null ? depth0.ratingCount : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"ratingCount","hash":{},"data":data}) : helper)))
     + "</span> reviews.\n";
 },"17":function(container,depth0,helpers,partials,data) {
     return "                            <span style=\"display:none\" itemprop=\"ratingCount\" class=\"monospaced\">1</span>\n";
@@ -224,7 +224,7 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "\n                                    </span>\n                                </span>\n";
 },"23":function(container,depth0,helpers,partials,data) {
-    return "                            <span class=\"product-price\" id=\"product-price\">"
+    return "                            <span  itemprop=\"price\" class=\"product-price\" id=\"product-price\">"
     + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
 },"25":function(container,depth0,helpers,partials,data,blockParams,depths) {
@@ -334,12 +334,12 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + "\"\n                        aria-hidden=\"true\">\n                    </span>\n\n                    <span itemscope = \"\" itemtype=\"http://schema.org/AggregateRating\">\n                        <span class=\"label label-success\">\n                            <span itemprop=\"aggregateRating\">"
     + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.averageRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
     + "</span> *\n                        </span>&nbsp;\n"
-    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(15, data, 0, blockParams, depths),"inverse":container.program(17, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.ratingCount : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0, blockParams, depths),"inverse":container.program(17, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\n"
     + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(19, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                    </span>\n                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-5 bottom-rule\">\n                    <h2>\n                        "
+    + "                    </span>\n                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-5 bottom-rule\">\n                    <h2 itemtype=\"http://schema.org/Offer\">\n                        <span itepprop=\"priceCurrency\">"
     + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
-    + "\n"
+    + "</span>\n"
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(21, data, 0, blockParams, depths),"inverse":container.program(23, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "                    </h2>\n                </div>\n\n"
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.options : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(25, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -1036,29 +1036,29 @@ this["templates"]["views"]["order"]["hbs"]["templates/views/order.hbs"] = Handle
 },"4":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "                                                <span>\n                                                <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                    <span itemprop=\"price\">"
+  return "                                                <span>\n                                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                        <span>"
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "</span>\n                                                </span>\n                                                <span itemprop=\"offerPrice\">"
+    + "</span>\n                                                    </span>\n                                                    <span>"
     + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
-    + "</span>\n                                            </span>\n";
+    + "</span>\n                                                </span>\n";
 },"6":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "                                                <span itemprop=\"price\">"
+  return "                                                <span>"
     + container.escapeExpression(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"price","hash":{},"data":data}) : helper)))
     + "</span>\n";
 },"8":function(container,depth0,helpers,partials,data) {
     var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
-  return "                                                <span>\n                                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                        <span itemprop=\"price\">"
+  return "                                                <span>\n                                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                        <span>"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(helpers.prod || (depth0 && depth0.prod) || alias2).call(alias1,(depth0 != null ? depth0.pieces : depth0),(depth0 != null ? depth0.price : depth0),{"name":"prod","hash":{},"data":data}),{"name":"formatNumber","hash":{},"data":data}))
-    + "</span>\n                                                    </span>\n                                                    <span itemprop=\"offerPrice\">"
+    + "</span>\n                                                    </span>\n                                                    <span >"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(helpers.prod || (depth0 && depth0.prod) || alias2).call(alias1,(depth0 != null ? depth0.pieces : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"prod","hash":{},"data":data}),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n                                                </span>\n";
 },"10":function(container,depth0,helpers,partials,data) {
     var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing;
 
-  return "                                                <span itemprop=\"price\">"
+  return "                                                <span>"
     + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(helpers.prod || (depth0 && depth0.prod) || alias2).call(alias1,(depth0 != null ? depth0.pieces : depth0),(depth0 != null ? depth0.price : depth0),{"name":"prod","hash":{},"data":data}),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
 },"12":function(container,depth0,helpers,partials,data) {
@@ -1378,11 +1378,9 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\n                </div>\n            </a>\n\n            <span>"
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "</span><br>\n            <span itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                <meta itemprop=\"priceCurrency\" content=\""
+    + "</span><br>\n            <span itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                <span itemprop=\"priceCurrency\">"
     + alias3(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
-    + "\"/>\n                "
-    + alias3(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
-    + "\n"
+    + "</span>\n"
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(3, data, 0, blockParams, depths),"inverse":container.program(5, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "            </span>\n            <br>\n            <div class=\"dropdown\">\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0, blockParams, depths),"inverse":container.program(13, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
@@ -1422,7 +1420,7 @@ this["templates"]["views"]["partials"]["product2"]["hbs"]["templates/views/parti
     + ((stack1 = (helpers.truncate || (depth0 && depth0.truncate) || alias2).call(alias1,(depth0 != null ? depth0.name : depth0),15,{"name":"truncate","hash":{},"data":data})) != null ? stack1 : "")
     + "\n                    </div>\n                </a>\n                <div style=\"font-size: 12px !important;\">"
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "</div>\n                <div style=\"font-size: 12px !important;\">\n                    <meta itemprop=\"priceCurrency\" content=\""
+    + "</div>\n                <div style=\"font-size: 12px !important;\" itemtype=\"http://schema.org/Offer\">\n                    <meta itemprop=\"priceCurrency\" content=\""
     + alias3(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
     + "\"/>\n                    "
     + alias3(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
@@ -1545,7 +1543,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</h1>\n                    </div>\n                </div><!-- end row-->\n\n"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1),{"name":"if","hash":{},"fn":container.program(6, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                \n                <div class=\"row\">\n                    <div class=\"col-md-5 bottom-rule\">\n                        <h2 style=\"margin-top:5px\">\n                            <span itemprop=\"priceCurrency\"> "
+    + "                \n                <div class=\"row\">\n                    <div class=\"col-md-5 bottom-rule\">\n                        <h2 style=\"margin-top:5px\" itemtype=\"http://schema.org/Offer\">\n                            <span itemprop=\"priceCurrency\"> "
     + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
     + "</span>\n"
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(8, data, 0, blockParams, depths),"inverse":container.program(10, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
@@ -1586,13 +1584,13 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + "\"\n                                    aria-hidden=\"true\">\n                                </span>\n\n                                <span itemprop=\"aggregateRating\" itemscope itemtype=\"http://schema.org/AggregateRating\">\n                                    <span class=\"label label-success\">\n                                        <span itemprop=\"ratingValue\">"
     + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.averageRatings : depth0),1,{"name":"formatNumber","hash":{},"data":data}))
     + "</span> *\n                                    </span>&nbsp;\n\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.ratingCount : depth0),{"name":"if","hash":{},"fn":container.program(49, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.ratingCount : depth0),{"name":"if","hash":{},"fn":container.program(49, data, 0, blockParams, depths),"inverse":container.program(51, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\n"
-    + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(51, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(53, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                                </span>\n\n                            </div>\n                        </div><!-- end row -->\n                        \n                        "
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(53, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(55, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n                    </div>\n                </div>\n            </div>\n            <div style=\"border-top: 1px solid lightgray;\" class=\"similar-products col-md-12\">\n            <h2 style=\"font-size: 15px;\">You may also like..</h2>\n"
-    + ((stack1 = helpers.each.call(alias1,(depths[1] != null ? depths[1].similar : depths[1]),{"name":"each","hash":{},"fn":container.program(55, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,(depths[1] != null ? depths[1].similar : depths[1]),{"name":"each","hash":{},"fn":container.program(57, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </div>\n        </div><!-- end row -->\n        <div class=\"row\">\n\n        </div>\n    </div><!-- end container -->\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"http://schema.org/\",\n  \"@type\": \"Product\",\n  \"name\": \""
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\",\n  \"image\": [\n    \""
@@ -1602,11 +1600,11 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + "\",\n  \"brand\": {\n    \"@type\": \"Thing\",\n    \"name\": \""
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1), depth0)) != null ? stack1 : "")
     + "\"\n  },\n  \"aggregateRating\": {\n    \"@type\": \"AggregateRating\",\n    \"bestRating\": \"5\"\n    \"ratingValue\": \""
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.averageRatings : depth0),{"name":"if","hash":{},"fn":container.program(57, data, 0, blockParams, depths),"inverse":container.program(59, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.averageRatings : depth0),{"name":"if","hash":{},"fn":container.program(59, data, 0, blockParams, depths),"inverse":container.program(61, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\",\n    \"ratingCount\": \""
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.ratingCount : depth0),{"name":"if","hash":{},"fn":container.program(61, data, 0, blockParams, depths),"inverse":container.program(63, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.ratingCount : depth0),{"name":"if","hash":{},"fn":container.program(63, data, 0, blockParams, depths),"inverse":container.program(65, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\"\n  },\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"if","hash":{},"fn":container.program(65, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"if","hash":{},"fn":container.program(67, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "}\n</script>\n\n";
 },"2":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
@@ -1753,46 +1751,48 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
 },"47":function(container,depth0,helpers,partials,data) {
     return "-empty";
 },"49":function(container,depth0,helpers,partials,data) {
-    var stack1;
+    var helper;
 
   return "                                        <span itemprop=\"ratingCount\" class=\"monospaced\">"
-    + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.ratings : depth0)) != null ? stack1.length : stack1), depth0))
+    + container.escapeExpression(((helper = (helper = helpers.ratingCount || (depth0 != null ? depth0.ratingCount : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"ratingCount","hash":{},"data":data}) : helper)))
     + "</span> reviews.\n";
 },"51":function(container,depth0,helpers,partials,data) {
+    return "                                        <span itemprop=\"ratingCount\" class=\"monospaced\">1</span> reviews.\n";
+},"53":function(container,depth0,helpers,partials,data) {
     return "                                        <span class=\"monospaced right\">Rate "
     + container.escapeExpression((helpers.truncate || (depth0 && depth0.truncate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.name : depth0),25,{"name":"truncate","hash":{},"data":data}))
     + "!</span>\n";
-},"53":function(container,depth0,helpers,partials,data) {
+},"55":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return ((stack1 = container.invokePartial(partials.productReview,depth0,{"name":"productReview","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "");
-},"55":function(container,depth0,helpers,partials,data) {
+},"57":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                    <div class=\"col-md-2\">\n"
     + ((stack1 = container.invokePartial(partials.product2,depth0,{"name":"product2","data":data,"indent":"                        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "                    </div>\n";
-},"57":function(container,depth0,helpers,partials,data) {
+},"59":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return container.escapeExpression(((helper = (helper = helpers.averageRatings || (depth0 != null ? depth0.averageRatings : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"averageRatings","hash":{},"data":data}) : helper)));
-},"59":function(container,depth0,helpers,partials,data) {
-    return "4";
 },"61":function(container,depth0,helpers,partials,data) {
+    return "4";
+},"63":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return container.escapeExpression(((helper = (helper = helpers.ratingCount || (depth0 != null ? depth0.ratingCount : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"ratingCount","hash":{},"data":data}) : helper)));
-},"63":function(container,depth0,helpers,partials,data) {
-    return "0";
 },"65":function(container,depth0,helpers,partials,data) {
+    return "0";
+},"67":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {};
 
   return "  \"offers\": {\n    \"@type\": \"Offer\",\n    \"priceCurrency\": \"KES\",\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"if","hash":{},"fn":container.program(66, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"if","hash":{},"fn":container.program(68, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "    \"price\": \""
     + container.escapeExpression(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
     + "\",\n    \"priceValidUntil\": \"2020-12-31\",\n    \"itemCondition\": \"http://schema.org/UsedCondition\",\n    \"availability\": \"http://schema.org/InStock\",\n    \"seller\": {\n      \"@type\": \"Organization\",\n      \"name\": \"Dial A Drink Kenya\"\n    }\n  }\n";
-},"66":function(container,depth0,helpers,partials,data) {
+},"68":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "    \"highPrice\": \""
@@ -1800,7 +1800,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + "\",\n    \"lowPrice\": \""
     + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
     + "\",\n";
-},"68":function(container,depth0,helpers,partials,data) {
+},"70":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "            var index = Math.min(5,"
@@ -1812,7 +1812,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
   return "<link rel=\"preload\" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>\n\n"
     + ((stack1 = helpers["with"].call(alias1,(depth0 != null ? depth0.product : depth0),{"name":"with","hash":{},"fn":container.program(1, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n<script>\n    window.minifiedMenu = true;\n    $(document).ready(function () {\n        if (addaffix) addaffix();\n        //$('.tab-content .tab-pane').scrollbar();\n        //$(\".similar-products\").owlCarousel({items:12})\n\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(68, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(70, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "    })\n</script>\n";
 },"usePartial":true,"useData":true,"useDepths":true});
 
@@ -1969,21 +1969,21 @@ this["templates"]["views"]["receipt"]["hbs"]["templates/views/receipt.hbs"] = Ha
 },"8":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "                                                        <span>\n                                                        <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                            <span itemprop=\"price\">"
+  return "                                                        <span>\n                                                        <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                            <span>"
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "</span>\n                                                        </span>\n                                                        <span itemprop=\"offerPrice\">"
+    + "</span>\n                                                        </span>\n                                                        <span>"
     + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
     + "</span>\n                                                    </span>\n";
 },"10":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "                                                        <span itemprop=\"price\">"
+  return "                                                        <span>"
     + container.escapeExpression(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"price","hash":{},"data":data}) : helper)))
     + "</span>\n";
 },"12":function(container,depth0,helpers,partials,data) {
     var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
-  return "                                                        <span>\n                                                            <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                                <span itemprop=\"price\">"
+  return "                                                        <span>\n                                                            <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                                <span>"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(helpers.prod || (depth0 && depth0.prod) || alias2).call(alias1,(depth0 != null ? depth0.pieces : depth0),(depth0 != null ? depth0.price : depth0),{"name":"prod","hash":{},"data":data}),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n                                                            </span>\n                                                            <span itemprop=\"offerPrice\">"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(helpers.prod || (depth0 && depth0.prod) || alias2).call(alias1,(depth0 != null ? depth0.pieces : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"prod","hash":{},"data":data}),{"name":"formatNumber","hash":{},"data":data}))
@@ -1991,7 +1991,7 @@ this["templates"]["views"]["receipt"]["hbs"]["templates/views/receipt.hbs"] = Ha
 },"14":function(container,depth0,helpers,partials,data) {
     var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing;
 
-  return "                                                        <span itemprop=\"price\">"
+  return "                                                        <span>"
     + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(helpers.prod || (depth0 && depth0.prod) || alias2).call(alias1,(depth0 != null ? depth0.pieces : depth0),(depth0 != null ? depth0.price : depth0),{"name":"prod","hash":{},"data":data}),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
 },"16":function(container,depth0,helpers,partials,data) {
