@@ -1,8 +1,6 @@
 cp .env /var/tmp/dialadrink.env
-git reset HEAD .
-git stash
+git checkout .
 git pull -X theirs
-git stash pop
 
 cp /var/tmp/dialadrink.env .env
 grunt build
