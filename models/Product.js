@@ -147,7 +147,7 @@ Product.schema.virtual('percentOffer').get(function () {
 
 Product.schema.virtual('priceValidUntil').get(function(){
     var today = new Date();
-    var firstStr = "{0}-{1}-{2}".format(today.getUTCFullYear().pad(2), today.getUTCMonth().pad(2), "01");
+    var firstStr = "{0}-{1}-{2}".format(today.getUTCFullYear().pad(2), (today.getUTCMonth()+1).pad(2), "01");
     var priveExpiry = new Date(firstStr);
     return priveExpiry.addMonths(1).addDays(-1).toISOString();
 });
