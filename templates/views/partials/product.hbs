@@ -1,14 +1,15 @@
+{{#ifgt price offerPrice}}
+    <a href="{{productUrl href}}" aria-label="{{{percentOffer}}}% off on {{{name}}}" style="position: absolute; display :block; color: black;">
+        <div class="product-promo">
+            <span>
+                {{{percentOffer}}}%
+            </span>
+        </div>
+    </a>
+{{/ifgt}}
 
-        {{#ifgt price offerPrice}}
-            <div class="product-promo" style="position: absolute">
-                <span>
-                    {{{percentOffer}}}%
-                </span>
-            </div>
-        {{/ifgt}}
-
-<a href="{{productUrl href}}" id="product{{_id}}" style="display :block; color: black;">
-    <div class="featured-image" style="text-align :center ;">
+<div class="featured-image" style="text-align :center;">
+    <a href="{{productUrl href}}" aria-label="Access product {{{name}}}" id="product{{_id}}" style="display :block; color: black;">
         <div class="item-name" style="text-align:center; justify-content :center; color: black">
             <img src="{{cloudinaryUrl image width=100 height=100 crop='fill'}}" 
                 data-src="{{cloudinaryUrl image width=250 height=250 crop='fill'}}" 
@@ -26,7 +27,7 @@
 
             <span>{{quantity}}</span><br>
             <span itemscope itemprop="offers" itemtype="http://schema.org/Offer">
-				<meta itemprop="priceCurrency" content="{{currency}}"/>
+                <meta itemprop="priceCurrency" content="{{currency}}"/>
                 {{currency}}
                 {{#ifgt price offerPrice}}
                     <span>
@@ -38,7 +39,7 @@
                 {{else}}
                     <span itemprop="price">{{formatNumber price}}</span>
                 {{/ifgt}}
-			</span>
+            </span>
             <br>
             <div class="dropdown">
                 {{#if inStock}}
@@ -69,5 +70,5 @@
                 {{/if}}
             </div>
         </div>
-    </div>
-</a>
+    </a>
+</div>
