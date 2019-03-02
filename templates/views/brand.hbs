@@ -69,7 +69,7 @@
                         aria-hidden="true">
                     </span>
 
-                    <span itemscope = "" itemtype="http://schema.org/AggregateRating">
+                    <span itemscope itemtype="http://schema.org/AggregateRating">
                         <span class="label label-success">
                             <span itemprop="aggregateRating">{{formatNumber averageRatings 1}}</span> *
                         </span>&nbsp;
@@ -88,7 +88,7 @@
 
             <div class="row">
                 <div class="col-md-5 bottom-rule">
-                    <h2 itemtype="http://schema.org/Offer">
+                    <h2 itemscope itemprop="offers" itemtype="http://schema.org/Offer">
                         <span itepprop="priceCurrency">{{currency}}</span>
                         {{#ifgt price offerPrice}}
                             <span>
