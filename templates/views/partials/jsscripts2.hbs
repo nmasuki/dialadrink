@@ -20,7 +20,16 @@
 {{/ifeq}}
 
 <script>
+    function onTouchStart(e){
+        //Do nothing
+    }
+
+
     $(document).ready(function () {
+        {{#if isMobile}}
+            document.addEventListener('touchstart', onTouchStart, {passive: true});
+        {{/if}}
+
         $('body').imagesLoaded()
             .always(function (instance) {
                 //console.log('all images loaded');

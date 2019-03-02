@@ -576,7 +576,7 @@ $(window).resize(function () {
 });
 
 function onTouchStart(e){
-    //Do nothing
+    console.log.apply(this, arguments);
 }
 
 
@@ -586,13 +586,18 @@ $(window).ready(function ($) {
     if($.fn.tooltip)
         $('[data-toggle="tooltip"]').tooltip();
 
-    $(document).on("mousemove, touchmove", "figure.zoom", function zoom(e){
+    $(document).on("mousemove touchmove", "figure.zoom", function zoom(e){
         var zoomer = e.currentTarget;
-        var offsetX = e.offsetX || e.touches[0].pageX;
-        var offsetY = e.offsetY || e.touches[0].pageX;
-        x = offsetX/zoomer.offsetWidth*100
-        y = offsetY/zoomer.offsetHeight*100
+        var offsetX = e.offsetX || (e.originalEvent.changedTouches && e.originalEvent.changedTouches[0].pageX);
+        var offsetY = e.offsetY || (e.originalEvent.changedTouches && e.originalEvent.changedTouches[0].pageY);
+        
+        x = Math.min(100, Math.max(0, offsetX/zoomer.offsetWidth*100));
+        y = Math.min(100, Math.max(0, offsetY/zoomer.offsetHeight*100));
+
+
         zoomer.style.backgroundPosition = x + '% ' + y + '%';
+
+        e.stopPropagation();
     });
     
     loadParticles();
