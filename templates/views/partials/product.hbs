@@ -28,7 +28,7 @@
             <span>{{quantity}}</span><br>
             <span itemscope itemprop="offers" itemtype="http://schema.org/Offer">
                 <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
-                <meta itemprop="url" content="https://www.dialadrinkkenya.com/product/{{productUrl href}}"/>
+                <meta itemprop="url" content="https://www.dialadrinkkenya.com{{productUrl href}}"/>
                 <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
                 <span itemprop="priceCurrency">{{currency}}</span>
                 {{#ifgt price offerPrice}}
