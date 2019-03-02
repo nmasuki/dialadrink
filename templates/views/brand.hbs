@@ -73,7 +73,7 @@
                         <span class="label label-success">
                             <span itemprop="aggregateRating">{{formatNumber averageRatings 1}}</span> *
                         </span>&nbsp;
-                        {{#ifge ratingCount 0}}
+                        {{#if ratingCount}}
                             <span itemprop="ratingCount" class="monospaced">{{ratingCount}}</span> reviews.
                         {{else}}
                             <span style="display:none" itemprop="ratingCount" class="monospaced">1</span>
