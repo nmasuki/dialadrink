@@ -216,16 +216,22 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + container.escapeExpression((helpers.truncate || (depth0 && depth0.truncate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.name : depth0),25,{"name":"truncate","hash":{},"data":data}))
     + "!</span>\n";
 },"21":function(container,depth0,helpers,partials,data) {
-    var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
-  return "                            <span>\n                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                        <span itemprop=\"price\" id=\"product-offerPrice\">"
+  return "                            <span>\n                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                        <span itemprop=\"price\" content=\""
+    + alias3(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\" id=\"product-offerPrice\">"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n                                    </span>\n                                    <span itemprop=\"offerPrice\" class=\"product-price\" id=\"product-price\">\n                                        "
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "\n                                    </span>\n                                </span>\n";
 },"23":function(container,depth0,helpers,partials,data) {
-    return "                            <span  itemprop=\"price\" class=\"product-price\" id=\"product-price\">"
-    + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
+
+  return "                            <span  itemprop=\"price\" content=\""
+    + alias3(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\" class=\"product-price\" id=\"product-price\">"
+    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
 },"25":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1;
@@ -1306,16 +1312,24 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + ((stack1 = ((helper = (helper = helpers.percentOffer || (depth0 != null ? depth0.percentOffer : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"percentOffer","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "%\n            </span>\n        </div>\n    </a>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "                    <span>\n                        <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                            <span itemprop=\"price\">"
-    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
-    + "</span>\n                        </span>\n                    <span itemprop=\"offerPrice\">"
-    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
+  return "                    <span>\n                        <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                            <span itemprop=\"price\" content=\""
+    + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
+    + "</span>\n                        </span>\n                    <span itemprop=\"offerPrice\" content=\""
+    + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n                    </span>\n";
 },"5":function(container,depth0,helpers,partials,data) {
-    return "                    <span itemprop=\"price\">"
-    + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
+
+  return "                    <span itemprop=\"price\" content=\""
+    + alias3(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
 },"7":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
@@ -1388,16 +1402,24 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
 },"useData":true,"useDepths":true});
 
 this["templates"]["views"]["partials"]["product2"]["hbs"]["templates/views/partials/product2.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "                        <span>\n                            <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                <span itemprop=\"price\">"
-    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
-    + "</span>\n                            </span>\n                            <span itemprop=\"offerPrice\">"
-    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
+  return "                        <span>\n                            <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                <span itemprop=\"price\" content=\""
+    + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
+    + "</span>\n                            </span>\n                            <span itemprop=\"offerPrice\" content=\""
+    + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n                        </span>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    return "                        <span itemprop=\"price\">"
-    + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
+
+  return "                        <span itemprop=\"price\" content=\""
+    + alias3(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression, alias4="function";
@@ -1543,7 +1565,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</h1>\n                    </div>\n                </div><!-- end row-->\n\n"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1),{"name":"if","hash":{},"fn":container.program(6, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                \n                <div class=\"row\">\n                    <div class=\"col-md-5 bottom-rule\">\n                        <h2 style=\"margin-top:5px\" itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                            <span itemprop=\"priceCurrency\"> "
+    + "                \n                <div class=\"row\">\n                    <div class=\"col-md-5 bottom-rule\">\n                        <h2 style=\"margin-top:5px\" itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                            <span itemprop=\"priceCurrency\">"
     + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
     + "</span>\n"
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(8, data, 0, blockParams, depths),"inverse":container.program(10, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
@@ -1633,16 +1655,24 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + alias1(container.lambda(((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1), depth0))
     + "</a>\n                            </p>\n                        </div>\n                    </div><!-- end row -->\n";
 },"8":function(container,depth0,helpers,partials,data) {
-    var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "                                <span>\n                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                        <span itemprop=\"price\" id=\"product-offerPrice\">"
-    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
-    + "</span>\n                                    </span>\n                                    <span itemprop=\"offerPrice\" class=\"product-price\" id=\"product-price\">\n                                        "
-    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
+  return "                                <span>\n                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                        <span itemprop=\"price\"  content=\""
+    + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\" id=\"product-offerPrice\">"
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
+    + "</span>\n                                    </span>\n                                    <span itemprop=\"offerPrice\" content=\""
+    + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
+    + "\" class=\"product-price\" id=\"product-price\">\n                                        "
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "\n                                    </span>\n                                </span>\n";
 },"10":function(container,depth0,helpers,partials,data) {
-    return "                                <span itemprop=\"price\" class=\"product-price\" id=\"product-price\">"
-    + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
+
+  return "                                <span itemprop=\"price\" content=\""
+    + alias3(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
+    + "\" class=\"product-price\" id=\"product-price\">"
+    + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
 },"12":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1;
