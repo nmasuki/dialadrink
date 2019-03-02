@@ -580,3 +580,8 @@ Date.prototype.addSeconds = function (value) {
     date.setTime(date.getTime() + (value * 1000));
     return date;
 };
+
+Number.prototype.pad = function pad(width, z) { 
+    var n = this + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z || '0') + n;
+};
