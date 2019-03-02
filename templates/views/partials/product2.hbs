@@ -17,14 +17,16 @@
                 </a>
                 <div style="font-size: 12px !important;">{{quantity}}</div>
                 <div style="font-size: 12px !important;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
-                    <meta itemprop="priceCurrency" content="{{currency}}"/>
-                    {{currency}}
+                    <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
+                    <meta itemprop="url" content="https://www.dialadrinkkenya.com/product/{{productUrl href}}"/>
+                    <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
+                    <span itemprop="priceCurrency">{{currency}}</span>
                     {{#ifgt price offerPrice}}
                         <span>
                             <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
+                                <span>{{formatNumber price}}</span>
                             </span>
-                            <span itemprop="offerPrice" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                            <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
                         </span>
                     {{else}}
                         <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>

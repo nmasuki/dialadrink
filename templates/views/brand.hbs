@@ -89,13 +89,16 @@
             <div class="row">
                 <div class="col-md-5 bottom-rule">
                     <h2 itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+                        <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
+                        <meta itemprop="url" content="https://www.dialadrinkkenya.com/product/{{productUrl href}}"/>
+                        <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
                         <span itepprop="priceCurrency">{{currency}}</span>
                         {{#ifgt price offerPrice}}
                             <span>
                                     <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                        <span itemprop="price" content="{{price}}" id="product-offerPrice">{{formatNumber price}}</span>
+                                        <span>{{formatNumber price}}</span>
                                     </span>
-                                    <span itemprop="offerPrice" class="product-price" id="product-price">
+                                    <span itemprop="price" class="product-price" id="product-price">
                                         {{formatNumber offerPrice}}
                                     </span>
                                 </span>

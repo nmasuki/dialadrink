@@ -56,9 +56,9 @@
                             {{#ifgt price offerPrice}}
                                 <span>
                                     <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                        <span itemprop="price"  content="{{price}}" id="product-offerPrice">{{formatNumber price}}</span>
+                                        <span>{{formatNumber price}}</span>
                                     </span>
-                                    <span itemprop="offerPrice" content="{{offerPrice}}" class="product-price" id="product-price">
+                                    <span itemprop="price" content="{{offerPrice}}" class="product-price" id="product-price">
                                         {{formatNumber offerPrice}}
                                     </span>
                                 </span>

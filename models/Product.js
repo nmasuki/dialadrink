@@ -145,6 +145,12 @@ Product.schema.virtual('percentOffer').get(function () {
     return null;
 });
 
+Product.schema.virtual('priceValidUntil').get(function(){
+    var today = new Date();
+    var priveExpiry = "{0}-{1}-{2}".format(today.getUTCFullYear(), today.getUTCMonth(), "01").addMonth(1).addDay(-1);
+    return priveExpiry.toISOString();
+});
+
 Product.schema.virtual('tags').get(function () {
     var tags = [];
 
@@ -205,9 +211,10 @@ Product.schema.set('toObject', {
             'href', 'name', 'priceOptions', 'onOffer', 'inStock',
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
-            'subCategory', 'brand', 'ratings',
-            'options', 'cheapestOption', 'averageRatings', 'ratingCount',
-            'quantity', 'currency', 'price', 'offerPrice', 'tags'
+            'subCategory', 'brand', 'ratings', 'options', 'cheapestOption', 
+            'averageRatings', 'ratingCount', 'tags',
+            'quantity', 'currency', 'price', 'offerPrice',
+            'priceValidUntil', 'percentOffer'
         ];
         whitelist.forEach(i => ret[i] = doc[i]);
         return ret;
