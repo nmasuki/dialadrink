@@ -51,7 +51,7 @@
                 
                 <div class="row">
                     <div class="col-md-5 bottom-rule">
-                        <h2 style="margin-top:5px">
+                        <h2 style="margin-top:5px" itemtype="http://schema.org/Offer">
                             <span itemprop="priceCurrency"> {{currency}}</span>
                             {{#ifgt price offerPrice}}
                                 <span>
@@ -251,7 +251,9 @@
                                     </span>&nbsp;
 
                                     {{#if ratingCount}}
-                                        <span itemprop="ratingCount" class="monospaced">{{ratings.length}}</span> reviews.
+                                        <span itemprop="ratingCount" class="monospaced">{{ratingCount}}</span> reviews.
+                                    {{else}}
+                                        <span itemprop="ratingCount" class="monospaced">1</span> reviews.
                                     {{/if}}
 
                                     {{#unless ../userRating}}

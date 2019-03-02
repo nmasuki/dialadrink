@@ -50,12 +50,12 @@
                                                     {{#ifgt price offerPrice}}
                                                         <span>
                                                         <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                                            <span itemprop="price">{{price}}</span>
+                                                            <span>{{price}}</span>
                                                         </span>
-                                                        <span itemprop="offerPrice">{{offerPrice}}</span>
+                                                        <span>{{offerPrice}}</span>
                                                     </span>
                                                     {{else}}
-                                                        <span itemprop="price">{{price}}</span>
+                                                        <span>{{price}}</span>
                                                     {{/ifgt}}
                                                 </td>
                                                 <td class="order-td" align="right"
@@ -65,14 +65,14 @@
                                                     {{#ifgt price offerPrice}}
                                                         <span>
                                                             <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                                                <span itemprop="price">{{formatNumber
+                                                                <span>{{formatNumber
                                                                         (prod pieces price)}}</span>
                                                             </span>
                                                             <span itemprop="offerPrice">{{formatNumber
                                                                     (prod pieces offerPrice)}}</span>
                                                         </span>
                                                     {{else}}
-                                                        <span itemprop="price">{{formatNumber (prod pieces price)}}</span>
+                                                        <span>{{formatNumber (prod pieces price)}}</span>
                                                     {{/ifgt}}
                                                 </span>
                                                 </td>

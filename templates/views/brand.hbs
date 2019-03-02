@@ -73,8 +73,8 @@
                         <span class="label label-success">
                             <span itemprop="aggregateRating">{{formatNumber averageRatings 1}}</span> *
                         </span>&nbsp;
-                        {{#if ratings.length}}
-                            <span itemprop="ratingCount" class="monospaced">{{ratings.length}}</span> reviews.
+                        {{#ifge ratingCount 0}}
+                            <span itemprop="ratingCount" class="monospaced">{{ratingCount}}</span> reviews.
                         {{else}}
                             <span style="display:none" itemprop="ratingCount" class="monospaced">1</span>
                         {{/if}}
@@ -88,8 +88,8 @@
 
             <div class="row">
                 <div class="col-md-5 bottom-rule">
-                    <h2>
-                        {{currency}}
+                    <h2 itemtype="http://schema.org/Offer">
+                        <span itepprop="priceCurrency">{{currency}}</span>
                         {{#ifgt price offerPrice}}
                             <span>
                                     <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
@@ -100,7 +100,7 @@
                                     </span>
                                 </span>
                         {{else}}
-                            <span class="product-price" id="product-price">{{formatNumber price}}</span>
+                            <span  itemprop="price" class="product-price" id="product-price">{{formatNumber price}}</span>
                         {{/ifgt}}
                     </h2>
                 </div>

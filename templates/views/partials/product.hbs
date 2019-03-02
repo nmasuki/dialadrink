@@ -27,8 +27,7 @@
 
             <span>{{quantity}}</span><br>
             <span itemscope itemprop="offers" itemtype="http://schema.org/Offer">
-                <meta itemprop="priceCurrency" content="{{currency}}"/>
-                {{currency}}
+                <span itemprop="priceCurrency">{{currency}}</span>
                 {{#ifgt price offerPrice}}
                     <span>
                         <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
