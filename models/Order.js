@@ -21,6 +21,13 @@ var Order = new keystone.List('Order', {
 });
 
 Order.add({
+    state: {
+        type: Types.Select,
+        options: 'created, placed, dispatched, delivered, pending, cancelled, paid',
+        default: 'created',
+        index: true
+    },
+
     orderNumber: {type: Number, noedit: true},
     orderDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
@@ -31,7 +38,7 @@ Order.add({
     paymentMethod: {type: String, noedit: true},
     
     cart: {type: Types.Relationship, ref: 'CartItem', many: true, noedit: true},
-    client: {type: Types.Relationship, ref: 'Client', noedit: false},
+    client: {type: Types.Relationship, ref: 'Client', noedit: true},
 
     payment:  {
         method: {type: String, noedit: true},
@@ -51,13 +58,6 @@ Order.add({
             noedit: true,
             index: true
         },
-    },
-    
-    state: {
-        type: Types.Select,
-        options: 'created, placed, dispatched, delivered, pending, cancelled, paid',
-        default: 'created',
-        index: true
     },
 
     promo: {
