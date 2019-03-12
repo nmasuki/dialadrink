@@ -347,7 +347,7 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(19, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                    </span>\n                </div>\n            </div><!-- end row -->\n\n            <div class=\"row\">\n                <div class=\"col-md-5 bottom-rule\">\n                    <h2 itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                        <meta itemprop=\"availability\" content=\"http://schema.org/"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(21, data, 0, blockParams, depths),"inverse":container.program(23, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
-    + "\"/>\n                        <meta itemprop=\"url\" content=\"https://www.dialadrinkkenya.com/product/"
+    + "\"/>\n                        <meta itemprop=\"url\" content=\"https://www.dialadrinkkenya.com"
     + alias4((helpers.productUrl || (depth0 && depth0.productUrl) || alias2).call(alias1,(depth0 != null ? depth0.href : depth0),{"name":"productUrl","hash":{},"data":data}))
     + "\"/>\n                        <meta itemprop=\"priceValidUntil\" content=\""
     + alias4(((helper = (helper = helpers.priceValidUntil || (depth0 != null ? depth0.priceValidUntil : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"priceValidUntil","hash":{},"data":data}) : helper)))
@@ -409,7 +409,7 @@ this["templates"]["views"]["cart"]["hbs"]["templates/views/cart.hbs"] = Handleba
     + alias4(((helper = (helper = helpers.cartId || (depth0 != null ? depth0.cartId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cartId","hash":{},"data":data}) : helper)))
     + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n					<div style=\"float: left; width: auto;\">\n						<img class=\"cart-image\" src=\""
     + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
-    + "\" style=\"max-height: 52px\">\n					</div>\n					<div class=\"col-md-5\">\n						<h6 class=\"my-0\">\n							<a class=\"cart-product-link\" href=\"/product/"
+    + "\" style=\"width: 52px, height: 52px\">\n					</div>\n					<div class=\"col-md-5\">\n						<h6 class=\"my-0\">\n							<a class=\"cart-product-link\" href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
     + "\">\n								"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.name : stack1), depth0))
@@ -484,7 +484,7 @@ this["templates"]["views"]["checkout"]["hbs"]["templates/views/checkout.hbs"] = 
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
     + "\"\n                            class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n                            <div style=\"float: left; width: auto; min-width: 53px;\">\n                                <img class=\"cart-image\" src=\""
     + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
-    + "\"\n                                     style=\"max-height: 52px;\">\n                            </div>\n                            <div class=\"col-md-8\">\n                                <h6 class=\"my-0\"><a href=\"/product/"
+    + "\" style=\"width: 52px, height: 52px\">\n                            </div>\n                            <div class=\"col-md-8\">\n                                <h6 class=\"my-0\"><a href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
     + "\">"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.name : stack1), depth0))
@@ -1270,7 +1270,7 @@ this["templates"]["views"]["partials"]["mini-cart-item"]["hbs"]["templates/views
     + alias4(((helper = (helper = helpers.cartId || (depth0 != null ? depth0.cartId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cartId","hash":{},"data":data}) : helper)))
     + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n    <div style=\"float: left; width: auto;\">\n        <img class=\"cart-image\" src=\""
     + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
-    + "\" style=\"max-height: 52px\">\n    </div>\n    <div class=\"col-md-8\">\n        <h6 class=\"my-0\"><a href=\"/product/"
+    + "\" style=\"width: 52px, height: 52px\">\n    </div>\n    <div class=\"col-md-8\">\n        <h6 class=\"my-0\"><a href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
     + "\">"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.name : stack1), depth0))
@@ -1404,7 +1404,7 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "</span><br>\n            <span itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                <meta itemprop=\"availability\" content=\"http://schema.org/"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0, blockParams, depths),"inverse":container.program(5, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
-    + "\"/>\n                <meta itemprop=\"url\" content=\"https://www.dialadrinkkenya.com/product/"
+    + "\"/>\n                <meta itemprop=\"url\" content=\"https://www.dialadrinkkenya.com"
     + alias3((helpers.productUrl || (depth0 && depth0.productUrl) || alias2).call(alias1,(depth0 != null ? depth0.href : depth0),{"name":"productUrl","hash":{},"data":data}))
     + "\"/>\n                <meta itemprop=\"priceValidUntil\" content=\""
     + alias3(((helper = (helper = helpers.priceValidUntil || (depth0 != null ? depth0.priceValidUntil : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"priceValidUntil","hash":{},"data":data}) : helper)))
@@ -1462,7 +1462,7 @@ this["templates"]["views"]["partials"]["product2"]["hbs"]["templates/views/parti
     + alias3(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "</div>\n                <div style=\"font-size: 12px !important;\" itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                    <meta itemprop=\"availability\" content=\"http://schema.org/"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
-    + "\"/>\n                    <meta itemprop=\"url\" content=\"https://www.dialadrinkkenya.com/product/"
+    + "\"/>\n                    <meta itemprop=\"url\" content=\"https://www.dialadrinkkenya.com"
     + alias3((helpers.productUrl || (depth0 && depth0.productUrl) || alias2).call(alias1,(depth0 != null ? depth0.href : depth0),{"name":"productUrl","hash":{},"data":data}))
     + "\"/>\n                    <meta itemprop=\"priceValidUntil\" content=\""
     + alias3(((helper = (helper = helpers.priceValidUntil || (depth0 != null ? depth0.priceValidUntil : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"priceValidUntil","hash":{},"data":data}) : helper)))
@@ -2013,7 +2013,7 @@ this["templates"]["views"]["receipt"]["hbs"]["templates/views/receipt.hbs"] = Ha
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias3).call(alias2,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(10, data, 0),"data":data})) != null ? stack1 : "")
     + "                                                </td>\n                                                <td class=\"order-td\" align=\"right\"\n                                                    style=\"text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px\">\n                                                <span class=\"order-amount amount\">\n                                                    <meta itemprop=\"availability\" content=\"http://schema.org/"
     + ((stack1 = helpers["if"].call(alias2,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.program(14, data, 0),"data":data})) != null ? stack1 : "")
-    + "\"/>\n                                                    <meta itemprop=\"url\" content=\"https://www.dialadrinkkenya.com/product/"
+    + "\"/>\n                                                    <meta itemprop=\"url\" content=\"https://www.dialadrinkkenya.com"
     + alias1((helpers.productUrl || (depth0 && depth0.productUrl) || alias3).call(alias2,(depth0 != null ? depth0.href : depth0),{"name":"productUrl","hash":{},"data":data}))
     + "\"/>\n                                                    <meta itemprop=\"priceValidUntil\" content=\""
     + alias1(((helper = (helper = helpers.priceValidUntil || (depth0 != null ? depth0.priceValidUntil : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"priceValidUntil","hash":{},"data":data}) : helper)))
