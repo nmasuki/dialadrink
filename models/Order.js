@@ -1,5 +1,6 @@
 var MoveSms = require("../helpers/movesms");
 var keystone = require('keystone');
+
 var Types = keystone.Field.Types;
 var sms = new MoveSms();
 
@@ -23,9 +24,35 @@ Order.add({
     orderNumber: {type: Number, noedit: true},
     orderDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
+    
+    smsNotificationSent: {type: Boolean, noedit: true},
     notificationSent: {type: Boolean, noedit: true},
+    
     paymentMethod: {type: String, noedit: true},
+    
+    cart: {type: Types.Relationship, ref: 'CartItem', many: true, noedit: true},
+    client: {type: Types.Relationship, ref: 'Client', noedit: false},
 
+    payment:  {
+        method: {type: String, noedit: true},
+        amount: {type: Number, noedit: true},
+        smsNotificationSent: {type: Boolean, noedit: true},
+        notificationSent: {type: Boolean, noedit: true},
+        notificationType: {type: String, noedit: true},
+        
+        url: {type: String, noedit: true},
+        shortUrl: {type: String, noedit: true},
+        referenceId: {type: String, noedit: true},
+        transactionId: {type: String, noedit: true},
+        state: {
+            type: String,
+            //options: 'Pending, Submited, Cancelled, Paid',
+            default: 'Pending',
+            noedit: true,
+            index: true
+        },
+    },
+    
     state: {
         type: Types.Select,
         options: 'created, placed, dispatched, delivered, pending, cancelled, paid',
@@ -40,7 +67,6 @@ Order.add({
         discountType: {type: String, noedit: true},
     },
 
-    cart: {type: Types.Relationship, ref: 'CartItem', many: true, noedit: true},
 
     //Delivery Details
     delivery: {
@@ -54,30 +80,14 @@ Order.add({
         houseNumber: {type: String, noedit: true}
     },
 
-    payment:  {
-        url: {type: String, noedit: true},
-        shortUrl: {type: String, noedit: true},
-        referenceId: {type: String, noedit: true},
-        transactionId: {type: String, noedit: true},
-        method: {type: String, noedit: true},
-        amount: {type: Number, noedit: true},
-        notificationSent: {type: Boolean, noedit: true},
-        notificationType: {type: String, noedit: true},
-        state: {
-            type: Types.Select,
-            options: 'Pending, Submited, Cancelled, Paid',
-            default: 'Pending',
-            noedit: true,
-            index: true
-        },
-    },
 });
 
 Order.schema.pre('save', function (next) {
     this.modifiedDate = Date.now();
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
-    next();
+
+    this.updateClient(next);
 });
 
 Order.schema.virtual("discount").get(function () {
@@ -122,6 +132,60 @@ Order.schema.virtual("deliveryAddress").get(function () {
     return address;
 });
 
+var clients = [];
+Order.schema.methods.updateClient = function(next){
+    var order = this;
+    if(order.delivery){
+        var findOption = {"$or":[]};
+        var phoneNumber = (this.delivery.phoneNumber || "").trim();
+        if(phoneNumber) {
+            if(phoneNumber.startsWith('0'))
+                phoneNumber = '254' + phoneNumber.trimLeft('0');
+            findOption["$or"].push({"phoneNumber": new RegExp(phoneNumber)});
+        }else{
+            var email = this.delivery.email || null;
+            if(email){
+                var username = email.split('@')[0];
+                if(username)                    
+                    findOption["$or"].push({"email": new RegExp("^" + username)});
+            }
+        }
+
+        if(findOption["$or"].length)
+            keystone.list("Client").model.findOne(findOption)
+                .exec((err, client)=>{
+                    if(err)
+                        return console.error(err);
+                    
+                    var delivery = order.delivery.toObject();
+                    client = client || clients.find(c=>c.phoneNumber == phoneNumber || c.email == email);
+                    if(client){
+                        if(client.createdDate < order.orderDate)
+                            for(var i in delivery){
+                                if(delivery[i] && typeof delivery[i] != "function"){
+                                    client[i] = delivery[i];
+                                }
+                            }
+                    }else{
+                        client = keystone.list("Client").model(delivery);
+                        client.createdDate = order.orderDate;
+                        clients.push(client);
+                    }
+
+                    client.save(function(){
+                        order.client = client;
+                        if(typeof next == "function")
+                            next();
+                    });                    
+                });   
+        else if(typeof next == "function")
+            next();
+    }else{
+        if(typeof next == "function")
+            next();
+    }
+};
+
 Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!")
     this.sendOrderNotification((err, data) => {
@@ -130,6 +194,7 @@ Order.schema.methods.placeOrder = function (next) {
         //Update order state
         this.state = 'placed';
         this.notificationSent = !err;
+
         this.save((err) => {
             if (err)
                 console.warn(err);
@@ -161,7 +226,6 @@ Order.schema.methods.sendPaymentNotification = function (next) {
         console.log("Payment notification already sent.");
         if (typeof next == "function")
             next("Payment notification already sent.");
-
         return;
     }
 
@@ -171,7 +235,11 @@ Order.schema.methods.sendPaymentNotification = function (next) {
             `for order #${order.orderNumber} has been received. Your order will be dispatched shortly. `+
             `Thank You for using http://dialadrinkkenya.com`;
         
-        order.sendSMSNotification(message);                
+        if(!order.payment.smsNotificationSent)
+            order.sendSMSNotification(message, function(err){
+                order.payment.smsNotificationSent = !!err;
+                order.save();
+            });                
     }
 
     var email = new keystone.Email('templates/views/receipt');
@@ -366,7 +434,9 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
 keystone.deepPopulate(Order.schema);
 
-Order.defaultColumns = 'orderDate|20%, orderNumber, delivery.firstName|20%, delivery.phoneNumber';
+Order.defaultColumns = 'orderDate|15%, orderNumber, delivery.firstName|15%, delivery.phoneNumber, payment.amount, state';
+Order.defaultSort = '-orderDate';
+
 Order.register();
 
 //Some random number from which to start counting
@@ -374,9 +444,7 @@ var autoId = 72490002;
 
 Order.getNextOrderId = () => (autoId = (autoId + 100));
 
-Order.model.find().sort({
-        'orderNumber': -1
-    })
+Order.model.find().sort({'orderNumber': -1 })
     .limit(1)
     .exec(function (err, data) {
         if (data[0] && data[0].orderNumber)

@@ -67,7 +67,7 @@ exports.initLocals = function (req, res, next) {
         res.locals.user = req.user;
 
         //contact number
-        res.locals.contactNumber = "0723688108";
+        res.locals.contactNumber = process.env.CONTACT_PHONE_NUMBER || "0723688108";
 
         //To use uglified files in production
         res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
@@ -147,7 +147,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
                 res.locals.breadcrumbs = [{"label": "Home", "href": "/"}];
 
             next(err);
-        })
+        });
 }
 
 exports.initTopMenuLocals = function (req, res, next) {

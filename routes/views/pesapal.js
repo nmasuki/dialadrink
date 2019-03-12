@@ -11,32 +11,38 @@ var PesaPalStatusMap = {"COMPLETED": "Paid", "PENDING": "Pending", "INVALID": "C
 var router = keystone.express.Router();
 
 router.get("/ipn", function (req, res) {
+	console.log("Recieved Pasapal IPN!")
     var transactionId = "", referenceId = "", notificationType = "";
     [req.body, req.query].forEach(payload => {
+		console.log("IPN payload:", payload);
+
         var payloadKeys = Object.keys(payload || {});
         var transactionIdKey = payloadKeys.find(k => k.toLowerCase().contains("transaction"));
         var referenceIdKey   = payloadKeys.find(k => k.toLowerCase().contains("reference") || k.toLowerCase().contains("reciept"));
         var notificationTypeKey = payloadKeys.find(k => k.toLowerCase().contains("notification"));
         
         if (transactionIdKey)
-            transactionId = payload[transactionIdKey];
+            transactionId = transactionId || payload[transactionIdKey];
         if (referenceIdKey)
-            referenceId = payload[referenceIdKey];
+            referenceId = referenceId || payload[referenceIdKey];
         if (notificationTypeKey)
-            notificationType = payload[notificationTypeKey];
+            notificationType = notificationType || payload[notificationTypeKey];
     });
 
 	Order.model.findOne({ orderNumber: referenceId })
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
-            if (!order)
+            if (!order){
+				console.log("Error while reading Order id:", referenceId);
                 return res.status(404).render('errors/404');
+			}
                 
             var options = {
                 reference: referenceId,
                 transaction: transactionId
             };
 
+			console.log("Reading Pasapal transaction id:" + transactionId + ", ref:" + referenceId)
             PesaPal.getPaymentDetails(options).then(function (payment) {
                 //payment -> {transaction, method, status, reference}
                 //console.log(payment);
@@ -55,8 +61,8 @@ router.get("/ipn", function (req, res) {
                 }
 
                 if (payment.status == "COMPLETED") {
-                    order.sendPaymentNotification(function () {
-                        order.payment.notificationSent = true;
+                    order.sendPaymentNotification(function (err) {
+                        order.payment.notificationSent = !!err;
                         order.save();
                     });
                 } else {

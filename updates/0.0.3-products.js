@@ -204,7 +204,6 @@ exports = module.exports = function (done) {
                     products = {};
                 else if (typeof products != "object")
                     products = JSON.parse(products) || products;
-                //createProduct(body[0], done);
 
                 var success = 0, errors = [], i = 0;
                 products = products.orderBy("name");

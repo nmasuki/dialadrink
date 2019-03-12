@@ -10,6 +10,7 @@
     "cloudinary": "1.7.0",
     "connect-mongo": "^2.0.1",
     "crawler": "^1.1.4",
+    "daemon": "^1.1.0",
     "dotenv": "4.0.0",
     "express-handlebars": "3.0.0",
     "express-handlebars-precompiler": "0.0.6",

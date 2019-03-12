@@ -5,6 +5,7 @@ var ProductRating = keystone.list('ProductRating');
 router.get("/:product", function (req, res) {
     var view = new keystone.View(req, res);
     var locals = res.locals;
+    locals.breadcrumbs = locals.breadcrumbs || [];
     var regex = new RegExp(req.params.product.cleanId().trim(), "i");
 
     locals.page = Object.assign(locals.page, {title: ""});

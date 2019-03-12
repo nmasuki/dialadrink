@@ -216,7 +216,7 @@ router.get("/pricelist", function (req, res) {
             if(html){
                 var pdf = require('html-pdf');
 
-                let filename = encodeURIComponent("DIAL A DRINK PRICELIST") + '.pdf';
+                let filename = encodeURIComponent("drinks pricelist") + '.pdf';
 
                 // Setting response to 'attachment' (download).
                 // If you use 'inline/attachment' here it will automatically open/download the PDF
@@ -231,10 +231,13 @@ router.get("/pricelist", function (req, res) {
                     "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
                     //"orientation": "landscape", // portrait or landscape
                 }).toStream(function (err, stream) {
-                    stream.pipe(res);
+                    if(err)
+                        console.error(err);
+                    else
+                        stream.pipe(res);
                 });
             } else if(next){
-                next(err)
+                next(err);
             } else {
                 res.status(404).render('errors/404');
             }
