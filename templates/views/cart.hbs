@@ -23,6 +23,7 @@
 							<a class="cart-product-link" href="/product/{{product.href}}">
 								{{product.name}}&nbsp;{{quantity}}
 							</a>
+							<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>
 						</h6>
 						<!--<small class="text-muted cart-description">{{truncate description 50}}</small>-->
 						<small class="text-muted">
@@ -47,7 +48,6 @@
 							<span class="glyphicon glyphicon-minus" aria-hidden="true" style="padding: 8px 0px;"></span>
 						</span>
 					</div>
-					<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>
 				</li>
 			{{else}}
 				<li class="list-group-item d-flex justify-content-between lh-condensed row">
