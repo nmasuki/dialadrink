@@ -38,7 +38,7 @@ router.post("/", function (req, res, next) {
 	}
 
 	if (Object.keys(req.session.cart || {}).length) {
-		var cart = Object.values(req.session.cart);
+		var cart = Object.values(req.session.cart || {});
 		var promo = req.session.promo || {};
 		var subtotal = cart.sum(function (c) {
 			var price = c.pieces * c.price;

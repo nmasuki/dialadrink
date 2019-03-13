@@ -440,7 +440,7 @@ if (!Array.prototype.splitChunks)
         }
 
         var groups = this.groupBy((a, i) => i % chunkCount);
-        return Object.values(groups);
+        return Object.values(groups || {});
     };
 //
 if (!Array.prototype.group)

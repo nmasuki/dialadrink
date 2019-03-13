@@ -166,7 +166,7 @@ var cartUtil = function () {
         },
 
         productCount: function () {
-            var productIds = Object.values(_cart)
+            var productIds = Object.values(_cart || {})
                 .distinct(function (item) {
                     return item.product && item.product._id;
                 });
