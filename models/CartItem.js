@@ -13,7 +13,7 @@ var CartItem = new keystone.List('CartItem', {
 });
 
 CartItem.add({
-    date: {type: Types.Date, index: true, default: Date.now, noedit: true},
+    date: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     pieces: {type: Number, noedit: true},
     state: {
         type: Types.Select,

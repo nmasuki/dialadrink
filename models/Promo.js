@@ -16,8 +16,8 @@ Promo.add({
 	name: {type: String },
 	discount: {type: Number },//Percentage 
 	discountType: { type: Types.Select, options: 'percent, KES', default: 'percent', index: true },
-	startDate: {type: Types.Date, index: true, default: Date.now},
-	endDate: {type: Types.Date }
+	startDate: {type: Types.Datetime, index: true, default: Date.now},
+	endDate: {type: Types.Datetime }
 });
 
 Promo.schema.virtual('status').get(function(){

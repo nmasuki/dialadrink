@@ -20,9 +20,9 @@ Client.add({
     orderCount: {type: Number, noedit:true},
     orderValue: {type: Number, noedit:true},
 
-    createdDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
-    modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},    
-    lastOrderDate: {type: Types.Date, index: true, noedit: true}
+    createdDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
+    modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},    
+    lastOrderDate: {type: Types.Datetime, index: true, noedit: true}
 });
 
 Client.relationship({ref: 'Order', refPath: 'client'});

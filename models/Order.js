@@ -24,8 +24,8 @@ Order.add({
     },
 
     orderNumber: {type: Number, noedit: true},
-    orderDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
-    modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
+    orderDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
+    modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     
     smsNotificationSent: {type: Boolean, noedit: true},
     notificationSent: {type: Boolean, noedit: true},    
