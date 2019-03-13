@@ -407,7 +407,7 @@ this["templates"]["views"]["cart"]["hbs"]["templates/views/cart.hbs"] = Handleba
 
   return "				<li data-cartid=\""
     + alias4(((helper = (helper = helpers.cartId || (depth0 != null ? depth0.cartId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cartId","hash":{},"data":data}) : helper)))
-    + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n					<div style=\"float: left; width: auto;\">\n						<img class=\"cart-image\" src=\""
+    + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n					<div class=\"col-md-3\">\n						<img class=\"cart-image\" src=\""
     + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
     + "\" style=\"width: 52px, height: 52px\">\n					</div>\n					<div class=\"col-md-5\">\n						<h6 class=\"my-0\">\n							<a class=\"cart-product-link\" href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
@@ -482,7 +482,7 @@ this["templates"]["views"]["checkout"]["hbs"]["templates/views/checkout.hbs"] = 
 
   return "                        <li data-cartid=\""
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
-    + "\"\n                            class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n                            <div style=\"float: left; width: auto; min-width: 53px;\">\n                                <img class=\"cart-image\" src=\""
+    + "\"\n                            class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n                            <div class=\"col-md-4\">\n                                <img class=\"cart-image\" src=\""
     + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
     + "\" style=\"width: 52px, height: 52px\">\n                            </div>\n                            <div class=\"col-md-8\">\n                                <h6 class=\"my-0\"><a href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
@@ -1268,7 +1268,7 @@ this["templates"]["views"]["partials"]["mini-cart-item"]["hbs"]["templates/views
 
   return "<li data-cartid=\""
     + alias4(((helper = (helper = helpers.cartId || (depth0 != null ? depth0.cartId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cartId","hash":{},"data":data}) : helper)))
-    + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n    <div style=\"float: left; width: auto;\">\n        <img class=\"cart-image\" src=\""
+    + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n    <div class=\"col-md-4\">\n        <img class=\"cart-image\" src=\""
     + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
     + "\" style=\"width: 52px, height: 52px\">\n    </div>\n    <div class=\"col-md-8\">\n        <h6 class=\"my-0\"><a href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
