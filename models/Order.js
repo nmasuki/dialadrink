@@ -10,14 +10,9 @@ var sms = new MoveSms();
  */
 
 var Order = new keystone.List('Order', {
-    map: {
-        name: 'orderNumber'
-    },
-    autokey: {
-        path: 'key',
-        from: 'orderNumber',
-        unique: true
-    },
+    map: { name: 'orderNumber' },
+    defaultSort: '-orderDate',
+    autokey: { path: 'key', from: 'orderNumber', unique: true },
 });
 
 Order.add({
@@ -77,7 +72,8 @@ Order.add({
         email: {type: String, noedit: true},
         address: {type: String, noedit: true},
         building: {type: String, noedit: true},
-        houseNumber: {type: String, noedit: true}
+        houseNumber: {type: String, noedit: true},
+        clientIp: {type: String, noedit: true}
     },
 
 });
@@ -160,6 +156,7 @@ Order.schema.methods.updateClient = function(next){
                     var delivery = order.delivery.toObject();
                     client = client || clients.find(c=>c.phoneNumber == phoneNumber || c.email == email);
                     if(client){
+                        client.clientIps.push(order.clientIp);
                         if(client.createdDate < order.orderDate)
                             for(var i in delivery){
                                 if(delivery[i] && typeof delivery[i] != "function")
@@ -168,6 +165,7 @@ Order.schema.methods.updateClient = function(next){
                     }else{
                         client = keystone.list("Client").model(delivery);
                         client.createdDate = order.orderDate;
+                        client.clientIps.push(order.clientIp);
                         clients.push(client);
                     }
 

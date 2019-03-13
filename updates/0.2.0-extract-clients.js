@@ -1,7 +1,6 @@
 var keystone = require('keystone');
 var Order = keystone.list('Order');
 
-
 exports = module.exports = function (done) {
     Order.model.find({})
         .sort({orderDate: -1})

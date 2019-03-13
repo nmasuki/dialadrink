@@ -72,6 +72,12 @@ exports.initLocals = function (req, res, next) {
         //To use uglified files in production
         res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
 
+        //Client IP
+        res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
+            req.connection.remoteAddress || 
+            req.socket.remoteAddress ||  
+            req.connection.socket.remoteAddress;
+
         //Load Top Menu
         exports.initTopMenuLocals(req, res, function () {
             //Load BreadCrumbs

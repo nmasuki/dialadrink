@@ -3,12 +3,11 @@ var Types = keystone.Field.Types;
 
 var Client = new keystone.List('Client', {
     map:{name: 'firstName'},
+    defaultSort: '-lastOrderDate',
     autokey: {path: 'key', unique: true, from: '_id'},
 });
 
 Client.add({
-    createdDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
-    modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},    
     firstName: {type: String},
     lastName: {type: String},
     phoneNumber: {type: String},
@@ -16,14 +15,19 @@ Client.add({
     address: {type: String},
     building: {type: String},
     houseNumber: {type: String},
+    clientIps: {type: Types.TextArray},
+
     orderCount: {type: Number, noedit:true},
     orderValue: {type: Number, noedit:true},
+
+    createdDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
+    modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},    
     lastOrderDate: {type: Types.Date, index: true, noedit: true}
 });
 
 Client.relationship({ref: 'Order', refPath: 'client'});
 
-Client.defaultColumns = 'firstName, lastName, phoneNumber, email, address, orderCount, orderValue';
+Client.defaultColumns = 'firstName, lastName, phoneNumber, email, address, orderCount, orderValue,lastOrderDate';
 
 Client.schema.virtual("fullName").get(function () {
     return (this.firstName + ' ' + this.lastName || '').trim();
