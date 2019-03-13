@@ -33,13 +33,14 @@ Order.add({
     modifiedDate: {type: Types.Date, index: true, default: Date.now, noedit: true},
     
     smsNotificationSent: {type: Boolean, noedit: true},
-    notificationSent: {type: Boolean, noedit: true},
-    
-    paymentMethod: {type: String, noedit: true},
-    
+    notificationSent: {type: Boolean, noedit: true},    
+
     cart: {type: Types.Relationship, ref: 'CartItem', many: true, noedit: true},
     client: {type: Types.Relationship, ref: 'Client', noedit: true},
-
+    orderAmount: {type: Number, noedit: true},
+    
+    //Payment Details
+    paymentMethod: {type: String, noedit: true},
     payment:  {
         method: {type: String, noedit: true},
         amount: {type: Number, noedit: true},
@@ -60,6 +61,7 @@ Order.add({
         },
     },
 
+    //Promo details
     promo: {
         code: {type: String, noedit: true},
         name: {type: String, noedit: true},
@@ -67,10 +69,8 @@ Order.add({
         discountType: {type: String, noedit: true},
     },
 
-
     //Delivery Details
     delivery: {
-        userId: {type: String, noedit: true, visible: false},
         firstName: {type: String, noedit: true},
         lastName: {type: String, noedit: true},
         phoneNumber: {type: String, noedit: true},
@@ -162,9 +162,8 @@ Order.schema.methods.updateClient = function(next){
                     if(client){
                         if(client.createdDate < order.orderDate)
                             for(var i in delivery){
-                                if(delivery[i] && typeof delivery[i] != "function"){
-                                    client[i] = delivery[i];
-                                }
+                                if(delivery[i] && typeof delivery[i] != "function")
+                                    client[i] = delivery[i];                                
                             }
                     }else{
                         client = keystone.list("Client").model(delivery);
