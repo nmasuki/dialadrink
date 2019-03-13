@@ -27,8 +27,19 @@ CartItem.add({
 });
 
 CartItem.schema.pre('save', function (next) {
-    this.name = this.product ? this.product.name : null;
-    next();
+    var pId = this.product && this.product._id || this.product;
+    this.name = this.product ? this.product.name : this.name;
+
+    if(this.product && this.product.name)
+        return next();
+    if(!pId)
+        return next();
+    
+    keystone.list('Product').findOne({_id: pId})
+        .exec((err, product) => {
+            this.name = product && product.name || this._id;
+            next();
+        });
 });
 
 CartItem.schema.virtual("productName").get(function () {

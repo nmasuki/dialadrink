@@ -19,6 +19,7 @@ function addToCart(req, res, callback) {
 			if(err)
 				console.err(err);
 			product.addPopularity(10);
+			cart[cartId].name = product.name;
 		});
 
 		console.log('"Incremented cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price, cart[cartId].pieces);
