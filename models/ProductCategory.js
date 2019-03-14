@@ -16,7 +16,7 @@ ProductCategory.add({
     description: {type: Types.Html, wysiwyg: true, height: 150},
 });
 
-ProductCategory.relationship({ref: 'Product', path: 'category'});
-ProductCategory.relationship({ref: 'ProductSubCategory', path: 'category'});
+ProductCategory.relationship({ref: 'Product', refPath: 'category'});
+ProductCategory.relationship({ref: 'ProductSubCategory', refPath: 'category'});
 
 ProductCategory.register();

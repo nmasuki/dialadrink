@@ -30,8 +30,8 @@ MenuItem.add({
 	submenus: { type: Types.Relationship, ref: 'MenuItem', many: true },
 });
 
-MenuItem.relationship({ ref: 'MenuItem', path: 'submenus' });
-MenuItem.relationship({ ref: 'MenuItem', path: 'parent' });
+MenuItem.relationship({ ref: 'MenuItem', refPath: 'submenus' });
+MenuItem.relationship({ ref: 'MenuItem', refPath: 'parent' });
 
 MenuItem.defaultColumns = 'label, level, parent, href|20%, show|20%';
 

@@ -6,7 +6,7 @@
 			{{/each}}
 			<li class="list-group-item d-flex justify-content-between lh-condensed row">
 				<div class="total" style="text-align: right">
-					<div class="col-md-4">Total (<span class="cart-currency">KES</span>)</div>
+					<div class="col-md-4 col-sm-4">Total (<span class="cart-currency">KES</span>)</div>
 					<strong class="cart-total">
 						{{formatNumber (sumEvals cartItems 'c=>c.pieces*c.price')}}
 					</strong>

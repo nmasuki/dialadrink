@@ -43,7 +43,6 @@ module.exports = function MoveSMS(sender) {
                     },
                     success: function (response) {
                         console.log("SMS notification sent!", response);
-
                         var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
                         resolve(balance);
                         if (typeof next == "function")

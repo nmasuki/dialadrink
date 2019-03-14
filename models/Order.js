@@ -329,7 +329,7 @@ Order.schema.methods.sendSMSNotification = function (next, message) {
             console.error.apply(this, arguments);
         
         if(typeof next == "function")
-            next.apply(this, arguments);
+            next(err, res);
     });
 };
 
