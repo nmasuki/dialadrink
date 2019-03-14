@@ -7,17 +7,17 @@ var Types = keystone.Field.Types;
  */
 
 var MenuItem = new keystone.List('MenuItem', {
-	map: { name: 'label' },
-	autokey: { path: 'key', from: 'href', unique: true },
-	defaultSort: 'level',
 	drilldown: 'parent',
+	defaultSort: 'level',
+	map: { name: 'href' },
+	autokey: { path: 'key', from: '_id', unique: true },
 });
 
 MenuItem.add({
-	href: { type: String, initial: true, required: true },
+	href: { type: String, initial: true },
 	label: { type: String },
-	index: { type: Number },
-	level: { type: Number },
+	index: { type: Number, default: 0 },
+	level: { type: Number, default: 0 },
 	show: { type: Boolean },
 	type: {
 		type: Types.Select,

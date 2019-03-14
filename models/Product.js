@@ -3,8 +3,7 @@ var extractor = require("keyword-extractor");
 var Types = keystone.Field.Types;
 
 var Product = new keystone.List('Product', {
-    map: {name: 'name'},
-    autokey: {from: '_id', path: 'key', unique: true},
+    map: {name: 'name'}
 });
 
 Product.add({
