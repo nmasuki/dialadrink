@@ -22,7 +22,7 @@ MenuItem.add({
 	type: {
 		type: Types.Select,
 		options: 'top, bottom, bottom col1, bottom col2, bottom col3, bottom col4',
-		default: 'draft',
+		default: 'top',
 		index: true,
 	},
 	page: { type: Types.Relationship, ref: 'Page' },
