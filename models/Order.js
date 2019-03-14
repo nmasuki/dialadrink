@@ -432,7 +432,6 @@ Order.schema.methods.sendOrderNotification = function (next) {
 keystone.deepPopulate(Order.schema);
 
 Order.defaultColumns = 'orderNumber, orderDate|15%, delivery.firstName|15%, delivery.phoneNumber, payment.amount, state';
-Order.defaultSort = '-orderDate';
 
 Order.register();
 

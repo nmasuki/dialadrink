@@ -6,7 +6,7 @@ var Types = keystone.Field.Types;
  * ==================
  */
 var ProductBrand = new keystone.List('ProductBrand', {
-    autokey: {from: 'name', path: 'key', unique: true},
+    autokey: {from: '_id', path: 'key', unique: true},
 });
 
 ProductBrand.add({
