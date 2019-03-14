@@ -387,7 +387,7 @@ this["templates"]["views"]["cart-mini"]["hbs"]["templates/views/cart-mini.hbs"] 
 
   return "	<div id=\"cart-content-mini\">\n		<ul class=\"list-group mb-3\" style=\"margin-bottom: 0;max-height: 528px;overflow: auto;\">\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.cartItems : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "			<li class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n				<div class=\"total\" style=\"text-align: right\">\n					<div class=\"col-md-4\">Total (<span class=\"cart-currency\">KES</span>)</div>\n					<strong class=\"cart-total\">\n						"
+    + "			<li class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n				<div class=\"total\" style=\"text-align: right\">\n					<div class=\"col-md-4 col-sm-4\">Total (<span class=\"cart-currency\">KES</span>)</div>\n					<strong class=\"cart-total\">\n						"
     + container.escapeExpression((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(helpers.sumEvals || (depth0 && depth0.sumEvals) || alias2).call(alias1,(depth0 != null ? depth0.cartItems : depth0),"c=>c.pieces*c.price",{"name":"sumEvals","hash":{},"data":data}),{"name":"formatNumber","hash":{},"data":data}))
     + "\n					</strong>\n				</div>\n			</li>\n			<li class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n				<button class=\"btn btn-primary\" style=\"float: right\" onclick=\"window.location='/checkout'\"\n						id=\"update-cart\" name=\"update\">Checkout\n				</button>\n			</li>\n		</ul>\n	</div>\n";
 },"2":function(container,depth0,helpers,partials,data) {
@@ -1268,9 +1268,9 @@ this["templates"]["views"]["partials"]["mini-cart-item"]["hbs"]["templates/views
 
   return "<li data-cartid=\""
     + alias4(((helper = (helper = helpers.cartId || (depth0 != null ? depth0.cartId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"cartId","hash":{},"data":data}) : helper)))
-    + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n    <div class=\"col-md-4\">\n        <img class=\"cart-image\" src=\""
+    + "\" class=\"list-group-item d-flex justify-content-between lh-condensed row\">\n    <div class=\"col-md-4 col-sm-4\">\n        <img class=\"cart-image\" src=\""
     + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"height":52,"crop":"fit"},"data":data}))
-    + "\" style=\"width: 52px, height: 52px\">\n    </div>\n    <div class=\"col-md-8\">\n        <h6 class=\"my-0\">\n            <a href=\"/product/"
+    + "\" style=\"width: 52px, height: 52px\">\n    </div>\n    <div class=\"col-md-8 col-sm-8\">\n        <h6 class=\"my-0\">\n            <a href=\"/product/"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.href : stack1), depth0))
     + "\">"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.product : depth0)) != null ? stack1.name : stack1), depth0))
