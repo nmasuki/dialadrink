@@ -10,7 +10,7 @@ var MenuItem = new keystone.List('MenuItem', {
 	drilldown: 'parent',
 	defaultSort: 'level',
 	map: { name: 'href' },
-	autokey: { path: 'key', from: '_id', unique: true },
+	autokey: { path: 'key', from: 'href', unique: true },
 });
 
 MenuItem.add({
@@ -33,8 +33,6 @@ MenuItem.add({
 MenuItem.relationship({ ref: 'MenuItem', refPath: 'submenus' });
 MenuItem.relationship({ ref: 'MenuItem', refPath: 'parent' });
 
-MenuItem.defaultColumns = 'label, level, parent, href|20%, show|20%';
-
+MenuItem.defaultColumns = 'label, level, href, parent, show';
 keystone.deepPopulate(MenuItem.schema);
-
 MenuItem.register();

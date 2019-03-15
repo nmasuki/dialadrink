@@ -72,4 +72,5 @@ Client.schema.pre('save', function (next) {
         next();
     }
 });
+
 Client.register();

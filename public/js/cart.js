@@ -199,16 +199,16 @@ var cartUtil = function () {
         },
 
         updateView: function (cart, promo) {
-            cart = cart || _cart;
+            cart = cart || _cart || {};
             promo = promo || _promo;
 
             //Update changes
             Object.values(cart).forEach(self.updateCartItemView);
+            
             //Remove missing
             Object.keys(_cart).forEach(function (cartId) {
-                if (!cart[cartId] || cart[cartId].pieces <= 0) {
-                    self.view("li[data-cartid='" + cartId + "']").slideUp();
-                }
+                if (!cart[cartId] || cart[cartId].pieces <= 0)
+                    self.view("li[data-cartid='" + cartId + "']").slideUp();                
             });
 
             var promoView = $(".promo-code-wrapper");

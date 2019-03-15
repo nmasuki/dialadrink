@@ -35,7 +35,7 @@ CartItem.schema.pre('save', function (next) {
     if(!pId)
         return next();
     
-    keystone.list('Product').findOne({_id: pId})
+    keystone.list('Product').model.findOne({_id: pId})
         .exec((err, product) => {
             this.name = product && product.name || this._id;
             next();
