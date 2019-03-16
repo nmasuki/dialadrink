@@ -170,13 +170,8 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
 exports.initTopMenuLocals = function (req, res, next) {
     //TopMenu
     return keystone.list('MenuItem').model
-        .find({
-            level: 1,
-            type: "top"
-        })
-        .sort({
-            index: 1
-        })
+        .find({ level: 1, type: "top" })
+        .sort({ index: 1 })
         .populate('submenus')
         .exec((err, menu) => {
             if (err)
