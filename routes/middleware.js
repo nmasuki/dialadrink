@@ -79,14 +79,13 @@ exports.initLocals = function (req, res, next) {
         res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
 
         var istart = new Date();
-        console.log("Starting Locals Inits");
         Promise.all([
             exports.initTopMenuLocals(req, res),
             exports.initBreadCrumbsLocals(req, res),
             exports.initPageLocals(req, res),
             exports.initBrandsLocals(req, res)
         ]).then(function () {
-            console.log("Initiated Locals done!", (new Date().getTime() - istart.getTime()), "ms");
+            console.log("Initiated Locals!", (new Date().getTime() - istart.getTime()), "ms");
             next();
         });
     }
