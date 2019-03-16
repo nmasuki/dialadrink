@@ -1,4 +1,4 @@
-var CACHE_VERSION = 11.1;
+var CACHE_VERSION = 11.5;
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
 function getCacheName(destination, inc) {
@@ -29,25 +29,25 @@ workbox.precaching.precacheAndRoute([
         version: getCacheName("script")
     },{
         url: "/styles/site.min.css",
-        version: getCacheName("styles")
+        version: getCacheName("style")
     },{
         url: "/js/owlcarousel/assets/owl.carousel.min.css",
-        version: getCacheName("styles")
+        version: getCacheName("style")
     },{
         url: "/js/owlcarousel/assets/owl.theme.default.min.css",
-        version: getCacheName("styles")
+        version: getCacheName("style")
     },{
         url: "/js/all.scripts.min.js",
         version: getCacheName("script")
     },{
         url: "//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300",
-        version: getCacheName("styles")
+        version: getCacheName("style")
     },{
         url: "//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css",
-        version: getCacheName("styles")
+        version: getCacheName("style")
     },{
         url: "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
-        version: getCacheName("styles")
+        version: getCacheName("style")
     }
 ], {
     "cacheId": "dialadinkkenya",
@@ -70,7 +70,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     new RegExp('.*\.css'),
     workbox.strategies.cacheFirst({
-        "cacheName": getCacheName("styles"),
+        "cacheName": getCacheName("style"),
         "cacheableResponse": {
             "statuses": [0, 200]
         }
