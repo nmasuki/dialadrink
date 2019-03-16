@@ -38,7 +38,7 @@ var routes = {
 exports = module.exports = function (app) {	
 	
 	app.enable('view cache');
-	var noopMiddleware = (req, res, next) => next();
+	var noopMiddleware = null;//(req, res, next) => next();
 	var globalCacheMiddleware = noopMiddleware ||  middleware.cache((process.env.CACHE_TIME || 30) * 60, "/");
 	var userCacheMiddleware = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30) * 60);
 	// Views
@@ -53,8 +53,8 @@ exports = module.exports = function (app) {
 	app.use('/checkout', routes.views.checkout);
 	app.use('/cart', routes.views.cart);
 
-	app.use('/', userCacheMiddleware, routes.views.products);
-	app.use('/', userCacheMiddleware,  routes.views.index);
+	app.use('/', globalCacheMiddleware, routes.views.products);
+	app.use('/', globalCacheMiddleware,  routes.views.index);
 
 	app.use('/order', routes.views.order);
 	app.use('/pesapal', routes.views.pesapal);
