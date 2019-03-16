@@ -15,6 +15,8 @@ var memCache = require("memory-cache");
 exports.cache = function (duration, _key) {
     duration = duration || 30;
     return (req, res, next) => {
+        if (req.xhr) return next();
+        
         try {
             let key = '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
             let cacheContent = memCache.get(key);
