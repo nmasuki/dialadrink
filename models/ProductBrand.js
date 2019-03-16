@@ -27,15 +27,17 @@ ProductBrand.defaultColumns = 'name, logo, h1, state';
 ProductBrand.register();
 
 ProductBrand.findPopularBrands = function (callback) {
-    keystone.list('Product').findPublished({})
+    return keystone.list('Product').findPublished({})
+        .sort('-popularity')
         .exec((err, _products) => {
             var brands = _products.map(p => {
                 if(p.brand && p.category && p.brand.category != p.category._id){
                     p.brand.category = p.category;
-                    //p.brand.save();
+                    p.brand.save();
                 }
                 return p.brand;
             }).filter(b => b).distinctBy(b => b._id);
+
             callback(err, brands, _products);
         });
 };

@@ -12,24 +12,24 @@ var keystone = require("keystone");
 var mobile = require('is-mobile');
 var memCache = require("memory-cache");
 
-exports.cache = function (duration, _key){
+exports.cache = function (duration, _key) {
     duration = duration || 30;
     return (req, res, next) => {
-        try{
-            let key =  '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
+        try {
+            let key = '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
             let cacheContent = memCache.get(key);
-            if(cacheContent){
+            if (cacheContent) {
                 res.send(cacheContent);
                 return;
-            }else{
+            } else {
                 res.sendResponse = res.send;
                 res.send = (body) => {
-                    memCache.put(key, body, duration*1000);
+                    memCache.put(key, body, duration * 1000);
                     res.sendResponse(body);
                 };
                 next();
             }
-        }catch(e){
+        } catch (e) {
             memCache.clear();
             next();
         }
@@ -54,9 +54,9 @@ exports.initLocals = function (req, res, next) {
 
     //Client IP
     res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
-            req.connection.remoteAddress || 
-            req.socket.remoteAddress ||  
-            req.connection.socket.remoteAddress;
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress;
 
     if (req.xhr) {
         var csrf_token = req.body.csrf || req.body.csrf_token || req.get('X-CSRF-Token');
@@ -79,20 +79,30 @@ exports.initLocals = function (req, res, next) {
         res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
 
         var istart = new Date();
-        console.log("Starting Inits");
-        
+        console.log("Starting Locals Inits");
+
         //Load Top Menu
-        exports.initTopMenuLocals(req, res, function () {
-            //Load BreadCrumbs
-            exports.initBreadCrumbsLocals(req, res, function () {
-                //Load Page
-                exports.initPageLocals(req, res, function () {
-                    exports.initBrandsLocals(req, res, function () {
-                        console.log("Inits done! in ", new Date().getTime() - istart.getTime());
-                        next();
-                    });
-                });
-            });
+        var p1 = exports.initTopMenuLocals(req, res, function () {
+            console.log("TopMenu init done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
+        });
+
+        //Load BreadCrumbs
+        var p2 = exports.initBreadCrumbsLocals(req, res, function () {
+            console.log("BreadCrumbs init done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
+        });
+
+        //Load Page
+        var p3 = exports.initPageLocals(req, res, function () {
+            console.log("Page init done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
+        });
+
+        var p4 = exports.initBrandsLocals(req, res, function () {
+            console.log("Brands init done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
+        });
+
+        Promise.all([p1, p2, p3, p4]).then(function () {
+            console.log("init all locals done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
+            next();
         });
     }
 };
@@ -105,32 +115,39 @@ exports.initPageLocals = function (req, res, next) {
     };
 
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
-    keystone.list('Page').model
-        .find({key: regex})
+    return keystone.list('Page').model
+        .find({
+            key: regex
+        })
         .exec((err, pages) => {
             var page = pages.orderBy(m => m.href.length).first();
             res.locals.isMobile = mobile(req);
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
-            next(err);
+            
+            if (typeof next == "function")
+                next(err);
         });
 
 };
 
 exports.initBrandsLocals = function (req, res, next) {
-    keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
+    return keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
         if (!err) {
             groups = brands.groupBy(b => b.category && b.category.name || "_delete");
             delete groups["_delete"];
             delete groups["Others"];
 
             for (var i in groups)
-                groups[i] = groups[i].orderByDescending(b => products
-                    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
-                    .avg(p => p.popularity)).slice(0, 10);
+                groups[i] = groups[i]
+                    //.orderByDescending(b => products
+                    //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
+                    //    .avg(p => p.popularity))
+                    .slice(0, 10);
 
             res.locals.groupedBrands = groups;
         }
-        next(err);
+        if (typeof next == "function")
+            next(err);
     });
 }
 
@@ -138,8 +155,10 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     //Load breadcrumbs
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
-    keystone.list('MenuItem').model
-        .find({key: regex})
+    return keystone.list('MenuItem').model
+        .find({
+            key: regex
+        })
         .deepPopulate("parent.parent")
         .exec((err, menus) => {
             var menu = menus.orderBy(m => m.href.length).first();
@@ -154,17 +173,26 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
             if (breadcrumbs.length)
                 res.locals.breadcrumbs = breadcrumbs.orderBy(m => m.level);
             else
-                res.locals.breadcrumbs = [{"label": "Home", "href": "/"}];
+                res.locals.breadcrumbs = [{
+                    "label": "Home",
+                    "href": "/"
+                }];
 
-            next(err);
+            if (typeof next == "function")
+                next(err);
         });
 }
 
 exports.initTopMenuLocals = function (req, res, next) {
     //TopMenu
-    keystone.list('MenuItem').model
-        .find({level: 1, type: "top"})
-        .sort({index: 1})
+    return keystone.list('MenuItem').model
+        .find({
+            level: 1,
+            type: "top"
+        })
+        .sort({
+            index: 1
+        })
         .populate('submenus')
         .exec((err, menu) => {
             if (err)
@@ -178,7 +206,8 @@ exports.initTopMenuLocals = function (req, res, next) {
                 })
                 .distinctBy(m => m.label.cleanId());
 
-            next();
+            if (typeof next == "function")
+                next(err);
         });
 }
 
