@@ -80,28 +80,13 @@ exports.initLocals = function (req, res, next) {
 
         var istart = new Date();
         console.log("Starting Locals Inits");
-
-        //Load Top Menu
-        var p1 = exports.initTopMenuLocals(req, res, function () {
-            console.log("TopMenu init done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
-        });
-
-        //Load BreadCrumbs
-        var p2 = exports.initBreadCrumbsLocals(req, res, function () {
-            console.log("BreadCrumbs init done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
-        });
-
-        //Load Page
-        var p3 = exports.initPageLocals(req, res, function () {
-            console.log("Page init done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
-        });
-
-        var p4 = exports.initBrandsLocals(req, res, function () {
-            console.log("Brands init done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
-        });
-
-        Promise.all([p1, p2, p3, p4]).then(function () {
-            console.log("init all locals done!", (new Date().getTime() - istart.getTime()) / 1000.0, "ms");
+        Promise.all([
+            exports.initTopMenuLocals(req, res),
+            exports.initBreadCrumbsLocals(req, res),
+            exports.initPageLocals(req, res),
+            exports.initBrandsLocals(req, res)
+        ]).then(function () {
+            console.log("Initiated Locals done!", (new Date().getTime() - istart.getTime()), "ms");
             next();
         });
     }
