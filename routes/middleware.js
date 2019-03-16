@@ -52,6 +52,12 @@ exports.initLocals = function (req, res, next) {
 
     res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
 
+    //Client IP
+    res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
+            req.connection.remoteAddress || 
+            req.socket.remoteAddress ||  
+            req.connection.socket.remoteAddress;
+
     if (req.xhr) {
         var csrf_token = req.body.csrf || req.body.csrf_token || req.get('X-CSRF-Token');
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
@@ -72,12 +78,9 @@ exports.initLocals = function (req, res, next) {
         //To use uglified files in production
         res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
 
-        //Client IP
-        res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
-            req.connection.remoteAddress || 
-            req.socket.remoteAddress ||  
-            req.connection.socket.remoteAddress;
-
+        var istart = new Date();
+        console.log("Starting Inits");
+        
         //Load Top Menu
         exports.initTopMenuLocals(req, res, function () {
             //Load BreadCrumbs
@@ -85,6 +88,7 @@ exports.initLocals = function (req, res, next) {
                 //Load Page
                 exports.initPageLocals(req, res, function () {
                     exports.initBrandsLocals(req, res, function () {
+                        console.log("Inits done! in ", new Date().getTime() - istart.getTime());
                         next();
                     });
                 });

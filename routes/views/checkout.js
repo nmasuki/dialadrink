@@ -73,7 +73,7 @@ router.post("/", function (req, res, next) {
 			promo: req.session.promo,
 			delivery: Object.assign({
 				userId: req.session.userId,
-				clientIp: req.locals.clientIp
+				clientIp: req.locals && req.locals.clientIp
 			}, req.body)
 		});
 
