@@ -1875,7 +1875,7 @@ this["templates"]["views"]["products"]["hbs"]["templates/views/products.hbs"] = 
 },"3":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "                    <div class=\"col-md-3 col-lg-3 single\"\n                         itemscope itemtype=\"http://schema.org/Product\"\n                         style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\n"
+  return "                    <div class=\"col-md-3 col-lg-3 col-sm-6 single\"\n                         itemscope itemtype=\"http://schema.org/Product\"\n                         style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\n"
     + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"                        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "                    </div>\n";
 },"5":function(container,depth0,helpers,partials,data) {
