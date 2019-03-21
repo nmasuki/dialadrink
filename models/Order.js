@@ -239,7 +239,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
                 order.sendSMSNotification(message);                
         }
     
-        var email = new keystone.Email('templates/views/receipt');
+        var email = new keystone.Email('templates/email/receipt');
     
         //Hack to make use of nodemailer..
         email.transport = require("../helpers/mailer");
@@ -348,7 +348,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
     if (!order.orderNumber)
         order.orderNumber = Order.getNextOrderId();
 
-    var email = new keystone.Email('templates/views/order');
+    var email = new keystone.Email('templates/email/order');
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 

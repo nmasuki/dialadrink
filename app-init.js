@@ -38,14 +38,17 @@ keystone.init({
 	'auto update': true,
 	'auth': true,
 	'user model': 'User',
-    'session': true,
-    'session store': 'mongo',
-    'session options': {
-        cookie: { secure: false, maxAge: 365*24*60*60*1000  }
-    },
+	'session': true,
+	'session store': 'mongo',
+	'session options': {
+		cookie: {
+			secure: false,
+			maxAge: 365 * 24 * 60 * 60 * 1000
+		}
+	},
 
 	'signin logo': 'https://res.cloudinary.com/nmasuki/image/upload/c_fill/logo-email.gif',
-    'cloudinary secure': true
+	'cloudinary secure': true
 });
 
 keystone.pre('routes', keystone.security.csrf.middleware.init);
@@ -99,4 +102,65 @@ keystone.set('nav', {
 });
 
 keystone.set("importUrl", "https://www.dialadrinkkenya.com/");
+
+//Log warning into email
+if (!console._warn)
+	(function () {
+		var email = new keystone.Email('templates/email/error-log');
+		//Hack to make use of nodemailer..
+		email.transport = require("./helpers/mailer");
+		console._log = console.log;
+		console._warn = console.warn;
+		console._error = console.error;
+
+		function emailToEmail(title, e) {
+			var emailOptions = {
+				subject: keystone.get("name") +  "-" + title,
+				to: {
+					name: keystone.get("name") + " Developer",
+					email: process.env.DEVELOPER_EMAIL || "nmasuki@gmail.com"
+				},
+				from: {
+					name: keystone.get("name"),
+					email: process.env.EMAIL_FROM
+				}
+			};
+
+			email.send(e, emailOptions, (err) => {
+				if (err)
+					return console._warn("Error while sending email.", err.info);
+				else
+					console._log("Log email notification Sent!");
+			});
+		}
+
+		/**
+		console.log = function(){
+			emailToEmail("Info!", arguments[0]);
+
+			var args = Array.from(arguments);
+			args.unshift(new Date());
+
+			console._log.apply(this, arguments);
+		};/**/
+
+		console.warn = function(){
+			emailToEmail("Warning!", arguments[0]);
+
+			var args = Array.from(arguments);
+			args.unshift(new Date());
+
+			console._warn.apply(this, arguments);
+		};
+
+		console.error = function(){
+			emailToEmail("Error!", arguments[0]);
+
+			var args = Array.from(arguments);
+			args.unshift(new Date());
+
+			console._error.apply(this, arguments);
+		};
+	})();
+
 module.exports = keystone;

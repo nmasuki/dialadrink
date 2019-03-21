@@ -57,7 +57,7 @@ function send(toSend, onSuccess, onFailure) {
 				from: 'Email.send',
 				key: 'send error',
 				message: 'Nodemailer encountered an error and did not send the emails.',
-				info: info
+				info: error.message
 			});
 		} else {
 			onSuccess(null, info);

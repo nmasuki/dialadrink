@@ -16,9 +16,11 @@ loadWorkers(function (err, workers) {
     
     (function makePass() {
       console.log("Running pass " + (++passes) + "..");
+      
       async.each(workers, worker => {
         if (worker && worker.run) worker.run();
       });
+      
       //Make next pass after a short delay
       setTimeout(makePass, process.env.WORK_DELAY || 60000);
     })();
