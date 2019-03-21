@@ -1,22 +1,30 @@
 var keystone = require('keystone');
+var lockFile = require('lockfile');
 var Order = keystone.list("Order");
 
 function getWork(next) {
-    Order.model.find({
-            state: 'placed',
-            orderDate: {
-                '$gt': new Date().addDays(-1),
-                '$lt': new Date().addMinutes(-15)
-            },
-            notificationSent: false            
-        })
+    var filter = {
+        state: 'placed',
+        orderDate: {
+            '$gt': new Date().addDays(-1),
+            '$lt': new Date().addMinutes(-15)
+        },
+        notificationSent: false
+    };
+
+    if(keystone.get("env") == "development"){
+        delete filter.orderDate;
+        filter["delivery.phoneNumber"] = "0720805835";
+    }
+
+    Order.model.find()
         .exec(function (err, orders) {
             if (err)
                 return next(err)
 
-            if (orders && orders.length)
+            if (orders && orders.length) {
                 orders.forEach(order => next(null, order));
-            else
+            } else
                 console.log("No order notifications to retry..");
         });
 }
@@ -25,22 +33,24 @@ function doWork(err, order) {
     if (err)
         return console.error("Error while retrying Order notification!", err);
 
-    order.sendOrderNotification((err, data) => {
-        console.log("Updating order state='placed'!", data)
-
-        //Update order state
-        order.state = 'placed';
-        order.notificationSent = !err;
-
-        order.save((err) => {
-            if (err)
-                console.warn(err);
-            else
-                console.log("Order updated!");
-        });
-    });
+    return order.sendOrderNotification();
 }
 
-module.exports = {
-    run: () => getWork(doWork)
+var self = module.exports = {
+    run: function () {
+        if (!self.lockFile)
+            getWork(doWork);
+        else
+            lockFile.lock(self.lockFile, function (err) {
+                if (err)
+                    return console.error("Could not aquire lock.", self.lockFile, err);
+                    
+                getWork(function () {
+                    doWork.apply(this, arguments).always(function () {
+                        //Unlock file
+                        lockFile.unlock(self.lockFile);
+                    });
+                });
+            })
+    }
 }

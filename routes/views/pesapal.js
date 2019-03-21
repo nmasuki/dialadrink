@@ -61,14 +61,8 @@ router.get("/ipn", function (req, res) {
                 }
 
                 if (payment.status == "COMPLETED") {
-                    order.sendPaymentNotification(function (err) {
-                        order.payment.notificationSent = !!err;
-                        order.save();
-                    });
-                } else {
-					order.payment.notificationSent = false;
-                    order.save();
-				}
+                    order.sendPaymentNotification();
+                }
             })
             .catch (function (error) {
                 /* do stuff*/
@@ -144,8 +138,6 @@ router.get("/:orderNo", function (req, res) {
 
 			if (payment.status == "COMPLETED") {
 				order.sendPaymentNotification(function () {
-					order.payment.notificationSent = true;
-					order.save();
 					showReceipt(null, order);
 				});
 			} else {

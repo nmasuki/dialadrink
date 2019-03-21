@@ -2,16 +2,19 @@ var keystone = require('keystone');
 var Order = keystone.list("Order");
 
 function getWork(next) {
-    Order.model.find({
-            orderDate: {
-                '$gt': new Date().addDays(-1),
-                '$lt': new Date().addMinutes(-15)
-            },
-            state: 'Paid',
-            payment: {
-                notificationSent: false
-            }
-        })
+    var filter = {
+        orderDate: {
+            '$gt': new Date().addDays(-1),
+            '$lt': new Date().addMinutes(-15)
+        },
+        state: 'Paid',
+        "payment.notificationSent": false
+    };
+
+    if(keystone.get("env") == "development")
+        filter = {"delivery.phoneNumber": "0720805835", "payment.notificationSent": false};
+
+    Order.model.find(filter)
         .exec(function (err, orders) {
             if (err)
                 return next(err)

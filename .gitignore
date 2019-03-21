@@ -5,3 +5,4 @@ routes/cache
 /.env
 /.*
 /templates.js
+/locks/

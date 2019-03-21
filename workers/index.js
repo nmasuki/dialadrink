@@ -15,10 +15,11 @@ loadWorkers(function (err, workers) {
     console.log("Loaded " + workers.length + " workers..");
     (function makePass() {
       console.log("Running pass " + (++passes) + "..");
-      
+
       async.each(workers, worker => {
-        if (worker && worker.run)
+        if (worker && worker.run) {
           worker.run();
+        }
       });
 
       //Make next pass after a short delay
@@ -31,8 +32,25 @@ loadWorkers(function (err, workers) {
 
 function loadWorkers(next) {
   console.log("Loading: ", __dirname);
-  var files = fs.readdirSync(__dirname)
-    .filter(f => !f.endsWith('index.js'));
-  var modules = files.map(f => require(__dirname + '/' + f));
-  next(null, modules);
+
+  fs.readdir(__dirname + "/../locks", (err, files) => {
+    if (err)
+      return console.error(err);
+      
+    files.filter(f => f.endsWith('.lock')).forEach(f => fs.unlink("/../locks/" + f));
+  });
+
+  fs.readdir(__dirname, (err, files) => {
+    var modules = files
+      .filter(f => f.endsWith('.js') && !f.endsWith('index.js'))
+      .map(f => {
+        var worker = require(__dirname + '/' + f);
+        worker.name = f.replace(/\.js$/, "");
+        worker.lockFile = __dirname + '/../locks/' + f.replace(/\.js$/, ".lock");
+        return worker;
+      });
+
+    next(null, modules);
+  });
+
 }
