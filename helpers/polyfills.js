@@ -29,7 +29,7 @@ if (!Object.equals)
             if (x[p] === y[p]) continue;
             // if they have the same strict value or identity then they are equal
 
-            if (typeof(x[p]) !== "object") return false;
+            if (typeof (x[p]) !== "object") return false;
             // Numbers, Strings, Functions, Booleans must be strictly equal
 
             if (!Object.equals(x[p], y[p])) return false;
@@ -46,9 +46,9 @@ if (!Object.equals)
 if (!Object.isEmpty)
     Object.isEmpty = function (obj) {
         //check if it's an Obj first
-        var isObj = obj !== null
-            && typeof obj === 'object'
-            && Object.prototype.toString.call(obj) === '[object Object]';
+        var isObj = obj !== null &&
+            typeof obj === 'object' &&
+            Object.prototype.toString.call(obj) === '[object Object]';
 
         if (isObj) {
             for (var o in obj) {
@@ -70,7 +70,8 @@ if (!Object.diff)
         if (obj1 && !obj2)
             return Object.diff(obj1, {})
 
-        var ret = {}, rett;
+        var ret = {},
+            rett;
         for (var i in obj2) {
             if (obj2.hasOwnProperty(i)) {
                 rett = {};
@@ -104,8 +105,7 @@ if (!Function.prototype.stackTrace)
                 //Remove call to stackTrace()
                 callstack.shift();
                 isCallstackPopulated = true;
-            }
-            else if (window.opera && e.message) { //Opera
+            } else if (window.opera && e.message) { //Opera
                 var lines = e.message.split('\n');
                 for (var i = 0, len = lines.length; i < len; i++) {
                     if (lines[i].match(/^\s*(at)\s/)) {
@@ -139,7 +139,9 @@ if (!Function.prototype.stackTrace)
 //
 if (!Function.prototype.retryApply)
     Function.prototype.retryApply = function (context, checkReady, maxRetries, retryTime, args) {
-        var retry = 0, fn = this, stackTrace = arguments.callee.caller.stackTrace();
+        var retry = 0,
+            fn = this,
+            stackTrace = arguments.callee.caller.stackTrace();
 
         maxRetries = maxRetries || 5;
         retryTime = retryTime || 1000;
@@ -187,7 +189,10 @@ if (!Function.prototype.retryCall)
 //
 if (!Function.prototype.promiseApply)
     Function.prototype.promiseApply = function (context) {
-        var retry = 0, fn = this, maxRetries = 5, retryTime = 1000;
+        var retry = 0,
+            fn = this,
+            maxRetries = 5,
+            retryTime = 1000;
         var args = [];
 
         for (var i = 1; i < arguments.length; i++)
@@ -342,7 +347,8 @@ if (!String.prototype.escapeRegExp)
 String.prototype.truncate = function (length, ending) {
     length = length || 100;
     ending = ending || '...';
-    var str = (this || ""), index = length - ending.length;
+    var str = (this || ""),
+        index = length - ending.length;
 
     while (index > 0 && str[index] && /\w/.test(str[index]))
         index--;
@@ -430,7 +436,9 @@ if (!Array.prototype.splitChunks)
             chunkSize = option;
             chunkCount = parseInt(arr.length / chunkSize) + 1;
         } else {
-            option = option || {chunkCount: 10};
+            option = option || {
+                chunkCount: 10
+            };
             if (option.chunkSize) {
                 chunkSize = option.chunkSize;
                 chunkCount = parseInt(arr.length / chunkSize) + 1;
@@ -581,7 +589,20 @@ Date.prototype.addSeconds = function (value) {
     return date;
 };
 
-Number.prototype.pad = function pad(width, z) { 
+Number.prototype.pad = function pad(width, z) {
     var n = this + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join(z || '0') + n;
 };
+
+// Add `finally()` to `Promise.prototype`
+if (!Promise.prototype.finally)
+    Promise.prototype.finally = function (onFinally) {
+        return this.then(
+            /* onFulfilled */
+            res => Promise.resolve(onFinally()).then(() => res),
+            /* onRejected */
+            err => Promise.resolve(onFinally()).then(() => {
+                throw err;
+            })
+        );
+    };

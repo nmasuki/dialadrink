@@ -39,7 +39,7 @@ ProductCategory.schema.methods.updateMenu = function(next){
                 ]}) 
                 .exec((err, allmenus) => {                    
                     if(err){
-                        console.error(err);
+                        console.warn(err);
                         if(typeof next == "function")
                             return next(err);
                         else

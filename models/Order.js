@@ -97,8 +97,10 @@ Order.schema.virtual("discount").get(function () {
 
 Order.schema.virtual("currency").get(function () {
     if (this.cart)
-        return this.cart.map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
-    return 0;
+        return this.cart
+            .filter(c=>c.currency)
+            .map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
+    return "KES";
 })
 
 Order.schema.virtual("subtotal").get(function () {
@@ -151,7 +153,7 @@ Order.schema.methods.updateClient = function(next){
             keystone.list("Client").model.findOne(findOption)
                 .exec((err, client)=>{
                     if(err)
-                        return console.error(err);
+                        return console.warn(err);
                     
                     var delivery = order.delivery.toObject();
                     client = client || clients.find(c=>c.phoneNumber == phoneNumber || c.email == email);
@@ -331,11 +333,11 @@ Order.schema.methods.sendSMSNotification = function (next, message) {
         
     return sms.send(this.delivery.phoneNumber, message.trim(), function(err, res){
         if(err)
-            console.error.apply(this, arguments);
-        
-        order.payment.smsNotificationSent = true;
-        order.save();
-
+            console.warn.apply(this, arguments);
+        else{
+            order.payment.smsNotificationSent = true;
+            order.save();
+        }
         if(typeof next == "function")
             next(err, res);
     });
@@ -424,7 +426,9 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
                             console.log("Order notification Sent!", a);
                             order.notificationSent = true;
-                            order.save(resolve);                        
+                            order.save();
+                               
+                            resolve();                   
                         });
 
                         if (typeof next == "function")

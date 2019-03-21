@@ -30,7 +30,7 @@ ProductSubCategory.schema.methods.updateMenu = function(next){
                 if(typeof next == "function")
                     return next(err);
                 else
-                    return console.error(err);
+                    return console.warn(err);
             }
             if(!category){
                 console.log(`Could not find category: ${categoryId}`);
@@ -50,7 +50,7 @@ ProductSubCategory.schema.methods.updateMenu = function(next){
                 ]}) 
                 .exec((err, allmenus)=>{                    
                     if(err){
-                        console.error(err);
+                        console.warn(err);
                         if(typeof next == "function")
                             return next(err);
                         else

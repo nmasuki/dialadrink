@@ -232,7 +232,7 @@ router.get("/pricelist", function (req, res) {
                     //"orientation": "landscape", // portrait or landscape
                 }).toStream(function (err, stream) {
                     if(err)
-                        console.error(err);
+                        console.warn(err);
                     else
                         stream.pipe(res);
                 });

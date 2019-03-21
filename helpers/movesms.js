@@ -49,7 +49,7 @@ module.exports = function MoveSMS(sender) {
                             next(null, balance);
                     },
                     error: function (error) {
-                        console.error("Error sending SMS!", error);
+                        console.warn("Error sending SMS!", error);
 
                         reject(error);
                         if (typeof next == "function")
