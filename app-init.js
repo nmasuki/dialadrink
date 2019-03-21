@@ -142,7 +142,7 @@ if (!console._warn)
 			args.unshift(new Date());
 
 			console._log.apply(this, arguments);
-		};/**/
+		};
 
 		console.warn = function(){
 			emailToEmail("Warning!", arguments[0]);
@@ -161,6 +161,7 @@ if (!console._warn)
 
 			console._error.apply(this, arguments);
 		};
+		/**/
 	})();
 
 module.exports = keystone;
