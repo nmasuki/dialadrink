@@ -1,59 +1,59 @@
-require('daemon').daemon(null, [], {
-  cwd: __dirname
-});
-var async = require('async');
-var fs = require('fs');
+ require('daemon').daemon(null, [], {
+   cwd: __dirname
+ });
+ var async = require('async');
+ var fs = require('fs');
 
-var passes = 0;
-console.log("Loading workers for background processes..");
+ function loadWorkers(next) {
+   console.log("Loading: ", __dirname);
 
-// Load workers
-loadWorkers(function (err, workers) {
-  if (err)
-    console.warn(err);
-  else if (workers) {
-    console.log("Loaded " + workers.length + " workers..");
-    
-    (function makePass() {
-      console.log("Running pass " + (++passes) + "..");
-      
-      async.each(workers, worker => {
-        if (worker && worker.run) worker.run();
-      });
-      
-      //Make next pass after a short delay
-      setTimeout(makePass, process.env.WORK_DELAY || 60000);
-    })();
+   fs.readdir(__dirname + "/../locks", (err, files) => {
+     if (err)
+       return console.warn(err);
 
-  } else {
-    console.log("No workers found. Exiting..");
-  }
-});
+     files.filter(f => f.endsWith('.lock'))
+       .forEach(f => fs.unlink(__dirname + "/../locks/" + f));
 
-function loadWorkers(next) {
-  console.log("Loading: ", __dirname);
+     fs.readdir(__dirname, (err, files) => {
+       var modules = files
+         .filter(f => f.endsWith('.js') && !f.endsWith('index.js'))
+         .map(f => {
+           var worker = require(__dirname + '/' + f);
+           worker.name = f.replace(/\.js$/, "");
+           worker.lockFile = __dirname + '/../locks/' + f.replace(/\.js$/, ".lock");
+           return worker;
+         });
 
-  fs.readdir(__dirname + "/../locks", (err, files) => {
-    if (err)
-      return console.warn(err);
+       next(null, modules);
+     });
+   });
+ }
 
-    files.filter(f => f.endsWith('.lock'))
-      .forEach(f => fs.unlink(__dirname + "/../locks/" + f));
+ if (process.env.ENABLE_BACKGROUNDWORKER) {
+   var passes = 0;
+   console.log("Loading workers for background processes..");
 
-    fs.readdir(__dirname, (err, files) => {
-      var modules = files
-        .filter(f => f.endsWith('.js') && !f.endsWith('index.js'))
-        .map(f => {
-          var worker = require(__dirname + '/' + f);
-          worker.name = f.replace(/\.js$/, "");
-          worker.lockFile = __dirname + '/../locks/' + f.replace(/\.js$/, ".lock");
-          return worker;
-        });
+   // Load workers
+   loadWorkers(function (err, workers) {
+     if (err)
+       console.warn(err);
+     else if (workers) {
+       console.log("Loaded " + workers.length + " workers..");
 
-      next(null, modules);
-    });
-  });
+       (function makePass() {
+         console.log("Running pass " + (++passes) + "..");
 
+         async.each(workers, worker => {
+           if (worker && worker.run) worker.run();
+         });
 
+         //Make next pass after a short delay
+         setTimeout(makePass, process.env.WORK_DELAY || 60000);
+       })();
 
-}
+     } else {
+       console.log("No workers found. Exiting..");
+     }
+   });
+
+ }

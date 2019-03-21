@@ -11,7 +11,7 @@ var sms = new MoveSms();
 
 var Order = new keystone.List('Order', {
     defaultSort: '-orderDate',
-    autokey: { path: 'key', from: 'orderNumber', unique: true },
+    autokey: { path: 'key', from: 'orderNumber' },
 });
 
 Order.add({
@@ -459,7 +459,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
 keystone.deepPopulate(Order.schema);
 
-Order.defaultColumns = 'orderNumber, orderDate|15%, delivery.firstName|15%, delivery.phoneNumber, payment.amount, state';
+Order.defaultColumns = 'orderNumber, orderDate|15%, client|15%, delivery.phoneNumber, payment.amount, state';
 
 Order.register();
 
