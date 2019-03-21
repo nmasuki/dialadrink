@@ -13,7 +13,7 @@ function getWork(next, done) {
     };
 
     if (keystone.get("env") == "development") {
-        delete filter.orderDate;
+        //delete filter.orderDate;
         filter["delivery.phoneNumber"] = "0720805835";
     }
 

@@ -10,7 +10,6 @@ var sms = new MoveSms();
  */
 
 var Order = new keystone.List('Order', {
-    map: { name: 'orderNumber' },
     defaultSort: '-orderDate',
     autokey: { path: 'key', from: 'orderNumber', unique: true },
 });
@@ -186,7 +185,17 @@ Order.schema.methods.updateClient = function(next){
 };
 
 Order.schema.methods.placeOrder = function (next) {
-    console.log("Placing order!")
+    console.log("Placing order!");
+
+    if(!this.notificationSent){
+        this.notificationSent = true;
+        keystone.list("Product").model.find({_id: {"$in": this.cart.map(c=>c.product._id || c.product) }})
+            .exec((err, products)=>{
+                var msg = `${this.payment.method} Order recieved from: ${this.delivery.firstName}(${this.delivery.phoneNumber}). Amount: ${this.payment.amount}, Drinks:${this.cart.map(c=>c.pieces + '*' + products.find(p=>p._id == c.product._id || c.product).name).join(',')}.`;
+                sms.send(process.env.CONTACT_PHONE_NUMBER || "254723688108", msg);                
+            });
+    }
+
     this.sendOrderNotification((err, data) => {
         console.log("Updating order state='placed'!", data)
 
@@ -330,13 +339,15 @@ Order.schema.methods.sendSMSNotification = function (next, message) {
         message += ` Please proceed to pay ${this.currency||''} ${this.total} online ${this.payment.shortUrl?' via ' + this.payment.shortUrl:''}`;
     else
         message += ` You will be required to pay ${this.currency||''} ${this.total} on delivery`;
-        
-    return sms.send(this.delivery.phoneNumber, message.trim(), function(err, res){
+                  
+    return sms.send([order.delivery.phoneNumber], message.trim(), function(err, res){
         if(err)
             console.warn.apply(this, arguments);
         else{
             order.payment.smsNotificationSent = true;
             order.save();
+
+
         }
         if(typeof next == "function")
             next(err, res);
@@ -422,7 +433,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
                         email.send(locals, emailOptions, (err, a) => {
                             if(err)
-                                return reject(console.warn("Error while sending email.", err));
+                                return reject(console.warn("Error while sending email.", err.info));
 
                             console.log("Order notification Sent!", a);
                             order.notificationSent = true;
