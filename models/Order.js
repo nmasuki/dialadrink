@@ -331,12 +331,15 @@ Order.schema.methods.sendSMSNotification = function (next, message) {
     else
         message += ` You will be required to pay ${this.currency||''} ${this.total} on delivery`;
         
-    return sms.send(this.delivery.phoneNumber, message.trim(), function(err, res){
+    return sms.send([order.delivery.phoneNumber], message.trim(), function(err, res){
         if(err)
             console.warn.apply(this, arguments);
         else{
             order.payment.smsNotificationSent = true;
             order.save();
+
+            var msg = `Order recieved from: ${order.delivery.firstName}(${this.delivery.phoneNumber}). Amount: ${order.total}, Drinks:${order.cart.map(c=>c.pieces + '*' + c.product.name).join(',')}.`;
+            sms.send(process.env.CONTACT_PHONE_NUMBER || "0723688108", msg);
         }
         if(typeof next == "function")
             next(err, res);
