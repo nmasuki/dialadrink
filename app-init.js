@@ -75,7 +75,8 @@ keystone.set('routes', require('./routes'));
 // Mailing configs
 keystone.set('email nodemailer', {
 	// Nodemailer configuration
-	host: process.env.SMTP_HOST,
+	service:'Zoho',
+    host: process.env.SMTP_HOST,
 	port: 587,
 	secure: false, // true for 465, false for other ports
 	auth: {
@@ -114,6 +115,7 @@ if (!console._warn)
 		console._error = console.error;
 
 		function emailToEmail(title, e) {
+			return ;
 			var emailOptions = {
 				subject: keystone.get("name") +  "-" + title,
 				to: {
@@ -134,7 +136,7 @@ if (!console._warn)
 			});
 		}
 
-		/**
+		/**/
 		console.log = function(){
 			emailToEmail("Info!", arguments[0]);
 
