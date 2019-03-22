@@ -87,8 +87,11 @@ exports.initLocals = function (req, res, next) {
             exports.initPageLocals(req, res),
             exports.initBrandsLocals(req, res)
         ]).then(function () {
-            console.log("Initiated Locals!", (new Date().getTime() - istart.getTime()), "ms");
             next();
+
+            var ms = (new Date().getTime() - istart.getTime());
+            if(ms > 1000)
+                console.log("Initiated Locals!", ms, "ms");            
         });
     }
 };
