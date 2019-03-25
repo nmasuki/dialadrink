@@ -2205,13 +2205,17 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
 },"65":function(container,depth0,helpers,partials,data) {
     return "0";
 },"67":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "  \"offers\": {\n    \"@type\": \"Offer\",\n    \"priceCurrency\": \"KES\",\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"if","hash":{},"fn":container.program(68, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "    \"price\": \""
-    + container.escapeExpression(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "\",\n    \"priceValidUntil\": \"2020-12-31\",\n    \"itemCondition\": \"http://schema.org/UsedCondition\",\n    \"availability\": \"http://schema.org/InStock\",\n    \"seller\": {\n      \"@type\": \"Organization\",\n      \"name\": \"Dial A Drink Kenya\"\n    }\n  }\n";
+  return "  \"offers\": {\n    \"@type\": \"Offer\",\n    \"priceCurrency\": \""
+    + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
+    + "\",\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"if","hash":{},"fn":container.program(68, data, 0),"inverse":container.program(70, data, 0),"data":data})) != null ? stack1 : "")
+    + "    \"priceValidUntil\": \""
+    + alias4(((helper = (helper = helpers.priceValidUntil || (depth0 != null ? depth0.priceValidUntil : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"priceValidUntil","hash":{},"data":data}) : helper)))
+    + "\",\n    \"availability\": \"http://schema.org/"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(72, data, 0),"inverse":container.program(74, data, 0),"data":data})) != null ? stack1 : "")
+    + "\",\n    \"seller\": {\n      \"@type\": \"Organization\",\n      \"name\": \"Dial A Drink Kenya\"\n    }\n  }\n";
 },"68":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
@@ -2221,6 +2225,16 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
     + "\",\n";
 },"70":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "    \"price\": \""
+    + container.escapeExpression(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"price","hash":{},"data":data}) : helper)))
+    + "\",    \n";
+},"72":function(container,depth0,helpers,partials,data) {
+    return "InStock";
+},"74":function(container,depth0,helpers,partials,data) {
+    return "OutOfStock";
+},"76":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "            var index = Math.min(5,"
@@ -2232,7 +2246,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
   return "<link rel=\"preload\" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>\n\n"
     + ((stack1 = helpers["with"].call(alias1,(depth0 != null ? depth0.product : depth0),{"name":"with","hash":{},"fn":container.program(1, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n<script>\n    window.minifiedMenu = true;\n    $(document).ready(function () {\n        if (addaffix) addaffix();\n        //$('.tab-content .tab-pane').scrollbar();\n        //$(\".similar-products\").owlCarousel({items:12})\n\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(70, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.userRating : depth0),{"name":"if","hash":{},"fn":container.program(76, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "    })\n</script>\n";
 },"usePartial":true,"useData":true,"useDepths":true});
 
