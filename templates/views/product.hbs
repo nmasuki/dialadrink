@@ -303,15 +303,15 @@
   {{#if price}}
   "offers": {
     "@type": "Offer",
-    "priceCurrency": "KES",
+    "priceCurrency": "{{currency}}",
     {{#if offerPrice}}
     "highPrice": "{{price}}",
     "lowPrice": "{{offerPrice}}",
+    {{else}}
+    "price": "{{price}}",    
     {{/if}}
-    "price": "{{price}}",
-    "priceValidUntil": "2020-12-31",
-    "itemCondition": "http://schema.org/UsedCondition",
-    "availability": "http://schema.org/InStock",
+    "priceValidUntil": "{{priceValidUntil}}",
+    "availability": "http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}",
     "seller": {
       "@type": "Organization",
       "name": "Dial A Drink Kenya"
