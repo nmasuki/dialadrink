@@ -242,6 +242,7 @@ var cartUtil = function () {
             // item = fillIn(item);
 
             var view = getItemView(item._id);
+            
             if(item.pieces <= 0) 
                 view.slideUp();
             else 

@@ -41,7 +41,6 @@
        console.log("Loaded " + workers.length + " workers..");
 
        (function makePass() {
-         console.log("Running pass " + (++passes) + "..");
 
          async.each(workers, worker => {
            if (worker && worker.run) worker.run();
@@ -52,7 +51,7 @@
        })();
 
      } else {
-       console.log("No workers found. Exiting..");
+       console.log("No workers found. Exiting workes..");
      }
    });
 

@@ -34,6 +34,7 @@ function doWork(err, orders, next) {
         return console.warn(err);
 
     if (orders && orders.length) {
+        console.log(orders.length + " payment notifications to retry..");
         return Promise.all(orders.map(order => order.sendPaymentNotification()))
             .then(function () {
                 if (typeof next == "function")
@@ -41,7 +42,6 @@ function doWork(err, orders, next) {
             });
 
     } else {
-        console.log("No payment notifications to retry..");
         if (typeof next == "function")
             next();
     }
