@@ -191,7 +191,11 @@ Order.schema.methods.placeOrder = function (next) {
         this.notificationSent = true;
         keystone.list("Product").model.find({_id: {"$in": this.cart.map(c=>c.product._id || c.product) }})
             .exec((err, products)=>{
-                var msg = `${this.payment.method} Order recieved from: ${this.delivery.firstName}(${this.delivery.phoneNumber}). Amount: ${this.payment.amount}, Drinks:${this.cart.map(c=>c.pieces + '*' + products.find(p=>p._id == c.product._id || c.product).name).join(',')}.`;
+                this.cart.forEach(c=>{
+                    c.product = products.find(p=>p._id == c.product._id || c.product);
+                });
+                
+                var msg = `${this.payment.method} Order recieved from: ${this.delivery.firstName}(${this.delivery.phoneNumber}). Amount: ${this.payment.amount}, Drinks:${this.cart.map(c=>c.pieces + '*' + c.product.name).join(',')}.`;
                 sms.send(process.env.CONTACT_PHONE_NUMBER || "254723688108", msg);                
             });
     }
