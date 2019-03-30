@@ -186,16 +186,22 @@ Order.schema.methods.updateClient = function(next){
 
 Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!");
-
-    if(!this.notificationSent){
-        this.notificationSent = true;
-        keystone.list("Product").model.find({_id: {"$in": this.cart.map(c=>c.product._id || c.product) }})
+    var order = this;
+    if(!order.notificationSent){
+        order.notificationSent = true;
+        var pIds = order.cart.map(c=>c.product._id || c.product);
+        keystone.list("Product").model.find({_id: {"$in": pIds }})
             .exec((err, products)=>{
-                this.cart.forEach(c=>{
-                    c.product = products.find(p=>p._id == c.product._id || c.product);
-                });
-                
-                var msg = `${this.payment.method} Order recieved from: ${this.delivery.firstName}(${this.delivery.phoneNumber}). Amount: ${this.payment.amount}, Drinks:${this.cart.map(c=>c.pieces + '*' + c.product.name).join(',')}.`;
+                var items = order.cart.map(function(c){ return {pieces: c.pieces, pid: c.product._id || c.product}});
+                if(products)
+                    products.forEach(p => {
+                        var item = items.find(c => p._id.toString() == c.pid.toString());
+                        item.product = p;
+                    });
+
+                var itemsMsg = `Drinks:\n ·${items.map(c=>c.pieces + '*' + c.product.name).join('\n ·')}`; 
+
+                var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
                 sms.send(process.env.CONTACT_PHONE_NUMBER || "254723688108", msg);                
             });
     }
@@ -257,7 +263,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
         //Hack to make use of nodemailer..
         email.transport = require("../helpers/mailer");
     
-        var subject = "Paymeny received #" + order.orderNumber + " - " + keystone.get("name");
+        var subject = "Payment received #" + order.orderNumber + " - " + keystone.get("name");
         if (keystone.get("env") == "development")
             subject = "(Testing) " + subject;
     
