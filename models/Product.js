@@ -6,6 +6,7 @@ var Product = new keystone.List('Product', {
     map: {name: 'name'}
 });
 
+
 Product.add({
     href: {type: String, initial: true, required: true},
     name: {type: String, initial: true},
@@ -28,7 +29,9 @@ Product.add({
     youtubeUrl: {type: String},
 
     pageTitle: {type: String},
+    tags: {type: Types.TextArray},
     description: {type: Types.Html, wysiwyg: true, height: 150},
+    
     publishedDate: {type: Date, default: Date.now},
     modifiedDate: {type: Date, default: Date.now},
 
@@ -39,7 +42,6 @@ Product.add({
     brand: {type: Types.Relationship, ref: 'ProductBrand'},
 
     ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true}
-    
 });
 
 Product.schema.virtual("keyWords").get(function () {
@@ -108,7 +110,7 @@ Product.schema.virtual('averageRatings').get(function () {
 });
 
 Product.schema.virtual("ratingCount").get(function () {
-    if(this.ratings && this.ratings.length)
+    if (this.ratings && this.ratings.length)
         return 5 + this.ratings.length;
     return 5;
 });
@@ -134,47 +136,36 @@ Product.schema.virtual('offerPrice').get(function () {
 
 Product.schema.virtual('percentOffer').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    if(cheapestOption && cheapestOption.price > cheapestOption.offerPrice){
+    if (cheapestOption && cheapestOption.price > cheapestOption.offerPrice) {
         var discount = cheapestOption.price - cheapestOption.offerPrice;
-        var percent = Math.round(100 * discount  / cheapestOption.price);
+        var percent = Math.round(100 * discount / cheapestOption.price);
         return percent;
     }
     return null;
 });
 
-Product.schema.virtual('priceValidUntil').get(function(){
+Product.schema.virtual('priceValidUntil').get(function () {
     var today = new Date();
-    var firstStr = "{0}-{1}-{2}".format(today.getUTCFullYear(), (today.getUTCMonth()+1).pad(2), "01");
+    var firstStr = "{0}-{1}-{2}".format(today.getUTCFullYear(), (today.getUTCMonth() + 1).pad(2), "01");
     var priveExpiry = new Date(firstStr);
     return priveExpiry.addMonths(1).addSeconds(-1).toISOString();
-});
-
-Product.schema.virtual('tags').get(function () {
-    var tags = [];
-
-    if (this.brand) {
-        tags.push(this.brand.name);
-        if (this.brand.company && this.brand.company.name)
-            tags.push((this.brand.company.name || "").toProperCase(true));
-    }
-    if (this.category)
-        tags.push(this.category.name);
-    if (this.subCategory)
-        tags.push(this.subCategory.name);
-    if (this.options)
-        this.options.forEach(po => tags.push(po.quantity));
-    return tags
 });
 
 Product.schema.methods.findSimilar = function (callback) {
     var filter = {_id: {"$ne": this._id}, "$or": []};
 
     if (this.brand)
-        filter.$or.push({brand: this.brand._id || this.brand});
+        filter.$or.push({
+            brand: this.brand._id || this.brand
+        });
     if (this.subCategory)
-        filter.$or.push({subCategory: this.subCategory._id || this.subCategory});
+        filter.$or.push({
+            subCategory: this.subCategory._id || this.subCategory
+        });
     if (this.category)
-        filter.$or.push({category: this.category._id || this.category});
+        filter.$or.push({
+            category: this.category._id || this.category
+        });
 
     return Product.findPublished(filter).exec(callback);
 };
@@ -190,15 +181,35 @@ keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', function (next) {
     var cheapestOption = this.cheapestOption || this.priceOptions.first();
     this.modifiedDate = new Date();
-    
-    if(cheapestOption){
+
+    if (cheapestOption) {
         this.price = cheapestOption.price;
         this.offerPrice = cheapestOption.offerPrice;
         this.quantity = cheapestOption.quantity;
     }
 
-    if(this.youtubeUrl)
-        this.youtubeUrl =  this.youtubeUrl.replace(/\/watch(\/|\?v=)/, "/embed/");
+    if (this.youtubeUrl)
+        this.youtubeUrl = this.youtubeUrl.replace(/\/watch(\/|\?v=)/, "/embed/");
+
+    function defaultTags() {
+        var tags = [];
+
+        if (this.brand) {
+            tags.push(this.brand.name);
+            if (this.brand.company && this.brand.company.name)
+                tags.push((this.brand.company.name || "").toProperCase(true));
+        }
+        if (this.category)
+            tags.push(this.category.name);
+        if (this.subCategory)
+            tags.push(this.subCategory.name);
+        if (this.options)
+            this.options.forEach(po => tags.push(po.quantity));
+        return tags.filter(t=>!!t)
+    }
+
+    if(!this.tags || !this.tags.length)
+        this.tags = defaultTags.call(this);
 
     next();
 });
@@ -209,7 +220,7 @@ Product.schema.set('toObject', {
             'href', 'name', 'priceOptions', 'onOffer', 'inStock',
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
-            'subCategory', 'brand', 'ratings', 'options', 'cheapestOption', 
+            'subCategory', 'brand', 'ratings', 'options', 'cheapestOption',
             'averageRatings', 'ratingCount', 'tags',
             'quantity', 'currency', 'price', 'offerPrice',
             'priceValidUntil', 'percentOffer'
@@ -228,9 +239,13 @@ Product.schema.set('toJSON', {
 Product.register();
 
 Product.findPublished = function (filter, callback) {
-    filter = Object.assign(filter || {}, {state: 'published'});
+    filter = Object.assign(filter || {}, {
+        state: 'published'
+    });
     var a = keystone.list('Product').model.find(filter)
-        .sort({popularity: -1})
+        .sort({
+            popularity: -1
+        })
         .populate('brand')
         .populate('category')
         .populate('subCategory')
@@ -239,15 +254,19 @@ Product.findPublished = function (filter, callback) {
         .deepPopulate("priceOptions.option");
 
     if (typeof callback == "function")
-        a.exec(callback);       
+        a.exec(callback);
 
     return a;
 };
 
 Product.findOnePublished = function (filter, callback) {
-    filter = Object.assign({state: 'published'}, filter || {});
+    filter = Object.assign({
+        state: 'published'
+    }, filter || {});
     var a = keystone.list('Product').model.findOne(filter)
-        .sort({popularity: -1})
+        .sort({
+            popularity: -1
+        })
         .populate('brand')
         .populate('category')
         .populate('subCategory')
@@ -267,46 +286,66 @@ Product.findByBrand = function (filter, callback) {
             if (err || !brands)
                 return console.log(err);
 
-            filter = {brand: {"$in": brands.map(b => b._id)}};
+            filter = {
+                brand: {
+                    "$in": brands.map(b => b._id)
+                }
+            };
             Product.findPublished(filter, callback);
         });
 };
 
 Product.findByCategory = function (filter, callback) {
     keystone.list('ProductCategory').model.find(filter)
-    .exec((err, categories) => {
+        .exec((err, categories) => {
             if (err || !categories)
                 return console.log(err);
 
-            filter = {category: {"$in": categories.map(b => b._id)}};
+            filter = {
+                category: {
+                    "$in": categories.map(b => b._id)
+                }
+            };
             Product.findPublished(filter, callback);
         });
 };
 
 Product.findBySubCategory = function (filter, callback) {
     keystone.list('ProductSubCategory').model.find(filter)
-    .exec((err, subCategories) => {
+        .exec((err, subCategories) => {
             if (err || !subCategories)
                 return console.log(err);
 
-            filter = {subCategory: {"$in": subCategories.map(b => b._id)}};
+            filter = {
+                subCategory: {
+                    "$in": subCategories.map(b => b._id)
+                }
+            };
             Product.findPublished(filter, callback);
         });
 };
 
 Product.findByOption = function (filter, callback) {
     keystone.list('ProductOption').model.find(filter)
-    .exec((err, options) => {
+        .exec((err, options) => {
             if (err || !options)
                 return console.log(err);
 
-            filter = {option: {"$in": options.map(b => b._id)}};
+            filter = {
+                option: {
+                    "$in": options.map(b => b._id)
+                }
+            };
             keystone.list('ProductPriceOption').model.find(filter)
                 .exec((err, options) => {
                     if (err || !options)
                         return console.log(err, options);
 
-                    filter = {priceOptions: {"$in": options.map(b => b._id)}};
+                    filter = {
+                        priceOptions: {
+                            "$in": options.map(b => b._id)
+                        }
+                    };
                     Product.findPublished(filter, callback);
                 })
 
@@ -322,18 +361,34 @@ Product.search = function (query, next) {
 
     // Set locals
     var filters = {
-        "$or": [
-            {key: keyRegex},
-            {href: nameRegex},
-            {href: keyRegex},
-            {name: nameRegex},
-            {name: keyRegex},
-            {quantity: nameRegex},
-            {quantity: keyRegex},
+        "$or": [{
+                key: keyRegex
+            },
             {
-                "$or": [
-                    {'company.name': keyRegex},
-                    {'company.name': nameRegex}
+                href: nameRegex
+            },
+            {
+                href: keyRegex
+            },
+            {
+                name: nameRegex
+            },
+            {
+                name: keyRegex
+            },
+            {
+                quantity: nameRegex
+            },
+            {
+                quantity: keyRegex
+            },
+            {
+                "$or": [{
+                        'company.name': keyRegex
+                    },
+                    {
+                        'company.name': nameRegex
+                    }
                 ]
             }
         ]
