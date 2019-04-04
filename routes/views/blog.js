@@ -123,13 +123,14 @@ router.get("/:post", function (req, res) {
 
     // Load the selected post
     view.on('init', function (next) {
-        var q = keystone.list('Blog').model
+        keystone.list('Blog').model
             .findOne({href: req.params.post})
             .populate('author categories')
             .exec((err, post) => {
+                
                 if (post) {
                     locals.data.blog = post;
-                    locals.page.title = post.title;
+                    locals.page.title = post.pageTitle;
                     locals.page.meta = post.content.breaf || post.title;
                 }
 
@@ -142,7 +143,6 @@ router.get("/:post", function (req, res) {
 });
 
 router.get("/cat/:category", function (req, res) {
-
     var view = new keystone.View(req, res);
     var locals = res.locals;
 
@@ -167,12 +167,10 @@ router.get("/cat/:category", function (req, res) {
 
             // Load the counts for each category
             async.each(locals.data.categories, function (category, next) {
-
                 keystone.list('Blog').model.count().where('categories').in([category.id]).exec(function (err, count) {
                     category.postCount = count;
                     next(err);
                 });
-
             }, function (err) {
                 next(err);
             });

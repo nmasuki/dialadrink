@@ -17,11 +17,15 @@ var Blog = new keystone.List('Blog', {
     map: {name: 'title'},
     singular: 'Blog',
     plural: 'Blogs',
-    autokey: {path: 'href', from: 'title', unique: true},
+    //autokey: {path: 'href', from: 'title', unique: true},
 });
 
 Blog.add({
+    href: {type: String},
+
+    pageTitle: {type: String},
     title: {type: String, required: true, initial: true},
+    
     state: {type: Types.Select, options: 'draft, published, archived', default: 'draft', index: true},
     author: {type: Types.Relationship, ref: 'User', index: true},
     publishedDate: {type: Types.Datetime, index: true, dependsOn: {state: 'published'}},
@@ -39,6 +43,9 @@ Blog.schema.virtual('content.full').get(function () {
 });
 
 Blog.schema.pre("save", function (next) {
+    if(!this.href)
+        this.href = this.title.cleanId();
+        
     keystone.list("BlogCategory").model.find({}).exec((err, categories) => {
         this.categories = categories.filter(c => {
             var regex = new RegExp(c.name, "i");
