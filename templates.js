@@ -1188,7 +1188,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     var stack1;
 
   return "                                <div class=\"collection-heading-inner heading-group item inset-2\"\n                                    style=\"background-image:url("
-    + ((stack1 = (helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || helpers.helperMissing).call(depth0 != null ? depth0 : {},depth0,{"name":"cloudinaryUrl","hash":{"crop":"fit","width":1140,"height":200},"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || helpers.helperMissing).call(depth0 != null ? depth0 : {},depth0,{"name":"cloudinaryUrl","hash":{"crop":"fit","width":1140,"height":300},"data":data})) != null ? stack1 : "")
     + ")\">\n                                </div>\n";
 },"31":function(container,depth0,helpers,partials,data) {
     return "col-sm-4";
