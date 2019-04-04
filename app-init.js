@@ -143,7 +143,7 @@ if (!console._warn)
 			var args = Array.from(arguments);
 			args.unshift(new Date());
 
-			console._log.apply(this, arguments);
+			console._log.apply(this, args);
 		};
 
 		console.warn = function(){
@@ -152,7 +152,7 @@ if (!console._warn)
 			var args = Array.from(arguments);
 			args.unshift(new Date());
 
-			console._warn.apply(this, arguments);
+			console._warn.apply(this, args);
 		};
 
 		console.error = function(){
@@ -161,9 +161,9 @@ if (!console._warn)
 			var args = Array.from(arguments);
 			args.unshift(new Date());
 
-			console._error.apply(this, arguments);
+			console._error.apply(this, args);
 		};
 		/**/
-	})();
+	})//();
 
 module.exports = keystone;

@@ -199,7 +199,7 @@ Order.schema.methods.placeOrder = function (next) {
                         item.product = p;
                     });
 
-                var itemsMsg = `Drinks:\n ·${items.map(c=>c.pieces + '*' + c.product.name).join('\n ·')}`; 
+                var itemsMsg = `Drinks:${items.map(c=>c.pieces + '*' + c.product.name).join(', ')}`; 
 
                 var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
                 sms.send(process.env.CONTACT_PHONE_NUMBER || "254723688108", msg);                

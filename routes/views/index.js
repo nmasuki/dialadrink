@@ -209,7 +209,7 @@ router.get("/pricelist", function (req, res) {
 
     Product.findPublished({}, function (err, products) {
         locals.products = products.orderBy(p => p.name);
-        locals.lastUpdated = products.map(p => p.modifiedDate).orderBy().first();
+        locals.lastUpdated = products.map(p => p.modifiedDate).orderBy().last();
         locals.categories = products.map(p => p.category && p.category.name).filter(c => !!c).distinct().orderBy();
 
         function printPdf(err, html, next) {

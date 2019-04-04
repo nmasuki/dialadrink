@@ -1,6 +1,6 @@
-const WebSocket = require('ws');
+var WebSocket = require('ws');
 
-const wss = new WebSocket.Server({
+var wss = new WebSocket.Server({
     port: 8080,
     perMessageDeflate: {
         zlibDeflateOptions: {
@@ -26,9 +26,8 @@ const wss = new WebSocket.Server({
 // Broadcast to all.
 wss.broadcast = function broadcast(data) {
     wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(data);
-        }
+        if (client.readyState === WebSocket.OPEN) 
+            client.send(data);        
     });
 };
 
@@ -43,7 +42,7 @@ wss.on('connection', function connection(ws, req) {
     });
 });
 
-const interval = setInterval(function ping() {
+var interval = setInterval(function ping() {
     wss.clients.forEach(function each(ws) {
         if (ws.isAlive === false)
             return ws.terminate();
@@ -54,3 +53,5 @@ const interval = setInterval(function ping() {
         });
     });
 }, 30000);
+
+module.exports = wss

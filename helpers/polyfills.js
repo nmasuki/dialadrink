@@ -334,7 +334,7 @@ if (!String.prototype.toProperCase)
 if (!String.prototype.cleanId)
     String.prototype.cleanId = function () {
         return this.toLowerCase().replace(/\W+/g, " ").trim().replace(/\W+/g, "-");
-    }
+    };
 
 if (!String.prototype.escapeRegExp)
     String.prototype.escapeRegExp = function escapeRegExp() {
