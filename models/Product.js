@@ -365,6 +365,9 @@ Product.search = function (query, next) {
                 tags: keyRegex
             },
             {
+                tags: nameRegex
+            },
+            {
                 key: keyRegex
             },
             {
