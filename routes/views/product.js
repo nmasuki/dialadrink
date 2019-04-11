@@ -32,7 +32,7 @@ router.get("/:product", function (req, res) {
 
                 locals.breadcrumbs.push({
                     label: product.name,
-                    href: "/product/" + product.href
+                    href: "/" + product.href
                 });
 
                 locals.page.title = product.pageTitle || [

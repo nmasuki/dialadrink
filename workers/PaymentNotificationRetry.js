@@ -46,6 +46,7 @@ function doWork(err, orders, next) {
             next();
     }
 }
+
 var self = {
     run: function () {
         if (!self.lockFile)

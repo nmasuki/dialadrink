@@ -4,7 +4,7 @@
     </div>
     <div class="col-md-8 col-sm-8">
         <h6 class="my-0">
-            <a href="/product/{{product.href}}">{{product.name}}&nbsp;{{quantity}}</a>
+            <a href="/{{product.href}}">{{product.name}}&nbsp;{{quantity}}</a>
             <a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>    
         </h6>
         <small class="text-muted">{{truncate (cleanHtml product.description) 50}}</small>

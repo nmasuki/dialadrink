@@ -374,7 +374,7 @@ module.exports = function () {
 
     // Direct url link to a specific product
     _helpers.productUrl = function (productSlug, options) {
-        return ('/product/' + productSlug);
+        return ('/' + productSlug);
     };
 
     // Direct url link to a specific post

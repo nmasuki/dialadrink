@@ -89,7 +89,7 @@ function search(req, res, next) {
 
             locals.breadcrumbs.push({
                 label: product.name,
-                href: "/product/" + product.href
+                href: "/" + product.href
             });
 
             locals.page.title = product.pageTitle || [
@@ -252,7 +252,7 @@ router.get("/products.json", function (req, res) {
 
         res.send(products.map(d => {
             var obj = Object.assign({}, d.toObject(), {
-                url: 'https://www.dialadrinkkenya.com/product/' + d.href,
+                url: 'https://www.dialadrinkkenya.com/' + d.href,
                 image: d.image.secure_url,
                 images: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
                 category: d.category ? d.category.name : null,
