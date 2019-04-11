@@ -153,18 +153,19 @@ Product.schema.virtual('priceValidUntil').get(function () {
 
 Product.schema.virtual('popularityRatio').get(function(){
     var max = 1.0, min = 0.75;
-    var ratio = this.hitsPerWeek / totalHitsPerWeek;
+    var ratio = this.hitsPerWeek / topHitsPerWeek;
 
     return parseFloat((min + (max - min) * ratio).toFixed(5));
 });
     
 Product.schema.virtual('hitsPerWeek').get(function(){
-    var weeks = (new Date().getTime() - this.publishedDate.getTime())/604800000;
+    var weeks = (new Date().getTime() - this.modifiedDate.getTime())/604800000.0;
     
     if(weeks <= 1)
-        return totalHitsPerWeek;
+        return topHitsPerWeek;
 
-    return this.popularity/weeks;
+    weeks = (new Date().getTime() - this.publishedDate.getTime())/604800000.0;
+    return this.popularity / weeks;
 });
 
 Product.schema.methods.findSimilar = function (callback) {
@@ -441,8 +442,8 @@ Product.search = function (query, next) {
     });
 };
 
-var totalHitsPerWeek = 100;
+var topHitsPerWeek = 100;
 Product.model.find()
     .exec(function (err, data) {
-        totalHitsPerWeek = data.max(p=>p.hitsPerWeek);
+        topHitsPerWeek = data.max(p=>p.hitsPerWeek);
     });
