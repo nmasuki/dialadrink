@@ -16248,6 +16248,7 @@ a .fa:hover, .home_featured_wrapper a {
     height: 44px;
     margin: 10px 0px 0 0;
     border-radius: 2px;
+    background: initial;
 }
 
 #product-section .row {
