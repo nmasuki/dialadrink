@@ -7,8 +7,7 @@ var Page = keystone.list("Page");
 var Order = keystone.list("Order");
 var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
-var ProductSubCategory = keystone.list("ProductSubCategory");
-var ProductBrand = keystone.list("ProductBrand");
+var Blog = keystone.list("Blog");
 
 function search(req, res, next) {
     var view = new keystone.View(req, res);
