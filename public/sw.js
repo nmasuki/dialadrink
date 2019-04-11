@@ -1,4 +1,4 @@
-var CACHE_VERSION = 11.5;
+var CACHE_VERSION = 11.6;
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
 function getCacheName(destination, inc) {
