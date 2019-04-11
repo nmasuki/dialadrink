@@ -1747,7 +1747,7 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
     + "\n                                </a>\n";
 },"17":function(container,depth0,helpers,partials,data) {
-    return "                    <image src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/soldout.png\"\n                        style=\"font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: text;\">\n                        alt=\"Sold out!\"/>\n";
+    return "                    <image src=\"https://res.cloudinary.com/nmasuki/image/upload/soldout.png\"\n                        style=\"font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: text;\"\n                        alt=\"Sold out!\"/>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression, alias4="function";
 
@@ -2538,8 +2538,8 @@ this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"
     + "\n			<changefreq>weekly</changefreq>\n			<priority>0.9</priority>\n		</url>\n";
 },"2":function(container,depth0,helpers,partials,data) {
     return "<lastmod>"
-    + container.escapeExpression((helpers.formatDate || (depth0 && depth0.formatDate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.modifiedDate : depth0),"YYYY-MM-DDTHH:mm:ss.SSS",{"name":"formatDate","hash":{},"data":data}))
-    + "</lastmod>";
+    + container.escapeExpression((helpers.formatDate || (depth0 && depth0.formatDate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.modifiedDate : depth0),"YYYY-MM-DDTHH:mm:ss",{"name":"formatDate","hash":{},"data":data}))
+    + "+00:00</lastmod>";
 },"4":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
@@ -2560,8 +2560,8 @@ this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"
     + "\n			<changefreq>weekly</changefreq>\n			<priority>0.76</priority>\n		</url>\n";
 },"7":function(container,depth0,helpers,partials,data) {
     return "<lastmod>"
-    + container.escapeExpression((helpers.formatDate || (depth0 && depth0.formatDate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.publishedDate : depth0),"YYYY-MM-DDTHH:mm:ss.SSS",{"name":"formatDate","hash":{},"data":data}))
-    + "</lastmod>";
+    + container.escapeExpression((helpers.formatDate || (depth0 && depth0.formatDate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.publishedDate : depth0),"YYYY-MM-DDTHH:mm:ss",{"name":"formatDate","hash":{},"data":data}))
+    + "+00:00</lastmod>";
 },"9":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing;
 
