@@ -485,9 +485,9 @@ this["templates"]["views"]["blog"]["hbs"]["templates/views/blog.hbs"] = Handleba
     + ((stack1 = (helpers.categoryList || (depth0 && depth0.categoryList) || alias2).call(alias1,(depth0 != null ? depth0.categories : depth0),{"name":"categoryList","hash":{"prefix":"Posted in "},"data":data})) != null ? stack1 : "")
     + "\n							"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = ((stack1 = (depth0 != null ? depth0.author : depth0)) != null ? stack1.name : stack1)) != null ? stack1.first : stack1),{"name":"if","hash":{},"fn":container.program(4, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n					</p>\n					"
+    + "\n					</p>\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n					<p>"
+    + "					<p>"
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.brief : stack1), depth0)) != null ? stack1 : "")
     + "</p>\n					"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.content : depth0)) != null ? stack1.extended : stack1),{"name":"if","hash":{},"fn":container.program(8, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -500,11 +500,13 @@ this["templates"]["views"]["blog"]["hbs"]["templates/views/blog.hbs"] = Handleba
   return "by "
     + container.escapeExpression(container.lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.author : depth0)) != null ? stack1.name : stack1)) != null ? stack1.first : stack1), depth0));
 },"6":function(container,depth0,helpers,partials,data) {
-    var stack1;
+    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing;
 
-  return "<img src=\""
-    + ((stack1 = (helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"crop":"fit","height":160,"width":160},"data":data})) != null ? stack1 : "")
-    + "\" class=\"img pull-right\">";
+  return "					<img src=\""
+    + ((stack1 = (helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"crop":"fit","height":160,"width":160},"data":data})) != null ? stack1 : "")
+    + "\" alt=\""
+    + container.escapeExpression(((helper = (helper = helpers.imageAlt || (depth0 != null ? depth0.imageAlt : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"imageAlt","hash":{},"data":data}) : helper)))
+    + "\" class=\"img pull-right\">\n";
 },"8":function(container,depth0,helpers,partials,data) {
     return "<p class=\"read-more\"><a href=\""
     + container.escapeExpression((helpers.postUrl || (depth0 && depth0.postUrl) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.href : depth0),{"name":"postUrl","hash":{},"data":data}))
@@ -1561,16 +1563,16 @@ this["templates"]["views"]["partials"]["brand"]["hbs"]["templates/views/partials
     + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.userRating : depth0)) != null ? stack1.rating : stack1), depth0))
     + ");\n            for (var i = 0; i < index; i++)\n                $(\".rated .glyphicon\").eq(i).css(\"color\", \"orange\");\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=container.lambda, alias2=container.escapeExpression, alias3=depth0 != null ? depth0 : {}, alias4=helpers.helperMissing, alias5="function";
+    var stack1, helper, alias1=container.lambda, alias2=container.escapeExpression, alias3=depth0 != null ? depth0 : {}, alias4=helpers.helperMissing;
 
   return "<div class=\"container\" id=\"product-section\"\n     data-product=\""
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1._id : stack1), depth0))
     + "\"\n     itemscope itemtype=\"http://schema.org/Brand\">\n    <div class=\"row\">\n        <div class=\"col-md-4\">\n            <img src=\""
-    + alias2(((helper = (helper = helpers.placeholderImg || (depth0 != null ? depth0.placeholderImg : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"placeholderImg","hash":{},"data":data}) : helper)))
+    + alias2(((helper = (helper = helpers.placeholderImg || (depth0 != null ? depth0.placeholderImg : depth0)) != null ? helper : alias4),(typeof helper === "function" ? helper.call(alias3,{"name":"placeholderImg","hash":{},"data":data}) : helper)))
     + "\" data-src=\""
     + alias2((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias4).call(alias3,((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.logo : stack1),{"name":"cloudinaryUrl","hash":{"crop":"fit"},"data":data}))
     + "\" alt=\""
-    + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + ((stack1 = alias1(((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1), depth0)) != null ? stack1 : "")
     + "\"\n                 class=\"img-responsive\" itemprop=\"image\"\n                 style=\"margin: auto; width: 100%;\"/>\n        </div>\n        <div class=\"col-md-6\" style=\"margin: 0 42px;\">\n            <div class=\"row\">\n                <h2 style=\"font-size: 18px\">"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1), depth0))
     + "</h2>\n                <p>"
@@ -1745,7 +1747,7 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
     + "\n                                </a>\n";
 },"17":function(container,depth0,helpers,partials,data) {
-    return "                    <div style=\"color:darkred;margin: 7px;\">Sold Out</div>\n";
+    return "                    <image src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/soldout.png\"\n                        style=\"font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: text;\">\n                        alt=\"Sold out!\"/>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression, alias4="function";
 
