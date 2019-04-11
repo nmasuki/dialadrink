@@ -160,9 +160,11 @@ Product.schema.virtual('popularityRatio').get(function(){
     
 Product.schema.virtual('hitsPerWeek').get(function(){
     var weeks = (new Date().getTime() - this.publishedDate.getTime())/604800000;
-    var hitsPerWeek = this.popularity/weeks;
     
-    return hitsPerWeek;
+    if(weeks <= 1)
+        return totalHitsPerWeek;
+
+    return this.popularity/weeks;
 });
 
 Product.schema.methods.findSimilar = function (callback) {
