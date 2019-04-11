@@ -2532,7 +2532,7 @@ this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"
   return "		<url>\n			<loc>https://www.dialadrinkkenya.com/"
     + container.escapeExpression((helpers.trim || (depth0 && depth0.trim) || helpers.helperMissing).call(alias1,(depth0 != null ? depth0.href : depth0),"/",{"name":"trim","hash":{},"data":data}))
     + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n			<changefreq>weekly</changefreq>\n			<priority>0.9</priority>\n		</url>\n";
 },"2":function(container,depth0,helpers,partials,data) {
     return "<lastmod>"
@@ -2544,7 +2544,7 @@ this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"
   return "		<url>\n			<loc>https://www.dialadrinkkenya.com/"
     + container.escapeExpression((helpers.trim || (depth0 && depth0.trim) || helpers.helperMissing).call(alias1,(depth0 != null ? depth0.href : depth0),"/",{"name":"trim","hash":{},"data":data}))
     + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n			<changefreq>weekly</changefreq>\n			<priority>0.8</priority>\n		</url>\n";
 },"6":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : {};
@@ -2552,7 +2552,7 @@ this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"
   return "		<url>\n			<loc>https://www.dialadrinkkenya.com/blog/"
     + container.escapeExpression((helpers.trim || (depth0 && depth0.trim) || helpers.helperMissing).call(alias1,(depth0 != null ? depth0.href : depth0),"/",{"name":"trim","hash":{},"data":data}))
     + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n			<changefreq>weekly</changefreq>\n			<priority>0.7</priority>\n		</url>\n";
 },"8":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing;
@@ -2560,7 +2560,7 @@ this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"
   return "		<url>\n			<loc>https://www.dialadrinkkenya.com/brand/"
     + container.escapeExpression((helpers.lowerCase || (depth0 && depth0.lowerCase) || alias2).call(alias1,(helpers.trim || (depth0 && depth0.trim) || alias2).call(alias1,(depth0 != null ? depth0.key : depth0),"/",{"name":"trim","hash":{},"data":data}),{"name":"lowerCase","hash":{},"data":data}))
     + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n			<changefreq>monthly</changefreq>\n			<priority>0.7</priority>\n		</url>\n";
 },"10":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing;
@@ -2568,7 +2568,7 @@ this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"
   return "		<url>\n			<loc>https://www.dialadrinkkenya.com/category/"
     + container.escapeExpression((helpers.lowerCase || (depth0 && depth0.lowerCase) || alias2).call(alias1,(helpers.trim || (depth0 && depth0.trim) || alias2).call(alias1,(depth0 != null ? depth0.key : depth0),"/",{"name":"trim","hash":{},"data":data}),{"name":"lowerCase","hash":{},"data":data}))
     + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n			<changefreq>monthly</changefreq>\n			<priority>0.7</priority>\n		</url>\n";
 },"12":function(container,depth0,helpers,partials,data) {
     var stack1;
@@ -2582,7 +2582,7 @@ this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"
     + "/"
     + alias3((helpers.lowerCase || (depth0 && depth0.lowerCase) || alias2).call(alias1,(helpers.trim || (depth0 && depth0.trim) || alias2).call(alias1,(depth0 != null ? depth0.key : depth0),"/",{"name":"trim","hash":{},"data":data}),{"name":"lowerCase","hash":{},"data":data}))
     + "</loc>\n				"
-    + ((stack1 = helpers["if"].call(alias1,{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n				<changefreq>monthly</changefreq>\n				<priority>0.7</priority>\n			</url>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : {};
