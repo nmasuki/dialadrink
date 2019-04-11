@@ -16,7 +16,7 @@ exports.cache = function (duration, _key) {
     duration = duration || 30;
     return (req, res, next) => {
         if (req.xhr) return next();
-        
+
         try {
             let key = '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
             let cacheContent = memCache.get(key);
@@ -75,7 +75,10 @@ exports.initLocals = function (req, res, next) {
         res.locals.user = req.user;
 
         //contact number
-        res.locals.contactNumber = process.env.CONTACT_PHONE_NUMBER || "0723688108";
+        res.locals.contactNumber = (process.env.CONTACT_PHONE_NUMBER || "0723688108");
+
+        if (res.locals.contactNumber.startsWith('0'))
+            res.locals.contactNumber = '254' + res.locals.contactNumber.trimLeft('0');
 
         //To use uglified files in production
         res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
@@ -90,8 +93,8 @@ exports.initLocals = function (req, res, next) {
             next();
 
             var ms = (new Date().getTime() - istart.getTime());
-            if(ms > 1000)
-                console.log("Initiated Locals!", ms, "ms");            
+            if (ms > 1000)
+                console.log("Initiated Locals!", ms, "ms");
         });
     }
 };
@@ -112,7 +115,7 @@ exports.initPageLocals = function (req, res, next) {
             var page = pages.orderBy(m => m.href.length).first();
             res.locals.isMobile = mobile(req);
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
-            
+
             if (typeof next == "function")
                 next(err);
         });
@@ -128,10 +131,10 @@ exports.initBrandsLocals = function (req, res, next) {
 
             for (var i in groups)
                 groups[i] = groups[i]
-                    //.orderByDescending(b => products
-                    //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
-                    //    .avg(p => p.popularity))
-                    .slice(0, 10);
+                //.orderByDescending(b => products
+                //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
+                //    .avg(p => p.popularity))
+                .slice(0, 10);
 
             res.locals.groupedBrands = groups;
         }
@@ -175,8 +178,13 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
 exports.initTopMenuLocals = function (req, res, next) {
     //TopMenu
     return keystone.list('MenuItem').model
-        .find({ level: 1, type: "top" })
-        .sort({ index: 1 })
+        .find({
+            level: 1,
+            type: "top"
+        })
+        .sort({
+            index: 1
+        })
         .populate('submenus')
         .exec((err, menu) => {
             if (err)
