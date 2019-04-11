@@ -16,19 +16,28 @@
 			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
 			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>{{/if}}
 			<changefreq>weekly</changefreq>
-			<priority>0.8</priority>
+			<priority>{{popularityRatio}}</priority>
 		</url>
 	{{/each}}
 
 	{{#each blogs}}
 		<url>
 			<loc>https://www.dialadrinkkenya.com/blog/{{trim href "/"}}</loc>
-			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>{{/if}}
+			{{#if publishedDate}}<lastmod>{{formatDate publishedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>{{/if}}
 			<changefreq>weekly</changefreq>
-			<priority>0.7</priority>
+			<priority>0.76</priority>
 		</url>
 	{{/each}}
-	
+
+	{{#each categories}}
+		<url>
+			<loc>https://www.dialadrinkkenya.com/category/{{lowerCase (trim key '/')}}</loc>
+			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>{{/if}}
+			<changefreq>monthly</changefreq>
+			<priority>0.75</priority>
+		</url>
+	{{/each}}
+
 	{{#each brands}}
 		<url>
 			<loc>https://www.dialadrinkkenya.com/brand/{{lowerCase (trim key '/')}}</loc>
@@ -38,15 +47,6 @@
 		</url>
 	{{/each}}
 	
-	{{#each categories}}
-		<url>
-			<loc>https://www.dialadrinkkenya.com/category/{{lowerCase (trim key '/')}}</loc>
-			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>{{/if}}
-			<changefreq>monthly</changefreq>
-			<priority>0.7</priority>
-		</url>
-	{{/each}}
-
 	{{#each subCategories}}
 		{{#if category.key}}
 			<url>

@@ -151,6 +151,20 @@ Product.schema.virtual('priceValidUntil').get(function () {
     return priveExpiry.addMonths(1).addSeconds(-1).toISOString();
 });
 
+Product.schema.virtual('popularityRatio').get(function(){
+    var max = 1.0, min = 0.75;
+    var ratio = this.hitsPerWeek / totalHitsPerWeek;
+
+    return parseFloat((min + (max - min) * ratio).toFixed(5));
+});
+    
+Product.schema.virtual('hitsPerWeek').get(function(){
+    var weeks = (new Date().getTime() - this.publishedDate.getTime())/604800000;
+    var hitsPerWeek = this.popularity/weeks;
+    
+    return hitsPerWeek;
+});
+
 Product.schema.methods.findSimilar = function (callback) {
     var filter = {_id: {"$ne": this._id}, "$or": []};
 
@@ -409,18 +423,24 @@ Product.search = function (query, next) {
                             Product.findBySubCategory(filters, function (err, products) {
                                 if (err || !products || !products.length)
                                     Product.findPublished(filters, function (err, products) {
-                                        next(err, products);
+                                        next(err, products.orderByDescending(p=>p.hitsPerWeek));
                                     });
                                 else
-                                    next(err, products);
+                                    next(err, products.orderByDescending(p=>p.hitsPerWeek));
                             });
                         else
-                            next(err, products);
+                            next(err, products.orderByDescending(p=>p.hitsPerWeek));
                     });
                 else
-                    next(err, products);
+                    next(err, products.orderByDescending(p=>p.hitsPerWeek));
             });
         else
-            next(err, products);
+            next(err, products.orderByDescending(p=>p.hitsPerWeek));
     });
 };
+
+var totalHitsPerWeek = 100;
+Product.model.find()
+    .exec(function (err, data) {
+        totalHitsPerWeek = data.max(p=>p.hitsPerWeek);
+    });

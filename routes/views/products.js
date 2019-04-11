@@ -19,7 +19,7 @@ function index(req, res) {
     // Load Products
     view.on('init', function (next) {
         keystone.list('Product').findPublished({onOffer: true, state: 'published'}, (err, products) => {
-            locals.products = products;
+            locals.products = products = products.orderByDescending(p => p.hitsPerWeek);
             
             var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
             if (brands.length == 1) locals.brand = brands.first();
