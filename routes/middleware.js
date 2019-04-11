@@ -75,10 +75,7 @@ exports.initLocals = function (req, res, next) {
         res.locals.user = req.user;
 
         //contact number
-        res.locals.contactNumber = (process.env.CONTACT_PHONE_NUMBER || "0723688108");
-
-        if (res.locals.contactNumber.startsWith('0'))
-            res.locals.contactNumber = '254' + res.locals.contactNumber.trimLeft('0');
+        res.locals.contactNumber = (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
 
         //To use uglified files in production
         res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";

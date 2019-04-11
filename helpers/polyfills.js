@@ -192,15 +192,14 @@ if (!Function.prototype.promiseApply)
         var retry = 0,
             fn = this,
             maxRetries = 5,
-            retryTime = 1000;
-        var args = [];
+            retryTime = 100;
 
+        var args = [];
         for (var i = 1; i < arguments.length; i++)
             args.push(arguments[i]);
 
         return new Promise(function (fulfill, reject) {
             var timeInterval = setInterval(function () {
-
                 try {
                     var d = fn.apply(context, args);
                     clearInterval(timeInterval);
@@ -331,11 +330,6 @@ if (!String.prototype.toProperCase)
             });
     };
 
-if (!String.prototype.cleanId)
-    String.prototype.cleanId = function () {
-        return this.toLowerCase().replace(/\W+/g, " ").trim().replace(/\W+/g, "-");
-    };
-
 if (!String.prototype.escapeRegExp)
     String.prototype.escapeRegExp = function escapeRegExp() {
         return (this || "")
@@ -343,6 +337,30 @@ if (!String.prototype.escapeRegExp)
             .replace(/\*/g, ".*?");
     };
 
+if (!String.prototype.cleanId)
+    String.prototype.cleanId = function () {
+        return this.toLowerCase().replace(/\W+/g, " ").trim().replace(/\W+/g, "-");
+    };
+
+if (!String.prototype.sanitizePhoneNumber)
+    String.prototype.cleanPhoneNumber = function sanitizePhoneNumber(countryCode) {
+        var phone = (this || "").replace(/[\W]+/g, "");
+        countryCode = countryCode || "254";
+
+        if (!phone)
+            return "";
+
+        if (phone.startsWith("+"))
+            phone = phone.replace("^+", "");
+
+        if (phone.length < 11)
+            phone = phone.replace(/^0/, countryCode);
+
+        if (countryCode == "254")
+            phone = phone.replace(/^7/, "2547");
+
+        return phone;
+    };
 
 String.prototype.truncate = function (length, ending) {
     length = length || 100;
@@ -606,4 +624,3 @@ if (!Promise.prototype.finally)
             })
         );
     };
-

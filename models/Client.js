@@ -35,9 +35,9 @@ Client.schema.virtual("fullName").get(function () {
 
 Client.schema.pre('save', function (next) {
     this.modifiedDate = Date.now();
-    if(this.phoneNumber && this.phoneNumber.startsWith('0'))
-        this.phoneNumber = '254' + this.phoneNumber.trimLeft('0');
-
+    
+    if(this.phoneNumber)
+        this.phoneNumber = this.phoneNumber.cleanPhoneNumber();
     
     var findOption = {"$or":[]};
     if(this.phoneNumber) {

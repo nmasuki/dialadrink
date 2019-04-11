@@ -25,7 +25,7 @@ function search(req, res, next) {
 
     locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId();
 
-    if(locals.breadcrumbs){
+    if (locals.breadcrumbs) {
         if (req.originalUrl.startsWith("/search"))
             locals.breadcrumbs.push({
                 label: "Search Results",
@@ -38,8 +38,8 @@ function search(req, res, next) {
             });
     }
 
-    function renderResults(products, title) {        
-        if (req.xhr) 
+    function renderResults(products, title) {
+        if (req.xhr)
             return res.send({
                 success: true,
                 results: products.map(p => p.name)
@@ -47,7 +47,8 @@ function search(req, res, next) {
 
         title = (title || "").toProperCase();
 
-        var i = -1, meta = title.replace(/\ \-\ /g, ", ");
+        var i = -1,
+            meta = title.replace(/\ \-\ /g, ", ");
         while (products[++i] && meta.length < 100) {
             meta += (meta ? ", " : "") + products[i].name;
             if (title.length < 40)
@@ -60,17 +61,17 @@ function search(req, res, next) {
         if (!locals.page.title || locals.page.title == keystone.get("name"))
             locals.page.title = "{0} price in Kenya | Buy {0} online | {1}".format(title.split(",").first(), keystone.get("name"));
 
-        if(products.length == 1){
-            if(locals.breadcrumbs && locals.breadcrumbs.length)
+        if (products.length == 1) {
+            if (locals.breadcrumbs && locals.breadcrumbs.length)
                 locals.breadcrumbs.pop();
             renderSingleResults(products.first());
-        }else{
+        } else {
             locals.products = products;
             view.render('search');
         }
     }
 
-    function renderSingleResults(product){
+    function renderSingleResults(product) {
         if (product) {
             locals.product = product;
             delete locals.page.h1;
@@ -106,29 +107,28 @@ function search(req, res, next) {
 
             var lastRemovedKey, lastRemoved;
             Object.keys(res.locals.groupedBrands).forEach(k => {
-                if (product.category && k != product.category.name)
-                {
+                if (product.category && k != product.category.name) {
                     lastRemovedKey = k;
                     lastRemoved = res.locals.groupedBrands[k];
                     //delete res.locals.groupedBrands[k];
                 }
             });
 
-            if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+            if (Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
                 res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
 
             if (!Object.keys(res.locals.groupedBrands).length)
                 delete res.locals.groupedBrands;
 
             product.findSimilar((err, products) => {
-                if (products){
+                if (products) {
                     locals.similar = products
                         .orderBy(p => Math.abs(p.popularity - product.popularity))
                         .slice(0, 6);
 
                     var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
                     if (brands.length == 1) locals.brand = brands.first();
-                }else{
+                } else {
                     locals.similar = [];
                 }
                 //popularity goes up
@@ -138,13 +138,13 @@ function search(req, res, next) {
         } else
             next(err);
     }
-    
-    if (req.params.query){
-        if(req.params.query.toLowerCase() == "giftpacks"){
+
+    if (req.params.query) {
+        if (req.params.query.toLowerCase() == "giftpacks") {
             Product.findPublished({isGiftPack: true}, function (err, products) {
                 renderResults(products, "Gift Packs");
             });
-        }else{            
+        } else {
             Product.search(req.params.query, function (err, products) {
                 if (err || !products || !products.length) {
                     if (req.originalUrl.startsWith("/search"))
@@ -156,8 +156,7 @@ function search(req, res, next) {
                 }
             });
         }
-    }        
-    else
+    } else
         next();
 }
 
@@ -173,11 +172,11 @@ router.get("/payment/:orderNo", function (req, res) {
             if (!order)
                 return res.status(404).render('errors/404');
 
-            var locals = res.locals;            
-            if (order.cart && order.cart.length){
+            var locals = res.locals;
+            if (order.cart && order.cart.length) {
                 locals.cartItems = (order.cart || []).orderBy(c => c.product.name);
-            }else                
-            locals.cartItems = [];
+            } else
+                locals.cartItems = [];
 
             locals.order = order;
             locals.page = Object.assign(locals.page, {
@@ -198,7 +197,7 @@ router.get("/payment/:orderNo", function (req, res) {
         });
 });
 
-router.get("/giftpacks", function(req, res, next){
+router.get("/giftpacks", function (req, res, next) {
     req.query = "giftpacks";
     search(req, res, next);
 });
@@ -213,7 +212,7 @@ router.get("/pricelist", function (req, res) {
         locals.categories = products.map(p => p.category && p.category.name).filter(c => !!c).distinct().orderBy();
 
         function printPdf(err, html, next) {
-            if(html){
+            if (html) {
                 var pdf = require('html-pdf');
 
                 let filename = encodeURIComponent("drinks pricelist") + '.pdf';
@@ -228,15 +227,15 @@ router.get("/pricelist", function (req, res) {
                     //"height": (11.69) + "in",        // allowed units: mm, cm, in, px
                     //"width": (8.27) + "in",            // allowed units: mm, cm, in, px
 
-                    "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+                    "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
                     //"orientation": "landscape", // portrait or landscape
                 }).toStream(function (err, stream) {
-                    if(err)
+                    if (err)
                         console.warn(err);
                     else
                         stream.pipe(res);
                 });
-            } else if(next){
+            } else if (next) {
                 next(err);
             } else {
                 res.status(404).render('errors/404');
@@ -263,8 +262,8 @@ router.get("/products.json", function (req, res) {
                 ratings: d.averageRatings,
                 ratingCount: d.ratingCount,
                 quantity: d.quantity,
-                brand: d.brand? d.brand.name: null,
-                company: d.brand && d.brand.company? d.brand.company.name: null,
+                brand: d.brand ? d.brand.name : null,
+                company: d.brand && d.brand.company ? d.brand.company.name : null,
                 price: d.price,
                 currency: d.currency,
                 options: d.options
@@ -291,37 +290,42 @@ router.get("/products.xml", function (req, res) {
 
         view.render('productsXml', {layout: false}, function (err, xmlText) {
             res.setHeader('Content-Type', 'text/xml');
-            res.send(xmlText)
+            res.send(xmlText);
         });
     });
 });
 
-router.get('/sitemap', function (req, res) {
+function sitemap(req, res) {
     var view = new keystone.View(req, res);
     var locals = res.locals;
     var xml = require('xml');
 
     Page.model.find({})
-        .exec((err, pages) => locals.pages = pages.filter(p=>p.href && p.content))
+        .exec((err, pages) => locals.pages = pages.filter(p => p.href && p.content))
         .then(Product.findPublished({})
-            .exec((err, products) => locals.products = products)
+            .exec((err, products) => {
+                locals.products = products;
+                locals.brands = products.filter(p => p.brand).map(p => p.brand).distinctBy(b => b.id);
+                locals.subCategories = products.filter(p => p.subCategory).map(p => p.subCategory).distinctBy(b => b.id);
+            })
             .then(() => ProductCategory.model.find({})
                 .exec((err, categories) => locals.categories = categories)
-                .then(() => ProductSubCategory.model.find({}).populate("category")
-                    .exec((err, subCategories) => locals.subCategories = subCategories)
-                    .then(() => ProductBrand.model.find({})
-                        .exec((err, brands) => locals.brands = brands)
-                        .then(() => {
-                                console.log(locals);
-                                view.render('sitemapXml', {layout: false}, function (err, xmlText) {
-                                    res.setHeader('Content-Type', 'text/xml');
-                                    res.send(xmlText);
-                                });
-                    })))));
-});
+                .then(() => Blog.model.find({})
+                    .exec((err, blogs) => locals.blogs = blogs)
+                    .then(() => {
+                        view.render('sitemapXml', {
+                            layout: false
+                        }, function (err, xmlText) {
+                            res.setHeader('Content-Type', 'text/xml');
+                            res.send(xmlText);
+                        });
+                    }))));
+}
+router.get('/sitemap', sitemap);
+router.get('/sitemap.xml', sitemap);
 
 router.get('/google81a0290a139b9339.html', function (req, res) {
-    res.send('google-site-verification: google81a0290a139b9339.html')
+    res.send('google-site-verification: google81a0290a139b9339.html');
 });
 
 router.get("/:query", search);

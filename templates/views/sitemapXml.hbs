@@ -1,34 +1,60 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 		xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-
+		
 	{{#each pages}}
 		<url>
 			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
+			<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>
+			<changefreq>weekly</changefreq>
+			<priority>0.9</priority>
 		</url>
 	{{/each}}
 
 	{{#each products}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/product/{{trim href "/"}}</loc>
+			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
+			<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>
+			<changefreq>weekly</changefreq>
+			<priority>0.8</priority>
+		</url>
+	{{/each}}
+
+	{{#each blogs}}
+		<url>
+			<loc>https://www.dialadrinkkenya.com/blog/{{trim href "/"}}</loc>
+			<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>
+			<changefreq>weekly</changefreq>
+			<priority>0.7</priority>
 		</url>
 	{{/each}}
 	
 	{{#each brands}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/brand/{{lowerCase key}}</loc>
+			<loc>https://www.dialadrinkkenya.com/brand/{{lowerCase (trim key '/')}}</loc>
+			<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>
+			<changefreq>monthly</changefreq>
+			<priority>0.7</priority>
 		</url>
 	{{/each}}
 	
 	{{#each categories}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/category/{{lowerCase key}}</loc>
+			<loc>https://www.dialadrinkkenya.com/category/{{lowerCase (trim key '/')}}</loc>
+			<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>
+			<changefreq>monthly</changefreq>
+			<priority>0.7</priority>
 		</url>
 	{{/each}}
 
 	{{#each subCategories}}
-		<url>
-			<loc>https://www.dialadrinkkenya.com/category/{{category.key}}/{{lowerCase key}}</loc>
-		</url>
+		{{#if category.key}}
+			<url>
+				<loc>https://www.dialadrinkkenya.com/category/{{lowerCase (trim category.key '/')}}/{{lowerCase (trim key '/')}}</loc>
+				<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss.SSS'}}</lastmod>
+				<changefreq>monthly</changefreq>
+				<priority>0.7</priority>
+			</url>
+		{{/if}}
 	{{/each}}
 </urlset>	

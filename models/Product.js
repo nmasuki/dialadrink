@@ -248,10 +248,9 @@ Product.findPublished = function (filter, callback) {
         })
         .populate('brand')
         .populate('category')
-        .populate('subCategory')
         .populate('ratings')
         .populate('category')
-        .deepPopulate("priceOptions.option");
+        .deepPopulate("subCategory.category,priceOptions.option");
 
     if (typeof callback == "function")
         a.exec(callback);

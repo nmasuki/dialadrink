@@ -136,8 +136,8 @@ Order.schema.methods.updateClient = function(next){
         var findOption = {"$or":[]};
         var phoneNumber = (this.delivery.phoneNumber || "").trim();
         if(phoneNumber) {
-            if(phoneNumber.startsWith('0'))
-                phoneNumber = '254' + phoneNumber.trimLeft('0');
+            if(phoneNumber)
+                phoneNumber = phoneNumber.cleanPhoneNumber();
             findOption["$or"].push({"phoneNumber": new RegExp(phoneNumber)});
         }else{
             var email = this.delivery.email || null;
@@ -202,7 +202,7 @@ Order.schema.methods.placeOrder = function (next) {
                 var itemsMsg = `Drinks:${items.map(c=>c.pieces + '*' + c.product.name).join(', ')}`; 
 
                 var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
-                sms.send(process.env.CONTACT_PHONE_NUMBER || "254723688108", msg);                
+                sms.send((process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber(), msg);                
             });
     }
 
