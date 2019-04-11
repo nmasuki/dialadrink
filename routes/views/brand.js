@@ -55,8 +55,6 @@ router.get("/:brand", function (req, res, next) {
         } else
             res.status(404).render('errors/404');
     });
-
-
-})
+});
 
 module.exports = router;

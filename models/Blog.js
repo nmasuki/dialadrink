@@ -30,6 +30,8 @@ Blog.add({
     author: {type: Types.Relationship, ref: 'User', index: true},
     publishedDate: {type: Types.Datetime, index: true, dependsOn: {state: 'published'}},
     image: {type: Types.CloudinaryImage, folder: "blob"},
+    imageAlt:{type: String, default:'Dial a drink Kenya'},
+
     content: {
         brief: {type: Types.Html, wysiwyg: true, height: 150},
         extended: {type: Types.Html, wysiwyg: true, height: 400},
