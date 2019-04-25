@@ -44,7 +44,8 @@ router.post("/paymentnotification", function (req, res) {
 			console.log("Reading AfricasTalking transaction id:" + payment.transactionId + ", ref:" + payment.referenceId)
 			AfricasTalking.getPaymentDetails(payment.transactionId).then(function (response) {
 					var data = response.data;
-
+					res.status(data? 200: 400);
+					
 					if (data) {
 						if (data.reference)
 							order.payment.referenceId = data.reference;
@@ -64,12 +65,11 @@ router.post("/paymentnotification", function (req, res) {
 					}
 				})
 				.catch(function (error) {
-					/* do stuff*/
+					res.status(400);
 					console.warn(error);
 				});
 		});
 
-	res.send('');
 });
 
 router.get("/:orderNo", function (req, res) {
