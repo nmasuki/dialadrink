@@ -53,11 +53,12 @@ Payment.schema.virtual("metadata").set(function (value) {
         var mapping = {
             'account': ['clientAccount'],
             'transactionId': ["transaction"],
-            'referenceId': ["reference", "order", "receipt"],
-            'notificationType': ["notification", "provider"],
-            'phoneNumber': ['phone'],
-            'status': ['state', 'status'],
-            'amount': ['amount', 'value']
+            'referenceId': ["order", "receipt"],
+            'notificationType': ["provider"],
+            'phoneNumber': [],
+            'status': ['state'],
+            'amount': ['amount', 'value'],
+            'productName': []
         };
 
         for (var i in mapping) {

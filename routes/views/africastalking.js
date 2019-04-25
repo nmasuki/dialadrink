@@ -19,33 +19,38 @@ router.post("/paymentvalidation", function(req, res){
 	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
 		.deepPopulate('cart.product.priceOptions.option')
 		.exec((err, order) => {
+			if (!order) {
+				console.log("Error while reading Order id:", payment.metadata.orderNumber);
+				return res.status(400);
+			}
 
+			res.status(200);
 		});
-	console.log("Received %s", req.url, data);
-	
-	res.status(200).send('');
+
+	console.log("Received %s", req.url, data);	
+	res.status(200);
 })
 
 router.post("/paymentnotification", function (req, res) {
-	console.log("Recieved AfricasTalking IPN!");
 	var payment = Payment.model({});
 	
 	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
 	payment.save();
 
+	console.log("Recieved AfricasTalking IPN!", payment.metadata);
 	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
 		.deepPopulate('cart.product.priceOptions.option')
 		.exec((err, order) => {
 			if (!order) {
 				console.log("Error while reading Order id:", payment.metadata.orderNumber);
-				return res.status(404).render('errors/404');
+				return res.status(200);
 			}
 
 			console.log("Reading AfricasTalking transaction id:" + payment.transactionId + ", ref:" + payment.referenceId)
 			AfricasTalking.getPaymentDetails(payment.transactionId).then(function (response) {
 					var data = response.data;
 					res.status(data? 200: 400);
-					
+
 					if (data) {
 						if (data.reference)
 							order.payment.referenceId = data.reference;
