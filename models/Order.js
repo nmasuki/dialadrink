@@ -2,7 +2,7 @@ var MoveSms = require("../helpers/movesms");
 var keystone = require('keystone');
 
 var Types = keystone.Field.Types;
-var sms = require('../helpers/AfricasTalking').Instance; //new MoveSms();
+var sms = new MoveSms();
 
 /**
  * Order Model

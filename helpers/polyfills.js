@@ -356,8 +356,8 @@ if (!String.prototype.sanitizePhoneNumber)
         if (phone.length < 11)
             phone = phone.replace(/^0/, countryCode);
 
-        if (countryCode == "254")
-            phone = phone.replace(/^7/, "2547");
+        if (/^7/.test(phone))
+            phone = phone.replace(/^7/, countryCode + "7");
 
         return phone;
     };
