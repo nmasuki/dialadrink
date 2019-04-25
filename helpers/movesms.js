@@ -25,7 +25,7 @@ module.exports = function MoveSMS(sender) {
         });
     };
 
-    self.send = function compose(to, message, next) {
+    self.sendSMS = function compose(to, message, next) {
         var url = apiUrl.format('compose') + `&sender=${sender}`;
 
         return self.balance().then(function (balance) {

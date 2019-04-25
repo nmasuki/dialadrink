@@ -1,6 +1,6 @@
 var credentials = {
-    apiKey: process.env.AFRICASTALKING_USER,
-    username: process.env.AFRICASTALKING_APIKEY
+    username: process.env.AFRICASTALKING_USER,
+    apiKey: process.env.AFRICASTALKING_APIKEY
 };
 
 function AfricaTalkingSMS(sender) {
@@ -10,16 +10,19 @@ function AfricaTalkingSMS(sender) {
     var self = this;
 
     self.balance = function balance() {
-        return AfricasTalking.APPLICATION.fetchAccount();
+        return AfricasTalking.APPLICATION.fetchAccount().then(response=> {
+            var balance = parseFloat(response.UserData.balance.split(' ')[1])
+            return Promise.resolve(balance);
+        });
     };
 
-    self.send = function () {
-        return self.balance().then(response => {
-            if (response.userData.balance < 0)
+    self.sendSMS = function (to, message) {
+        return self.balance().then(balance => {
+            if (balance < 0)
                 return console.warn("AfricaTalking account balance is low. Please topup.");
 
             var options = {
-                to: (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber()).join(','),
+                to: (Array.isArray(to) ? to : [to]).map(t => '+' + t.cleanPhoneNumber()),
                 message: message,
                 from: sender
             };
@@ -27,13 +30,13 @@ function AfricaTalkingSMS(sender) {
             return AfricasTalking.SMS.send(options)
                 .then((response) => {
                     console.log("SMS sent!", response);
-                    var code = parseFloat(/[\d]+/.exec(response).pop() || "0");
-                    resolve(code);
+                    var cost = parseFloat(/([\d]+\.[\d]+)/.exec(response.SMSMessageData.Message).pop() || "0");
+                    resolve(cost);
                     if (typeof next == "function")
                         next(null, code);
                 })
                 .catch((error) => {
-                    console.warn("Error sending SMS!", error);
+                    console.warn("Error sending SMS!", error, options);
 
                     reject(error);
                     if (typeof next == "function")
