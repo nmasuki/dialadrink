@@ -11,6 +11,20 @@ var PesaPalStatusMap = {
 };
 var router = keystone.express.Router();
 
+
+router.post("/incomingsmsnotification", function(req, res){
+	var data = Object.assign({}, req.body || {}, req.query || {});
+	console.log("Received %s", req.url, data);	
+	res.status(200);
+});
+
+router.post("/optoutsmsnotification", function(req, res){
+	var data = Object.assign({}, req.body || {}, req.query || {});
+	console.log("Received %s", req.url, data);	
+	res.status(200);
+});
+
+
 router.post("/paymentvalidation", function(req, res){
 	var payment = Payment.model({});
 	
@@ -27,7 +41,6 @@ router.post("/paymentvalidation", function(req, res){
 			res.status(200);
 		});
 
-	console.log("Received %s", req.url, data);	
 	res.status(200);
 })
 
