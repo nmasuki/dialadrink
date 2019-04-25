@@ -242,6 +242,14 @@ module.exports = function () {
         return accum;
     };
 
+    _helpers.json = function(obj){
+        try{
+            return JSON.stringify(obj);
+        }catch(e){
+            console.log("Error while running JSON.stringify on", obj, e);
+        }
+    }
+
     //Comparison helpers
     _helpers = Object.assign(_helpers, {
         eq: function (v1, v2, options) {
