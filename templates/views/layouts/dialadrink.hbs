@@ -307,9 +307,23 @@
                     {{/if}}
                 </div>
 
-                <div class="col-sm-3" style="text-align: center;display:none;">
-                    <span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
+                <div class="col-sm-3">
+                    <div class="col-sm-8" style="text-align: center;display:none;">                        
+                        <span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <i class="fa fa-sort-amount-asc sorting dropdown-toggle" 
+                            data-toggle="dropdown" aria-hidden="true">
+                        </i>
+                        <ul class="dropdown-menu" style="display: none;">
+                            <li class="noselect" data-sortby="name">Name <i class="fa fa-sort-alpha-asc" style="float: right;padding-right: 20px;"></i></li>
+                            <li class="noselect" data-sortby="price">Price <i class="fa fa-sort-amount-asc" style="float: right;padding-right: 20px;"></i></li>
+                            <li class="noselect" data-sortby="popularity">Popularity <i class="fa fa-sort-asc" style="float: right;padding-right: 20px;"></i></li>
+                            <li class="noselect" data-sortby="size">Quantity <i class="fa fa-sort-number-asc" style="float: right;padding-right: 20px;"></i></li>
+                        </ul>             
+                    </div>
                 </div>
+
             </div>
 
             {{{body}}}
@@ -497,6 +511,6 @@
 </div>
 
 {{>jsscripts2}}
-
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js"/>
 </body>
 </html>
