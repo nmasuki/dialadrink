@@ -96,7 +96,7 @@ keystone.set('nav', {
 		'product-brands'
 	],
 	orders: 'orders',
-	payment: 'payment',
+	payment: 'payments',
 	enquiries: 'enquiries',
 	'content-and-seo': ['menu-items', 'pages'],
 	blog: ["blogs", "blog-categories"],
