@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "africastalking": "^0.4.0",
     "async": "2.1.4",
     "bitly": "^6.0.8",
     "body-parser-xml": "^1.1.0",
