@@ -1,5 +1,3 @@
-var fs = require('fs');
-var najax = require('najax');
 var credentials = {
     apiKey: process.env.AFRICASTALKING_USER,
     username: process.env.AFRICASTALKING_APIKEY
@@ -9,26 +7,15 @@ function AfricaTalkingSMS(sender) {
     var AfricasTalking = require("africastalking")(credentials);
 
     sender = sender || process.env.AFRICASTALKING_SENDEID;
-    var dataFile = '../africastalking-balance.json';
     var self = this;
 
-    self.balance = function balance(next) {
-        return new Promise((resolve, reject) => {
-            fs.readFile(dataFile, 'utf8', (err, data) => {
-                try {
-                    var obj = JSON.parse((data || "{ \"balance\": 100 }").toString());
-                    resolve(obj.balance);
-                } catch (e) {
-                    console.log(e);
-                    reject(e);
-                }
-            });
-        });
+    self.balance = function balance() {
+        return AfricasTalking.APPLICATION.fetchAccount();
     };
 
     self.send = function () {
-        return self.balance().then(balance => {
-            if (balance < 0)
+        return self.balance().then(response => {
+            if (response.userData.balance < 0)
                 return console.warn("MoveSMS balance is low. Please topup.");
 
             var options = {
