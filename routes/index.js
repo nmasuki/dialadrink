@@ -40,8 +40,8 @@ exports = module.exports = function (app) {
 	
 	app.enable('view cache');
 	var noopMiddleware = (req, res, next) => next();
-	var globalCacheMiddleware = noopMiddleware ||  middleware.cache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
-	var userCacheMiddleware = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30) * 60);
+	var globalCacheMiddleware = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
+	var userCacheMiddleware   = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30) * 60);
 	// Views
 	app.use('/brand', globalCacheMiddleware, routes.views.brand);
 	app.use('/blog', globalCacheMiddleware, routes.views.blog);
@@ -59,6 +59,7 @@ exports = module.exports = function (app) {
 
 	app.use('/order', routes.views.order);
 	app.use('/pesapal', routes.views.pesapal);
+	app.use('/africastalking', routes.views.africastalking);
 
     // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
