@@ -2,7 +2,7 @@ var MoveSms = require("../helpers/movesms");
 var keystone = require('keystone');
 
 var Types = keystone.Field.Types;
-var sms = new MoveSms();
+var sms = require('../helpers/AfricasTalking').Instance; //new MoveSms();
 
 /**
  * Order Model
@@ -202,7 +202,7 @@ Order.schema.methods.placeOrder = function (next) {
                 var itemsMsg = `Drinks:${items.map(c=>c.pieces + '*' + c.product.name).join(', ')}`; 
 
                 var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
-                sms.send((process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber(), msg);                
+                sms.send((process.env.CONTACT_PHONE_NUMBER || "254723688108"), msg);                
             });
     }
 

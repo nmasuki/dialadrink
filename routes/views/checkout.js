@@ -95,6 +95,10 @@ router.post("/", function (req, res, next) {
 						if (order.payment.method == "PesaPal") {
 							json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
 							json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+						} else if(order.payment.method == "Mpesa"){
+							json.msg = "Processing payment. Please check your mobile handsets to complete the transaction.";
+							require('../helpers/AfricasTalking').Instance
+								.processPayment(order.delivery.phoneNumber, order.orderNumber, order.orderNumber, order.payment.amount, 'KES');
 						}
 	
 						delete req.session.promo;

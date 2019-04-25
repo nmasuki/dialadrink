@@ -16,7 +16,7 @@ function AfricaTalkingSMS(sender) {
     self.send = function () {
         return self.balance().then(response => {
             if (response.userData.balance < 0)
-                return console.warn("MoveSMS balance is low. Please topup.");
+                return console.warn("AfricaTalking account balance is low. Please topup.");
 
             var options = {
                 to: (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber()).join(','),
@@ -43,7 +43,7 @@ function AfricaTalkingSMS(sender) {
         });
     };
 
-    self.processPayment = function (email, phoneNumber, orderNumber, productName, amount, currency = 'KES', description = 'Online store payment') {
+    self.processPayment = function (phoneNumber, orderNumber, productName, amount, currency = 'KES', description = 'Online store payment', email = null) {
         var paymentOptions = {
             productName: productName,
             phoneNumber: phoneNumber,
