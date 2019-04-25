@@ -136,7 +136,7 @@ if (!console._warn)
 			});
 		}
 
-		/**/
+		/**
 		console.log = function(){
 			emailToEmail("Info!", arguments[0]);
 
