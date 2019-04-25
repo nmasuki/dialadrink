@@ -58,12 +58,13 @@ function AfricaTalkingSMS(sender) {
         if (email)
             paymentOptions.customerEmail = email;
 
+        console.log("Calling AfricasTalking.PAYMENTS.mobileCheckout()", paymentOptions);
         return AfricasTalking.PAYMENTS.mobileCheckout(paymentOptions)
             .then((response) => {
                 console.log(JSON.stringify(response, 0, 4));
             })
             .catch((error) => {
-                console.log(error);
+                console.warn(error);
             });
     };
 
