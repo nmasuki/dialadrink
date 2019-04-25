@@ -94,5 +94,5 @@ try {
         Instance: new AfricaTalkingSMS()
     };
 } catch (e) {
-    console.log(e);
+    console.log("Error while setting up AfricaTalking", e);
 }
