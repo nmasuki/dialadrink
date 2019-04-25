@@ -12,7 +12,18 @@ var PesaPalStatusMap = {
 var router = keystone.express.Router();
 
 router.post("/paymentvalidation", function(req, res){
+	var payment = Payment.model({});
+	
+	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
+	payment.save();
+	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
+		.deepPopulate('cart.product.priceOptions.option')
+		.exec((err, order) => {
 
+		});
+	console.log("Received %s", req.url, data);
+	
+	res.status(200).send('');
 })
 
 router.post("/paymentnotification", function (req, res) {
@@ -58,9 +69,7 @@ router.post("/paymentnotification", function (req, res) {
 				});
 		});
 
-	res.send(`pesapal_notification_type=${notificationType}` +
-		`&pesapal_transaction_tracking_id=${transactionId}` +
-		`&pesapal_merchant_reference=${referenceId}`);
+	res.send('');
 });
 
 router.get("/:orderNo", function (req, res) {
