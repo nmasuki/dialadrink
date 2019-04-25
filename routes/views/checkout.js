@@ -21,6 +21,7 @@ router.get('/', function (req, res) {
 		label: "Checkout"
 	});
 
+	locals.enableMPesa = process.env.MPESA_ENABLED;
 	locals.enablePaypal = process.env.PESAPAL_ENABLED;
 	return view.render('checkout');
 });

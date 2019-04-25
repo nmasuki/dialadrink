@@ -219,6 +219,13 @@
                             <label class="custom-control-label" for="debit">Pay online</label>
                         </div>
                         {{/if}}
+                        
+                        {{#if enableMPesa}}
+                        <div class="custom-control custom-radio">
+                            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="MPesa">
+                            <label class="custom-control-label" for="debit">MPesa</label>
+                        </div>
+                        {{/if}}
                     </div>
                     {{/if}}
 
