@@ -4,9 +4,10 @@ var credentials = {
     apiKey: process.env.AFRICASTALKING_USER,
     username: process.env.AFRICASTALKING_APIKEY
 };
-var AfricasTalking = require("africastalking")(credentials);
 
-function AfricaTalking(sender) {
+function AfricaTalkingSMS(sender) {
+    var AfricasTalking = require("africastalking")(credentials);
+
     sender = sender || process.env.AFRICASTALKING_SENDEID;
     var dataFile = '../africastalking-balance.json';
     var self = this;
@@ -62,13 +63,13 @@ function AfricaTalking(sender) {
             amount: amount,
             currencyCode: currency || 'KES',
             narration: description || 'Online store payment',
-            metadata: { orderNumber: orderNumber },
+            metadata: {
+                orderNumber: orderNumber
+            },
         };
 
         if (email)
             paymentOptions.customerEmail = email;
-
-        
 
         return AfricasTalking.PAYMENTS.mobileCheckout(paymentOptions)
             .then((response) => {
@@ -87,7 +88,11 @@ function AfricaTalking(sender) {
     }
 }
 
-module.exports = {
-    AfricaTalking: AfricaTalking,
-    Instance: new AfricaTalking()
-};
+try {
+    module.exports = {
+        AfricaTalking: AfricaTalkingSMS,
+        Instance: new AfricaTalkingSMS()
+    };
+} catch (e) {
+    console.log(e);
+}
