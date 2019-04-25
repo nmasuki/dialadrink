@@ -26,7 +26,7 @@ var handlebars = require('express-handlebars').create({
 keystone.init({
 	'name': 'Dial A Drink Kenya',
 	'brand': 'Dial A Drink Kenya',
-	'port': 4000,
+	'port': process.env.HTTP_PORT || 4000,
 	'less': 'public',
 	'static': 'public',
 	'favicon': 'public/favicon.ico',
@@ -136,7 +136,7 @@ if (!console._warn)
 			});
 		}
 
-		/**/
+		/**
 		console.log = function(){
 			emailToEmail("Info!", arguments[0]);
 
