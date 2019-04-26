@@ -619,6 +619,7 @@ function handleProductSorting() {
 
             $(this).find('i.fa').each(changeSortDirIcon);
             $(this).parent().siblings(".dropdown-toggle, .dropdown-toggle .fa").each(changeSortDirIcon);
+            $(this).parent().siblings(".dropdown-toggle #sortby").text($(this).text());
         });
 
         $grid.isotope({ sortBy : 'name', sortAscending: true });
