@@ -600,31 +600,34 @@ function handleProductSorting() {
             $(this).parents(".dropdown-menu").hide();
 
             var sortBy = $(this).data('sortby') || 'name';
-            var sortDecending = $grid.data('sortedBy') == sortBy && $grid.data('sortAscending') == "false";
+            var sortAscending = !($grid.data('sortedBy') == sortBy && ($grid.data('sortDir') || 'asc') == 'asc');
+            var sortDir = (sortAscending? "asc": "desc");
 
             $grid.isotope({ 
                 sortBy : sortBy,
-                sortAscending: !sortDecending
+                sortAscending: sortAscending
             });
 
             $grid.data("sortedBy", sortBy);
-            $grid.data("sortAscending", (!sortDecending).toString());
-            console.log('Sorting by ' + sortBy + " " + (sortDecending? "desc": "asc"));
+            $grid.data("sortDir", (sortAscending? "asc": "desc"));
+            console.log('Sorting by ' + sortBy + " " + (sortAscending? "asc": "desc"));
 
+            function changeSortDirIcon(i, el){
+                var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortDir);
+                if(cls) $(el).attr("class", cls);
+            }
+
+            $(this).find('i.fa').each(changeSortDirIcon);
+            $(this).parent().siblings(".dropdown-toggle, .dropdown-toggle .fa").each(changeSortDirIcon);
         });
 
-        $grid.isotope({ 
-            sortBy : '',
-            sortAscending: true
-        });
+        $grid.isotope({ sortBy : 'name', sortAscending: true });
     }
 }
 
 
 $(window).ready(function ($) {
-    document.addEventListener('touchstart', onTouchStart, {
-        passive: true
-    });
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
 
     if ($.fn.tooltip)
         $('[data-toggle="tooltip"]').tooltip();
@@ -636,7 +639,6 @@ $(window).ready(function ($) {
 
         x = Math.min(100, Math.max(0, offsetX / zoomer.offsetWidth * 100));
         y = Math.min(100, Math.max(0, offsetY / zoomer.offsetHeight * 100));
-
 
         zoomer.style.backgroundPosition = x + '% ' + y + '%';
 
