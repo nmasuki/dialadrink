@@ -1,4 +1,5 @@
-var touch = false, clickEv = 'click';
+var touch = false,
+    clickEv = 'click';
 
 $.ajaxSetup({
     beforeSend: function (xhr) {
@@ -8,7 +9,7 @@ $.ajaxSetup({
 
 /*Slider main*/
 function slider_main() {
-    if($.fn.carousel)
+    if ($.fn.carousel)
         $('.carousel').carousel({
             interval: false,
             pause: false
@@ -172,17 +173,15 @@ function handleDropdown() {
 function getWidthBrowser() {
     var myWidth;
 
-    if (typeof(window.innerWidth) == 'number') {
+    if (typeof (window.innerWidth) == 'number') {
         //Non-IE
         myWidth = window.innerWidth;
         //myHeight = window.innerHeight;
-    }
-    else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
+    } else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
         //IE 6+ in 'standards compliant mode'
         myWidth = document.documentElement.clientWidth;
         //myHeight = document.documentElement.clientHeight;
-    }
-    else if (document.body && (document.body.clientWidth || document.body.clientHeight)) {
+    } else if (document.body && (document.body.clientWidth || document.body.clientHeight)) {
         //IE 4 compatible
         myWidth = document.body.clientWidth;
         //myHeight = document.body.clientHeight;
@@ -211,20 +210,20 @@ function handleScrollTop() {
         var c = $(this).height();
         if (b > 0) {
             var d = b + c / 2;
-        }
-        else {
+        } else {
             var d = 1;
         }
         if (d < 1e3 && d < c) {
             totop_button("off");
-        }
-        else {
+        } else {
             totop_button("on");
         }
     });
     $("#scroll-to-top").click(function (e) {
         e.preventDefault();
-        $('body,html').animate({scrollTop: 0}, 800, 'swing');
+        $('body,html').animate({
+            scrollTop: 0
+        }, 800, 'swing');
     });
 }
 
@@ -243,7 +242,7 @@ function ModalNewsletter() {
 
 }
 
-function handleSearchingAndPaging(){
+function handleSearchingAndPaging() {
     $('#search').on('click', function (e) {
         e.preventDefault();
 
@@ -255,28 +254,28 @@ function handleSearchingAndPaging(){
         }
     });
 
-    $(".disabled a, a.disabled").on("click", function(e){
+    $(".disabled a, a.disabled").on("click", function (e) {
         e.preventDefault();
     })
 }
 
-function handleSearchAutoComplete(){
-    if($.fn.autocomplete)
+function handleSearchAutoComplete() {
+    if ($.fn.autocomplete)
         $("#search_box").autocomplete({
-            source: function( request, response ) {
-            $.ajax( {
-                url: "/search/" + request.term,
-                dataType: "json",
-                data: {
-                term: request.term
-                },
-                success: function( data ) {
-                response( data.results );
-                }
-            });
+            source: function (request, response) {
+                $.ajax({
+                    url: "/search/" + request.term,
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data.results);
+                    }
+                });
             },
             minLength: 2,
-            select: function( event, ui ) {
+            select: function (event, ui) {
                 var query = ui.item.value || ui.item;
                 if (query !== "") {
                     console.log(query)
@@ -380,12 +379,10 @@ function handleMap() {
                 zoom: 17,
                 scrollwheel: false,
                 maptype: 'ROADMAP',
-                markers: [
-                    {
-                        address: '474 Ontario St Toronto, ON M4X 1M7 Canada',
-                        html: '_address'
-                    }
-                ]
+                markers: [{
+                    address: '474 Ontario St Toronto, ON M4X 1M7 Canada',
+                    html: '_address'
+                }]
             });
         }
     }
@@ -418,7 +415,10 @@ function updateScrollThumbsQS() {
             var _index = 0;
             var product_images = $('#gallery_main_qs .image-thumb');
             product_images.each(function (key, val) {
-                _items.push({'href': val.href, 'title': val.title});
+                _items.push({
+                    'href': val.href,
+                    'title': val.title
+                });
                 if ($(this).hasClass('active')) {
                     _index = key;
                 }
@@ -471,13 +471,11 @@ function addClassFirst() {
                 $(this).addClass('padding-80');
                 $(".main-content section").first().addClass('padding-80');
             }
-        }
-        else if (i == 2 && check == 0) {
+        } else if (i == 2 && check == 0) {
             if ($(this).attr('class').indexOf('main-slideshow') == -1) {
                 //$(this).addClass('padding-20');
             }
-        }
-        else if (i > 2) {
+        } else if (i > 2) {
             return false;
         }
         i++;
@@ -488,7 +486,7 @@ function addClassFirst() {
     }*/
 }
 
-function handleProductRating(){
+function handleProductRating() {
     $(document).on("mouseover", ".unrated .glyphicon", function (e) {
         var index = $(this).index();
         for (var i = 0; i <= index; i++)
@@ -514,32 +512,32 @@ function handleProductRating(){
     });
 }
 
-function loadParticles(){
+function loadParticles() {
     var thisSeason = null;
     var seasons = {
         valentines: "14 Feb",
         chrismass: "25 Dec",
     };
 
-    for(var i in seasons){
+    for (var i in seasons) {
         var today = new Date();
         var year = new Date().getFullYear();
         var date = new Date(seasons[i] + " " + year);
-        
-        if(today > date.addDays(-7) && today < date.addDays(5)){
+
+        if (today > date.addDays(-7) && today < date.addDays(5)) {
             thisSeason = i;
             break;
         }
     }
 
-    if(thisSeason)
-        $.getScript("/js/particles/particles.min.js").then(function(){
-            if(window.particlesJS)
+    if (thisSeason)
+        $.getScript("/js/particles/particles.min.js").then(function () {
+            if (window.particlesJS)
                 window.particlesJS.load('dad_Body', '/js/particles/data/' + thisSeason + '.json');
         });
 }
 
-function ioLazyLoad(){
+function ioLazyLoad() {
     var options = {
         root: document.querySelector('.main-content'),
         rootMargin: '0px',
@@ -547,26 +545,26 @@ function ioLazyLoad(){
     };
 
     function loadImage(imageElement) {
-        setTimeout(function() {
-            var img = $(imageElement).is("img")? imageElement: imageElement.querySelector('img');
-            img.src = img.dataset.src;  
+        setTimeout(function () {
+            var img = $(imageElement).is("img") ? imageElement : imageElement.querySelector('img');
+            img.src = img.dataset.src;
         }, 1000);
     }
 
-    var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(entry) {
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
             // console.log('entry: ', entry);
             if (entry.intersectionRatio > 0.9) {
                 loadImage(entry.target);
-	            entry.target.classList.add('active');
+                entry.target.classList.add('active');
                 // console.log('Loaded: ', entry);
-	            io.unobserve(entry.target);
+                io.unobserve(entry.target);
             }
         });
     }, options);
 
     var targetElements = $('img[data-src]');
-    targetElements.each(function(i, e){
+    targetElements.each(function (i, e) {
         io.observe(e);
     });
 }
@@ -575,31 +573,80 @@ $(window).resize(function () {
     toggleLeftMenu();
 });
 
-function onTouchStart(e){
+function onTouchStart(e) {
     console.log.apply(this, arguments);
+}
+
+function handleProductSorting() {
+    function getSortFn(property) {
+        return function (elem) {
+            var json = $(elem).find('script.json').text(),
+                data = JSON.parse(json) || {};
+            return data[property];
+        };
+    }
+
+    if ($.fn.isotope){
+        var $grid = $('.products-grid').isotope({
+            getSortData: {
+                name: getSortFn('name'),
+                popularity: getSortFn('popularity'),
+                price: getSortFn('price'),
+                size: getSortFn('popularity'),
+            }
+        });
+
+        $(document).on('click', '[data-sortby]', function(e){
+            $(this).parents(".dropdown-menu").hide();
+
+            var sortBy = $(this).data('sortby') || 'name';
+            var sortAscending = !($grid.data('sortedBy') == sortBy && ($grid.data('sortDir') || 'asc') == 'asc');
+            var sortDir = (sortAscending? "asc": "desc");
+
+            $grid.isotope({ 
+                sortBy : sortBy,
+                sortAscending: sortAscending
+            });
+
+            $grid.data("sortedBy", sortBy);
+            $grid.data("sortDir", (sortAscending? "asc": "desc"));
+            console.log('Sorting by ' + sortBy + " " + (sortAscending? "asc": "desc"));
+
+            function changeSortDirIcon(i, el){
+                var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortDir);
+                if(cls) $(el).attr("class", cls);
+            }
+
+            $(this).find('i.fa').each(changeSortDirIcon);
+            $(this).parent().siblings(".dropdown-toggle, .dropdown-toggle .fa").each(changeSortDirIcon);
+        });
+
+        $grid.isotope({ sortBy : 'name', sortAscending: true });
+    }
 }
 
 
 $(window).ready(function ($) {
-    document.addEventListener('touchstart', onTouchStart, {passive: true});
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
 
-    if($.fn.tooltip)
+    if ($.fn.tooltip)
         $('[data-toggle="tooltip"]').tooltip();
 
-    $(document).on("mousemove touchmove", "figure.zoom", function zoom(e){
+    $(document).on("mousemove touchmove", "figure.zoom", function zoom(e) {
         var zoomer = e.currentTarget;
         var offsetX = e.offsetX || (e.originalEvent.changedTouches && e.originalEvent.changedTouches[0].pageX);
         var offsetY = e.offsetY || (e.originalEvent.changedTouches && e.originalEvent.changedTouches[0].pageY);
-        
-        x = Math.min(100, Math.max(0, offsetX/zoomer.offsetWidth*100));
-        y = Math.min(100, Math.max(0, offsetY/zoomer.offsetHeight*100));
 
+        x = Math.min(100, Math.max(0, offsetX / zoomer.offsetWidth * 100));
+        y = Math.min(100, Math.max(0, offsetY / zoomer.offsetHeight * 100));
 
         zoomer.style.backgroundPosition = x + '% ' + y + '%';
 
         e.stopPropagation();
     });
-    
+
+    handleProductSorting();
+
     loadParticles();
 
     ioLazyLoad();
