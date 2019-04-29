@@ -564,14 +564,10 @@ function ioLazyLoad() {
     }, options);
 
     var targetElements = $('img[data-src]');
-    targetElements.each(function (i, e) {
-        io.observe(e);
-    });
+    targetElements.each(function (i, e) { io.observe(e); });
 }
 
-$(window).resize(function () {
-    toggleLeftMenu();
-});
+$(window).resize(function () { toggleLeftMenu(); });
 
 function onTouchStart(e) {
     console.log.apply(this, arguments);
@@ -582,6 +578,8 @@ function handleProductSorting() {
         return function (elem) {
             var json = $(elem).find('script.json').text(),
                 data = JSON.parse(json) || {};
+            if(property == 'price' && data['offerPrice'])
+                return data['offerPrice'];
             return data[property];
         };
     }
@@ -618,10 +616,12 @@ function handleProductSorting() {
             }
 
             $(this).find('i.fa').each(changeSortDirIcon);
-            $(this).parent().siblings(".dropdown-toggle, .dropdown-toggle .fa").each(changeSortDirIcon);
-            $(this).parent().siblings(".dropdown-toggle #sortby").text($(this).text());
+            $(".sorting, .sorting .fa").each(changeSortDirIcon);
+            $(".sorting #sortby").text($(this).text());
         });
 
+        $grid.data("sortDir", "asc");
+        $grid.data("sortedBy", "name");
         $grid.isotope({ sortBy : 'name', sortAscending: true });
     }
 }
