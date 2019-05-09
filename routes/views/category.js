@@ -61,11 +61,11 @@ router.get("/:category", function (req, res) {
                     var l = 0,
                         i = 0;
 
-                    var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name,"i")
+                    var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name, "i")
                     var uifilters = subCategories.map(p => p.name.replace(regexReplace, "").trim());
-                    
+
                     uifilters.forEach(s => {
-                        if (l <= 40) {
+                        if (l <= 40 - 7) {
                             i += 1;
                             l += s.length;
                         }
