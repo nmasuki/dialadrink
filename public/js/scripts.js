@@ -564,28 +564,42 @@ function ioLazyLoad() {
     }, options);
 
     var targetElements = $('img[data-src]');
-    targetElements.each(function (i, e) { io.observe(e); });
+    targetElements.each(function (i, e) {
+        io.observe(e);
+    });
 }
 
-$(window).resize(function () { toggleLeftMenu(); });
+$(window).resize(function () {
+    toggleLeftMenu();
+});
 
 function onTouchStart(e) {
     console.log.apply(this, arguments);
 }
 
 function handleProductSorting() {
-    function getSortFn(property) {
+
+    function getSortFn(property, expectedValue) {
         return function (elem) {
-            var json = $(elem).find('script.json').text(),
+            var json = $(elem || this).find('script.json').text(),
                 data = JSON.parse(json) || {};
-            if(property == 'price' && data['offerPrice'])
+
+            if (property == 'price' && data['offerPrice'])
                 return data['offerPrice'];
+
+            if (expectedValue) {
+                var regex = new RegExp(expectedValue, "i");
+                var fValue = data[property] && (data[property].name || data[property] || "");
+
+                return fValue && regex.test(fValue);
+            }
             return data[property];
         };
     }
+    var $grid = $('.products-grid');
 
-    if ($.fn.isotope){
-        var $grid = $('.products-grid').isotope({
+    if ($grid.isotope) {
+        $grid.isotope({
             getSortData: {
                 name: getSortFn('name'),
                 popularity: getSortFn('popularity'),
@@ -594,41 +608,69 @@ function handleProductSorting() {
             }
         });
 
-        $(document).on('click', '[data-sortby]', function(e){
+        $(".filter").click(function (e) {
+            var filterBy = ["category", "subCategory"];
+            var filterByVal = $(this).data("filterby");
+
+            if (filterBy) {
+                $(this).siblings(".active").removeClass("active");
+                $(this).addClass("active");
+
+                $grid.isotope({
+                    filter: function (elem) {
+                        elem = elem || this;
+                        return filterBy.any(function (f) {
+                            return getSortFn(f, filterByVal)(elem);
+                        });
+                    },
+                    sortAscending: true
+                });
+            }
+        });
+
+        $(".sort-products").click(function (e) {
             $(this).parents(".dropdown-menu").hide();
 
             var sortBy = $(this).data('sortby') || 'name';
             var sortAscending = !($grid.data('sortedBy') == sortBy && ($grid.data('sortDir') || 'asc') == 'asc');
-            var sortDir = (sortAscending? "asc": "desc");
+            var sortDir = (sortAscending ? "asc" : "desc");
 
-            $grid.isotope({ 
-                sortBy : sortBy,
+            $grid.isotope({
+                sortBy: sortBy,
                 sortAscending: sortAscending
             });
 
             $grid.data("sortedBy", sortBy);
-            $grid.data("sortDir", (sortAscending? "asc": "desc"));
-            console.log('Sorting by ' + sortBy + " " + (sortAscending? "asc": "desc"));
+            $grid.data("sortDir", (sortAscending ? "asc" : "desc"));
+            console.log('Sorting by ' + sortBy + " " + (sortAscending ? "asc" : "desc"));
 
-            function changeSortDirIcon(i, el){
+            function changeSortDirIcon(i, el) {
                 var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortDir);
-                if(cls) $(el).attr("class", cls);
+                if (cls) $(el).attr("class", cls);
             }
 
             $(this).find('i.fa').each(changeSortDirIcon);
             $(".sorting, .sorting .fa").each(changeSortDirIcon);
-            $(".sorting #sortby").text($(this).text());
+            $(".sorting #sortby").text("Sorted by " + $(this).text());
         });
 
         $grid.data("sortDir", "asc");
         $grid.data("sortedBy", "name");
-        $grid.isotope({ sortBy : 'name', sortAscending: true });
+        $grid.isotope({
+            sortBy: 'name',
+            sortAscending: true
+        });
+    } else {
+        console.log("$.fn.isotope not defined. Waiting..");
+        setTimeout(handleProductSorting, 500);
     }
 }
 
 
-$(window).ready(function ($) {
-    document.addEventListener('touchstart', onTouchStart, { passive: true });
+$(document).ready(function ($) {
+    document.addEventListener('touchstart', onTouchStart, {
+        passive: true
+    });
 
     if ($.fn.tooltip)
         $('[data-toggle="tooltip"]').tooltip();

@@ -18,14 +18,19 @@ function index(req, res) {
 
     // Load Products
     view.on('init', function (next) {
-        keystone.list('Product').findPublished({onOffer: true, state: 'published'}, (err, products) => {
+        keystone.list('Product').findPublished({
+            onOffer: true,
+            state: 'published'
+        }, (err, products) => {
             locals.products = products = products.orderByDescending(p => p.hitsPerWeek);
-            
+
             var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
             if (brands.length == 1) locals.brand = brands.first();
 
             var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
             var lastRemovedKey, lastRemoved;
+
+            res.locals.uifilters = categories.map(p => p.name).slice(0, 5);
             Object.keys(res.locals.groupedBrands).forEach(k => {
                 if (!categories.find(c => k == c.name)) {
                     lastRemovedKey = k;

@@ -154,8 +154,9 @@ router.get('/validatepromo/:promocode', function (req, res) {
 				res.send({
 					state: promo.status == "running",
 					promo: promo.status == "running" ? (req.session.promo = promo) : null,
-					msg: promo.status == "running" ?
-						`Promo code '${promo.name || promo.code}' applied successfully!` : `The promo code you entered is '${promo.status.toProperCase()}'!`
+					msg: promo.status == "running" 
+						?`Promo code '${promo.name || promo.code}' applied successfully!` 
+						: `The promo code you have entered is '${promo.status.toProperCase()}'!`
 				});
 			} else {
 				res.send({

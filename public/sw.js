@@ -1,8 +1,8 @@
-var CACHE_VERSION = 11.6;
+var CACHE_VERSION = 12;
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
 function getCacheName(destination, inc) {
-    return destination + "s-v" + (CACHE_VERSION + ((inc || 0)/10.0));
+    return destination + ((destination.endsWith("s")?"":"s") + "-v") + (CACHE_VERSION + ((inc || 0)/10.0));
 }
 
 workbox.precaching.precacheAndRoute([
@@ -61,7 +61,7 @@ workbox.skipWaiting();
 workbox.routing.registerRoute(
     new RegExp('.*\.js'),
     workbox.strategies.cacheFirst({
-        "cacheName": "scripts",
+        "cacheName": getCacheName("scripts"),
         "cacheableResponse": {
             "statuses": [0, 200]
         }
@@ -70,7 +70,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     new RegExp('.*\.css'),
     workbox.strategies.cacheFirst({
-        "cacheName": getCacheName("style"),
+        "cacheName": getCacheName("styles"),
         "cacheableResponse": {
             "statuses": [0, 200]
         }
@@ -79,7 +79,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     new RegExp('https://maxcdn.bootstrapcdn.com/.*'),
     workbox.strategies.cacheFirst({
-        "cacheName": getCacheName("fontawsomeiconfonts"),
+        "cacheName": getCacheName("bootstrap"),
         "cacheableResponse": {
             "statuses": [0, 200]
         }
@@ -88,7 +88,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     new RegExp('https://fonts.googleapis.com/.*'),
     workbox.strategies.cacheFirst({
-        "cacheName": getCacheName("googlefontscache"),
+        "cacheName": getCacheName("googlefonts"),
         "cacheableResponse": {
             "statuses": [0, 200]
         }
@@ -97,7 +97,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     /(https).*\.(?:png|jpg|jpeg|svg|gif)/,
     workbox.strategies.cacheFirst({
-        "cacheName": getCacheName("fontawsomeiconfonts"),
+        "cacheName": getCacheName("images"),
         "cacheableResponse": {
             "statuses": [0, 200]
         },

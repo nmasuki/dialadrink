@@ -1,12 +1,12 @@
 var credentials = {
-    username: process.env.AFRICASTALKING_USER,
-    apiKey: process.env.AFRICASTALKING_APIKEY
+    username: process.env.AFRICASTALKING_USER || "dialadrink",
+    apiKey: process.env.AFRICASTALKING_APIKEY || '8e42f0b0477b3c1312997e33fd698f2d8e27fc609b9f323cb5237fb8d46f50ff'
 };
 
 function AfricaTalkingSMS(sender) {
     var AfricasTalking = require("africastalking")(credentials);
 
-    sender = sender || process.env.AFRICASTALKING_SENDEID;
+    sender = sender || process.env.AFRICASTALKING_SENDEID || 'DIALADRINK';
     var self = this;
 
     self.balance = function balance() {

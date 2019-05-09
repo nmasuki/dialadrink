@@ -7,23 +7,34 @@ router.get("/:category", function (req, res) {
 
     // Set locals
     locals.section = 'store';
-    locals.filters = {category: req.params.category || ""};
+    locals.filters = {
+        category: req.params.category || ""
+    };
 
-    locals.page = Object.assign(locals.page, {h1: locals.filters.category.toProperCase()});
+    locals.page = Object.assign(locals.page, {
+        h1: locals.filters.category.toProperCase()
+    });
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 
     // Load Products
     view.on('init', function (next) {
-        keystone.list('ProductCategory').model.find({key: locals.filters.category.cleanId()})
+        keystone.list('ProductCategory').model.find({
+                key: locals.filters.category.cleanId()
+            })
             .exec((err, categories) => {
                 var title = categories.map(c => c.name).join(" - ");
                 locals.page.title = categories.map(c => (c.pageTitle || "").replace(/I/g, "|")).first();
 
-                var filter = {category: {"$in": categories.map(c => c._id)}};
+                var filter = {
+                    category: {
+                        "$in": categories.map(c => c._id)
+                    }
+                };
                 keystone.list('Product').findPublished(filter, (err, products) => {
 
-                    var i = -1, meta = title.replace(/\ \-\ /g, ", ");
+                    var i = -1,
+                        meta = title.replace(/\ \-\ /g, ", ");
                     while (products[++i] && products[i].name && meta.length < 120) {
                         meta += (meta ? ", " : "") + products[i].name.trim();
                         if (title.length < 40)
@@ -42,23 +53,39 @@ router.get("/:category", function (req, res) {
                     locals.products = products;
 
                     var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
-                    if(brands.length == 1) locals.brand = brand;
+                    if (brands.length == 1) locals.brand = brand;
 
                     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
+                    var subCategories = products.map(p => p.subCategory).filter(b => !!b).distinctBy(b => b.name);
+
+                    var l = 0,
+                        i = 0;
+
+                    var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name,"i")
+                    var uifilters = subCategories.map(p => p.name.replace(regexReplace, "").trim());
+                    
+                    uifilters.forEach(s => {
+                        if (l <= 40) {
+                            i += 1;
+                            l += s.length;
+                        }
+                    });
+
+                    res.locals.uifilters = uifilters.slice(0, i);
+
                     var lastRemovedKey, lastRemoved;
                     Object.keys(res.locals.groupedBrands).forEach(k => {
-                        if (!categories.find(c=> c && k == c.name))
-                        {
+                        if (!categories.find(c => c && k == c.name)) {
                             lastRemovedKey = k;
                             lastRemoved = res.locals.groupedBrands[k];
                             //delete res.locals.groupedBrands[k];
                         }
                     });
 
-                    if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+                    if (Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
                         res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
 
-                    if(!Object.keys(res.locals.groupedBrands).length)
+                    if (!Object.keys(res.locals.groupedBrands).length)
                         delete res.locals.groupedBrands;
 
 
@@ -81,16 +108,24 @@ router.get("/:category/:subcategory", function (req, res) {
         subcategory: req.params.subcategory
     };
 
-    locals.page = Object.assign(locals.page, {h1: locals.filters.category.toProperCase()});
+    locals.page = Object.assign(locals.page, {
+        h1: locals.filters.category.toProperCase()
+    });
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 
     // Load Products
     view.on('init', function (next) {
-        keystone.list('ProductSubCategory').model.find({key: locals.filters.subcategory.cleanId()})
+        keystone.list('ProductSubCategory').model.find({
+                key: locals.filters.subcategory.cleanId()
+            })
             .exec((err, subCategories) => {
                 var title = subCategories.map(c => c.name).join(" - ");
-                var filter = {subCategory: {"$in": subCategories.map(c => c._id)}};
+                var filter = {
+                    subCategory: {
+                        "$in": subCategories.map(c => c._id)
+                    }
+                };
                 keystone.list('Product').findPublished(filter, (err, products) => {
 
                     var i = -1;
@@ -106,25 +141,25 @@ router.get("/:category/:subcategory", function (req, res) {
                     locals.products = products;
 
                     var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
-                    if(brands.length == 1) 
+                    if (brands.length == 1)
                         locals.brand = brands.first();
-/*
-                    var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
-                    var lastRemovedKey, lastRemoved;
-                    Object.keys(res.locals.groupedBrands).forEach(k => {
-                        if (!categories.find(c=> c && k == c.name))
-                        {
-                            lastRemovedKey = k;
-                            lastRemoved = res.locals.groupedBrands[k];
-                            delete res.locals.groupedBrands[k];
-                        }
-                    });
-                    
-                    if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
-                        res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
-*/
+                    /*
+                                        var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
+                                        var lastRemovedKey, lastRemoved;
+                                        Object.keys(res.locals.groupedBrands).forEach(k => {
+                                            if (!categories.find(c=> c && k == c.name))
+                                            {
+                                                lastRemovedKey = k;
+                                                lastRemoved = res.locals.groupedBrands[k];
+                                                delete res.locals.groupedBrands[k];
+                                            }
+                                        });
+                                        
+                                        if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+                                            res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
+                    */
 
-                    if(!Object.keys(res.locals.groupedBrands).length)
+                    if (!Object.keys(res.locals.groupedBrands).length)
                         delete res.locals.groupedBrands;
 
                     next();
