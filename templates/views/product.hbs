@@ -301,8 +301,7 @@
     "bestRating": "5",
     "ratingValue": "{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}",
     "ratingCount": "{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}"
-  },
-  {{#if price}}
+  }{{#if price}},
   "offers": {
     "@type": "Offer",
     "priceCurrency": "{{currency}}",
