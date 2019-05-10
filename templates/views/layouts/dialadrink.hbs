@@ -280,7 +280,7 @@
     <section class="home3_featured" id="home_featured_layout">
         <div class="home_featured_wrapper">
             <div class="container" style="margin-bottom: 0">
-                <div class="{{#if page.h1}}col-sm-4{{else}}col-sm-6{{/if}}" style="text-align: left;">
+                <div class="{{#if page.h1}}col-sm-4{{else}}col-sm-5{{/if}}" style="text-align: left;">
                     <div class="breadcrumb clearfix" style="background-color: transparent">
                         {{#each breadcrumbs}}
                             {{#if @last}}
@@ -304,7 +304,7 @@
                     {{/each}}
                 </div>
 
-                <div class="{{#if page.h1}}col-sm-5{{else}}col-sm-3{{/if}}">
+                <div class="{{#if page.h1}}col-sm-4{{else}}col-sm-3{{/if}}">
                     {{#if page.h1}}
                         <h1 class="home_featured_title home-title page-title">
                             <span class="category-name">{{{page.h1}}}</span>
@@ -312,7 +312,7 @@
                     {{/if}}
                 </div>
 
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <div class="col-sm-8" style="text-align: center; display:none;">                        
                         <span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
                     </div>
