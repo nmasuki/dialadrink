@@ -298,9 +298,9 @@
                         {{/each}}
                     </div>
                     {{#each uifilters}}
-                    <span class="filter" data-filterby="{{this}}">
-                        <span style="padding-left: 5px; padding-right: 5px;">{{this}}</span>
-                    </span>
+                        <span class="filter noselect" data-filterby="{{this}}">
+                            <span style="padding-left: 5px; padding-right: 5px;">{{this}}</span>
+                        </span>
                     {{/each}}
                 </div>
 
@@ -313,11 +313,11 @@
                 </div>
 
                 <div class="col-sm-3">
-                    <div class="col-sm-8" style="text-align: center;display:none;">                        
+                    <div class="col-sm-8" style="text-align: center; display:none;">                        
                         <span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
                     </div>
                     <div class="col-sm-4" style="float:right">
-                        <span class="sorting dropdown-toggle">
+                        <span class="sorting noselect dropdown-toggle">
                             <span id="sortby" style="padding-left: 5px;">Sorted by Name</span>
                             <i class="fa fa-sort-amount-asc" style="float: right; padding:2px;"></i>
                         </span>

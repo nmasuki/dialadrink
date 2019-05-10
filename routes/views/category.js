@@ -60,9 +60,12 @@ router.get("/:category", function (req, res) {
 
                     var l = 0,
                         i = 0;
-
                     var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name, "i")
                     var uifilters = subCategories.map(p => p.name.replace(regexReplace, "").trim());
+
+                    if (uifilters.length <= 1) {
+                        uifilters = brands.map(p => p.name.replace(regexReplace, "").trim());
+                    }
 
                     uifilters.forEach(s => {
                         if (l <= 40 - 7) {
@@ -143,21 +146,22 @@ router.get("/:category/:subcategory", function (req, res) {
                     var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
                     if (brands.length == 1)
                         locals.brand = brands.first();
-                    /*
-                                        var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
-                                        var lastRemovedKey, lastRemoved;
-                                        Object.keys(res.locals.groupedBrands).forEach(k => {
-                                            if (!categories.find(c=> c && k == c.name))
-                                            {
-                                                lastRemovedKey = k;
-                                                lastRemoved = res.locals.groupedBrands[k];
-                                                delete res.locals.groupedBrands[k];
-                                            }
-                                        });
-                                        
-                                        if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
-                                            res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
-                    */
+
+                    {
+                        var l = 0,
+                            i = 0;
+                        var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name, "i")
+                        uifilters = brands.map(p => p.name.replace(regexReplace, "").trim());
+
+                        uifilters.forEach(s => {
+                            if (l <= 40 - 7) {
+                                i += 1;
+                                l += s.length;
+                            }
+                        });
+
+                        res.locals.uifilters = uifilters.slice(0, i);
+                    }
 
                     if (!Object.keys(res.locals.groupedBrands).length)
                         delete res.locals.groupedBrands;

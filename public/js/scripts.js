@@ -609,22 +609,26 @@ function handleProductSorting() {
         });
 
         $(".filter").click(function (e) {
-            var filterBy = ["category", "subCategory"];
-            var filterByVal = $(this).data("filterby");
+            if ($(this).hasClass("active")) {
+                $(this).removeClass("active");
+                $grid.isotope({filter: "*"});//Remove filter.
+            } else {
+                var filterBy = ["category", "subCategory", "brand"];
+                var filterByVal = $(this).data("filterby");
 
-            if (filterBy) {
-                $(this).siblings(".active").removeClass("active");
-                $(this).addClass("active");
+                if (filterBy) {
+                    $(this).siblings(".active").removeClass("active");
+                    $(this).addClass("active");
 
-                $grid.isotope({
-                    filter: function (elem) {
-                        elem = elem || this;
-                        return filterBy.any(function (f) {
-                            return getSortFn(f, filterByVal)(elem);
-                        });
-                    },
-                    sortAscending: true
-                });
+                    $grid.isotope({
+                        filter: function (elem) {
+                            elem = elem || this;
+                            return filterBy.any(function (f) {
+                                return getSortFn(f, filterByVal)(elem);
+                            });
+                        }
+                    });
+                }
             }
         });
 
