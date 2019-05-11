@@ -150,6 +150,8 @@ router.get("/:category/:subcategory", function (req, res) {
                     {
                         var l = 0,
                             i = 0;
+
+                        var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
                         var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name, "i")
                         uifilters = brands.map(p => p.name.replace(regexReplace, "").trim());
 
