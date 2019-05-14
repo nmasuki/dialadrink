@@ -316,6 +316,13 @@
                     <div class="col-sm-8" style="text-align: center; display:none;">                        
                         <span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
                     </div>
+                    {{#if isMobile}}
+                        <script>
+                            $(document).ready(function(){
+                                $(".col-md-3.col-lg-3.col-sm-12.single").css("width", "100%");
+                            })
+                        </script>
+                    {{else}}
                     <div class="col-sm-4" style="float:right">
                         <span class="sorting noselect dropdown-toggle">
                             <span id="sortby" style="padding-left: 5px;">Sorted by Name</span>
@@ -328,6 +335,7 @@
                             <li class="noselect sort-products" data-sortby="size">Quantity<i class="fa fa-sort-numeric-asc" style="float: right;padding-right: 5px;"></i></li>
                         </ul>             
                     </div>
+                    {{/if}}
                 </div>
 
             </div>
@@ -517,6 +525,5 @@
 </div>
 
 {{>jsscripts2}}
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js"/>
 </body>
 </html>

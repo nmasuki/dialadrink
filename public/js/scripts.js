@@ -146,6 +146,12 @@ function handleDropdown() {
                 $(this).find('.dropdown-menu').hide();
             }
         });
+
+        $('.dropdown-toggle').parent().click(function(e){
+            if (touch == false) {
+                $(this).find('.dropdown-menu').stop(true, true).slideDown(300);
+            }
+        })
     }
 
     $('nav .dropdown-menu').each(function () {
@@ -657,13 +663,14 @@ function handleProductSorting() {
             $(".sorting, .sorting .fa").each(changeSortDirIcon);
             $(".sorting #sortby").text("Sorted by " + $(this).text());
         });
-
+        /***
         $grid.data("sortDir", "asc");
         $grid.data("sortedBy", "name");
         $grid.isotope({
             sortBy: 'name',
             sortAscending: true
         });
+        /****/
     } else {
         console.log("$.fn.isotope not defined. Waiting..");
         setTimeout(handleProductSorting, 500);
