@@ -26,7 +26,7 @@ router.get("/:category", function (req, res) {
                 if (locals.page.title == keystone.get("name"))
                     locals.page.title = "";
 
-                var title = (categories.map(c => (c.pageTitle || "")).first() || 
+                var title = (categories.map(c => (c.pageTitle || "")).first() ||
                     locals.page.title || categories.map(c => c.name).join(" - ")).replace(/ I /g, " | ");
 
                 var filter = {
@@ -39,8 +39,8 @@ router.get("/:category", function (req, res) {
 
                     var i = -1,
                         meta = title.replace(/\ \-\ /g, ", ");
-                    
-                        while (products[++i] && products[i].name && meta.length < 120) {
+
+                    while (products[++i] && products[i].name && meta.length < 120) {
                         meta += (meta ? ", " : "") + products[i].name.trim();
                         if (title.length < 40)
                             title += (title ? " - " : "") + products[i].name.trim();
@@ -57,24 +57,31 @@ router.get("/:category", function (req, res) {
                         locals.page.title = locals.page.title.replace(/\ \ /g, " ");
 
                     locals.products = products;
+                    
 
                     var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
                     if (brands.length == 1) locals.brand = brand;
 
                     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
-                    var subCategories = products.map(p => p.subCategory).filter(b => !!b).distinctBy(b => b.name);
+                    var subCategoryGroups = Object.values(products.filter(p => p.subCategory)
+                            .groupBy(p => p.subCategory._id))
+                            .orderBy(g => -g.length);
+
+                    var brandGroups = Object.values(products.filter(p => p.brand)
+                            .groupBy(p => p.brand._id))
+                            .orderBy(g => -g.length);
 
                     var l = 0,
                         i = 0;
                     var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name, "i")
-                    var uifilters = subCategories.map(p => p.name.replace(regexReplace, "").trim());
+                    var uifilters = subCategoryGroups.map(g => g[0].subCategory).map(p => p.name.replace(regexReplace, "").trim());
 
-                    if (uifilters.length <= 1) {
-                        uifilters = brands.map(p => p.name.replace(regexReplace, "").trim());
+                    if (uifilters.length <= 3) {
+                        uifilters = uifilters.concat(brandGroups.map(g => g[0].brand).map(p => p.name.replace(regexReplace, "").trim()));
                     }
 
                     uifilters.forEach(s => {
-                        if (l <= 40 - 7) {
+                        if (l <= 50) {
                             i += 1;
                             l += s.length;
                         }
@@ -149,6 +156,10 @@ router.get("/:category/:subcategory", function (req, res) {
 
                     locals.products = products;
 
+                    var brandGroups = Object.values(products.filter(p => p.brand)
+                            .groupBy(p => p.brand._id))
+                            .orderBy(g => -g.length);
+
                     var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
                     if (brands.length == 1)
                         locals.brand = brands.first();
@@ -163,10 +174,10 @@ router.get("/:category/:subcategory", function (req, res) {
                             regexStr += "|" + categories[0].name + "(s|ry)|" + categories[0].name;
 
                         var regexReplace = new RegExp(regexStr, "i");
-                        uifilters = brands.map(p => p.name.replace(regexReplace, "").trim());
+                        uifilters = brandGroups.map(g => g[0].brand).map(p => p.name.replace(regexReplace, "").trim());
 
                         uifilters.forEach(s => {
-                            if (l <= 40 - 7) {
+                            if (l <= 50) {
                                 i += 1;
                                 l += s.length;
                             }

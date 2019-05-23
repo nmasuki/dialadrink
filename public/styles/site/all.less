@@ -2,7 +2,8 @@
   font-family: 'Helvetica Neue';
   font-display: auto;
   src: url("../../assets/HelveticaNeueCEfbfd.woff2") format("woff2"), 
-        url("../../assets/HelveticaNeueCEfbfd.ttf") format("truetype"),        url("../../assets/HelveticaNeueCEfbfd.woff") format("woff");
+        url("../../assets/HelveticaNeueCEfbfd.ttf") format("truetype"),
+        url("../../assets/HelveticaNeueCEfbfd.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
@@ -15479,13 +15480,19 @@ img[src=""] {
   float: right;
 }
 
+.filter {
+  margin: 3px;
+}
+
 .filter,.sorting {
-  padding: 3px;
-  margin-right: 3px;
+  float: left;
+  padding: 0 3px;
   border-radius: 4px;
   border: 1px solid;
   font-size: 12px;
   cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.5;
 }
 
 .filter.active {
