@@ -80,7 +80,7 @@ router.get("/:category", function (req, res) {
                         uifilters = uifilters.concat(brandGroups.map(g => g[0].brand).map(p => p.name.replace(regexReplace, "").trim()));
                     
                     uifilters.forEach(s => {
-                        if (l <= 50) {
+                        if (l <= 60) {
                             i += 1;
                             l += s.length;
                         }
@@ -175,7 +175,7 @@ router.get("/:category/:subcategory", function (req, res) {
                         uifilters = brandGroups.map(g => g[0].brand).map(p => p.name.replace(regexReplace, "").trim());
 
                         uifilters.forEach(s => {
-                            if (l <= 50) {
+                            if (l <= 60) {
                                 i += 1;
                                 l += s.length;
                             }
