@@ -1223,11 +1223,11 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
 },"42":function(container,depth0,helpers,partials,data) {
     var alias1=container.lambda, alias2=container.escapeExpression;
 
-  return "                        <span class=\"filter noselect\" data-filterby=\""
+  return "                        <div class=\"filter noselect\" data-filterby=\""
     + alias2(alias1(depth0, depth0))
     + "\">\n                            <span style=\"padding-left: 5px; padding-right: 5px;\">"
     + alias2(alias1(depth0, depth0))
-    + "</span>\n                        </span>\n";
+    + "</span>\n                        </div>\n";
 },"44":function(container,depth0,helpers,partials,data) {
     return "col-sm-3";
 },"46":function(container,depth0,helpers,partials,data) {
@@ -2296,39 +2296,43 @@ this["templates"]["views"]["products"]["hbs"]["templates/views/products.hbs"] = 
 },"usePartial":true,"useData":true});
 
 this["templates"]["views"]["productsXml"]["hbs"]["templates/views/productsXml.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.price : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"2":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 
-  return "		<product>\n			<name>"
+  return "			<product>\n				<name>"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</name>\n			<image>"
+    + "</name>\n				<image>"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.image : depth0)) != null ? stack1.secure_url : stack1), depth0))
-    + "</image>\n			<price>"
+    + "</image>\n				<price>"
     + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
     + " "
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "</price>\n			<quantity>"
+    + "</price>\n				<quantity>"
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "</quantity>\n			<category>"
+    + "</quantity>\n				<category>"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.category : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</category>\n			<subcategory>"
+    + "</category>\n				<subcategory>"
     + alias4(alias5(((stack1 = (depth0 != null ? depth0.subCategory : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</subcategory>\n			<description>"
+    + "</subcategory>\n				<description>"
     + alias4(((helper = (helper = helpers.desc || (depth0 != null ? depth0.desc : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"desc","hash":{},"data":data}) : helper)))
-    + "</description>\n			<url>https://www.dialadrinkkenya.com/"
+    + "</description>\n				<url>https://www.dialadrinkkenya.com/"
     + alias4(((helper = (helper = helpers.href || (depth0 != null ? depth0.href : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"href","hash":{},"data":data}) : helper)))
-    + "</url>\n			<options>\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "			</options>\n		</product>\n";
-},"2":function(container,depth0,helpers,partials,data) {
+    + "</url>\n				<options>\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "				</options>\n			</product>\n";
+},"3":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "					<option>\n						<name>"
+  return "						<option>\n							<name>"
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "</name>\n						<price>"
+    + "</name>\n							<price>"
     + alias4(((helper = (helper = helpers.curency || (depth0 != null ? depth0.curency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"curency","hash":{},"data":data}) : helper)))
     + " "
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "</price>\n					</option>\n";
+    + "</price>\n						</option>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -2537,17 +2541,17 @@ this["templates"]["views"]["receipt"]["hbs"]["templates/views/receipt.hbs"] = Ha
 this["templates"]["views"]["search"]["hbs"]["templates/views/search.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "		<div class=\"col-md-2 col-lg-2 single\"\n				itemscope itemtype=\"http://schema.org/Product\"\n				style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\n"
-    + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"\t\t\t","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "		</div>\n";
+  return "			<div class=\"col-md-2 col-lg-2 single\"\n					itemscope itemtype=\"http://schema.org/Product\"\n					style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\n"
+    + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"\t\t\t\t","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "			</div>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    return "		<div class=\"col-md-12 text-center\">\n			<h2 style=\"font-size: 18px;\">No results found!</h2>\n			<img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/><br>\n			<a href=\"/\">Back to Today's Offers</a>\n		</div>\n";
+    return "			<div class=\"col-md-12 text-center\">\n				<h2 style=\"font-size: 18px;\">No results found!</h2>\n				<img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/><br>\n				<a href=\"/\">Back to Today's Offers</a>\n			</div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<style>\n	.featured-image img.img-responsive {\n		min-height: 180.6px;\n		max-height: 180.6px;\n	}\n</style>\n\n<div class=\"row container\">\n"
+  return "<style>\n	.featured-image img.img-responsive {\n		min-height: 180.6px;\n		max-height: 180.6px;\n	}\n</style>\n\n<div class=\"container\">\n	<div class=\"row\">\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.products : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
-    + "</div>\n";
+    + "	</div>\n</div>\n";
 },"usePartial":true,"useData":true});
 
 this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
