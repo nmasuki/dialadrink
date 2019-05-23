@@ -76,12 +76,11 @@ router.get("/:category", function (req, res) {
                     var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name, "i")
                     var uifilters = subCategoryGroups.map(g => g[0].subCategory).map(p => p.name.replace(regexReplace, "").trim());
 
-                    if (uifilters.length <= 3) {
+                    if (uifilters.length <= 3)
                         uifilters = uifilters.concat(brandGroups.map(g => g[0].brand).map(p => p.name.replace(regexReplace, "").trim()));
-                    }
-
+                    
                     uifilters.forEach(s => {
-                        if (l <= 50) {
+                        if (l <= 60) {
                             i += 1;
                             l += s.length;
                         }
@@ -103,7 +102,6 @@ router.get("/:category", function (req, res) {
 
                     if (!Object.keys(res.locals.groupedBrands).length)
                         delete res.locals.groupedBrands;
-
 
                     next();
                 });
@@ -177,7 +175,7 @@ router.get("/:category/:subcategory", function (req, res) {
                         uifilters = brandGroups.map(g => g[0].brand).map(p => p.name.replace(regexReplace, "").trim());
 
                         uifilters.forEach(s => {
-                            if (l <= 50) {
+                            if (l <= 60) {
                                 i += 1;
                                 l += s.length;
                             }
