@@ -663,7 +663,7 @@ function handleProductSorting() {
             $(".sorting, .sorting .fa").each(changeSortDirIcon);
             $(".sorting #sortby").text("Sorted by " + $(this).text());
         });
-        /***
+        /***/
         $grid.data("sortDir", "asc");
         $grid.data("sortedBy", "name");
         $grid.isotope({
