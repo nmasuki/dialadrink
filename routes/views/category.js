@@ -23,19 +23,24 @@ router.get("/:category", function (req, res) {
                 key: locals.filters.category.cleanId()
             })
             .exec((err, categories) => {
-                var title = categories.map(c => c.name).join(" - ");
-                locals.page.title = categories.map(c => (c.pageTitle || "").replace(/I/g, "|")).first();
+                if (locals.page.title == keystone.get("name"))
+                    locals.page.title = "";
+
+                var title = (categories.map(c => (c.pageTitle || "")).first() || 
+                    locals.page.title || categories.map(c => c.name).join(" - ")).replace(/ I /g, " | ");
 
                 var filter = {
                     category: {
                         "$in": categories.map(c => c._id)
                     }
                 };
+
                 keystone.list('Product').findPublished(filter, (err, products) => {
 
                     var i = -1,
                         meta = title.replace(/\ \-\ /g, ", ");
-                    while (products[++i] && products[i].name && meta.length < 120) {
+                    
+                        while (products[++i] && products[i].name && meta.length < 120) {
                         meta += (meta ? ", " : "") + products[i].name.trim();
                         if (title.length < 40)
                             title += (title ? " - " : "") + products[i].name.trim();
@@ -44,8 +49,9 @@ router.get("/:category", function (req, res) {
                     if (!locals.page.meta)
                         locals.page.meta = meta + " all available at " + keystone.get("name");
 
-                    if (!locals.page.title || locals.page.title == keystone.get("name"))
-                        locals.page.title = title.trim() + " | " + keystone.get("name");
+                    locals.page.title = title.trim();
+                    if (!locals.page.title.contains(keystone.get("name")))
+                        locals.page.title += ", " + keystone.get("name")
 
                     while (locals.page.title.contains("  "))
                         locals.page.title = locals.page.title.replace(/\ \ /g, " ");
@@ -152,7 +158,11 @@ router.get("/:category/:subcategory", function (req, res) {
                             i = 0;
 
                         var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
-                        var regexReplace = new RegExp("Whiskies|Whiskey|" + categories[0].name + "s|" + categories[0].name, "i")
+                        var regexStr = "Whiskies|Whiskey";
+                        if (categories[0])
+                            regexStr += "|" + categories[0].name + "(s|ry)|" + categories[0].name;
+
+                        var regexReplace = new RegExp(regexStr, "i");
                         uifilters = brands.map(p => p.name.replace(regexReplace, "").trim());
 
                         uifilters.forEach(s => {
