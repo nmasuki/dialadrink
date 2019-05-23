@@ -1237,25 +1237,29 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1), depth0)) != null ? stack1 : "")
     + "</span>\n                        </h1>\n";
 },"48":function(container,depth0,helpers,partials,data) {
+    return "                        <script>\n                            $(document).ready(function(){\n                                $(\".col-md-3.col-lg-3.col-sm-12.single\").css(\"width\", \"100%\");\n                            })\n                        </script>\n";
+},"50":function(container,depth0,helpers,partials,data) {
+    return "                    <div class=\"col-sm-4\" style=\"float:right\">\n                        <span class=\"sorting noselect dropdown-toggle\">\n                            <span id=\"sortby\" style=\"padding-left: 5px;\">Sorted by Name</span>\n                            <i class=\"fa fa-sort-amount-asc\" style=\"float: right; padding:2px;\"></i>\n                        </span>\n                        <ul class=\"dropdown-menu\" style=\"display: none; left: -67%;\">\n                            <li class=\"noselect sort-products\" data-sortby=\"name\">Name<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                            <li class=\"noselect sort-products\" data-sortby=\"price\">Price<i class=\"fa fa-sort-amount-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                            <li class=\"noselect sort-products\" data-sortby=\"popularity\">Popularity<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                            <li class=\"noselect sort-products\" data-sortby=\"size\">Quantity<i class=\"fa fa-sort-numeric-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                        </ul>             \n                    </div>\n";
+},"52":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                <div class=\"container content\">\n                    "
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.content : stack1), depth0)) != null ? stack1 : "")
     + "\n                </div>\n";
-},"50":function(container,depth0,helpers,partials,data) {
+},"54":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                    <h2 style=\"font-size: 15px;text-transform: uppercase\">SHOP BY BRAND</h2>                    \n"
-    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.groupedBrands : depth0),{"name":"each","hash":{},"fn":container.program(51, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
-},"51":function(container,depth0,helpers,partials,data) {
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.groupedBrands : depth0),{"name":"each","hash":{},"fn":container.program(55, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"55":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {};
 
   return "                        <div class=\"row\" style=\"margin: 8px\">\n                            <div style=\"float: left; min-width: 80px\"><b style=\"\">"
     + container.escapeExpression(((helper = (helper = helpers.key || (data && data.key)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"key","hash":{},"data":data}) : helper)))
     + "</b>:</div> \n"
-    + ((stack1 = helpers.each.call(alias1,depth0,{"name":"each","hash":{},"fn":container.program(52, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,depth0,{"name":"each","hash":{},"fn":container.program(56, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                        </div>\n";
-},"52":function(container,depth0,helpers,partials,data) {
+},"56":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression, alias4="function";
 
   return "                                <a href=\""
@@ -1265,7 +1269,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + "\" style=\"display: inline-block;\">"
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</a>\n                                <span style=\"color: #F44336\"> | </span>\n";
-},"54":function(container,depth0,helpers,partials,data) {
+},"58":function(container,depth0,helpers,partials,data) {
     return "\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=container.lambda, alias2=container.escapeExpression, alias3=depth0 != null ? depth0 : {}, alias4=helpers.helperMissing, alias5="function";
@@ -1326,12 +1330,14 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(31, data, 0),"inverse":container.program(44, data, 0),"data":data})) != null ? stack1 : "")
     + "\">\n"
     + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(46, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                </div>\n\n                <div class=\"col-sm-4\">\n                    <div class=\"col-sm-8\" style=\"text-align: center; display:none;\">                        \n                        <span>Offer ends in </span><br><span class=\"countDownTimer\" id=\"countDownTimer\">00:00:00</span>\n                    </div>\n                    <div class=\"col-sm-4\" style=\"float:right\">\n                        <span class=\"sorting noselect dropdown-toggle\">\n                            <span id=\"sortby\" style=\"padding-left: 5px;\">Sorted by Name</span>\n                            <i class=\"fa fa-sort-amount-asc\" style=\"float: right; padding:2px;\"></i>\n                        </span>\n                        <ul class=\"dropdown-menu\" style=\"display: none; left: -67%;\">\n                            <li class=\"noselect sort-products\" data-sortby=\"name\">Name<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                            <li class=\"noselect sort-products\" data-sortby=\"price\">Price<i class=\"fa fa-sort-amount-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                            <li class=\"noselect sort-products\" data-sortby=\"popularity\">Popularity<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                            <li class=\"noselect sort-products\" data-sortby=\"size\">Quantity<i class=\"fa fa-sort-numeric-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                        </ul>             \n                    </div>\n                </div>\n\n            </div>\n\n            "
+    + "                </div>\n\n                <div class=\"col-sm-4\">\n                    <div class=\"col-sm-8\" style=\"text-align: center; display:none;\">                        \n                        <span>Offer ends in </span><br><span class=\"countDownTimer\" id=\"countDownTimer\">00:00:00</span>\n                    </div>\n"
+    + ((stack1 = helpers["if"].call(alias3,(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(48, data, 0),"inverse":container.program(50, data, 0),"data":data})) != null ? stack1 : "")
+    + "                </div>\n\n            </div>\n\n            "
     + ((stack1 = ((helper = (helper = helpers.body || (depth0 != null ? depth0.body : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"body","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\n\n"
-    + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.content : stack1),{"name":"if","hash":{},"fn":container.program(48, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.content : stack1),{"name":"if","hash":{},"fn":container.program(52, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n            <div class=\"container\">\n"
-    + ((stack1 = helpers["if"].call(alias3,(depth0 != null ? depth0.groupedBrands : depth0),{"name":"if","hash":{},"fn":container.program(50, data, 0),"inverse":container.program(54, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias3,(depth0 != null ? depth0.groupedBrands : depth0),{"name":"if","hash":{},"fn":container.program(54, data, 0),"inverse":container.program(58, data, 0),"data":data})) != null ? stack1 : "")
     + "            </div>\n        </div>\n    </section>\n</main>\n\n<!-- Footer -->\n<!-- Footer -->\n<footer>\n    <div class=\"container\">\n        <div class=\"row\">\n            <div class=\"col-md-3 col-sm-6 footerleft \">\n                <h6 class=\"heading7\">DIAL A DRINK KENYA</h6>\n                <ul class=\"footer-ul\">\n                    <li>\n                        <a href=\"/about-us\">About Us</a>\n                    </li>\n                    <li>\n                        <a href=\"/blog\">Blog</a>\n                    </li>\n                    <li>\n                        <a href=\"/delivery-locations\">Delivery Locations</a>\n                    </li>\n                    <li>\n                        <a href=\"/giftpacks\">Gifts Delivery</a>\n                    </li>\n                    <li>\n                        <a href=\"/pricelist\">Get Our Pricelist</a>\n                    </li>\n                    <li>\n                        <a href=\"/\">Drinks Delivery Kenya</a>\n                    </li>\n                </ul>\n\n            </div>\n            <div class=\"col-md-3 col-sm-6 paddingtop-bottom\">\n                <h6 class=\"heading7\">GENERAL LINKS</h6>\n                <ul class=\"footer-ul\">\n                    <li>\n                        <a href=\"/terms-and-conditions\">Terms and Conditions</a>\n                    </li>\n                    <li>\n                        <a href=\"/privacy-policy\" title=\"Buy alcohol online in Kenya\" rel=\"noopener\">Privacy Policy</a>\n                    </li>\n                    <li>\n                        <a href=\"/sitemap\">Sitemap</a>\n                    </li>\n                    <li>\n                        <a href=\"https://play.google.com/store/apps/details?id=md.app.ke.dialadrink\">Get Our App</a>\n                    </li>\n                </ul>\n            </div>\n\n            <div class=\"col-md-3 col-sm-6 paddingtop-bottom\">\n                <h6 class=\"heading7\">PAYMENT METHODS</h6>\n\n                <ul style=\"color: #848484\">\n                    <li><p>Cash On Delivery</p></li>\n                    <li>\n                        <p>\n                            <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/mpesa.png\" alt=\"Pay via MPESA\" height=\"30px\">\n                        </p>\n                    </li>\n                    <li>\n                        <p>\n                            <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/visa.png\" alt=\"Pay via VISA\" height=\"30px\">\n                        </p>\n                    </li>\n                    <li>\n                        <p>\n                            <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/mastercard.png\" alt=\"Pay Via Master Card\" height=\"30px\">\n                        </p>\n                    </li>\n                </ul>\n            </div>\n\n            <div class=\"col-md-3 col-sm-6 paddingtop-bottom\">\n                <h6 class=\"heading7\">SOCIAL NETWORKS</h6>\n                <div class=\"footer-ul\">\n                    <a href=\"https://www.facebook.com/drinkdeliverynairobi\" title=\"Dial A Drink Facebook\"\n                       class=\"icon-social facebook\">\n                        <i class=\"fa fa-facebook\"></i>\n                    </a>\n                    <a href=\"https://twitter.com/liqourdelivery\" title=\"Dial A Drink Twitter\"\n                       class=\"icon-social twitter\">\n                        <i class=\"fa fa-twitter\"></i>\n                    </a>\n                    <a href=\"https://instagram.com/alcoholdeliverynairobi\" title=\"Dial A Drink Instagram\"\n                       class=\"icon-social instagram\">\n                        <i class=\"fa fa-instagram\"></i>\n                    </a>\n                    <a href=\"https://www.youtube.com/user/dialadrink\" title=\"Dial A Drink Youtube\"\n                       class=\"icon-social youtube\">\n                        <i class=\"fa fa-youtube\"></i>\n                    </a>\n                    <a href=\"https://plus.google.com/u/1/102101315171058540161\" title=\"Dial A Drink Google+\"\n                       class=\"icon-social google-plus\">\n                        <i class=\"fa fa-google-plus\"></i>\n                    </a>\n                    <a href=\"https://www.pinterest.com/liqourdelivery\" title=\"Dial A Drink Pinterest\"\n                       class=\"icon-social google-plus\">\n                        <i class=\"fa fa-pinterest\"></i>\n                    </a>\n                </div>\n\n            </div>\n        </div>\n    </div>\n</footer>\n<div class=\"copyright\">\n    <div class=\"container\">\n        <div class=\"col-md-6\">\n            <p>©Dial A Drink Kenya 2017 - All Rights Reserved</p>\n        </div>\n        <div class=\"col-md-6\">\n            <!-- <ul class=\"bottom_ul\">\n              <li><a href=\"/\">Drinks delivery kenya</a></li>\n              <li><a href=\"#\">About us</a></li>\n              <li><a href=\"/\">Blog</a></li>\n              <li><a href=\"#\">Faq's</a></li>\n              <li><a href=\"#\">Contact us</a></li>\n              <li><a href=\"/sitemap\">Site Map</a></li>\n            </ul> -->\n        </div>\n    </div>\n</div>\n<!--footer start from here-->\n\n<!-- Float right icon -->\n<div class=\"float-right-icon\" style=\"top: 114px;\">\n    <ul>\n        <li class=\"mobile-only\">\n            <a href=\"/cart\" title=\"My cart\">\n                <span class=\"badge badge-secondary badge-pill cart-total-pieces\" style=\"position: absolute;left: 18px;background-color: red;\">0</span>\n                <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart-2.png\" width=\"48px\" alt=\"My cart\">\n            </a>\n        </li>\n\n        <li class=\"mobile-only\">\n            <a href=\"tel:"
     + alias2(((helper = (helper = helpers.contactNumber || (depth0 != null ? depth0.contactNumber : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"contactNumber","hash":{},"data":data}) : helper)))
     + "\" title=\"Call to order\">\n                <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/phoneicon.png\" width=\"48px\" alt=\"Call to order\">\n            </a>\n        </li>  \n\n        <li class=\"mobile-only\">\n            <a target=\"_blank\" rel=\"noreferrer\" href=\"https://api.whatsapp.com/send?l=en&phone="
@@ -1340,7 +1346,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + alias2((helpers.urlencode || (depth0 && depth0.urlencode) || alias4).call(alias3,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.canonical : stack1),{"name":"urlencode","hash":{},"data":data}))
     + "\" title=\"Whatsup\">\n                <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/whatsapp.png\" width=\"48px\" alt=\"Whatsup to order\">\n            </a>\n        </li> \n    </ul>\n</div>\n\n<div class=\"float-right-icon\">\n    <ul>\n        <li>\n            <div id=\"scroll-to-top\" data-toggle=\"\" data-placement=\"left\" title=\"Scroll to Top\" class=\"off\">\n                <i class=\"fa fa-angle-up\"></i>\n            </div>\n        </li>\n    </ul>\n</div>\n\n"
     + ((stack1 = container.invokePartial(partials.jsscripts2,depth0,{"name":"jsscripts2","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "<script src=\"//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js\"/>\n</body>\n</html>\n";
+    + "</body>\n</html>\n";
 },"usePartial":true,"useData":true});
 
 this["templates"]["views"]["layouts"]["email"]["hbs"]["templates/views/layouts/email.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -1609,7 +1615,7 @@ this["templates"]["views"]["partials"]["jsscripts2"]["hbs"]["templates/views/par
 },"3":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "    <script src=\"//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js\"></script>\n    <script src=\"/js/jquery/imagesloaded.pkgd.min.js\"></script>\n    <script src=\"/js/jquery/jquery.flexslider.min.js\"></script>\n    <script src=\"/js/jquery/jquery.zoom.min.js\"></script>\n\n    <script src=\"/js/jquery/jquery.fancybox"
+  return "    <script src=\"/js/isotope.pkgd.min.js\"></script>\n    <script src=\"/js/jquery/imagesloaded.pkgd.min.js\"></script>\n    <script src=\"/js/jquery/jquery.flexslider.min.js\"></script>\n    <script src=\"/js/jquery/jquery.zoom.min.js\"></script>\n\n    <script src=\"/js/jquery/jquery.fancybox"
     + alias4(((helper = (helper = helpers.dotmin || (depth0 != null ? depth0.dotmin : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dotmin","hash":{},"data":data}) : helper)))
     + ".js\"></script>\n    <script src=\"/js/jquery/jquery.scrollbar"
     + alias4(((helper = (helper = helpers.dotmin || (depth0 != null ? depth0.dotmin : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dotmin","hash":{},"data":data}) : helper)))
@@ -2268,25 +2274,25 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
 this["templates"]["views"]["products"]["hbs"]["templates/views/products.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "                <div class=\"row\">\n"
-    + ((stack1 = container.invokePartial(partials.brand,depth0,{"name":"brand","data":data,"indent":"                    ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "                </div>\n";
+  return "        <div class=\"row\">\n"
+    + ((stack1 = container.invokePartial(partials.brand,depth0,{"name":"brand","data":data,"indent":"            ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "        </div>\n";
 },"3":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "                    <div class=\"col-md-3 col-lg-3 col-sm-12 single\" \n                        itemscope itemtype=\"http://schema.org/Product\"\n                        style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\n"
-    + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"                        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "                    </div>\n";
+  return "            <div class=\"col-md-3 col-lg-3 col-sm-12 single\" \n                itemscope itemtype=\"http://schema.org/Product\"\n                style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;\">\n"
+    + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"                ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "            </div>\n";
 },"5":function(container,depth0,helpers,partials,data) {
-    return "                    <div class=\"col-md-12 text-center\">\n                        <h2 style=\"font-size: 18px;\">No results found!</h2>\n                        <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/>\n                        <a href=\"/\">Back to Today's Offers</a>\n                    </div>\n";
+    return "            <div class=\"col-md-12 text-center\">\n                <h2 style=\"font-size: 18px;\">No results found!</h2>\n                <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/>\n                <a href=\"/\">Back to Today's Offers</a>\n            </div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : {};
 
-  return "<style>\n    .featured-image img.img-responsive {\n        min-height: 250px;\n        max-height: 250px;\n    }\n</style>\n<div class=\"container\">\n    <div class=\"row\">\n        <div class=\"col-md-12 col-lg-12\">\n\n"
+  return "<style>\n    .featured-image img.img-responsive {\n        min-height: 250px;\n        max-height: 250px;\n    }\n</style>\n<div class=\"row container\">\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.brand : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n            <div class=\"row products-grid\">\n"
+    + "\n    <div class=\"row products-grid\">\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.products : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "")
-    + "            </div>\n        </div>\n    </div>\n</div>\n";
+    + "    </div>\n</div>\n";
 },"usePartial":true,"useData":true});
 
 this["templates"]["views"]["productsXml"]["hbs"]["templates/views/productsXml.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -2531,17 +2537,17 @@ this["templates"]["views"]["receipt"]["hbs"]["templates/views/receipt.hbs"] = Ha
 this["templates"]["views"]["search"]["hbs"]["templates/views/search.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "					<div class=\"col-md-2 col-lg-2 single\"\n						 itemscope itemtype=\"http://schema.org/Product\"\n						 style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\n"
-    + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"\t\t\t\t\t\t","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "					</div>\n";
+  return "		<div class=\"col-md-2 col-lg-2 single\"\n				itemscope itemtype=\"http://schema.org/Product\"\n				style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\n"
+    + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"\t\t\t","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "		</div>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    return "					<div class=\"col-md-12 text-center\">\n						<h2 style=\"font-size: 18px;\">No results found!</h2>\n						<img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/><br>\n						<a href=\"/\">Back to Today's Offers</a>\n					</div>\n";
+    return "		<div class=\"col-md-12 text-center\">\n			<h2 style=\"font-size: 18px;\">No results found!</h2>\n			<img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/><br>\n			<a href=\"/\">Back to Today's Offers</a>\n		</div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<style>\n	.featured-image img.img-responsive {\n		min-height: 180.6px;\n		max-height: 180.6px;\n	}\n</style>\n\n<div class=\"container\">\n	<div class=\"row\">\n		<div class=\"col-md-12 col-lg-12\">\n			<div class=\"row\">\n"
+  return "<style>\n	.featured-image img.img-responsive {\n		min-height: 180.6px;\n		max-height: 180.6px;\n	}\n</style>\n\n<div class=\"row container\">\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.products : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
-    + "			</div>\n		</div>\n	</div>\n</div>\n";
+    + "</div>\n";
 },"usePartial":true,"useData":true});
 
 this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
