@@ -2290,7 +2290,7 @@ this["templates"]["views"]["products"]["hbs"]["templates/views/products.hbs"] = 
 
   return "<style>\n    .featured-image img.img-responsive {\n        min-height: 250px;\n        max-height: 250px;\n    }\n</style>\n<div class=\"row container\">\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.brand : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n    <div class=\"row products-grid\">\n"
+    + "\n    <div class=\"row\">\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.products : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "")
     + "    </div>\n</div>\n";
 },"usePartial":true,"useData":true});
