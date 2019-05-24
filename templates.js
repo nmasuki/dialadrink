@@ -1237,7 +1237,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1), depth0)) != null ? stack1 : "")
     + "</span>\r\n                        </h1>\r\n";
 },"48":function(container,depth0,helpers,partials,data) {
-    return "                        <script>\r\n                            $(document).ready(function(){\r\n                                $(\".col-md-3.col-lg-3.col-sm-12.single\").css(\"width\", \"100%\");\r\n                            })\r\n                        </script>\r\n";
+    return "                        <script>\r\n                            $(document).ready(function(){\r\n                                $(\".col-sm-12.single\").css(\"width\", \"100%\");\r\n                            })\r\n                        </script>\r\n";
 },"50":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -2547,7 +2547,7 @@ this["templates"]["views"]["receipt"]["hbs"]["templates/views/receipt.hbs"] = Ha
 this["templates"]["views"]["search"]["hbs"]["templates/views/search.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "			<div class=\"col-md-2 col-lg-2 single\"\r\n					itemscope itemtype=\"http://schema.org/Product\"\r\n					style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\r\n"
+  return "			<div class=\"col-sm-12 col-md-2 col-lg-2 single\"\r\n					itemscope itemtype=\"http://schema.org/Product\"\r\n					style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px ;\">\r\n"
     + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"\t\t\t\t","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "			</div>\r\n";
 },"3":function(container,depth0,helpers,partials,data) {
