@@ -473,6 +473,7 @@ Product.getUIFilters = function(products){
 
     var strUIfilters = uifilters.filter(f=>f.filter && !/^\d/.test(f.filter))
         .orderBy(f => -f.hits)
+        .distinctBy(f => f.filter.trim())
         .distinctBy(f => f.g.map(p => p.id).orderBy(i => i).join("|"))
         .map(f => f.filter);
 
