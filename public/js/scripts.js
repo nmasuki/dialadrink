@@ -586,15 +586,28 @@ function onTouchStart(e) {
 function handleProductSorting() {
 
     function getSortFn(property, expectedValue) {
+        function getSize(qty){
+            if(!qty) return 0;
+            qty = qty.toLowerCase();
+            var value = qty.replace(/[^\d]+/, "").trim() || 0;
+            var measure = qty.replace(/[\d]+/, "").trim() || "ml";
+
+            if(measure.startsWith("l"))
+                return parseFloat(value) * 1000;
+
+            return parseFloat(value);
+        }
+
         return function (elem) {
             var json = $(elem || this).find('script.json').text(),
                 data = JSON.parse(json) || {};
 
-
-
             if (expectedValue) {
                 var regex = new RegExp(expectedValue, "i");
                 var fValue = data[property] && (data[property].name || data[property] || "");
+
+                if($.isArray(fValue))
+                    fValue = fValue.join(",");
 
                 return fValue && regex.test(fValue);
             }
@@ -603,6 +616,10 @@ function handleProductSorting() {
                 return data.offerPrice;
             if(property == 'popularity')
                 return -data[property];
+            if(property == 'size')
+                return getSize(data[property]);
+            if(property == 'tags')
+                return (data[property] || []).sort()[0];
                             
             return data[property];
         };
@@ -616,7 +633,7 @@ function handleProductSorting() {
                 name: getSortFn('name'),
                 popularity: getSortFn('popularity'),
                 price: getSortFn('price'),
-                size: getSortFn('popularity'),
+                size: getSortFn('size'),
             }
         });
 
