@@ -1335,7 +1335,9 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + "\">\r\n"
     + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(46, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                </div>\r\n\r\n                <div class=\"col-sm-4\">\r\n                    <div class=\"col-sm-8\" style=\"text-align: center; display:none;\">                        \r\n                        <span>Offer ends in </span><br><span class=\"countDownTimer\" id=\"countDownTimer\">00:00:00</span>\r\n                    </div>\r\n"
-    + ((stack1 = helpers["if"].call(alias3,(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(48, data, 0),"inverse":container.program(50, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias3,(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(48, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\r\n"
+    + ((stack1 = helpers.unless.call(alias3,(depth0 != null ? depth0.isMobile : depth0),{"name":"unless","hash":{},"fn":container.program(50, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                </div>\r\n\r\n            </div>\r\n\r\n            "
     + ((stack1 = ((helper = (helper = helpers.body || (depth0 != null ? depth0.body : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"body","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\r\n\r\n"
