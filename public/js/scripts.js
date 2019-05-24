@@ -642,7 +642,7 @@ function handleProductSorting() {
                 $(this).removeClass("active");
                 $grid.isotope({filter: "*"});//Remove filter.
             } else {
-                var filterBy = ["category", "subCategory", "brand"];
+                var filterBy = ["category", "subCategory", "brand", "tags"];
                 var filterByVal = $(this).data("filterby");
 
                 if (filterBy) {
