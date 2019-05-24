@@ -616,8 +616,11 @@ function handleProductSorting() {
                 return data.offerPrice;
             if(property == 'popularity')
                 return -data[property];
-            if(property == 'size')
-                return getSize(data[property]);
+            if(property == 'size'){
+                if(data.options && options.length)
+                    return data.options.max(function(o){ return getSize(o.quantity);});
+                return 0;
+            }
             if(property == 'tags')
                 return (data[property] || []).sort()[0];
                             
