@@ -617,7 +617,7 @@ function handleProductSorting() {
             if(property == 'popularity')
                 return -data[property];
             if(property == 'size'){
-                if(data.options && options.length)
+                if(data.options && data.options.length)
                     return data.options.max(function(o){ return getSize(o.quantity);});
                 return 0;
             }
