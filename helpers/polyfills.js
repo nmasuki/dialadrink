@@ -434,6 +434,12 @@ if (!Array.prototype.sum)
     };
 
 //
+if (!Array.prototype.selectMany)
+    Array.prototype.selectMany = function (selector) {
+        return this.aggregate([], (a, b) => a.concat(b), selector || function(a){ return a});
+    };
+
+//
 if (!Array.prototype.avg)
     Array.prototype.avg = function (selector) {
         return this.sum(selector) / this.length;

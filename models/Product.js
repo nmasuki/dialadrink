@@ -446,7 +446,10 @@ Product.getUIFilters = function(products){
     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
     var subCategoryGroups = Object.values(products.filter(p => p.subCategory)
             .groupBy(p => p.subCategory._id));
-
+    var tagsGroups = Object.values(products.filter(p=>p.tags.length)
+            .selectMany(p=>p.tags.map(t=>{return {t:t, p:p }}))
+            .groupBy(t=>t.t));
+            
     var brandGroups = Object.values(products.filter(p => p.brand)
             .groupBy(p => p.brand._id));
 
@@ -461,18 +464,22 @@ Product.getUIFilters = function(products){
     
     if(categories.length > 2){
         var categoryGroups = Object.values(products.filter(p => p.category).groupBy(p => p.category._id));
-        uifilters = uifilters.concat(categoryGroups.map(g => {return {filter: g[0].category.name.trim(), hits: g.length};}));
+        uifilters = uifilters.concat(categoryGroups.map(g => {return {filter: g[0].category.name.trim(), hits: g.length, g:g};}));
     }
     
-    uifilters = uifilters.concat(subCategoryGroups.map(g => {return {filter: g[0].subCategory.name.replace(regex, "").trim(), hits: g.length};}));
-    uifilters = uifilters.concat(brandGroups.map(g => {return {filter: g[0].brand.name.replace(regex, "").trim(), hits: g.length};}));
-    
-    var strUIfilters = uifilters.orderBy(f => -f.hits).map(f => f.filter);
-    
+    uifilters = uifilters.concat(subCategoryGroups.map(g => {return {filter: g[0].subCategory.name.replace(regex, "").trim(), hits: g.length, g:g};}));
+    uifilters = uifilters.concat(brandGroups.map(g => {return {filter: g[0].brand.name.replace(regex, "").trim(), hits: g.length, g:g};}));
+    uifilters = uifilters.concat(tagsGroups.map(g => { return { filter: g[0].t.replace(regex, "").trim(),  hits: g.length, g: g }; }));
+
+    var strUIfilters = uifilters.filter(f=>f.filter && !/^\d/.test(f.filter))
+        .orderBy(f => -f.hits)
+        .distinctBy(f => f.g.map(p => p.id).join("|"))
+        .map(f => f.filter);
+        
     strUIfilters.forEach(s => {
         if (l <= 70) {
             i += 1;
-            l += s.length;
+            l += (s.filter || s).length;
         }
     });
 
