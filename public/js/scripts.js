@@ -590,8 +590,7 @@ function handleProductSorting() {
             var json = $(elem || this).find('script.json').text(),
                 data = JSON.parse(json) || {};
 
-            if (property == 'price' && data['offerPrice'])
-                return data['offerPrice'];
+
 
             if (expectedValue) {
                 var regex = new RegExp(expectedValue, "i");
@@ -599,9 +598,16 @@ function handleProductSorting() {
 
                 return fValue && regex.test(fValue);
             }
+
+            if (property == 'price' && data.offerPrice)
+                return data.offerPrice;
+            if(property == 'popularity')
+                return -data[property];
+                            
             return data[property];
         };
     }
+
     var $grid = $('.products-grid');
 
     if ($grid.isotope) {
@@ -656,13 +662,15 @@ function handleProductSorting() {
 
             function changeSortDirIcon(i, el) {
                 var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortDir);
-                if (cls) $(el).attr("class", cls);
+                if (cls) 
+                    $(el).attr("class", cls);
             }
 
             $(this).find('i.fa').each(changeSortDirIcon);
             $(".sorting, .sorting .fa").each(changeSortDirIcon);
             $(".sorting #sortby").text("Sorted by " + $(this).text());
         });
+        
         /***/
         $grid.data("sortDir", "asc");
         $grid.data("sortedBy", "name");
@@ -672,6 +680,7 @@ function handleProductSorting() {
         });
         /****/
     } else {
+        $(".filter, .sorting").hide();
         console.log("$.fn.isotope not defined. Waiting..");
         setTimeout(handleProductSorting, 500);
     }

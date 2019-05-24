@@ -66,6 +66,7 @@ function search(req, res, next) {
             renderSingleResults(products.first());
         } else {
             locals.products = products;
+            res.locals.uifilters = Product.getUIFilters(products);
             view.render('search');
         }
     }

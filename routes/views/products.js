@@ -30,7 +30,6 @@ function index(req, res) {
             var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
             var lastRemovedKey, lastRemoved;
 
-            res.locals.uifilters = categories.map(p => p.name).slice(0, 5);
             Object.keys(res.locals.groupedBrands).forEach(k => {
                 if (!categories.find(c => k == c.name)) {
                     lastRemovedKey = k;
@@ -42,6 +41,7 @@ function index(req, res) {
             if (Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
                 res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
 
+            res.locals.uifilters = keystone.list('Product').getUIFilters(products);
             if (!Object.keys(res.locals.groupedBrands).length)
                 delete res.locals.groupedBrands;
 

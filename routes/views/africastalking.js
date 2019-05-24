@@ -11,7 +11,6 @@ var PesaPalStatusMap = {
 };
 var router = keystone.express.Router();
 
-
 router.post("/incomingsmsnotification", function(req, res){
 	var data = Object.assign({}, req.body || {}, req.query || {});
 	console.log("Received %s", req.url, data);	
