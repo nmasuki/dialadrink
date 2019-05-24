@@ -589,12 +589,12 @@ function handleProductSorting() {
         function getSize(qty){
             if(!qty) return 0;
             qty = qty.toLowerCase();
-            var value = qty.replace(/[^\d.]+/, "").trim() || 0;
-            var measure = qty.replace(/[\d.]+/, "").trim() || "ml";
+            var value = qty.replace(/([^\d.]+)/, "").trim() || 0;
+            var measure = qty.replace(/([\d.]+)/, "").trim() || "ml";
 
             if(qty.indexOf(".") >= 0)
                 console.log(qty, value, measure);
-                
+
             if(measure.startsWith("l"))
                 return parseFloat(value) * 1000;
 
