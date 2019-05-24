@@ -2553,7 +2553,7 @@ this["templates"]["views"]["search"]["hbs"]["templates/views/search.hbs"] = Hand
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<style>\n	.featured-image img.img-responsive {\n		min-height: 180.6px;\n		max-height: 180.6px;\n	}\n</style>\n\n<div class=\"container\">\n	<div class=\"row\">\n"
+  return "<style>\n	.featured-image img.img-responsive {\n		min-height: 180.6px;\n		max-height: 180.6px;\n	}\n</style>\n\n<div class=\"container\">\n	<div class=\"row products-grid\">\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.products : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
     + "	</div>\n</div>\n";
 },"usePartial":true,"useData":true});
