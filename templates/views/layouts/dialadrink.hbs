@@ -299,8 +299,8 @@
                     </div>
                     <div>
                     {{#each uifilters}}
-                        <span class="filter noselect" data-filterby="{{this}}">
-                            {{this}}
+                        <span class="filter noselect" data-filterby="{{this.filter}}">
+                            {{this.filter}} <small style="font-size: 0.8em">({{this.hits}})</small>
                         </span>
                     {{/each}}
                     </div>
@@ -322,7 +322,7 @@
                         <script>
                             $(document).ready(function(){
                                 $(".col-sm-12.single").css("width", "100%");
-                            })
+                            });
                         </script>
                     {{/if}}
 
