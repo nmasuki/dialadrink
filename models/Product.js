@@ -146,16 +146,19 @@ Product.schema.virtual('percentOffer').get(function () {
 
 Product.schema.virtual('priceValidUntil').get(function () {
     var today = new Date();
-    var firstStr = "{0}-{1}-{2}".format(today.getUTCFullYear(), (today.getUTCMonth() + 1).pad(2), "01");
-    var priveExpiry = new Date(firstStr);
-    return priveExpiry.addMonths(1).addSeconds(-1).toISOString();
+    var firstStr = today.toISOString().substr(0, 8) + "01";
+    var lastExpiry = new Date(firstStr);
+    return lastExpiry.addMonths(1).addSeconds(-1).toISOString();
 });
 
 Product.schema.virtual('popularityRatio').get(function(){
     var max = 1.0, min = 0.75;
     var ratio = this.hitsPerWeek / topHitsPerWeek;
 
-    return parseFloat((min + (max - min) * ratio).toFixed(5));
+    if(ratio)
+        return parseFloat((min + (max - min) * ratio).toFixed(5));
+
+    return min;
 });
     
 Product.schema.virtual('hitsPerWeek').get(function(){
@@ -237,7 +240,7 @@ Product.schema.set('toObject', {
             'href', 'name', 'priceOptions', 'onOffer', 'inStock',
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
-            'subCategory', 'brand', 'ratings', 'options', 'cheapestOption',
+            'subCategory', 'brand', 'ratings','popularityRatio', 'options', 'cheapestOption',
             'averageRatings', 'ratingCount', 'tags',
             'quantity', 'currency', 'price', 'offerPrice',
             'priceValidUntil', 'percentOffer'

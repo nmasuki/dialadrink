@@ -321,6 +321,7 @@ function sitemap(req, res) {
                         });
                     }))));
 }
+
 router.get('/sitemap', sitemap);
 router.get('/sitemap.xml', sitemap);
 
@@ -342,4 +343,4 @@ router.get("/:page", function (req, res) {
         res.status(404).render('errors/404');
 });
 
-exports = module.exports = router;
+module.exports = router;
