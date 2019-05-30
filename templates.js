@@ -1239,7 +1239,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1), depth0)) != null ? stack1 : "")
     + "</span>\r\n                        </h1>\r\n";
 },"48":function(container,depth0,helpers,partials,data) {
-    return "                        <script>\r\n                            $(document).ready(function(){\r\n                                $(\".col-sm-12.single\").css(\"width\", \"100%\");\r\n                            });\r\n                        </script>\r\n";
+    return "                        <style>\r\n                            .col-sm-12.single { width: 100% !important; }\r\n                        </style>\r\n";
 },"50":function(container,depth0,helpers,partials,data) {
     var stack1;
 

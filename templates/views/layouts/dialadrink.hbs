@@ -320,11 +320,9 @@
                     </div>
                     
                     {{#if isMobile}}
-                        <script>
-                            $(document).ready(function(){
-                                $(".col-sm-12.single").css("width", "100%");
-                            });
-                        </script>
+                        <style>
+                            .col-sm-12.single { width: 100% !important; }
+                        </style>
                     {{/if}}
 
                     {{#unless isMobile}}
