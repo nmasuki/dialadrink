@@ -35,6 +35,7 @@ Client.schema.virtual("fullName").get(function () {
 
 Client.schema.pre('save', function (next) {
     this.modifiedDate = Date.now();
+    this.clientIps = this.clientIps.filter(ip=>ip).distinct();
     
     if(this.phoneNumber)
         this.phoneNumber = this.phoneNumber.cleanPhoneNumber();
