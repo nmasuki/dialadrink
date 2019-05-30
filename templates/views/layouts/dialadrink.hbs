@@ -318,14 +318,7 @@
                     <div class="col-sm-8" style="text-align: center; display:none;">                        
                         <span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
                     </div>
-                    {{#if isMobile}}
-                        <script>
-                            $(document).ready(function(){
-                                $(".col-sm-12.single").css("width", "100%");
-                            });
-                        </script>
-                    {{/if}}
-
+                    
                     {{#unless isMobile}}
                         {{#if uifilters}}
                             <div class="col-sm-4" style="float:right">
