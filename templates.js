@@ -1224,10 +1224,12 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     var alias1=container.lambda, alias2=container.escapeExpression;
 
   return "                        <span class=\"filter noselect\" data-filterby=\""
-    + alias2(alias1(depth0, depth0))
+    + alias2(alias1((depth0 != null ? depth0.filter : depth0), depth0))
     + "\">\n                            "
-    + alias2(alias1(depth0, depth0))
-    + "\n                        </span>\n";
+    + alias2(alias1((depth0 != null ? depth0.filter : depth0), depth0))
+    + " <small style=\"font-size: 0.8em\">("
+    + alias2(alias1((depth0 != null ? depth0.hits : depth0), depth0))
+    + ")</small>\n                        </span>\n";
 },"44":function(container,depth0,helpers,partials,data) {
     return "col-sm-3";
 },"46":function(container,depth0,helpers,partials,data) {
@@ -1237,13 +1239,13 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1), depth0)) != null ? stack1 : "")
     + "</span>\n                        </h1>\n";
 },"48":function(container,depth0,helpers,partials,data) {
-    return "                        <script>\n                            $(document).ready(function(){\n                                $(\".col-sm-12.single\").css(\"width\", \"100%\");\n                            })\n                        </script>\n";
+    return "                        <script>\n                            $(document).ready(function(){\n                                $(\".col-sm-12.single\").css(\"width\", \"100%\");\n                            });\n                        </script>\n";
 },"50":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.uifilters : depth0),{"name":"if","hash":{},"fn":container.program(51, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"51":function(container,depth0,helpers,partials,data) {
-    return "                            <div class=\"col-sm-4\" style=\"float:right\">\n                                <span class=\"sorting noselect dropdown-toggle\">\n                                    <span id=\"sortby\" style=\"padding-left: 5px;\">Sorted by Name</span>\n                                    <i class=\"fa fa-sort-amount-asc\" style=\"float: right; padding:2px;\"></i>\n                                </span>\n                                <ul class=\"dropdown-menu\" style=\"display: none; left: -67%;\">\n                                    <li class=\"noselect sort-products\" data-sortby=\"name\">Name<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                                    <li class=\"noselect sort-products\" data-sortby=\"price\">Price<i class=\"fa fa-sort-amount-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                                    <li class=\"noselect sort-products\" data-sortby=\"popularity\">Popularity<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                                    <li class=\"noselect sort-products\" data-sortby=\"size\">Quantity<i class=\"fa fa-sort-numeric-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                                </ul>             \n                            </div>\n";
+    return "                            <div class=\"col-sm-4\" style=\"float:right\">\n                                <span class=\"sorting noselect dropdown-toggle\">\n                                    <span id=\"sortby\" style=\"padding-left: 5px;\">Sorted by Name</span>\n                                    <i class=\"fa fa-sort-amount-asc\" style=\"float: right; padding:2px;\"></i>\n                                </span>\n                                <ul class=\"dropdown-menu\" style=\"display: none; left: -67%;\">\n                                    <li class=\"noselect sort-products\" data-sortby=\"name\">Name<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                                    <li class=\"noselect sort-products\" data-sortby=\"price\">Price<i class=\"fa fa-sort-amount-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                                    <li class=\"noselect sort-products\" data-sortby=\"popularityRatio\">Popularity<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                                    <li class=\"noselect sort-products\" data-sortby=\"size\">Quantity<i class=\"fa fa-sort-numeric-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\n                                </ul>             \n                            </div>\n";
 },"53":function(container,depth0,helpers,partials,data) {
     var stack1;
 
