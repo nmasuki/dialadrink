@@ -1227,7 +1227,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + alias2(alias1((depth0 != null ? depth0.filter : depth0), depth0))
     + "\">\n                            "
     + alias2(alias1((depth0 != null ? depth0.filter : depth0), depth0))
-    + " <small style=\"font-size: 0.8em\">("
+    + " <small style=\"font-size: 0.8em; display: none\">("
     + alias2(alias1((depth0 != null ? depth0.hits : depth0), depth0))
     + ")</small>\n                        </span>\n";
 },"44":function(container,depth0,helpers,partials,data) {
