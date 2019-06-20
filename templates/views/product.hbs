@@ -35,20 +35,10 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <h1 style="margin: 0" itemprop="name">{{{name}}}</h1>
+                        <h1 style="margin: 0; color: black;" itemprop="name">{{{name}}}</h1>
                     </div>
                 </div><!-- end row-->
 
-                {{#if brand.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            <p class="description">
-                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
-                            </p>
-                        </div>
-                    </div><!-- end row -->
-                {{/if}}
-                
                 <div class="row">
                     <div class="col-md-5 bottom-rule">
                         <h2 style="margin-top:5px" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
@@ -85,6 +75,25 @@
                         </div>
                     {{/ifgt}}
                 </div>
+
+                {{#if alcoholContent}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="monospaced label label-info">{{alcoholContent}}%</span>
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if brand.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                            <p class="description">
+                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
+                            </p>
+                        </div>
+                    </div><!-- end row -->
+                {{/if}}
+                
                 <div class="row">
                     <div class="col-md-4 text-left">
                         {{#if inStock}}

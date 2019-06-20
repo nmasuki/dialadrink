@@ -75,8 +75,8 @@ keystone.set('routes', require('./routes'));
 // Mailing configs
 keystone.set('email nodemailer', {
 	// Nodemailer configuration
-	service:'Zoho',
-    host: process.env.SMTP_HOST,
+	service: 'Zoho',
+	host: process.env.SMTP_HOST,
 	port: 587,
 	secure: false, // true for 465, false for other ports
 	auth: {
@@ -116,28 +116,41 @@ if (!console._warn)
 		console._error = console.error;
 
 		function emailToEmail(title, e) {
-			return ;
-			var emailOptions = {
-				subject: keystone.get("name") +  "-" + title,
-				to: {
-					name: keystone.get("name") + " Developer",
-					email: process.env.DEVELOPER_EMAIL || "nmasuki@gmail.com"
-				},
-				from: {
-					name: keystone.get("name"),
-					email: process.env.EMAIL_FROM
-				}
-			};
+			try {
 
-			email.send(e, emailOptions, (err) => {
-				if (err)
-					return console._warn("Error while sending email.", err.info);
-				else
-					console._log("Log email notification Sent!");
-			});
+				var emailOptions = {
+					subject: keystone.get("name") + "-" + title,
+					to: {
+						name: keystone.get("name") + " Developer",
+						email: process.env.DEVELOPER_EMAIL || "nmasuki@gmail.com"
+					},
+					from: {
+						name: keystone.get("name"),
+						email: process.env.EMAIL_FROM
+					}
+				};
+
+				email.send(e, emailOptions, (err) => {
+					if (err)
+						return console._warn("Error while sending email.", err.info);
+					else
+						console._log("Log email notification Sent!");
+				});
+			} catch (e) {
+
+			}
 		}
-
+		
 		/**
+		console.error = function(){
+			emailToEmail("Error!", arguments[0]);
+
+			var args = Array.from(arguments);
+			args.unshift(new Date());
+
+			console._error.apply(this, args);
+		};
+
 		console.log = function(){
 			emailToEmail("Info!", arguments[0]);
 
@@ -155,16 +168,7 @@ if (!console._warn)
 
 			console._warn.apply(this, args);
 		};
-
-		console.error = function(){
-			emailToEmail("Error!", arguments[0]);
-
-			var args = Array.from(arguments);
-			args.unshift(new Date());
-
-			console._error.apply(this, args);
-		};
 		/**/
-	})//();
+	})();
 
 module.exports = keystone;

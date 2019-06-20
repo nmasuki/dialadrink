@@ -11,6 +11,8 @@ Product.add({
     href: {type: String, initial: true, required: true},
     name: {type: String, initial: true},
 
+    alcoholContent: {type: Number, initial: true},
+
     priceOptions: {
         type: Types.Relationship,
         ref: 'ProductPriceOption',
@@ -68,7 +70,7 @@ Product.schema.virtual("keyWords").get(function () {
 
     var keyWords = extractor.extract(sentence, {
         language: "english",
-        remove_digits: false,
+        remove_digits: true,
         return_changed_case: false,
         remove_duplicates: true
     });
@@ -201,6 +203,13 @@ keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', function (next) {
     var cheapestOption = this.cheapestOption || this.priceOptions.first();
     this.modifiedDate = new Date();
+
+    if(this.alcoholContent){
+        if(this.alcoholContent > 100)
+            this.alcoholContent = 100;
+        else if(this.alcoholContent<0)
+            this.alcoholContent = 0;
+    }
 
     if (cheapestOption) {
         this.price = cheapestOption.price;
@@ -380,21 +389,22 @@ Product.search = function (query, next) {
 
     // Set locals
     var filters = {
-        "$or": [{ 
+        "$or": [ {
+                key: keyRegex
+            },
+            {
+                href: keyRegex
+            },
+            {
+                href: nameRegex
+            },
+            { 
                 tags: keyRegex
             },
             {
                 tags: nameRegex
             },
-            {
-                key: keyRegex
-            },
-            {
-                href: nameRegex
-            },
-            {
-                href: keyRegex
-            },
+            
             {
                 name: nameRegex
             },
@@ -420,16 +430,21 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    Product.findByBrand(filters, function (err, products) {
+    Product.findPublished({href: new RegExp(keyStr + "$", "i")}, function (err, products) {
         if (err || !products || !products.length)
-            Product.findByOption(filters, function (err, products) {
+            Product.findByBrand(filters, function (err, products) {
                 if (err || !products || !products.length)
-                    Product.findByCategory(filters, function (err, products) {
+                    Product.findByOption(filters, function (err, products) {
                         if (err || !products || !products.length)
-                            Product.findBySubCategory(filters, function (err, products) {
+                            Product.findByCategory(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                    Product.findPublished(filters, function (err, products) {
-                                        next(err, products.orderByDescending(p=>p.hitsPerWeek));
+                                    Product.findBySubCategory(filters, function (err, products) {
+                                        if (err || !products || !products.length)
+                                            Product.findPublished(filters, function (err, products) {
+                                                next(err, products.orderByDescending(p=>p.hitsPerWeek));
+                                            });
+                                        else
+                                            next(err, products.orderByDescending(p=>p.hitsPerWeek));
                                     });
                                 else
                                     next(err, products.orderByDescending(p=>p.hitsPerWeek));
