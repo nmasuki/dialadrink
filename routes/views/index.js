@@ -55,10 +55,10 @@ function search(req, res, next) {
         }
 
         if (!locals.page.meta)
-            locals.page.meta = meta + ", Best prices online, " + keystone.get("name");
+            locals.page.meta = meta + ", Best prices online - " + keystone.get("name");
 
         if (!locals.page.title || locals.page.title == keystone.get("name"))
-            locals.page.title = "{0} price in Kenya | Buy {0} online | {1}".format(title.split(",").first(), keystone.get("name"));
+            locals.page.title = "{1} - {2}".format(title.split(",").first(), title, keystone.get("name"));
 
         if (products.length == 1) {
             if (locals.breadcrumbs && locals.breadcrumbs.length)
@@ -148,11 +148,11 @@ function search(req, res, next) {
             Product.search(req.params.query, function (err, products) {
                 if (err || !products || !products.length) {
                     if (req.originalUrl.startsWith("/search"))
-                        renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
+                        renderResults(products);
                     else
                         res.status(404).render('errors/404');
                 } else {
-                    renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
+                    renderResults(products);
                 }
             });
         }

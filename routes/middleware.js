@@ -56,9 +56,7 @@ exports.initLocals = function (req, res, next) {
 
     //Client IP
     res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress ||
-        req.connection.socket.remoteAddress;
+        req.connection.remoteAddress || req.socket.remoteAddress;
 
     if (req.xhr) {
         var csrf_token = req.body.csrf || req.body.csrf_token || req.get('X-CSRF-Token');

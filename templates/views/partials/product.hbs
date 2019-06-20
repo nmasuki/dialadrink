@@ -8,22 +8,25 @@
     </a>
 {{/ifgt}}
 
-<div class="featured-image" style="text-align :center;">
-    <a href="{{productUrl href}}" aria-label="Access product {{{name}}}" id="product{{_id}}" style="display :block; color: black;">
-        <div class="item-name" style="text-align:center; justify-content :center; color: black">
+<div class="featured-image" style="text-align :center;" aria-label="Access product {{{name}}}" id="product{{_id}}">
+    <div class="product-hover-blind"></div>
+    
+    <a class="product-hover" href="{{productUrl href}}" aria-label="{{{percentOffer}}}% off on {{{name}}}">
+        <img src="https://res.cloudinary.com/nmasuki/image/upload/v1561049835/icons/magnify.png">
+    </a>   
+
+    <div class="item-name" style="text-align:center; justify-content :center; color: black">
+        <a href="{{productUrl href}}" style="display :block; color: black;">
             <img src="{{cloudinaryUrl image width=100 height=100 crop='fill'}}" 
                 data-src="{{cloudinaryUrl image width=250 height=250 crop='fill'}}" 
                 title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
+                itemprop="image" alt="{{{name}}}"
                 class="img-responsive" 
-                style="margin: auto"
-                itemprop="image"
-                alt="{{{name}}}"/>
+                style="margin: auto"/>
 
-            <a href="{{productUrl href}}" style="font-size: 15px; color: black; ">
-                <div itemprop="name" class="drinks-name">
-                    {{{name}}}
-                </div>
-            </a>
+            <div itemprop="name" class="drinks-name">
+                <a href="{{productUrl href}}" style="font-size: 15px; color: black;">{{{name}}}</a>
+            </div>            
 
             <span>{{quantity}}</span><br>
             <span itemscope itemprop="offers" itemtype="http://schema.org/Offer">
@@ -72,8 +75,8 @@
                         alt="Sold out!"/>
                 {{/if}}
             </div>
-        </div>
-    </a>
+        </a>
+    </div>
 </div>
 
 <script class="json" id="json{{_id}}" type="application/ld+json">{{{json this}}}</script>

@@ -72,9 +72,9 @@ router.post("/", function (req, res, next) {
 				amount: subtotal - discount
 			},
 			promo: req.session.promo,
+			clientIp: req.locals && req.locals.clientIp,
 			delivery: Object.assign({
-				userId: req.session.userId,
-				clientIp: req.locals && req.locals.clientIp
+				userId: req.session.userId
 			}, req.body)
 		});
 

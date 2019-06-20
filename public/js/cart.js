@@ -206,7 +206,7 @@ var cartUtil = function () {
             Object.values(cart).forEach(self.updateCartItemView);
             
             //Remove missing
-            Object.keys(_cart).forEach(function (cartId) {
+            Object.keys(_cart || {}).forEach(function (cartId) {
                 if (!cart[cartId] || cart[cartId].pieces <= 0)
                     self.view("li[data-cartid='" + cartId + "']").slideUp();                
             });
