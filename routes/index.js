@@ -45,7 +45,7 @@ exports = module.exports = function (app) {
 	// Api endpoints
 	for (var i in routes.apis) {
 		var path = "/api/" + (i == "index" ? "" : i);
-		app.use(path, globalCacheMiddleware, routes.apis[i];)
+		app.use(path, globalCacheMiddleware, routes.apis[i]);
 	}
 
 	// Views
