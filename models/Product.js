@@ -480,14 +480,15 @@ Product.getUIFilters = function(products){
     var regex = new RegExp(regexStr, "i");
     var uifilters = [];
     
-    if(categories.length > 2){
+    uifilters = uifilters.concat(tagsGroups.map(g => { return { filter: g[0].t.replace(regex, "").trim(),  hits: g.length, g: g }; }));
+    
+    if(categories.length > 3){
         var categoryGroups = Object.values(products.filter(p => p.category).groupBy(p => p.category._id));
         uifilters = uifilters.concat(categoryGroups.map(g => {return {filter: g[0].category.name.trim(), hits: g.length, g:g};}));
     }
-    
+
     uifilters = uifilters.concat(subCategoryGroups.map(g => {return {filter: g[0].subCategory.name.replace(regex, "").trim(), hits: g.length, g:g};}));
     uifilters = uifilters.concat(brandGroups.map(g => {return {filter: g[0].brand.name.replace(regex, "").trim(), hits: g.length, g:g};}));
-    uifilters = uifilters.concat(tagsGroups.map(g => { return { filter: g[0].t.replace(regex, "").trim(),  hits: g.length, g: g }; }));
 
     var strUIfilters = uifilters.filter(f=>f.filter && !/^\d/.test(f.filter))
         .orderBy(f => -f.hits)

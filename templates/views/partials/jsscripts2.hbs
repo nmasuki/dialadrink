@@ -46,7 +46,6 @@
                     console.warn('image is ' + result + ' for ' + image.img.src);
             });
 
-
         {{#if (contains page.h1 'Offer')}}
             $("#countDownTimer").startCountDown();
         {{/if}}
@@ -89,7 +88,8 @@
                 }
             }
         }
-        else $('#top').removeClass('affix');
+        else 
+            $('#top').removeClass('affix');
     }
 
     $(window).scroll(function () {
