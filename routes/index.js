@@ -32,35 +32,43 @@ keystone.pre('render', middleware.flashMessages);
 // Import Route Controllers
 var routes = {
 	views: importRoutes('./views'),
-	apis: importRoutes('./ws'),
+	apis: importRoutes('./apis'),
 };
 
 // Setup Route Bindings
-exports = module.exports = function (app) {	
-	
+exports = module.exports = function (app) {
 	app.enable('view cache');
 	var noopMiddleware = (req, res, next) => next();
 	var globalCacheMiddleware = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
-	var userCacheMiddleware   = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30) * 60);
+	var userCacheMiddleware = noopMiddleware || middleware.cache((process.env.CACHE_TIME || 30) * 60);
+
+	// Api endpoints
+	for (var i in routes.apis) {
+		var path = "/api/" + (i == "index" ? "" : i);
+		app.use(path, globalCacheMiddleware, routes.apis[i];)
+	}
+
 	// Views
 	app.use('/brand', globalCacheMiddleware, routes.views.brand);
 	app.use('/blog', globalCacheMiddleware, routes.views.blog);
 	app.use('/contact-us', globalCacheMiddleware, routes.views.contact);
 	app.use('/gallery', globalCacheMiddleware, routes.views.gallery);
 
-    app.use('/product', globalCacheMiddleware, routes.views.product);
-    app.use('/category', globalCacheMiddleware, routes.views.category);
-    app.use('/product', globalCacheMiddleware, routes.views.category);
+	app.use('/product', globalCacheMiddleware, routes.views.product);
+	app.use('/category', globalCacheMiddleware, routes.views.category);
+	app.use('/product', globalCacheMiddleware, routes.views.category);
 	app.use('/checkout', routes.views.checkout);
 	app.use('/cart', routes.views.cart);
 
 	app.use('/', globalCacheMiddleware, routes.views.products);
-	app.use('/', globalCacheMiddleware,  routes.views.index);
+	app.use('/', globalCacheMiddleware, routes.views.index);
 
 	app.use('/order', routes.views.order);
 	app.use('/pesapal', routes.views.pesapal);
 	app.use('/africastalking', routes.views.africastalking);
 
-    // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
+
+
+	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
 };
