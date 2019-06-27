@@ -227,7 +227,7 @@ router.get("/location/:location", function (req, res) {
                 locals.page.title = locals.page.title || "Delivery to " + locations[0].name;
                 var center = locations[0].location;
                 var colors = ["red", "green", "blue", "orange", "yellow"]
-                var markers = locations.map((l, i) => `markers=color:${colors[i % colors.length]}%7Clabel:${l.name}%7C${l.location.lat}%2c%20${l.location.lng}`);
+                var markers = locations.map((l, i) => `markers=color:${colors[i % colors.length]}%7Clabel:${l.name[0]}%7C${l.location.lat}%2c%20${l.location.lng}`);
 
                 locals.mapUrl = `https://maps.googleapis.com/maps/api/staticmap` +
                     `?center=${center.lat}%2c%20${center.lng}` +
