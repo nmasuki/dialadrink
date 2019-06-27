@@ -141,7 +141,9 @@ function search(req, res, next) {
 
     if (req.params.query) {
         if (req.params.query.toLowerCase() == "giftpacks") {
-            Product.findPublished({isGiftPack: true}, function (err, products) {
+            Product.findPublished({
+                isGiftPack: true
+            }, function (err, products) {
                 renderResults(products, "Gift Packs");
             });
         } else {
@@ -166,7 +168,9 @@ router.get("/payment/:orderNo", function (req, res) {
     require('./checkout');
     var view = new keystone.View(req, res);
 
-    Order.model.findOne({orderNumber: req.params.orderNo})
+    Order.model.findOne({
+            orderNumber: req.params.orderNo
+        })
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
             if (!order)
@@ -194,6 +198,49 @@ router.get("/payment/:orderNo", function (req, res) {
 
             locals.orderUrl = pesapalHelper.getPasaPalUrl(order, req.headers.origin)
             return view.render('checkout');
+        });
+});
+
+router.get("/location/:location", function (req, res) {
+    var view = new keystone.View(req, res);
+    var locals = res.locals;
+
+    locals.breadcrumbs = locals.breadcrumbs || [];
+    var regex = new RegExp(req.params.location.cleanId().trim(), "i");
+
+    locals.page = Object.assign(locals.page, {
+        title: ""
+    });
+
+    var filter = {
+        "$or": [{
+            href: regex
+        }, {
+            href: req.params.location
+        }]
+    };
+
+    keystone.list('Location').model
+        .find(filter)
+        .exec(function (err, locations) {
+            if (locations && locations.length) {
+                locals.page.title = locals.page.title || "Delivery to " + locations[0].name;
+                var center = locations[0].location;
+                var colors = ["red", "green", "blue", "orange", "yellow"]
+                var markers = locations.map((l, i) => `markers=color:${colors[i % colors.length]}%7Clabel:${l.name}%7C${l.location.lat}%2c%20${l.location.lng}`);
+
+                locals.mapUrl = `https://maps.googleapis.com/maps/api/staticmap` +
+                    `?center=${center.lat}%2c%20${center.lng}` +
+                    `&zoom=13&size=640x400&maptype=roadmap` +
+                    `&${markers.join('&')}&key=${process.env.GOOGLE_API_KEY1}`;
+                
+                locals.mobileMapUrl = locals.mapUrl.replace("640x400", "300x300");
+
+                locals.locations = locations;
+            }
+
+            // Render View
+            view.render('location');
         });
 });
 
@@ -242,7 +289,9 @@ router.get("/pricelist", function (req, res) {
             }
         }
 
-        view.render('pricelist', {layout: 'newsletter'}, printPdf);
+        view.render('pricelist', {
+            layout: 'newsletter'
+        }, printPdf);
     });
 });
 
@@ -288,7 +337,9 @@ router.get("/products.xml", function (req, res) {
 
         res.locals.products = products;
 
-        view.render('productsXml', {layout: false}, function (err, xmlText) {
+        view.render('productsXml', {
+            layout: false
+        }, function (err, xmlText) {
             res.setHeader('Content-Type', 'text/xml');
             res.send(xmlText);
         });
@@ -324,7 +375,6 @@ function sitemap(req, res) {
 
 router.get('/sitemap', sitemap);
 router.get('/sitemap.xml', sitemap);
-
 router.get('/google81a0290a139b9339.html', function (req, res) {
     res.send('google-site-verification: google81a0290a139b9339.html');
 });
