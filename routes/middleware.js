@@ -18,8 +18,11 @@ function requestCache(duration, _key) {
         if (req.xhr)
             return next();
 
+        res.locals = res.locals || {};
+
         try {
-            let key = '__express__' + (mobile(req) ? "_mobile_" : "") + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
+            let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
+            let key = '__express__' + (isMobile ? "_mobile_" : "") + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
             let cacheContent = memCache.get(key);
             if (cacheContent) {
                 res.send(cacheContent);
@@ -64,8 +67,11 @@ exports.initLocals = function (req, res, next) {
     res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
         req.connection.remoteAddress || req.socket.remoteAddress;
 
+    //Check mobile
+    var isMobile = (res.locals.isMobile = mobile(req));
+
+    //Locals only applied to views and not ajax calls
     if (req.xhr) {
-        //Locals only applied to views and not ajax calls
         var csrf_token = req.body.csrf || req.body.csrf_token || req.get('X-CSRF-Token');
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
             res.send({
@@ -76,27 +82,36 @@ exports.initLocals = function (req, res, next) {
             next();
     } else {
         var istart = new Date();
-        let key = '__locals__' + (mobile(req) ? "_mobile_" : "") + req.session.id + "[" + (req.originalUrl || req.url) + "]";
+        let key = '__locals__' + (isMobile ? "_mobile_" : "") + req.session.id;
         var cachedLocals = memCache ? memCache.get(key) : null;
 
+        //Admin user
+        res.locals.user = req.user;
+
+        //Contact number
+        res.locals.contactNumber = (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
+
+        //To use uglified files in production
+        res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
+
+        //Initiate Page details
+        res.locals.page = {
+            title: keystone.get("name"),
+            canonical: "https://www.dialadrinkkenya.com" + req.originalUrl
+        };
+
         if (cachedLocals) {
-            res.locals = Object.assign(res.locals, cachedLocals);
-            next();
+            res.locals = Object.assign(cachedLocals, res.locals);
+            exports.initPageLocals(req, res).then(function () {
+                next();
+            });
         } else {
             Promise.all([
                 exports.initTopMenuLocals(req, res),
                 exports.initBreadCrumbsLocals(req, res),
-                exports.initPageLocals(req, res),
-                exports.initBrandsLocals(req, res)
+                exports.initBrandsLocals(req, res),
+                exports.initPageLocals(req, res)
             ]).then(function () {
-                //Admin user
-                res.locals.user = req.user;
-
-                //Contact number
-                res.locals.contactNumber = (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
-
-                //To use uglified files in production
-                res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
 
                 //Cache locals for next time
                 if (memCache)
@@ -113,21 +128,27 @@ exports.initLocals = function (req, res, next) {
 };
 
 exports.initPageLocals = function (req, res, next) {
-    //Load Page details
-    res.locals.page = {
-        title: keystone.get("name"),
-        canonical: "https://www.dialadrinkkenya.com" + req.originalUrl
-    };
+    var cleanId = req.originalUrl.cleanId();
+    var cachedPage = memCache? memCache.get("__page__" + cleanId): null;
+    
+    if(cachedPage){
+        res.locals.page = Object.assign(res.locals.page, cachedPage || {});
+        
+        if (typeof next == "function")
+            next(err);
 
-    var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
+        return Promise.resolve();
+    }
+
+    var regex = new RegExp("(" + cleanId.escapeRegExp() + ")", "i");
     return keystone.list('Page').model
-        .find({
-            key: regex
-        })
+        .find({ key: regex })
         .exec((err, pages) => {
-            var page = pages.orderBy(m => m.href.length).first();
-            res.locals.isMobile = mobile(req);
+            var page = pages.orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
+
+            if (memCache)
+                memCache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
