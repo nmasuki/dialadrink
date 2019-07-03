@@ -19,7 +19,7 @@ function requestCache(duration, _key) {
             return next();
 
         try {
-            let key = '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
+            let key = '__express__' + (mobile(req) ? "_mobile_" : "") + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
             let cacheContent = memCache.get(key);
             if (cacheContent) {
                 res.send(cacheContent);
@@ -76,8 +76,8 @@ exports.initLocals = function (req, res, next) {
             next();
     } else {
         var istart = new Date();
-        let key = '__express__' + req.session.id + "[" + (req.originalUrl || req.url) + "]";
-        var cachedLocals = memCache? memCache.get(key): null;
+        let key = '__locals__' + (mobile(req) ? "_mobile_" : "") + req.session.id + "[" + (req.originalUrl || req.url) + "]";
+        var cachedLocals = memCache ? memCache.get(key) : null;
 
         if (cachedLocals) {
             res.locals = Object.assign(res.locals, cachedLocals);
@@ -99,12 +99,12 @@ exports.initLocals = function (req, res, next) {
                 res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
 
                 //Cache locals for next time
-                if(memCache)
+                if (memCache)
                     memCache.put(key, res.locals, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
-                
+
                 next();
 
-                var ms = new Date().getTime() - istart.getTime();                
+                var ms = new Date().getTime() - istart.getTime();
                 if (ms > 1000)
                     console.log("Initiated Locals!", ms, "ms");
             });
