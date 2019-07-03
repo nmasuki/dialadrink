@@ -12,10 +12,11 @@ var keystone = require("keystone");
 var mobile = require('is-mobile');
 var memCache = require("memory-cache");
 
-exports.cache = function (duration, _key) {
+function requestCache(duration, _key) {
     duration = duration || 30;
     return (req, res, next) => {
-        if (req.xhr) return next();
+        if (req.xhr)
+            return next();
 
         try {
             let key = '__express__' + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
@@ -35,8 +36,13 @@ exports.cache = function (duration, _key) {
             memCache.clear();
             next();
         }
-    }
+    };
 }
+
+exports.globalCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
+
+exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
+
 /**
  Initialises the standard view locals
 
@@ -59,6 +65,7 @@ exports.initLocals = function (req, res, next) {
         req.connection.remoteAddress || req.socket.remoteAddress;
 
     if (req.xhr) {
+        //Locals only applied to views and not ajax calls
         var csrf_token = req.body.csrf || req.body.csrf_token || req.get('X-CSRF-Token');
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
             res.send({
@@ -68,29 +75,40 @@ exports.initLocals = function (req, res, next) {
         else
             next();
     } else {
-        //Locals only applied to views and not ajax calls
-        //Admin user
-        res.locals.user = req.user;
-
-        //contact number
-        res.locals.contactNumber = (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
-
-        //To use uglified files in production
-        res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
-
         var istart = new Date();
-        Promise.all([
-            exports.initTopMenuLocals(req, res),
-            exports.initBreadCrumbsLocals(req, res),
-            exports.initPageLocals(req, res),
-            exports.initBrandsLocals(req, res)
-        ]).then(function () {
-            next();
+        let key = '__express__' + req.session.id + "[" + (req.originalUrl || req.url) + "]";
+        var cachedLocals = memCache? memCache.get(key): null;
 
-            var ms = (new Date().getTime() - istart.getTime());
-            if (ms > 1000)
-                console.log("Initiated Locals!", ms, "ms");
-        });
+        if (cachedLocals) {
+            res.locals = Object.assign(res.locals, cachedLocals);
+            next();
+        } else {
+            Promise.all([
+                exports.initTopMenuLocals(req, res),
+                exports.initBreadCrumbsLocals(req, res),
+                exports.initPageLocals(req, res),
+                exports.initBrandsLocals(req, res)
+            ]).then(function () {
+                //Admin user
+                res.locals.user = req.user;
+
+                //Contact number
+                res.locals.contactNumber = (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
+
+                //To use uglified files in production
+                res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
+
+                //Cache locals for next time
+                if(memCache)
+                    memCache.put(key, res.locals, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+                
+                next();
+
+                var ms = new Date().getTime() - istart.getTime();                
+                if (ms > 1000)
+                    console.log("Initiated Locals!", ms, "ms");
+            });
+        }
     }
 };
 
@@ -158,7 +176,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
             }
 
             if (breadcrumbs.length)
-                res.locals.breadcrumbs = breadcrumbs.orderBy(m => m.level).distinctBy(b=>(b.href || "").toLowerCase().trim());
+                res.locals.breadcrumbs = breadcrumbs.orderBy(m => m.level).distinctBy(b => (b.href || "").toLowerCase().trim());
             else
                 res.locals.breadcrumbs = [{
                     "label": "Home",
