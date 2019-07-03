@@ -24,10 +24,10 @@ exports.cache = function (duration, _key) {
                 res.send(cacheContent);
                 return;
             } else {
-                res.sendResponse = res.send;
+                var resSend = res.send;
                 res.send = (body) => {
                     memCache.put(key, body, duration * 1000);
-                    res.sendResponse(body);
+                    resSend.call(res, body);
                 };
                 next();
             }

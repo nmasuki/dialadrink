@@ -488,9 +488,10 @@ Product.getUIFilters = function(products){
     }
 
     uifilters = uifilters.concat(subCategoryGroups.map(g => {return {filter: g[0].subCategory.name.replace(regex, "").trim(), hits: g.length, g:g};}));
-    uifilters = uifilters.concat(brandGroups.map(g => {return {filter: g[0].brand.name.replace(regex, "").trim(), hits: g.length, g:g};}));
+    //uifilters = uifilters.concat(brandGroups.map(g => {return {filter: g[0].brand.name.replace(regex, "").trim(), hits: g.length, g:g};}));
 
-    var strUIfilters = uifilters.filter(f=>f.filter && !/^\d/.test(f.filter))
+    var strUIfilters = uifilters
+        .filter(f=>f.filter && !/^\d/.test(f.filter))
         .orderBy(f => -f.hits)
         .distinctBy(f => f.filter.trim())
         .distinctBy(f => f.g.map(p => p.id).orderBy(i => i).join("|"));
