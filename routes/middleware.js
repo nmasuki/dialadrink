@@ -82,8 +82,6 @@ exports.initLocals = function (req, res, next) {
             next();
     } else {
         var istart = new Date();
-        let key = '__locals__' + (isMobile ? "_mobile_" : "") + req.session.id;
-        var cachedLocals = memCache ? memCache.get(key) : null;
 
         //Admin user
         res.locals.user = req.user;
@@ -100,30 +98,19 @@ exports.initLocals = function (req, res, next) {
             canonical: "https://www.dialadrinkkenya.com" + req.originalUrl
         };
 
-        if (cachedLocals) {
-            res.locals = Object.assign(cachedLocals, res.locals);
-            exports.initPageLocals(req, res).then(function () {
-                next();
-            });
-        } else {
-            Promise.all([
-                exports.initTopMenuLocals(req, res),
-                exports.initBreadCrumbsLocals(req, res),
-                exports.initBrandsLocals(req, res),
-                exports.initPageLocals(req, res)
-            ]).then(function () {
+        Promise.all([
+            exports.initTopMenuLocals(req, res),
+            exports.initBreadCrumbsLocals(req, res),
+            exports.initBrandsLocals(req, res),
+            exports.initPageLocals(req, res)
+        ]).then(function () {
 
-                //Cache locals for next time
-                if (memCache)
-                    memCache.put(key, res.locals, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+            next();
 
-                next();
-
-                var ms = new Date().getTime() - istart.getTime();
-                if (ms > 1000)
-                    console.log("Initiated Locals!", ms, "ms");
-            });
-        }
+            var ms = new Date().getTime() - istart.getTime();
+            if (keystone.get("env") == "development" || ms > 1000)
+                console.log("Initiated Locals in ", ms, "ms");
+        });
     }
 };
 
@@ -132,7 +119,7 @@ exports.initPageLocals = function (req, res, next) {
     var cachedPage = memCache? memCache.get("__page__" + cleanId): null;
     
     if(cachedPage){
-        res.locals.page = Object.assign(res.locals.page, cachedPage || {});
+        res.locals.page = Object.assign(res.locals.page || {}, cachedPage || {});
         
         if (typeof next == "function")
             next(err);
@@ -157,6 +144,17 @@ exports.initPageLocals = function (req, res, next) {
 };
 
 exports.initBrandsLocals = function (req, res, next) {
+    var cachedPage = memCache? memCache.get("__popularbrands__"): null;
+    
+    if(cachedPage){
+        res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage || {});
+        
+        if (typeof next == "function")
+            next(err);
+
+        return Promise.resolve(cachedPage);
+    }
+    
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
         if (!err) {
             groups = brands.groupBy(b => b.category && b.category.name || "_delete");
@@ -171,6 +169,10 @@ exports.initBrandsLocals = function (req, res, next) {
                 .slice(0, 10);
 
             res.locals.groupedBrands = groups;
+
+            if (memCache)
+                memCache.put("__popularbrands__", res.locals.groupedBrands, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+
         }
         if (typeof next == "function")
             next(err);
@@ -178,6 +180,18 @@ exports.initBrandsLocals = function (req, res, next) {
 }
 
 exports.initBreadCrumbsLocals = function (req, res, next) {
+    var cleanId = req.originalUrl.cleanId();
+    var cachedPage = memCache? memCache.get("__breadcrumbs__" + cleanId): null;
+    
+    if(cachedPage){
+        res.locals.breadcrumbs = Object.assign(res.locals.breadcrumbs || {}, cachedPage || {});
+        
+        if (typeof next == "function")
+            next(err);
+
+        return Promise.resolve();
+    }
+    
     //Load breadcrumbs
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
@@ -204,12 +218,26 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
                     "href": "/"
                 }];
 
+            if (memCache)
+                memCache.put("__breadcrumbs__" + cleanId, res.locals.breadcrumbs, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+
             if (typeof next == "function")
                 next(err);
         });
 }
 
 exports.initTopMenuLocals = function (req, res, next) {
+    var cachedPage = memCache? memCache.get("__topmenu__"): null;
+    
+    if(cachedPage){
+        res.locals.navLinks = Object.assign(res.locals.navLinks || {}, cachedPage || {});
+        
+        if (typeof next == "function")
+            next(err);
+
+        return Promise.resolve();
+    }
+    
     //TopMenu
     return keystone.list('MenuItem').model
         .find({
@@ -231,6 +259,10 @@ exports.initTopMenuLocals = function (req, res, next) {
                     return m.index
                 })
                 .distinctBy(m => m.label.cleanId());
+
+            
+            if (memCache)
+                memCache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
