@@ -25,8 +25,7 @@ function requestCache(duration, _key) {
             let key = '__express__' + (isMobile ? "_mobile_" : "") + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
             let cacheContent = memCache.get(key);
             if (cacheContent) {
-                res.send(cacheContent);
-                return;
+                return res.send(cacheContent);
             } else {
                 var resSend = res.send;
                 res.send = (body) => {
@@ -36,13 +35,14 @@ function requestCache(duration, _key) {
                 next();
             }
         } catch (e) {
+            console.warn("Error while getting cached http response!", e);
             memCache.clear();
             next();
         }
     };
 }
 
-exports.globalCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
+exports.globalCache = (req, res, next) => next();//requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
 
 exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 
