@@ -72,7 +72,7 @@ exports.initLocals = function (req, res, next) {
 
     //Locals only applied to views and not ajax calls
     if (req.xhr) {
-        var csrf_token = req.body.csrf || req.body.csrf_token || req.get('X-CSRF-Token');
+        var csrf_token = keystone.security.csrf.requestToken(req);
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
             res.send({
                 success: true,
