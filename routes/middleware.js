@@ -184,7 +184,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     var cachedPage = memCache? memCache.get("__breadcrumbs__" + cleanId): null;
     
     if(cachedPage){
-        res.locals.breadcrumbs = Object.assign(res.locals.breadcrumbs || {}, cachedPage || {});
+        res.locals.breadcrumbs = Array.from(Object.assign(res.locals.breadcrumbs || {}, cachedPage || {}));
         
         if (typeof next == "function")
             next(err);
