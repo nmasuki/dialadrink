@@ -1,10 +1,9 @@
 <div class="container">
-
     <div class="row">
         <img class="col-md-6 col-lg-6" src="{{mapUrl}}" alt="Location map!" />
         <div class="col-md-6 col-lg-6" style="padding-left: 22px !important">
             {{#each locations}}
-                <h2>{{name}}, {{city}}</h2>
+                <strong>{{name}}, {{city}}</strong>
                 <p>{{description}}</p>
             {{/each}}
         </div>

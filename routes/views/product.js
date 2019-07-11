@@ -10,7 +10,7 @@ router.get("/:product", function (req, res) {
 
     locals.page = Object.assign(locals.page, {title: ""});
 
-    var filter = {"$or": [{href: regex}, {href: req.params.product}]}
+    var filter = {"$or": [{href: regex}, {href: req.params.product}]};
 
     view.on('init', function (next) {
         keystone.list('Product').findOnePublished(filter, function (err, product) {

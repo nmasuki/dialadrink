@@ -206,6 +206,11 @@ router.get("/location/:location", function (req, res) {
     var locals = res.locals;
 
     locals.breadcrumbs = locals.breadcrumbs || [];
+    locals.breadcrumbs.push({
+        href: "/delivery-locations",
+        label: "Delivery Locations"
+    });
+
     var regex = new RegExp(req.params.location.cleanId().trim(), "i");
 
     locals.page = Object.assign(locals.page, {
@@ -224,9 +229,9 @@ router.get("/location/:location", function (req, res) {
         .find(filter)
         .exec(function (err, locations) {
             if (locations && locations.length) {
-                locals.page.title = locals.page.title || "Delivery to " + locations[0].name;
+                locals.page.title = locals.page.title || "Drinks Delivery to " + locations[0].name;
                 var center = locations[0].location;
-                var colors = ["red", "green", "blue", "orange", "yellow"]
+                var colors = ["red", "orange", "yellow", "green", "blue"];
                 var markers = locations.map((l, i) => `markers=color:${colors[i % colors.length]}%7Clabel:${l.name[0]}%7C${l.location.lat}%2c%20${l.location.lng}`);
 
                 locals.mapUrl = `https://maps.googleapis.com/maps/api/staticmap` +
@@ -237,6 +242,12 @@ router.get("/location/:location", function (req, res) {
                 locals.mobileMapUrl = locals.mapUrl.replace("640x400", "300x300");
 
                 locals.locations = locations;
+
+                locals.breadcrumbs = locals.breadcrumbs.concat(locations.map(l=>{
+                    return {
+                        href: l.href,
+                        label: l.name                    }                    
+                }));
             }
 
             // Render View

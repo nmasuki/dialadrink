@@ -602,7 +602,7 @@ function handleProductSorting() {
         }
 
         return function (elem) {
-            var json = $(elem || this).find('script.json').text(),
+            var json = $(elem || this).find('script.json').text() || "{}",
                 data = JSON.parse(json) || {};
 
             if (expectedValue) {

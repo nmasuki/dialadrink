@@ -344,7 +344,6 @@
                         {{/if}}
                     {{/unless}}
                 </div>
-
             </div>
 
             {{{body}}}
@@ -370,7 +369,25 @@
                 {{else}}
 
                 {{/if}}
+            </div>            
+
+            <div class="container inst-checkout">
+                <div class="col-md-6 action-wrapper">
+                    <hr>
+                    <button id="inst-checkout-button" 
+                        alt="Continue shopping" onclick="$('.inst-checkout').slideDown();">
+                        Continue shopping
+                    </button>
+
+                    <button id="inst-checkout-button" 
+                        alt="Instant Checkout" onclick="window.location='/checkout'">
+                        Instant Checkout
+                    </button>
+                    <br><br>                    
+                    <hr style="margin-top: 0;">                        
+                </div>
             </div>
+
         </div>
     </section>
 </main>
