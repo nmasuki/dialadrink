@@ -2,18 +2,19 @@
  * Created by nmasuki on 7/7/2018.
  */
 var cartUtil = function () {
-    var _cart = {}, _promo = null;
+    var _cart = {},
+        _promo = null;
     var _url = "/";
 
-    function getProductFromView(cartId){
+    function getProductFromView(cartId) {
         var id = cartId.split('|').first();
-        var product = { 
+        var product = {
             _id: id,
-            href:"",
+            href: "",
             name: "",
             currency: "",
-            priceOptions:[{
-                option:{
+            priceOptions: [{
+                option: {
                     quantity: cartId.split('|').last(),
                     currency: ""
                 }
@@ -46,8 +47,8 @@ var cartUtil = function () {
             return po.option.quantity === cartItem.quantity
         });
 
-        var price = cartItem.price || (priceOption.offerPrice && priceOption.price > priceOption.offerPrice
-            ? priceOption.offerPrice : priceOption.price);
+        var price = cartItem.price || (priceOption.offerPrice && priceOption.price > priceOption.offerPrice ?
+            priceOption.offerPrice : priceOption.price);
 
         cartItem._id = cartItem._id || cartItem.product._id + "|" + cartItem.quantity;
         cartItem.image = cartItem.image || cartItem.product.image;
@@ -58,7 +59,7 @@ var cartUtil = function () {
     }
 
     var self = Object.assign(this, {
-        
+
         view: function (selector) {
             var view = $('#cart-content-main, #cart-content-mini');
             if (selector) {
@@ -91,8 +92,11 @@ var cartUtil = function () {
             var view = self.view('.number');
             qty = qty || "";
             var cartId = productId + "|" + qty;
-            var cartItem = _cart[cartId] || (_cart[cartId] = {_id:cartId, pieces:0});
-            cartItem.pieces += pieces;            
+            var cartItem = _cart[cartId] || (_cart[cartId] = {
+                _id: cartId,
+                pieces: 0
+            });
+            cartItem.pieces += pieces;
             self.updateView();
 
             app.showToast("Adding to cart!");
@@ -101,13 +105,13 @@ var cartUtil = function () {
                 url: _url + 'cart/add/' + productId + '/' + qty + '/' + (pieces || 1),
                 type: 'get',
                 success: function (data) {
-                    console.log("Added to cart", data, pieces);                    
+                    console.log("Added to cart", data, pieces);
                     app.showToast(pieces + " " + data.item.product.name + " added to cart!", 1500, "green");
                     _cart[cartId] = fillIn(Object.assign(cartItem, data.item));
                     self.updateView();
                 },
-                fail: function(){
-                    console.warn("Added to cart fails. Could not reach Server");                    
+                fail: function () {
+                    console.warn("Added to cart fails. Could not reach Server");
                     app.showToast("Added to cart fails. Could not reach Server!", 1500, "red");
                     cartItem.pieces -= pieces;
                     self.updateView();
@@ -117,12 +121,15 @@ var cartUtil = function () {
         },
 
         updateItem: function (cartId, pieces) {
-            if(pieces <= 0)
+            if (pieces <= 0)
                 return self.removeItem(cartId);
 
-            var cartItem = _cart[cartId] || (_cart[cartId] = {_id: cartId, pieces: pieces});
+            var cartItem = _cart[cartId] || (_cart[cartId] = {
+                _id: cartId,
+                pieces: pieces
+            });
             self.updateView();
-            
+
             return $.ajax({
                 url: _url + 'cart/update/' + cartId + '/' + pieces,
                 type: 'get',
@@ -139,7 +146,7 @@ var cartUtil = function () {
                 throw "Cart item not found! " + cartId;
             }
 
-            var view  = self.view("li[data-cartid='" + cartId + "']");
+            var view = self.view("li[data-cartid='" + cartId + "']");
             view.slideUp();
             return $.ajax({
                 url: _url + 'cart/remove/' + cartId,
@@ -204,11 +211,11 @@ var cartUtil = function () {
 
             //Update changes
             Object.values(cart).forEach(self.updateCartItemView);
-            
+
             //Remove missing
             Object.keys(_cart || {}).forEach(function (cartId) {
                 if (!cart[cartId] || cart[cartId].pieces <= 0)
-                    self.view("li[data-cartid='" + cartId + "']").slideUp();                
+                    self.view("li[data-cartid='" + cartId + "']").slideUp();
             });
 
             var promoView = $(".promo-code-wrapper");
@@ -242,10 +249,10 @@ var cartUtil = function () {
             // item = fillIn(item);
 
             var view = getItemView(item._id);
-            
-            if(item.pieces <= 0) 
+
+            if (item.pieces <= 0)
                 view.slideUp();
-            else 
+            else
                 view.slideDown();
 
             view.find(".cart-description").html((item.description || "").truncate(50));
@@ -253,31 +260,43 @@ var cartUtil = function () {
             view.find(".cart-pieces").html(item.pieces);
 
             item.product = item.product || getProductFromView(item._id);
-            if(item.product){
+            if (item.product) {
                 view.find(".cart-image").attr("src", item.product.image.secure_url);
                 view.find(".cart-product-link")
                     .attr("href", item.product.href)
                     .html(item.product.name + " " + item.quantity);
-                
-                if(item.product.priceOptions){
+
+                if (item.product.priceOptions) {
                     var priceOption = item.product.priceOptions.find(function (po) {
                         return po.option.quantity === item.quantity
-                    }); 
+                    });
                     view.find(".cart-currency").html(item.currency || (priceOption && priceOption.currency) || "KES");
                     view.find(".cart-price").html((item.pieces * item.price).formatNumber(2));
-                }           
-            }else
+                }
+            } else
                 app.cartUtil.viewNotUpdated = true;
         },
 
         updateTotals: function () {
             $(".cart-total-products").html(self.productCount());
             $(".cart-total-pieces").html(self.piecesCount());
+
+            if (!["/checkout", "/cart"].find(function (l) {
+                    return window.location.href.indexOf(l) >= 0;
+                })) {
+                if (self.piecesCount() > 0)
+                    $(".inst-checkout").slideDown();
+                else
+                    $(".inst-checkout").slideUp();
+            }else{
+                $(".shop-by-brand").hide();
+            }
+
             var totalHtml = self.totalAmount().formatNumber(2);
 
             if (self.totalAmount() !== self.totalCost())
                 totalHtml = "<span style='font-size: 0.8em; text-decoration: line-through; color: orangered'>{0}</span>"
-                    .format(self.totalCost().formatNumber(2)) + totalHtml;
+                .format(self.totalCost().formatNumber(2)) + totalHtml;
 
             $(".cart-total").html(totalHtml);
         }
@@ -287,7 +306,9 @@ var cartUtil = function () {
     return self;
 };
 
-window.app = window.app || {cartUtil: new cartUtil()};
+window.app = window.app || {
+    cartUtil: new cartUtil()
+};
 
 $(function () {
     $(document).on('click', '.add-to-cart', function (e) {
@@ -308,7 +329,7 @@ $(function () {
 
     $(document).on("mouseover", ".num-items-in-cart", function (e) {
         var that = $(this);
-        if (app.cartUtil.viewNotUpdated || (!window.cartXHR || window.cartXHR.state() == "resolved")){
+        if (app.cartUtil.viewNotUpdated || (!window.cartXHR || window.cartXHR.state() == "resolved")) {
             window.cartXHR = $.ajax("/cart/mini").then(function (html, b, c) {
                 if (typeof html === "string") {
                     that.data("loadedAt", new Date().getTime());
@@ -400,7 +421,9 @@ $(function () {
             };
 
             $.ajax({
-                headers: {'X-CSRF-Token': app.csrf_token},
+                headers: {
+                    'X-CSRF-Token': app.csrf_token
+                },
                 type: 'get',
                 url: '/cart/checkout/' + name + "/" + location + "/" + cell + "/" + email + "/" + street + "/" + building + "/" + houseno,
                 data: data,
@@ -414,11 +437,11 @@ $(function () {
                     console.log(XMLHttpRequest, textStatus, errorThrown)
                 }
             })
-        }//checkout if the form is filled
+        } //checkout if the form is filled
         else {
             var msg = "Please fill all the fields and try again";
             $('.checkout-error').html(msg);
         }
-    })//checkout event
+    }) //checkout event
 
 })

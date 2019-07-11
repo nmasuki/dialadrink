@@ -16,6 +16,7 @@
 
     form.promo-redeem button, form.needs-validation button {
         border: 1px solid lightgray;
+        color: white;
     }
 
     form.promo-redeem input {
@@ -55,7 +56,7 @@
                         <li data-cartid="{{_id}}"
                             class="list-group-item d-flex justify-content-between lh-condensed row">
                             <div class="col-md-4">
-                                <img class="cart-image" src="{{cloudinaryUrl image crop='fit' height=52}}" style="width: 52px, height: 52px">
+                                <img class="cart-image" src="{{cloudinaryUrl image crop='fit' height=52}}" style="width: 52px; height: 52px">
                             </div>
                             <div class="col-md-8">
                                 <h6 class="my-0"><a href="/{{product.href}}">{{product.name}}
@@ -107,15 +108,23 @@
                     </li>
                 {{/if}}
             </ul>
+
             {{#if cartItems.length}}
                 <form class="card promo-redeem">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-md-8 col-sm-8">
-                                    <input id="promocode" type="text" class="form-control" placeholder="Promo code" style="width: 100%; float: left;">
+                                <div class="col-md-8 col-sm-8" style="
+    width: 74%;
+    float: left;
+">
+                                    <input id="promocode" type="text" class="form-control" placeholder="Promo code" style="/* width: 100%; */float: left;">
                                 </div>
-                                <div class="col-md-4 col-sm-4">
+                                <div class="col-md-4 col-sm-4" style="
+    width: 21%;
+    float: left;
+    color: white;
+">
                                     <button type="submit" class="btn btn-secondary" style="margin-top: 0;">Redeem</button>
                                 </div>
                             </div>                            
@@ -168,15 +177,15 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="address">Address</label>
+                            <label for="address">Location</label>
                             <input type="text" class="form-control" name="address" id="address"
-                                placeholder="1234 Main St" required value="{{userData.address}}">
+                                placeholder="1234 Kileleshwa" required value="{{userData.address}}">
                             <div class="invalid-feedback">
                                 Please enter your shipping address.
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+                            <label for="address2">Apartment</label>
                             <input type="text" class="form-control" name="building" id="address2"
                                 placeholder="Apartment or suite" value="{{userData.building}}">
                         </div>
@@ -184,9 +193,9 @@
 
                     <div class="row">
                         <div class="col-md-8 mb-3">
-                            <label for="address">Address 3 <span class="text-muted">(Optional)</span></label>
+                            <label for="address">House Number</label>
                             <input type="text" class="form-control" name="houseNumber" id="houseNumber"
-                                placeholder="House number" value="{{userData.houseNumber}}">
+                                placeholder="House Number" value="{{userData.houseNumber}}">
                         </div>
                     </div>
 
@@ -198,6 +207,7 @@
                         </label>
                     </div>
                     --}}
+
                     {{#if cartItems.length}}
                     <hr class="mb-4">
                     <h4 class="mb-3">Payment</h4>
@@ -270,6 +280,7 @@
                         </div>
                     </div>
                     --}}
+
                     <div class="alert alert-danger fade in alert-dismissible" style="display: none">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
                         <span class="msg-text"><strong>Danger!</strong> This alert box indicates a dangerous or potentially negative action.</span>

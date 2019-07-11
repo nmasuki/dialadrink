@@ -16,6 +16,10 @@ body .group-form-address .add-new-address {
     border: 1px solid #222;
 }
 
+.btn{
+    color: white !important; 
+}
+
 body .product-detail-content #product-information .add-to-wishlist button,
 body .account-content #customer-account #customer_sidebar #view_address,
 body .address_table .add-new-address,
@@ -16242,7 +16246,7 @@ body footer.home6_theme_footer .footer_contact_group>div .fa {
 .float-right-icon {
     position: fixed;
     right: 20px;
-    bottom: 24px;
+    bottom: 60px;
     overflow: hidden;
     z-index: 100;
 }
@@ -16506,30 +16510,38 @@ h2.section-header {
     padding: 0;
     width: 100%;
 }
-.container.inst-checkout {
-  bottom: 0;
-  position: fixed;
-  padding-bottom: 0 !important;
-  z-index: 999999999999;
-  display: none;
+
+.container.inst-checkout{
+    bottom: 0;
+    position: fixed;
+    padding-bottom: 0 !important;
+    z-index: 999999999999;
+    display: none;
+    padding: 0;
 }
 
-.col-md-6.action-wrapper {
-    background: white;
-    padding: 0 20px;
-    margin: 0 auto;
-    left: 400px;
+.action-wrapper .flat-button{
+    float: left;
+    width: 50%;
+    background: red;
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 20px;
 }
 
-.col-md-6.action-wrapper hr {
-    margin-top: 0;
+.flat-button.view-cart {
+    padding: 7px;
+    color: #ff4747;
+    background: #fff1f1;
 }
 
-#inst-checkout-button {
-  font-size: 14px !important;
-  padding: 0 15px;
-  text-transform: none;
-  max-width: 170px;
-  cursor: pointer;
-  float: right;
+@media (max-width: 640px) {
+    .container.inst-checkout{
+        width: 100%;
+    }
+    .action-wrapper{
+      left: initial;
+    }
 }
