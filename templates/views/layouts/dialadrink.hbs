@@ -12,6 +12,7 @@
     <meta name="msapplication-TileImage" content="https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/ms-icon-144x144.png"/>
     <meta name="theme-color" content="#ffffff"/>
     {{!--PWA setups and js regestry--}}
+    
     {{>pwaheaders}}
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -354,7 +355,7 @@
                 </div>
             {{/if}}
 
-            <div class="container">
+            <div class="container shop-by-brand">
                 {{#if groupedBrands}}
                     <h2 style="font-size: 15px;text-transform: uppercase">SHOP BY BRAND</h2>                    
                     {{#each groupedBrands}}
@@ -371,20 +372,18 @@
                 {{/if}}
             </div>            
 
-            <div class="container inst-checkout">
+            <div class="container inst-checkout" style="width:100%">
                 <div class="col-md-6 action-wrapper">
-                    <hr>
-                    <button id="inst-checkout-button" 
-                        alt="Continue shopping" onclick="$('.inst-checkout').slideDown();">
-                        Continue shopping
-                    </button>
+                    <div class="flat-button view-cart" onclick="window.location='/cart'">
+                        <span class="badge badge-secondary badge-pill cart-total-pieces" 
+                            style="position:absolute;background-color:red;">0</span>
+                        <img src="/images/ic_shopping_cart_empty.png" alt="My cart" style="width: 46px;">
+                        View Cart
+                    </div>
 
-                    <button id="inst-checkout-button" 
-                        alt="Instant Checkout" onclick="window.location='/checkout'">
+                    <div class="flat-button" onclick="window.location='/checkout'">
                         Instant Checkout
-                    </button>
-                    <br><br>                    
-                    <hr style="margin-top: 0;">                        
+                    </div>                       
                 </div>
             </div>
 
@@ -515,9 +514,9 @@
 <!--footer start from here-->
 
 <!-- Float right icon -->
-<div class="float-right-icon" style="top: 114px;">
+<div class="float-right-icon" style="top: 114px; bottom:initial;">
     <ul>
-        <li class="mobile-only">
+        <li class="mobile-only" style="display: none;">
             <a href="/cart" title="My cart">
                 <span class="badge badge-secondary badge-pill cart-total-pieces" style="position: absolute;left: 18px;background-color: red;">0</span>
                 <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart-2.png" width="48px" alt="My cart">
