@@ -389,10 +389,12 @@
 
             {{#unless isMobile}}              
                 <script>
+                    console.log("We are here.")
                     $(document).ready(function(){
                         var width = $(document.body).width();
-                        var left = (width - width/3)/2;
-                        $(".inst-checkout").css({left: left});
+                        var left = (width - $(".inst-checkout").width())/2;
+                        if(left > 0)
+                            $(".inst-checkout").css({left: left});
                     });
                 </script>
             {{/unless}}
