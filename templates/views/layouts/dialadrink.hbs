@@ -326,6 +326,14 @@
                         <style>
                             .col-sm-12.single { width: 100% !important; }
                         </style>
+                    {{else}}                    
+                        <script>
+                            (function(){
+                                var width = $(document.body).width();
+                                var left = (width - width/3)/2;
+                                $(".inst-checkout").css({left: left});
+                            })()
+                        </script>
                     {{/if}}
 
                     {{#unless isMobile}}
@@ -373,7 +381,7 @@
             </div>            
 
             <div class="container inst-checkout" style="width:100%">
-                <div class="col-md-6 action-wrapper">
+                <div class="col-md-4 action-wrapper">
                     <div class="flat-button view-cart" onclick="window.location='/cart'">
                         <span class="badge badge-secondary badge-pill cart-total-pieces" 
                             style="position:absolute;background-color:red;">0</span>
