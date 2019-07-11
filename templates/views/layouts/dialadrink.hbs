@@ -326,14 +326,6 @@
                         <style>
                             .col-sm-12.single { width: 100% !important; }
                         </style>
-                    {{else}}                    
-                        <script>
-                            (function(){
-                                var width = $(document.body).width();
-                                var left = (width - width/3)/2;
-                                $(".inst-checkout").css({left: left});
-                            })()
-                        </script>
                     {{/if}}
 
                     {{#unless isMobile}}
