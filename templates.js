@@ -732,7 +732,7 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),(depth0 != null ? depth0.offerPrice : depth0),{"name":"ifgt","hash":{},"fn":container.program(25, data, 0, blockParams, depths),"inverse":container.program(27, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "                    </h2>\n                </div>\n\n"
     + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.options : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(29, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "            </div>\n\n            <div class=\"row add-to-cart-wrapper\">\n                <div class=\"col-md-5 product-qty\">\n                    <span id=\"pieces-plus\" class=\"pieces-plus btn btn-default btn-lg btn-qty\" style=\"width: 46px;color: black !important;\">\n                        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n                    </span>\n                    <input id=\"pieces\" class=\"pieces btn btn-default btn-lg btn-qty\" style=\"width: 48px;color: black !important;\" value=\"1\"/>\n                    <span id=\"pieces-minus\" class=\"pieces-minus btn btn-default btn-lg btn-qty\"\n                        style=\"width: 46px;color: black !important;\">\n                        <span class=\"glyphicon glyphicon-minus\" aria-hidden=\"true\"></span>\n                    </span>\n                </div>\n                <div class=\"col-md-5\" style=\"margin-top: 5px\">\n                    <button data-qty=\""
+    + "            </div>\n\n            <div class=\"row add-to-cart-wrapper\">\n                <div class=\"col-md-5 product-qty\">\n                    <span id=\"pieces-plus\" class=\"pieces-plus btn btn-default btn-lg btn-qty\" style=\"width: 46px;color: black !important;\">\n                        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n                    </span>\n                    <input id=\"pieces\" class=\"pieces btn btn-default btn-lg btn-qty\" style=\"width: 48px;color: black !important;\" value=\"1\"/>\n                    <span id=\"pieces-minus\" class=\"pieces-minus btn btn-default btn-lg btn-qty\"\n                        style=\"width: 46px;color: black !important;\">\n                        <span class=\"glyphicon glyphicon-minus\" aria-hidden=\"true\"></span>\n                    </span>\n                </div>\n                <div class=\"col-md-5\" style=\"margin-top: 5px\"> \n                    <button data-qty=\""
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "\" data-product=\""
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
@@ -1389,14 +1389,14 @@ this["templates"]["views"]["layouts"]["newsletter"]["hbs"]["templates/views/layo
 },"useData":true});
 
 this["templates"]["views"]["location"]["hbs"]["templates/views/location.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "                <strong>"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + ", "
     + alias4(((helper = (helper = helpers.city || (depth0 != null ? depth0.city : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"city","hash":{},"data":data}) : helper)))
     + "</strong>\n                <p>"
-    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
+    + ((stack1 = ((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</p>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {};
