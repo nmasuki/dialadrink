@@ -4,7 +4,7 @@ var Client = keystone.list("Client");
 var router = keystone.express.Router();
 
 router.post("/signup", function (req, res) {
-    var mobile = (req.body.mobile || "");
+    var mobile = (req.body.mobile || "").cleanPhoneNumber();
     var password = req.body.password || "";
     var gender = (req.body.gender || "M");
 
@@ -13,27 +13,41 @@ router.post("/signup", function (req, res) {
             response: "error",
             message: "Username and password are required!!"
         });
-        
+
     Client.model.find({
-            phoneNumber: mobile.cleanPhoneNumber()
+            phoneNumber: mobile
         })
         .exec((clients, err) => {
-            var match = clients.find(c => password.comparePassword(c.password));
-            if (!matched)
-                match = clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd)
+            var client = clients && clients[0];
 
             var json = {
                 response: "error",
                 data: {}
             };
-            if (match) {
+
+            if (client && client.isAppRegistered) {
                 json.data = "Mobile Already Exist";
+                res.send(json);
             } else {
-                json.response = "success";
-                json.data = "Added Successfully";
+                client = client || new Client.model({});
+                client.phoneNumber = mobile;
+                client.password = password.encryptPassword();
+                client.gender = gender.toUpperCase();
+
+                client.save(function (err) {
+                    if (err) {
+                        json.message = err;
+                    }else{
+                        json.response = "success";
+                        json.message = "Added Successfully";
+                        json.data = client.toAppObject();                  
+                    }
+
+                    res.send(json);
+                });
+
             }
 
-            res.send(json);
         });
 
 });
@@ -52,10 +66,10 @@ router.post("/login", function (req, res) {
             phoneNumber: mobile
         })
         .exec((err, clients) => {
-            
+
             if (err)
                 throw err;
-            
+
             var client = clients.find(c => password.comparePassword(c.password)) ||
                 clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd)
 

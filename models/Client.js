@@ -8,12 +8,13 @@ var Client = new keystone.List('Client', {
 });
 
 Client.add({
+    phoneNumber: {type: String},
+    email: {type: String},
+
     firstName: {type: String},
     lastName: {type: String},
+    gender: {type: String, default:"Undefined"},
     
-    phoneNumber: {type: String},
-
-    email: {type: String},
     city: {type: String, default: 'Nairobi'},
     address: {type: String},
     building: {type: String},
@@ -26,10 +27,9 @@ Client.add({
     isRegistered: { type: Boolean, default: false},
     fcmCode:  {type: String},
 
-    username: {type: String},
     image: {type: Types.CloudinaryImage, folder: "clients"},
-
-    password: {type: String},
+    username: {type: String},
+    password: {type: String},    
     tempPassword: {
         pwd: {type: String, noedit: true},
         expiryDate: {type: Types.Datetime, default: Date.now}
@@ -47,6 +47,10 @@ Client.defaultColumns = 'firstName, lastName, phoneNumber, email, address, order
 
 Client.schema.virtual("name").get(function () {
     return ((this.firstName || '')+ ' ' + (this.lastName || '')).trim();
+});
+
+Client.schema.virtual("isAppRegistered").get(function () {
+    return !!this.password;
 });
 
 Client.schema.virtual("name").set(function (name) {
