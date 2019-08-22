@@ -127,7 +127,7 @@ Client.fromAppObject = function(obj, callback){
             {email: obj.user_email}
         ]
     })
-        .exec((client, err) => {
+        .exec((err, client) => {
             if(err)
                 throw err;
             if(!client)

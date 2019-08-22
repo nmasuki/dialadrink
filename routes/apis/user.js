@@ -32,7 +32,7 @@ router.post("/login", function (req, res) {
     var password = req.body.password || "";
 
     Client.model.find({phoneNumber: mobile.cleanPhoneNumber()})
-        .exec((clients, err)=>{
+        .exec((err, clients)=>{
             if(err)
                 throw err;
 
