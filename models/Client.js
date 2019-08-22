@@ -96,9 +96,8 @@ Client.schema.pre('save', function (next) {
     
     if(this.email){
         var email = this.email || null;
-        if(email){
-            findOption.$or.push({"delivery.email": new RegExp(username.escapeRegExp(), "i")});
-        }
+        if(email)
+            findOption.$or.push({"delivery.email": new RegExp(email.escapeRegExp(), "i")});        
     }
 
     if(findOption.$or.length){
