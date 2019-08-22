@@ -354,10 +354,10 @@ if (!String.prototype.sanitizePhoneNumber)
             phone = phone.replace("^+", "");
 
         if (phone.length < 11)
-            phone = phone.replace(/^0/, countryCode);
+            phone = phone.trim().replace(/^0/, countryCode);
 
         if (/^7/.test(phone))
-            phone = phone.replace(/^7/, countryCode + "7");
+            phone = phone.trim().replace(/^7/, countryCode + "7");
 
         return phone;
     };
@@ -383,15 +383,15 @@ if (!String.prototype.encryptPassword)
     String.prototype.encryptPassword = function (salt) {
         bcrypt = require('bcrypt');
 
-        salt = salt || bcrypt.genSaltSync();
-        encryptedPassword = bcrypt.hashSync(this, salt);
+        salt = (salt || bcrypt.genSaltSync());
+        encryptedPassword = bcrypt.hashSync(this.toString(), salt.toString());
         return {salt, encryptedPassword};
     };
 
 if (!String.prototype.comparePassword)
     String.prototype.comparePassword = function (encryptedPassword, salt) {
-        var {encrypted2} = password.encryptPassword(this, salt);
-        return encryptedPassword == encrypted2;
+        var encrypted2 = this.encryptPassword(salt);
+        return encryptedPassword == encrypted2.encryptedPassword;
     };
 
 if (!Array.prototype.clone)
