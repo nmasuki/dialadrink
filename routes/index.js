@@ -42,7 +42,8 @@ exports = module.exports = function (app) {
 	// Api endpoints
 	for (var i in routes.apis) {
 		var path = "/api/" + (i == "index" ? "" : i);
-		app.use(path, routes.apis[i]);
+		if(routes.apis[i])
+			app.use(path, routes.apis[i]);
 	}
 
 	// Views
