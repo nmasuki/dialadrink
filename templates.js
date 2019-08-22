@@ -597,11 +597,11 @@ this["templates"]["views"]["brand"]["hbs"]["templates/views/brand.hbs"] = Handle
 },"25":function(container,depth0,helpers,partials,data) {
     var alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
-  return "                            <span>\n                                    <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                        <span>"
+  return "                            <span>\n                                <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                    <span>"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
-    + "</span>\n                                    </span>\n                                    <span itemprop=\"price\" class=\"product-price\" id=\"product-price\">\n                                        "
+    + "</span>\n                                </span>\n                                <span itemprop=\"price\" class=\"product-price\" id=\"product-price\">\n                                    "
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
-    + "\n                                    </span>\n                                </span>\n";
+    + "\n                                </span>\n                            </span>\n";
 },"27":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
@@ -1399,13 +1399,17 @@ this["templates"]["views"]["location"]["hbs"]["templates/views/location.hbs"] = 
     + ((stack1 = ((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</p>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "<div class=\"container\">\n    <div class=\"row\">\n        <img class=\"col-md-6 col-lg-6\" src=\""
-    + container.escapeExpression(((helper = (helper = helpers.mapUrl || (depth0 != null ? depth0.mapUrl : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"mapUrl","hash":{},"data":data}) : helper)))
-    + "\" alt=\"Location map!\" />\n        <div class=\"col-md-6 col-lg-6\" style=\"padding-left: 22px !important\">\n"
+    + alias4(((helper = (helper = helpers.mapUrl || (depth0 != null ? depth0.mapUrl : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"mapUrl","hash":{},"data":data}) : helper)))
+    + "\" alt=\""
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + ", "
+    + alias4(((helper = (helper = helpers.city || (depth0 != null ? depth0.city : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"city","hash":{},"data":data}) : helper)))
+    + " map!\" />\n        <div class=\"col-md-6 col-lg-6\" style=\"padding-left: 22px !important\">\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.locations : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "        </div>\n    </div>\n\n</div>";
+    + "        </div>\n    </div>\n</div>";
 },"useData":true});
 
 this["templates"]["views"]["order"]["hbs"]["templates/views/order.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
