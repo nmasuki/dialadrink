@@ -383,7 +383,7 @@ if (!String.prototype.encryptPassword)
     String.prototype.encryptPassword = function (salt) {
         bcrypt = require('bcrypt');
 
-        salt = (salt || process.env.COOKIE_SECRET || bcrypt.genSaltSync());
+        salt = (salt || process.env.SALT || bcrypt.genSaltSync());
         encryptedPassword = bcrypt.hashSync(this.toString(), salt.toString());
         return {salt, encryptedPassword};
     };
