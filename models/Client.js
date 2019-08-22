@@ -13,7 +13,7 @@ Client.add({
 
     firstName: {type: String},
     lastName: {type: String},
-    gender: {type: String, default:"Undefined"},
+    gender: {type: String},
     
     city: {type: String, default: 'Nairobi'},
     address: {type: String},
