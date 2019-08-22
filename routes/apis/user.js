@@ -15,7 +15,7 @@ router.post("/signup", function (req, res) {
         });
 
     Client.model.find({ phoneNumber: mobile })
-        .exec((clients, err) => {
+        .exec((err, clients) => {
             
             if (err)
                 return res.send({
@@ -80,7 +80,7 @@ router.post("/login", function (req, res) {
                 });
 
             var client = clients.find(c => password.comparePassword(c.password)) ||
-                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd)
+                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
             var json = {
                 response: "error"
@@ -90,6 +90,11 @@ router.post("/login", function (req, res) {
                 json.response = "success";
                 json.message = "Login successfully";
                 json.data = client.toAppObject();
+
+                if(!client.tempPassword.used && password == client.tempPassword.pwd){
+                    client.tempPassword.used = true;
+                    client.save();
+                }
             } else {
                 json.message = "Username/password do not match!";
             }
