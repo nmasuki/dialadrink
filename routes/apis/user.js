@@ -14,9 +14,11 @@ router.post("/signup", function (req, res) {
             message: "Username and password are required!!"
         });
 
-    Client.model.find({ phoneNumber: mobile })
+    Client.model.find({
+            phoneNumber: mobile
+        })
         .exec((err, clients) => {
-            
+
             if (err)
                 return res.send({
                     response: "error",
@@ -40,13 +42,20 @@ router.post("/signup", function (req, res) {
                 client.password = password.encryptPassword().encryptedPassword;
                 client.gender = gender.toUpperCase();
 
+                console.log("Saving client details.", {
+                    phone: client.phoneNumber,
+                    pwd: client.password,
+                    gender: client.gender
+                });
+                
                 client.save(function (err) {
                     if (err) {
                         json.message = err;
-                    }else{
+                        console.log(err);
+                    } else {
                         json.response = "success";
                         json.message = "Added Successfully";
-                        json.data = client.toAppObject();                  
+                        json.data = client.toAppObject();
                     }
 
                     res.send(json);
@@ -91,7 +100,7 @@ router.post("/login", function (req, res) {
                 json.message = "Login successfully";
                 json.data = client.toAppObject();
 
-                if(!client.tempPassword.used && password == client.tempPassword.pwd){
+                if (!client.tempPassword.used && password == client.tempPassword.pwd) {
                     client.tempPassword.used = true;
                     client.save();
                 }
@@ -106,9 +115,11 @@ router.post("/login", function (req, res) {
 
 router.post("/update", function (req, res) {
     var mobile = (req.body.mobile || "").cleanPhoneNumber();
-    Client.model.find({ phoneNumber: mobile })
+    Client.model.find({
+            phoneNumber: mobile
+        })
         .exec((clients, err) => {
-            
+
             if (err)
                 return res.send({
                     response: "error",
