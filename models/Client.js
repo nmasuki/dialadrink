@@ -19,7 +19,7 @@ Client.add({
     address: {type: String},
     building: {type: String},
     houseNumber: {type: String},
-    clientIps: {type: Types.TextArray},
+    clientIps: {type: Types.TextArray, noedit:true},
 
     orderCount: {type: Number, noedit:true},
     orderValue: {type: Number, noedit:true},
