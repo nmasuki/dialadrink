@@ -55,10 +55,10 @@ function search(req, res, next) {
         }
 
         if (!locals.page.meta)
-            locals.page.meta = meta + ", Best prices online, " + keystone.get("name");
+            locals.page.meta = meta + ", Best prices online - " + keystone.get("name");
 
         if (!locals.page.title || locals.page.title == keystone.get("name"))
-            locals.page.title = "{0} price in Kenya | Buy {0} online | {1}".format(title.split(",").first(), keystone.get("name"));
+            locals.page.title = "{1} - {2}".format(title.split(",").first(), title, keystone.get("name"));
 
         if (products.length == 1) {
             if (locals.breadcrumbs && locals.breadcrumbs.length)
@@ -66,6 +66,7 @@ function search(req, res, next) {
             renderSingleResults(products.first());
         } else {
             locals.products = products;
+            res.locals.uifilters = Product.getUIFilters(products);
             view.render('search');
         }
     }
@@ -140,18 +141,20 @@ function search(req, res, next) {
 
     if (req.params.query) {
         if (req.params.query.toLowerCase() == "giftpacks") {
-            Product.findPublished({isGiftPack: true}, function (err, products) {
+            Product.findPublished({
+                isGiftPack: true
+            }, function (err, products) {
                 renderResults(products, "Gift Packs");
             });
         } else {
             Product.search(req.params.query, function (err, products) {
                 if (err || !products || !products.length) {
                     if (req.originalUrl.startsWith("/search"))
-                        renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
+                        renderResults(products);
                     else
                         res.status(404).render('errors/404');
                 } else {
-                    renderResults(products, req.params.query.replace(/\-/g, " ").toProperCase());
+                    renderResults(products);
                 }
             });
         }
@@ -165,7 +168,9 @@ router.get("/payment/:orderNo", function (req, res) {
     require('./checkout');
     var view = new keystone.View(req, res);
 
-    Order.model.findOne({orderNumber: req.params.orderNo})
+    Order.model.findOne({
+            orderNumber: req.params.orderNo
+        })
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
             if (!order)
@@ -193,6 +198,60 @@ router.get("/payment/:orderNo", function (req, res) {
 
             locals.orderUrl = pesapalHelper.getPasaPalUrl(order, req.headers.origin)
             return view.render('checkout');
+        });
+});
+
+router.get("/location/:location", function (req, res) {
+    var view = new keystone.View(req, res);
+    var locals = res.locals;
+
+    locals.breadcrumbs = locals.breadcrumbs || [];
+    locals.breadcrumbs.push({
+        href: "/delivery-locations",
+        label: "Delivery Locations"
+    });
+
+    var regex = new RegExp(req.params.location.cleanId().trim(), "i");
+
+    locals.page = Object.assign(locals.page, {
+        title: ""
+    });
+
+    var filter = {
+        "$or": [{
+            href: regex
+        }, {
+            href: req.params.location
+        }]
+    };
+
+    keystone.list('Location').model
+        .find(filter)
+        .exec(function (err, locations) {
+            if (locations && locations.length) {
+                locals.page.title = locals.page.title || "Drinks Delivery to " + locations[0].name;
+                var center = locations[0].location;
+                var colors = ["red", "orange", "yellow", "green", "blue"];
+                var markers = locations.map((l, i) => `markers=color:${colors[i % colors.length]}%7Clabel:${l.name[0]}%7C${l.location.lat}%2c%20${l.location.lng}`);
+
+                locals.mapUrl = `https://maps.googleapis.com/maps/api/staticmap` +
+                    `?center=${center.lat}%2c%20${center.lng}` +
+                    `&zoom=13&size=640x400&maptype=roadmap` +
+                    `&${markers.join('&')}&key=${process.env.GOOGLE_API_KEY1}`;
+                
+                locals.mobileMapUrl = locals.mapUrl.replace("640x400", "300x300");
+
+                locals.locations = locations;
+
+                locals.breadcrumbs = locals.breadcrumbs.concat(locations.map(l=>{
+                    return {
+                        href: l.href,
+                        label: l.name                    }                    
+                }));
+            }
+
+            // Render View
+            view.render('location');
         });
 });
 
@@ -241,7 +300,9 @@ router.get("/pricelist", function (req, res) {
             }
         }
 
-        view.render('pricelist', {layout: 'newsletter'}, printPdf);
+        view.render('pricelist', {
+            layout: 'newsletter'
+        }, printPdf);
     });
 });
 
@@ -287,7 +348,9 @@ router.get("/products.xml", function (req, res) {
 
         res.locals.products = products;
 
-        view.render('productsXml', {layout: false}, function (err, xmlText) {
+        view.render('productsXml', {
+            layout: false
+        }, function (err, xmlText) {
             res.setHeader('Content-Type', 'text/xml');
             res.send(xmlText);
         });
@@ -320,9 +383,9 @@ function sitemap(req, res) {
                         });
                     }))));
 }
+
 router.get('/sitemap', sitemap);
 router.get('/sitemap.xml', sitemap);
-
 router.get('/google81a0290a139b9339.html', function (req, res) {
     res.send('google-site-verification: google81a0290a139b9339.html');
 });
@@ -341,4 +404,4 @@ router.get("/:page", function (req, res) {
         res.status(404).render('errors/404');
 });
 
-exports = module.exports = router;
+module.exports = router;

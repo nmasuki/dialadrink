@@ -1,18 +1,25 @@
 /**
  * Created by nmasuki on 7/7/2018.
  */
+
+function getCookie(name) {
+	var start = document.cookie.indexOf(name) + name.length + 1;
+	var sepPos = document.cookie.indexOf(";", start);
+	return document.cookie.substr(start, (sepPos < 0 ? document.cookie.length : sepPos) - start);
+}
+
 var app = {
-    csrf_token: $('meta[name="_csrf"]').attr('content'),
+	csrf_token: getCookie("XSRF-TOKEN"), // $('meta[name="_csrf"]').attr('content'),
 
 	type: ['', 'info', 'success', 'warning', 'danger'],
 
-    cartUtil: new window.cartUtil(),
+	cartUtil: new window.cartUtil(),
 
-    initPickColor: function () {
+	initPickColor: function () {
 		$('.pick-class-label').click(function () {
 			var new_class = $(this).attr('new-class');
-            var display_div = $('#display-buttons');
-            var old_class = display_div.attr('data-class');
+			var display_div = $('#display-buttons');
+			var old_class = display_div.attr('data-class');
 			if (display_div.length) {
 				var display_buttons = display_div.find('.btn');
 				display_buttons.removeClass(old_class);
@@ -124,41 +131,88 @@ var app = {
 			scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
 			styles: [{
 				"featureType": "water",
-				"stylers": [{"saturation": 43}, {"lightness": -11}, {"hue": "#0088ff"}]
+				"stylers": [{
+					"saturation": 43
+				}, {
+					"lightness": -11
+				}, {
+					"hue": "#0088ff"
+				}]
 			}, {
 				"featureType": "road",
 				"elementType": "geometry.fill",
-				"stylers": [{"hue": "#ff0000"}, {"saturation": -100}, {"lightness": 99}]
+				"stylers": [{
+					"hue": "#ff0000"
+				}, {
+					"saturation": -100
+				}, {
+					"lightness": 99
+				}]
 			}, {
 				"featureType": "road",
 				"elementType": "geometry.stroke",
-				"stylers": [{"color": "#808080"}, {"lightness": 54}]
+				"stylers": [{
+					"color": "#808080"
+				}, {
+					"lightness": 54
+				}]
 			}, {
 				"featureType": "landscape.man_made",
 				"elementType": "geometry.fill",
-				"stylers": [{"color": "#ece2d9"}]
+				"stylers": [{
+					"color": "#ece2d9"
+				}]
 			}, {
 				"featureType": "poi.park",
 				"elementType": "geometry.fill",
-				"stylers": [{"color": "#ccdca1"}]
+				"stylers": [{
+					"color": "#ccdca1"
+				}]
 			}, {
 				"featureType": "road",
 				"elementType": "labels.text.fill",
-				"stylers": [{"color": "#767676"}]
+				"stylers": [{
+					"color": "#767676"
+				}]
 			}, {
 				"featureType": "road",
 				"elementType": "labels.text.stroke",
-				"stylers": [{"color": "#ffffff"}]
-			}, {"featureType": "poi", "stylers": [{"visibility": "off"}]}, {
+				"stylers": [{
+					"color": "#ffffff"
+				}]
+			}, {
+				"featureType": "poi",
+				"stylers": [{
+					"visibility": "off"
+				}]
+			}, {
 				"featureType": "landscape.natural",
 				"elementType": "geometry.fill",
-				"stylers": [{"visibility": "on"}, {"color": "#b8cb93"}]
-			}, {"featureType": "poi.park", "stylers": [{"visibility": "on"}]}, {
+				"stylers": [{
+					"visibility": "on"
+				}, {
+					"color": "#b8cb93"
+				}]
+			}, {
+				"featureType": "poi.park",
+				"stylers": [{
+					"visibility": "on"
+				}]
+			}, {
 				"featureType": "poi.sports_complex",
-				"stylers": [{"visibility": "on"}]
-			}, {"featureType": "poi.medical", "stylers": [{"visibility": "on"}]}, {
+				"stylers": [{
+					"visibility": "on"
+				}]
+			}, {
+				"featureType": "poi.medical",
+				"stylers": [{
+					"visibility": "on"
+				}]
+			}, {
 				"featureType": "poi.business",
-				"stylers": [{"visibility": "simplified"}]
+				"stylers": [{
+					"visibility": "simplified"
+				}]
 			}]
 
 		}
@@ -173,23 +227,23 @@ var app = {
 		marker.setMap(map);
 	},
 
-	showToast: function(msg, timer, color){
+	showToast: function (msg, timer, color) {
 		timer = timer || 1500;
 		var that = this;
-		
-		if(that.$toastInstance){
+
+		if (that.$toastInstance) {
 			clearTimeout(that.$toastInstance);
 			that.$toastContainer.find(".showToastCon").html(msg);
-			that.$toastInstance = setTimeout(function(){
+			that.$toastInstance = setTimeout(function () {
 				that.$toastContainer.remove();
-				that.$toastInstance=false;
+				that.$toastInstance = false;
 			}, timer);
-		}else{
-			that.$toastContainer=$('<div class="showToast"><div class="showToastInner"><div class="showToastTips fieldTipBounceIn"><div class="showToastCon">'+msg+'</div></div></div></div>');
+		} else {
+			that.$toastContainer = $('<div class="showToast"><div class="showToastInner"><div class="showToastTips fieldTipBounceIn"><div class="showToastCon">' + msg + '</div></div></div></div>');
 			that.$toastContainer.appendTo($("body"));
-			that.$toastInstance = setTimeout(function(){
+			that.$toastInstance = setTimeout(function () {
 				that.$toastContainer.remove();
-				that.$toastInstance=false;
+				that.$toastInstance = false;
 			}, timer);
 		}
 
@@ -197,28 +251,28 @@ var app = {
 	},
 
 	showLoading: function (msg, timeout) {
-        app.hideModal();
+		app.hideModal();
 
-        var x, modal = $($('#loading-template').html());
+		var x, modal = $($('#loading-template').html());
 		$(document.body).append(modal);
 
 		modal.on('hidden.bs.modal', function () {
 			modal.siblings(".modal-backdrop.in").hide();
 			modal.remove();
-			if(x) clearTimeout(x);
+			if (x) clearTimeout(x);
 		});
 
 		modal.find(".loading-msg").html(msg);
 
 		function setModalMaxHeight(element) {
-			this.$element     = $(element);
-			this.$content     = this.$element.find('.modal-content');
-			var borderWidth   = this.$content.outerHeight() - this.$content.innerHeight();
-			var dialogMargin  = $(window).width() < 768 ? 20 : 60;
+			this.$element = $(element);
+			this.$content = this.$element.find('.modal-content');
+			var borderWidth = this.$content.outerHeight() - this.$content.innerHeight();
+			var dialogMargin = $(window).width() < 768 ? 20 : 60;
 			var contentHeight = $(window).height() - (dialogMargin + borderWidth);
-			var headerHeight  = this.$element.find('.modal-header').outerHeight() || 0;
-			var footerHeight  = this.$element.find('.modal-footer').outerHeight() || 0;
-			var maxHeight     = contentHeight - (headerHeight + footerHeight);
+			var headerHeight = this.$element.find('.modal-header').outerHeight() || 0;
+			var footerHeight = this.$element.find('.modal-footer').outerHeight() || 0;
+			var maxHeight = contentHeight - (headerHeight + footerHeight);
 
 			this.$content.css({
 				'overflow': 'hidden'
@@ -226,17 +280,17 @@ var app = {
 
 			this.$element
 				.find('.modal-body').css({
-				'max-height': maxHeight,
-				'overflow-y': 'auto'
-			});
+					'max-height': maxHeight,
+					'overflow-y': 'auto'
+				});
 		}
 
-		modal.on('show.bs.modal', function() {
+		modal.on('show.bs.modal', function () {
 			$(this).show();
 			setModalMaxHeight(this);
 		});
 
-		$(window).resize(function() {
+		$(window).resize(function () {
 			if ($('.modal.in').length !== 0) {
 				setModalMaxHeight($('.modal.in'));
 			}
@@ -255,14 +309,14 @@ var app = {
 		return modal;
 	},
 
-    hideModal: function(){
-        $(".modal:visible").modal("hide");
+	hideModal: function () {
+		$(".modal:visible").modal("hide");
 	},
-	
-	showModal: function (option) {
-        app.hideModal();
 
-        option = option || {};
+	showModal: function (option) {
+		app.hideModal();
+
+		option = option || {};
 		var title = option.title || "Dial a Drink";
 		var msg = option.msg || option.message;
 
@@ -274,14 +328,14 @@ var app = {
 			modal.find(".btn-primary").on("click", function () {
 				option.ok.apply(this, arguments);
 			});
-		else if(option.ok == false)
+		else if (option.ok == false)
 			modal.find(".btn-primary").hide();
 
 		if (typeof option.close === "function")
 			modal.find(".btn-secondary, .close").on("click", function () {
 				option.close.apply(this, arguments);
 			});
-		else if(option.ok == false)
+		else if (option.ok == false)
 			modal.find(".btn-secondary, .close").hide();
 
 		modal.on('hidden.bs.modal', function () {
@@ -292,7 +346,7 @@ var app = {
 
 		modal.find(".modal-body").html(msg);
 
-		if(option.css)
+		if (option.css)
 			modal.css(option.css);
 
 		modal.modal({
@@ -319,4 +373,3 @@ var app = {
 			});
 	}
 };
-

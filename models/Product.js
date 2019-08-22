@@ -3,13 +3,17 @@ var extractor = require("keyword-extractor");
 var Types = keystone.Field.Types;
 
 var Product = new keystone.List('Product', {
-    map: {name: 'name'}
+    map: {
+        name: 'name'
+    }
 });
 
 
 Product.add({
     href: {type: String, initial: true, required: true},
     name: {type: String, initial: true},
+
+    alcoholContent: {type: Number, initial: true},
 
     priceOptions: {
         type: Types.Relationship,
@@ -68,7 +72,7 @@ Product.schema.virtual("keyWords").get(function () {
 
     var keyWords = extractor.extract(sentence, {
         language: "english",
-        remove_digits: false,
+        remove_digits: true,
         return_changed_case: false,
         remove_duplicates: true
     });
@@ -146,30 +150,39 @@ Product.schema.virtual('percentOffer').get(function () {
 
 Product.schema.virtual('priceValidUntil').get(function () {
     var today = new Date();
-    var firstStr = "{0}-{1}-{2}".format(today.getUTCFullYear(), (today.getUTCMonth() + 1).pad(2), "01");
-    var priveExpiry = new Date(firstStr);
-    return priveExpiry.addMonths(1).addSeconds(-1).toISOString();
+    var firstStr = today.toISOString().substr(0, 8) + "01";
+    var lastExpiry = new Date(firstStr);
+    return lastExpiry.addMonths(1).addSeconds(-1).toISOString();
 });
 
-Product.schema.virtual('popularityRatio').get(function(){
-    var max = 1.0, min = 0.75;
+Product.schema.virtual('popularityRatio').get(function () {
+    var max = 1.0,
+        min = 0.75;
     var ratio = this.hitsPerWeek / topHitsPerWeek;
 
-    return parseFloat((min + (max - min) * ratio).toFixed(5));
+    if (ratio)
+        return parseFloat((min + (max - min) * ratio).toFixed(5));
+
+    return min;
 });
-    
-Product.schema.virtual('hitsPerWeek').get(function(){
-    var weeks = (new Date().getTime() - this.modifiedDate.getTime())/604800000.0;
-    
-    if(weeks <= 1)
+
+Product.schema.virtual('hitsPerWeek').get(function () {
+    var weeks = (new Date().getTime() - this.modifiedDate.getTime()) / 604800000.0;
+
+    if (weeks <= 1)
         return topHitsPerWeek;
 
-    weeks = (new Date().getTime() - this.publishedDate.getTime())/604800000.0;
+    weeks = (new Date().getTime() - this.publishedDate.getTime()) / 604800000.0;
     return this.popularity / weeks;
 });
 
 Product.schema.methods.findSimilar = function (callback) {
-    var filter = {_id: {"$ne": this._id}, "$or": []};
+    var filter = {
+        _id: {
+            "$ne": this._id
+        },
+        "$or": []
+    };
 
     if (this.brand)
         filter.$or.push({
@@ -199,6 +212,13 @@ Product.schema.pre('save', function (next) {
     var cheapestOption = this.cheapestOption || this.priceOptions.first();
     this.modifiedDate = new Date();
 
+    if (this.alcoholContent) {
+        if (this.alcoholContent > 100)
+            this.alcoholContent = 100;
+        else if (this.alcoholContent < 0)
+            this.alcoholContent = 0;
+    }
+
     if (cheapestOption) {
         this.price = cheapestOption.price;
         this.offerPrice = cheapestOption.offerPrice;
@@ -222,10 +242,10 @@ Product.schema.pre('save', function (next) {
             tags.push(this.subCategory.name);
         if (this.options)
             this.options.forEach(po => tags.push(po.quantity));
-        return tags.filter(t=>!!t)
+        return tags.filter(t => !!t)
     }
 
-    if(!this.tags || !this.tags.length)
+    if (!this.tags || !this.tags.length)
         this.tags = defaultTags.call(this);
 
     next();
@@ -237,7 +257,7 @@ Product.schema.set('toObject', {
             'href', 'name', 'priceOptions', 'onOffer', 'inStock',
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
-            'subCategory', 'brand', 'ratings', 'options', 'cheapestOption',
+            'subCategory', 'brand', 'ratings', 'popularityRatio', 'options', 'cheapestOption',
             'averageRatings', 'ratingCount', 'tags',
             'quantity', 'currency', 'price', 'offerPrice',
             'priceValidUntil', 'percentOffer'
@@ -363,7 +383,7 @@ Product.findByOption = function (filter, callback) {
                         }
                     };
                     Product.findPublished(filter, callback);
-                })
+                });
 
         });
 };
@@ -377,21 +397,22 @@ Product.search = function (query, next) {
 
     // Set locals
     var filters = {
-        "$or": [{ 
-                tags: keyRegex
-            },
-            {
-                tags: nameRegex
-            },
-            {
+        "$or": [{
                 key: keyRegex
+            },
+            {
+                href: keyRegex
             },
             {
                 href: nameRegex
             },
             {
-                href: keyRegex
+                tags: keyRegex
             },
+            {
+                tags: nameRegex
+            },
+
             {
                 name: nameRegex
             },
@@ -417,33 +438,118 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    Product.findByBrand(filters, function (err, products) {
+    Product.findPublished({
+        href: new RegExp(keyStr + "$", "i")
+    }, function (err, products) {
         if (err || !products || !products.length)
-            Product.findByOption(filters, function (err, products) {
+            Product.findByBrand(filters, function (err, products) {
                 if (err || !products || !products.length)
-                    Product.findByCategory(filters, function (err, products) {
+                    Product.findByOption(filters, function (err, products) {
                         if (err || !products || !products.length)
-                            Product.findBySubCategory(filters, function (err, products) {
+                            Product.findByCategory(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                    Product.findPublished(filters, function (err, products) {
-                                        next(err, products.orderByDescending(p=>p.hitsPerWeek));
+                                    Product.findBySubCategory(filters, function (err, products) {
+                                        if (err || !products || !products.length)
+                                            Product.findPublished(filters, function (err, products) {
+                                                next(err, products.orderByDescending(p => p.hitsPerWeek));
+                                            });
+                                        else
+                                            next(err, products.orderByDescending(p => p.hitsPerWeek));
                                     });
                                 else
-                                    next(err, products.orderByDescending(p=>p.hitsPerWeek));
+                                    next(err, products.orderByDescending(p => p.hitsPerWeek));
                             });
                         else
-                            next(err, products.orderByDescending(p=>p.hitsPerWeek));
+                            next(err, products.orderByDescending(p => p.hitsPerWeek));
                     });
                 else
-                    next(err, products.orderByDescending(p=>p.hitsPerWeek));
+                    next(err, products.orderByDescending(p => p.hitsPerWeek));
             });
         else
-            next(err, products.orderByDescending(p=>p.hitsPerWeek));
+            next(err, products.orderByDescending(p => p.hitsPerWeek));
     });
+};
+
+Product.getUIFilters = function (products) {
+    var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
+    var subCategoryGroups = Object.values(products.filter(p => p.subCategory)
+        .groupBy(p => p.subCategory._id));
+    var tagsGroups = Object.values(products.filter(p => p.tags.length)
+        .selectMany(p => p.tags.map(t => {
+            return {
+                t: t,
+                p: p
+            }
+        }))
+        .groupBy(t => t.t));
+
+    var brandGroups = Object.values(products.filter(p => p.brand)
+        .groupBy(p => p.brand._id));
+
+    var l = 0,
+        i = 0;
+    var regexStr = "Whiskies|Whiskey";
+
+    categories.forEach(c => c && c.name ? regexStr += "|" + c.name + "(es|s|ry)|" + c.name : null);
+
+    var regex = new RegExp(regexStr, "i");
+    var uifilters = [];
+
+    uifilters = uifilters.concat(tagsGroups.map(g => {
+        return {
+            filter: g[0].t.replace(regex, "").trim(),
+            hits: g.length,
+            g: g
+        };
+    }));
+
+    if (categories.length > 3) {
+        var categoryGroups = Object.values(products.filter(p => p.category).groupBy(p => p.category._id));
+        uifilters = uifilters.concat(categoryGroups.map(g => {
+            return {
+                filter: g[0].category.name.trim(),
+                hits: g.length,
+                g: g
+            };
+        }));
+    }
+
+    if(subCategoryGroups.length > 3)
+        uifilters = uifilters.concat(subCategoryGroups.map(g => {
+            return {
+                filter: g[0].subCategory.name.replace(regex, "").trim(),
+                hits: g.length,
+                g: g
+            };
+        }));
+
+    if(brandGroups.length > 2)
+        uifilters = uifilters.concat(brandGroups.map(g => {
+            return {
+                filter: g[0].brand.name.replace(regex, "").trim(),
+                hits: g.length,
+                g: g
+            };
+        }));
+
+    var strUIfilters = uifilters
+        .filter(f => f.hits > 1 && f.filter && !/^\d/.test(f.filter))
+        .orderBy(f => -f.hits)
+        .distinctBy(f => f.filter.trim())
+        .distinctBy(f => f.g.map(p => p.id).orderBy(i => i).join("|"));
+
+    strUIfilters.forEach(s => {
+        if (l <= 70) {
+            i += 1;
+            l += (s.filter || s).length;
+        }
+    });
+
+    return strUIfilters.slice(0, i);
 };
 
 var topHitsPerWeek = 100;
 Product.model.find()
     .exec(function (err, data) {
-        topHitsPerWeek = data.max(p=>p.hitsPerWeek);
+        topHitsPerWeek = data.max(p => p.hitsPerWeek);
     });

@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <products>
 	{{#each products}}
-		<product>
-			<name>{{name}}</name>
-			<image>{{image.secure_url}}</image>
-			<price>{{currency}} {{price}}</price>
-			<quantity>{{quantity}}</quantity>
-			<category>{{category.name}}</category>
-			<subcategory>{{subCategory.name}}</subcategory>
-			<description>{{desc}}</description>
-			<url>https://www.dialadrinkkenya.com/{{href}}</url>
-			<options>
-				{{#each options}}
-					<option>
-						<name>{{quantity}}</name>
-						<price>{{curency}} {{price}}</price>
-					</option>
-				{{/each}}
-			</options>
-		</product>
+		{{#if price}}
+			<product>
+				<name>{{name}}</name>
+				<image>{{image.secure_url}}</image>
+				<price>{{currency}} {{price}}</price>
+				<quantity>{{quantity}}</quantity>
+				<category>{{category.name}}</category>
+				<subcategory>{{subCategory.name}}</subcategory>
+				<description>{{desc}}</description>
+				<url>https://www.dialadrinkkenya.com/{{href}}</url>
+				<options>
+					{{#each options}}
+						<option>
+							<name>{{quantity}}</name>
+							<price>{{curency}} {{price}}</price>
+						</option>
+					{{/each}}
+				</options>
+			</product>
+		{{/if}}
 	{{/each}}
 </products>

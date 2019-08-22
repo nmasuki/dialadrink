@@ -26,7 +26,7 @@ module.exports = function (grunt) {
             },
             dist: {
                 src: [
-                    'https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js',
+                    'public/js/isotope.pkgd.min.js',
                     'public/js/jquery/imagesloaded.pkgd.min.js',
                     'public/js/jquery/jquery.flexslider.min.js',
                     'public/js/jquery/jquery.zoom.min.js',

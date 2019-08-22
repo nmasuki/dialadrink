@@ -21,6 +21,7 @@ router.get('/', function (req, res) {
 		label: "Checkout"
 	});
 
+	locals.enableMPesa = process.env.MPESA_ENABLED;
 	locals.enablePaypal = process.env.PESAPAL_ENABLED;
 	return view.render('checkout');
 });
@@ -55,7 +56,7 @@ router.post("/", function (req, res, next) {
 			cart: cart.map(item => {
 				//console.log(item)
 				var cartItem = new(keystone.list("CartItem")).model({});
-				
+
 				cartItem.date = item.date;
 				cartItem.state = item.state;
 				cartItem.pieces = item.pieces;
@@ -71,9 +72,9 @@ router.post("/", function (req, res, next) {
 				amount: subtotal - discount
 			},
 			promo: req.session.promo,
+			clientIp: req.locals && req.locals.clientIp,
 			delivery: Object.assign({
-				userId: req.session.userId,
-				clientIp: req.locals && req.locals.clientIp
+				userId: req.session.userId
 			}, req.body)
 		});
 
@@ -81,41 +82,49 @@ router.post("/", function (req, res, next) {
 			if (err)
 				return next(err);
 
-			var placeOrder = function(){
+			var placeOrder = function () {
 				order.placeOrder((err) => {
 					if (err)
 						console.warn(err);
-	
+
 					var json = {
 						state: !!err,
 						msg: err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
 					};
-	
+
 					if (!err) {
 						if (order.payment.method == "PesaPal") {
 							json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
 							json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+						} else if (order.payment.method == "Mpesa") {
+							json.msg = "Processing payment. Please check your mobile handsets to complete the transaction.";
+							var mpesa = require('../../helpers/mpesa');
+							mpesa.onlineCheckout(order.delivery.phoneNumber, order.payment.amount, order.orderNumber);
+						} else if (order.payment.method == "Mpesa2") {
+							json.msg = "Processing payment. Please check your mobile handsets to complete the transaction.";
+							require('../helpers/AfricasTalking').Instance
+								.processPayment(order.delivery.phoneNumber, order.orderNumber, order.orderNumber, order.payment.amount, 'KES');
 						}
-	
+
 						delete req.session.promo;
 						delete req.session.cart;
-	
+
 						req.session.save();
 					}
-	
+
 					return res.send(json);
 				});
 			};
 
 			if (order.payment.method == "PesaPal") {
 				var paymentUrl = `https://www.dialadrinkkenya.com/payment/${order.orderNumber}`;
-				pesapalHelper.shoternUrl(paymentUrl, function(err, shortUrl){
+				pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
 					order.payment.url = paymentUrl;
-					if(!err)
+					if (!err)
 						order.payment.shortUrl = shortUrl;
 					order.save(placeOrder);
 				});
-			}else{
+			} else {
 				placeOrder();
 			}
 
@@ -145,8 +154,9 @@ router.get('/validatepromo/:promocode', function (req, res) {
 				res.send({
 					state: promo.status == "running",
 					promo: promo.status == "running" ? (req.session.promo = promo) : null,
-					msg: promo.status == "running" ?
-						`Promo code '${promo.name || promo.code}' applied successfully!` : `The promo code you entered is '${promo.status.toProperCase()}'!`
+					msg: promo.status == "running" 
+						?`Promo code '${promo.name || promo.code}' applied successfully!` 
+						: `The promo code you have entered is '${promo.status.toProperCase()}'!`
 				});
 			} else {
 				res.send({

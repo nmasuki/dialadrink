@@ -23,6 +23,8 @@ router.get("/:brand", function (req, res, next) {
             {
                 title += locals.brand.name;
                 locals.page.meta = locals.brand.description || locals.brand.company.description || title;
+                if(locals.brand.pageTitle)
+                    locals.page.title = locals.brand.pageTitle;
             }
 
             var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);

@@ -95,13 +95,13 @@
                         <span itepprop="priceCurrency">{{currency}}</span>
                         {{#ifgt price offerPrice}}
                             <span>
-                                    <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                        <span>{{formatNumber price}}</span>
-                                    </span>
-                                    <span itemprop="price" class="product-price" id="product-price">
-                                        {{formatNumber offerPrice}}
-                                    </span>
+                                <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                    <span>{{formatNumber price}}</span>
                                 </span>
+                                <span itemprop="price" class="product-price" id="product-price">
+                                    {{formatNumber offerPrice}}
+                                </span>
+                            </span>
                         {{else}}
                             <span  itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
                         {{/ifgt}}
@@ -125,16 +125,16 @@
 
             <div class="row add-to-cart-wrapper">
                 <div class="col-md-5 product-qty">
-						<span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 46px;">
-						  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-						</span>
-                    <input id="pieces" class="pieces btn btn-default btn-lg btn-qty" style="width: 48px" value="1"/>
+                    <span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 46px;color: black !important;">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </span>
+                    <input id="pieces" class="pieces btn btn-default btn-lg btn-qty" style="width: 48px;color: black !important;" value="1"/>
                     <span id="pieces-minus" class="pieces-minus btn btn-default btn-lg btn-qty"
-                          style="width: 46px;">
-							<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-						</span>
+                        style="width: 46px;color: black !important;">
+                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                    </span>
                 </div>
-                <div class="col-md-5" style="margin-top: 5px">
+                <div class="col-md-5" style="margin-top: 5px"> 
                     <button data-qty="{{quantity}}" data-product="{{_id}}"
                             class="btn btn-lg btn-brand btn-full-width add-to-cart">
                         Add to Cart

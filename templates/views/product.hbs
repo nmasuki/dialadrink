@@ -35,20 +35,10 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <h1 style="margin: 0" itemprop="name">{{{name}}}</h1>
+                        <h1 style="margin: 0; color: black !important;" itemprop="name">{{{name}}}</h1>
                     </div>
                 </div><!-- end row-->
 
-                {{#if brand.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            <p class="description">
-                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
-                            </p>
-                        </div>
-                    </div><!-- end row -->
-                {{/if}}
-                
                 <div class="row">
                     <div class="col-md-5 bottom-rule">
                         <h2 style="margin-top:5px" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
@@ -85,6 +75,25 @@
                         </div>
                     {{/ifgt}}
                 </div>
+
+                {{#if alcoholContent}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            Alcohol content <span class="monospaced label label-info">{{alcoholContent}}%</span>
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if brand.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                            <p class="description">
+                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
+                            </p>
+                        </div>
+                    </div><!-- end row -->
+                {{/if}}
+                
                 <div class="row">
                     <div class="col-md-4 text-left">
                         {{#if inStock}}
@@ -97,12 +106,12 @@
 
                 <div class="row add-to-cart-wrapper">
                     <div class="col-md-5 product-qty">
-						<span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 46px;">
+						<span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 46px;color: black !important;">
 						  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 						</span>
-                        <input id="pieces" class="pieces btn btn-default btn-lg btn-qty" style="width: 48px" value="1"/>
+                        <input id="pieces" class="pieces btn btn-default btn-lg btn-qty" style="width: 48px;color: black !important;" value="1"/>
                         <span id="pieces-minus" class="pieces-minus btn btn-default btn-lg btn-qty"
-                              style="width: 46px;">
+                              style="width: 46px;color: black !important;">
 							<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
 						</span>
                     </div>
@@ -301,8 +310,7 @@
     "bestRating": "5",
     "ratingValue": "{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}",
     "ratingCount": "{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}"
-  },
-  {{#if price}}
+  }{{#if price}},
   "offers": {
     "@type": "Offer",
     "priceCurrency": "{{currency}}",

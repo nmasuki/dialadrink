@@ -1,11 +1,7 @@
 var keystone = require('keystone');
-var Payment = keystone.list("Payment");
 var Order = keystone.list("Order");
-var PesaPal = require('pesapaljs').init({
-	key: process.env.PESAPAL_KEY,
-	secret: process.env.PESAPAL_SECRET,
-	debug: false, //process.env.NODE_ENV != "production" // false in production!
-});
+var Payment = keystone.list("Payment");
+var AfricasTalking = require('../../helpers/AfricasTalking').Instance;
 
 var PesaPalStatusMap = {
 	"COMPLETED": "Paid",
@@ -15,33 +11,58 @@ var PesaPalStatusMap = {
 };
 var router = keystone.express.Router();
 
-router.post("/ipn", function (req, res) {
-	console.log("Recieved PesaPal IPN!");
+router.post("/incomingsmsnotification", function(req, res){
+	var data = Object.assign({}, req.body || {}, req.query || {});
+	console.log("Received %s", req.url, data);	
+	res.status(200);
+});
+
+router.post("/optoutsmsnotification", function(req, res){
+	var data = Object.assign({}, req.body || {}, req.query || {});
+	console.log("Received %s", req.url, data);	
+	res.status(200);
+});
+
+
+router.post("/paymentvalidation", function(req, res){
+	var payment = Payment.model({});
+	
+	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
+	payment.save();
+	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
+		.deepPopulate('cart.product.priceOptions.option')
+		.exec((err, order) => {
+			if (!order) {
+				console.log("Error while reading Order id:", payment.metadata.orderNumber);
+				return res.status(400);
+			}
+
+			res.status(200);
+		});
+
+	res.status(200);
+})
+
+router.post("/paymentnotification", function (req, res) {
 	var payment = Payment.model({});
 	
 	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
 	payment.save();
 
-	Order.model.findOne({
-			orderNumber: payment.referenceId
-		})
+	console.log("Recieved AfricasTalking IPN!", payment.metadata);
+	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
 		.deepPopulate('cart.product.priceOptions.option')
 		.exec((err, order) => {
-			if (err || !order) {
-				console.log("Error while reading Order id: %s", payment.referenceId, err);
-				return res.status(404).render('errors/404');
+			if (!order) {
+				console.log("Error while reading Order id:", payment.metadata.orderNumber);
+				return res.status(200);
 			}
 
-			var options = {
-				reference: payment.referenceId,
-				transaction: payment.transactionId
-			};
+			console.log("Reading AfricasTalking transaction id:" + payment.transactionId + ", ref:" + payment.referenceId)
+			AfricasTalking.getPaymentDetails(payment.transactionId).then(function (response) {
+					var data = response.data;
+					res.status(data? 200: 400);
 
-			console.log("Reading PesaPal transaction id:" + payment.transactionId + ", ref:" + payment.referenceId)
-			PesaPal.getPaymentDetails(options).then(function (data) {
-					//data -> {transaction, method, status, reference}
-					//console.log(data);
-					
 					if (data) {
 						if (data.reference)
 							order.payment.referenceId = data.reference;
@@ -50,7 +71,7 @@ router.post("/ipn", function (req, res) {
 						if (notificationType)
 							order.payment.notificationType = payment.notificationType;
 
-						order.payment.method = (payment.method.split("_").first() || "");
+						order.payment.method = (data.method.split("_").first() || "");
 						order.payment.state = PesaPalStatusMap[data.status] || "unexpected_" + data.status;
 						order.state = order.payment.state.toLowerCase();
 
@@ -61,14 +82,11 @@ router.post("/ipn", function (req, res) {
 					}
 				})
 				.catch(function (error) {
-					/* do stuff*/
+					res.status(400);
 					console.warn(error);
 				});
 		});
 
-	res.send(`pesapal_notification_type=${notificationType}` +
-		`&pesapal_transaction_tracking_id=${transactionId}` +
-		`&pesapal_merchant_reference=${referenceId}`);
 });
 
 router.get("/:orderNo", function (req, res) {

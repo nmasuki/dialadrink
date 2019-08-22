@@ -343,7 +343,7 @@ if (!String.prototype.cleanId)
     };
 
 if (!String.prototype.sanitizePhoneNumber)
-    String.prototype.cleanPhoneNumber = function sanitizePhoneNumber(countryCode) {
+    String.prototype.cleanPhoneNumber = String.prototype.sanitizePhoneNumber = function sanitizePhoneNumber(countryCode) {
         var phone = (this || "").replace(/[\W]+/g, "");
         countryCode = countryCode || "254";
 
@@ -356,27 +356,43 @@ if (!String.prototype.sanitizePhoneNumber)
         if (phone.length < 11)
             phone = phone.replace(/^0/, countryCode);
 
-        if (countryCode == "254")
-            phone = phone.replace(/^7/, "2547");
+        if (/^7/.test(phone))
+            phone = phone.replace(/^7/, countryCode + "7");
 
         return phone;
     };
 
-String.prototype.truncate = function (length, ending) {
-    length = length || 100;
-    ending = ending || '...';
-    var str = (this || ""),
-        index = length - ending.length;
+if (!String.prototype.truncate)
+    String.prototype.truncate = function (length, ending) {
+        length = length || 100;
+        ending = ending || '...';
+        var str = (this || ""),
+            index = length - ending.length;
 
-    while (index > 0 && str[index] && /\w/.test(str[index]))
-        index--;
+        while (index > 0 && str[index] && /\w/.test(str[index]))
+            index--;
 
-    if (this.length > length) {
-        return (str.substring(0, index).trim().trim('.') + ending).trim();
-    } else {
-        return (str || "").trim();
-    }
-};
+        if (this.length > length) {
+            return (str.substring(0, index).trim().trim('.') + ending).trim();
+        } else {
+            return (str || "").trim();
+        }
+    };
+
+if (!String.prototype.encryptPassword)
+    String.prototype.encryptPassword = function (salt) {
+        bcrypt = require('bcrypt');
+
+        salt = salt || bcrypt.genSaltSync();
+        encryptedPassword = bcrypt.hashSync(this, salt);
+        return {salt, encryptedPassword};
+    };
+
+if (!String.prototype.comparePassword)
+    String.prototype.comparePassword = function (encryptedPassword, salt) {
+        var {encrypted2} = password.encryptPassword(this, salt);
+        return encryptedPassword == encrypted2;
+    };
 
 if (!Array.prototype.clone)
     Array.prototype.clone = function () {
@@ -434,6 +450,14 @@ if (!Array.prototype.sum)
     };
 
 //
+if (!Array.prototype.selectMany)
+    Array.prototype.selectMany = function (selector) {
+        return this.aggregate([], (a, b) => a.concat(b), selector || function (a) {
+            return a
+        });
+    };
+
+//
 if (!Array.prototype.avg)
     Array.prototype.avg = function (selector) {
         return this.sum(selector) / this.length;
@@ -452,14 +476,14 @@ if (!Array.prototype.splitChunks)
 
         if (typeof option == "number") {
             chunkSize = option;
-            chunkCount = parseInt(arr.length / chunkSize) + 1;
+            chunkCount = parseInt(arr.length / chunkSize);
         } else {
             option = option || {
                 chunkCount: 10
             };
             if (option.chunkSize) {
                 chunkSize = option.chunkSize;
-                chunkCount = parseInt(arr.length / chunkSize) + 1;
+                chunkCount = parseInt(arr.length / chunkSize);
             } else if (option.chunkCount) {
                 chunkCount = option.chunkCount || 10;
             }

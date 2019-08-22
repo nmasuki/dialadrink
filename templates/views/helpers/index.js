@@ -242,6 +242,17 @@ module.exports = function () {
         return accum;
     };
 
+    _helpers.foreachkey = function (obj, block) {
+        if(!obj || !Object.keys(obj).length)
+            return block.inverse(this);
+        
+        var accum = "";
+        for(var i in Object.keys(obj)){
+            accum += block.fn(this, i);
+        }
+        return accum;
+    };
+
     _helpers.json = function(obj){
         try{
             return JSON.stringify(obj);

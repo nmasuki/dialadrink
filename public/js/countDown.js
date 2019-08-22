@@ -26,14 +26,16 @@ $.fn.startCountDown = function(countDownDate){
 		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
 		var time = "";
-		if (days > 0) time += days + "d ";
+		if (days > 0) 
+			time += days + "d ";
+		
 		time += hours.toString().padStart(2, "0") + ":" +
 			minutes.toString().padStart(2, "0") + ":" +
 			seconds.toString().padStart(2, "0");
 
 		// If the count down is finished, write some text
 		if (distance < 0) {
-			clearInterval(x);
+			clearInterval(interval);
 
 			that.parent().hide();
 			that.addClass("countDownTimer").html("");
@@ -48,6 +50,7 @@ $.fn.startCountDown = function(countDownDate){
 
 $.fn.stopCountDown = function(){
 	var interval = $(this).data("interval");
-	clearInterval(interval);
+	if(interval)
+		clearInterval(interval);
 }
 

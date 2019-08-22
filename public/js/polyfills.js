@@ -504,10 +504,10 @@ if (!Array.prototype.orderByDescending)
 	};
 
 if (!Array.prototype.max)
-	Array.prototype.max = function (clause) {
-		var ordered = this.orderBy(clause);
-		return ordered.last();
-	};
+    Array.prototype.max = function (clause) {
+        var ordered = this.orderBy(clause);
+        return ordered.map(clause).last();
+    };
 
 if (!Array.prototype.flatten)
 	Array.prototype.flatten = function (map) {

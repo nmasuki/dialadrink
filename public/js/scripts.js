@@ -146,6 +146,12 @@ function handleDropdown() {
                 $(this).find('.dropdown-menu').hide();
             }
         });
+
+        $('.dropdown-toggle').parent().click(function(e){
+            if (touch == false) {
+                $(this).find('.dropdown-menu').stop(true, true).slideDown(300);
+            }
+        })
     }
 
     $('nav .dropdown-menu').each(function () {
@@ -578,56 +584,136 @@ function onTouchStart(e) {
 }
 
 function handleProductSorting() {
-    function getSortFn(property) {
+
+    function getSortFn(property, expectedValue) {
+        function getSize(qty){
+            if(!qty) return 0;
+            qty = qty.toLowerCase();
+            var value = qty.replace(/([^\d.]+)/, "").trim() || 0;
+            var measure = qty.replace(/([\d.]+)/, "").trim() || "ml";
+
+            if(qty.indexOf(".") >= 0)
+                console.log(qty, value, measure);
+
+            if(measure.startsWith("l"))
+                return parseFloat(value) * 1000;
+
+            return parseFloat(value);
+        }
+
         return function (elem) {
-            var json = $(elem).find('script.json').text(),
+            var json = $(elem || this).find('script.json').text() || "{}",
                 data = JSON.parse(json) || {};
+
+            if (expectedValue) {
+                var regex = new RegExp(expectedValue, "i");
+                var fValue = data[property] && (data[property].name || data[property] || "");
+
+                if($.isArray(fValue))
+                    fValue = fValue.join(",");
+
+                return fValue && regex.test(fValue);
+            }
+
+            if (property == 'price' && data.offerPrice)
+                return data.offerPrice;
+            if(property == 'popularity')
+                return -data[property];
+            if(property == 'size'){
+                if(data.options && data.options.length)
+                    return data.options.max(function(o){ return getSize(o.quantity);});
+                return 0;
+            }
+            if(property == 'tags')
+                return (data[property] || []).sort()[0];
+                            
             return data[property];
         };
     }
 
-    if ($.fn.isotope){
-        var $grid = $('.products-grid').isotope({
+    var $grid = $('.products-grid');
+
+    if ($grid.isotope) {
+        $grid.isotope({
             getSortData: {
                 name: getSortFn('name'),
                 popularity: getSortFn('popularity'),
                 price: getSortFn('price'),
-                size: getSortFn('popularity'),
+                size: getSortFn('size'),
             }
         });
 
-        $(document).on('click', '[data-sortby]', function(e){
+        $(".filter").click(function (e) {
+            if ($(this).hasClass("active")) {
+                $(this).removeClass("active");
+                $grid.isotope({filter: "*"});//Remove filter.
+            } else {
+                var filterBy = ["category", "subCategory", "brand", "tags"];
+                var filterByVal = $(this).data("filterby");
+
+                if (filterBy) {
+                    $(this).siblings(".active").removeClass("active");
+                    $(this).addClass("active");
+
+                    $grid.isotope({
+                        filter: function (elem) {
+                            elem = elem || this;
+                            return filterBy.any(function (f) {
+                                return getSortFn(f, filterByVal)(elem);
+                            });
+                        }
+                    });
+                }
+            }
+        });
+
+        $(".sort-products").click(function (e) {
             $(this).parents(".dropdown-menu").hide();
 
             var sortBy = $(this).data('sortby') || 'name';
             var sortAscending = !($grid.data('sortedBy') == sortBy && ($grid.data('sortDir') || 'asc') == 'asc');
-            var sortDir = (sortAscending? "asc": "desc");
+            var sortDir = (sortAscending ? "asc" : "desc");
 
-            $grid.isotope({ 
-                sortBy : sortBy,
+            $grid.isotope({
+                sortBy: sortBy,
                 sortAscending: sortAscending
             });
 
             $grid.data("sortedBy", sortBy);
-            $grid.data("sortDir", (sortAscending? "asc": "desc"));
-            console.log('Sorting by ' + sortBy + " " + (sortAscending? "asc": "desc"));
+            $grid.data("sortDir", (sortAscending ? "asc" : "desc"));
+            console.log('Sorting by ' + sortBy + " " + (sortAscending ? "asc" : "desc"));
 
-            function changeSortDirIcon(i, el){
+            function changeSortDirIcon(i, el) {
                 var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortDir);
-                if(cls) $(el).attr("class", cls);
+                if (cls) 
+                    $(el).attr("class", cls);
             }
 
             $(this).find('i.fa').each(changeSortDirIcon);
-            $(this).parent().siblings(".dropdown-toggle, .dropdown-toggle .fa").each(changeSortDirIcon);
+            $(".sorting, .sorting .fa").each(changeSortDirIcon);
+            $(".sorting #sortby").text("Sorted by " + $(this).text());
         });
-
-        $grid.isotope({ sortBy : 'name', sortAscending: true });
+        
+        /***/
+        $grid.data("sortDir", "asc");
+        $grid.data("sortedBy", "name");
+        $grid.isotope({
+            sortBy: 'name',
+            sortAscending: true
+        });
+        /****/
+    } else {
+        $(".filter, .sorting").hide();
+        console.log("$.fn.isotope not defined. Waiting..");
+        setTimeout(handleProductSorting, 500);
     }
 }
 
 
-$(window).ready(function ($) {
-    document.addEventListener('touchstart', onTouchStart, { passive: true });
+$(document).ready(function ($) {
+    document.addEventListener('touchstart', onTouchStart, {
+        passive: true
+    });
 
     if ($.fn.tooltip)
         $('[data-toggle="tooltip"]').tooltip();

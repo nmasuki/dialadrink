@@ -25,7 +25,7 @@ module.exports = function MoveSMS(sender) {
         });
     };
 
-    self.send = function compose(to, message, next) {
+    self.sendSMS = function compose(to, message, next) {
         var url = apiUrl.format('compose') + `&sender=${sender}`;
 
         return self.balance().then(function (balance) {
@@ -42,7 +42,7 @@ module.exports = function MoveSMS(sender) {
                         dlr: 0
                     },
                     success: function (response) {
-                        console.log("SMS notification sent!", response);
+                        console.log("SMS sent!", response);
                         var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
                         resolve(balance);
                         if (typeof next == "function")
