@@ -37,7 +37,7 @@ router.post("/signup", function (req, res) {
             } else {
                 client = client || new Client.model({});
                 client.phoneNumber = mobile;
-                client.password = password.encryptPassword();
+                client.password = password.encryptPassword().encryptedPassword;
                 client.gender = gender.toUpperCase();
 
                 client.save(function (err) {
