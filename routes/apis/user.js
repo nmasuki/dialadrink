@@ -14,10 +14,16 @@ router.post("/signup", function (req, res) {
             message: "Username and password are required!!"
         });
 
-    Client.model.find({
-            phoneNumber: mobile
-        })
+    Client.model.find({ phoneNumber: mobile })
         .exec((clients, err) => {
+            
+            if (err)
+                return res.send({
+                    response: "error",
+                    message: "Error while reading registered users. " + err
+                });
+
+
             var client = clients && clients[0];
 
             var json = {
@@ -68,7 +74,10 @@ router.post("/login", function (req, res) {
         .exec((err, clients) => {
 
             if (err)
-                throw err;
+                return res.send({
+                    response: "error",
+                    message: "Error while reading registered users. " + err
+                });
 
             var client = clients.find(c => password.comparePassword(c.password)) ||
                 clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd)
@@ -91,21 +100,24 @@ router.post("/login", function (req, res) {
 });
 
 router.post("/update", function (req, res) {
-    var mobile = (req.body.mobile || "");
-    Client.model.find({
-            phoneNumber: mobile.cleanPhoneNumber()
-        })
+    var mobile = (req.body.mobile || "").cleanPhoneNumber();
+    Client.model.find({ phoneNumber: mobile })
         .exec((clients, err) => {
+            
             if (err)
-                throw err;
+                return res.send({
+                    response: "error",
+                    message: "Error while reading registered users. " + err
+                });
+
 
             var json = {
                 response: "error",
                 data: {}
             };
 
-            if (clients.length <= 0) {
-                json.data = `No client found with number '${mobile.cleanPhoneNumber()}'`;
+            if (!clients || clients.length <= 0) {
+                json.data = `No client found with number '${mobile}'`;
                 return res.send(json);
             }
 
@@ -123,7 +135,7 @@ router.post("/update", function (req, res) {
                     } else {
                         json.response = "success";
                         json.message = "Profile updated successfully";
-                        json = Object.assign(json, client.toAppObject());
+                        json.data = client.toAppObject();
                     }
 
                     if (i == 0)
