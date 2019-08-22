@@ -24,7 +24,7 @@ Client.add({
     orderCount: {type: Number, noedit:true},
     orderValue: {type: Number, noedit:true},
 
-    fcmCode:  {type: String},
+    fcmCodes: {type: Types.TextArray, noedit:true},
 
     image: {type: Types.CloudinaryImage, folder: "clients"},
     username: {type: String},
