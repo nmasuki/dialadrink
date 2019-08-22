@@ -24,14 +24,13 @@ Client.add({
     orderCount: {type: Number, noedit:true},
     orderValue: {type: Number, noedit:true},
 
-    isRegistered: { type: Boolean, default: false},
     fcmCode:  {type: String},
 
     image: {type: Types.CloudinaryImage, folder: "clients"},
     username: {type: String},
-    password: {type: String},    
+    password: {type: String, noedit:true},    
     tempPassword: {
-        pwd: {type: String, noedit: true},
+        pwd: {type: String},
         expiryDate: {type: Types.Datetime, default: Date.now}
     },
 
