@@ -5,7 +5,7 @@
 if (!Object.values)
     Object.values = function (obj) {
         return Object.keys(obj).map(k => obj[k]);
-    }
+    };
 
 if (!Object.equals)
     Object.equals = function (x, y) {
@@ -41,7 +41,7 @@ if (!Object.equals)
             // allows x[ p ] to be set to undefined
         }
         return true;
-    }
+    };
 
 if (!Object.isEmpty)
     Object.isEmpty = function (obj) {
@@ -51,12 +51,10 @@ if (!Object.isEmpty)
             Object.prototype.toString.call(obj) === '[object Object]';
 
         if (isObj) {
-            for (var o in obj) {
-                if (obj.hasOwnProperty(o)) {
-                    return false;
-                    break;
-                }
-            }
+            for (var o in obj) 
+                if (obj.hasOwnProperty(o)) 
+                    return false;                
+            
             return true;
         } else {
             console.warn("isEmpty function only accept an Object");
@@ -66,9 +64,9 @@ if (!Object.isEmpty)
 if (!Object.diff)
     Object.diff = function (obj1, obj2) {
         if (obj2 && !obj1)
-            return Object.diff({}, obj2)
+            return Object.diff({}, obj2);
         if (obj1 && !obj2)
-            return Object.diff(obj1, {})
+            return Object.diff(obj1, {});
 
         var ret = {},
             rett;
@@ -134,7 +132,7 @@ if (!Function.prototype.stackTrace)
             }
         }
         return callstack;
-    }
+    };
 
 //
 if (!Function.prototype.retryApply)
@@ -145,7 +143,6 @@ if (!Function.prototype.retryApply)
 
         maxRetries = maxRetries || 5;
         retryTime = retryTime || 1000;
-
 
         return new Promise(function (fulfill, reject) {
             var timeInterval = setInterval(function () {
@@ -174,7 +171,7 @@ if (!Function.prototype.retryApply)
                 }
             }, retryTime);
         }).catch(console.log);
-    }
+    };
 
 //
 if (!Function.prototype.retryCall)
@@ -184,7 +181,7 @@ if (!Function.prototype.retryCall)
             args.push(arguments[i]);
 
         return this.retryApply(context, checkReady, maxRetries, retryTime, args);
-    }
+    };
 
 //
 if (!Function.prototype.promiseApply)
@@ -216,7 +213,7 @@ if (!Function.prototype.promiseApply)
                 }
             }, retryTime);
         }).catch(console.debug);
-    }
+    };
 
 //
 if (!Function.prototype.promiseCall)
@@ -226,7 +223,7 @@ if (!Function.prototype.promiseCall)
             args.push(arguments[i]);
 
         return this.promiseApply.apply(this, context, args);
-    }
+    };
 
 if (!Number.prototype.format)
     Number.prototype.format = Number.prototype.formatNumber = function (n, x) {
@@ -253,7 +250,7 @@ if (!String.prototype.format)
             }
         }
         return formated;
-    }
+    };
 
 if (!String.prototype.splitArgs)
     String.prototype.splitArgs = function () {
@@ -403,24 +400,24 @@ if (!Array.prototype.nth)
     Array.prototype.nth = function (filter, index) {
         index = (index || 1) - 1;
         filter = filter || function (f) {
-            return true
+            return true;
         };
         return this.filter(filter)[index];
-    }
+    };
 
+//
 if (!Array.prototype.first)
     Array.prototype.first = function (filter) {
-        filter = filter || function (f) {
-            return true
-        };
+        filter = filter || (f => true);
         var filtered = this.filter(filter);
         return filtered ? filtered[0] : null;
-    }
+    };
 
+//
 if (!Array.prototype.last)
     Array.prototype.last = function (filter) {
         filter = filter || (f => true);
-        var arr = this.filter(filter)
+        var arr = this.filter(filter);
         return arr[arr.length - 1];
     };
 
@@ -452,9 +449,7 @@ if (!Array.prototype.sum)
 //
 if (!Array.prototype.selectMany)
     Array.prototype.selectMany = function (selector) {
-        return this.aggregate([], (a, b) => a.concat(b), selector || function (a) {
-            return a
-        });
+        return this.aggregate([], (a, b) => a.concat(b), selector || a => a);
     };
 
 //
@@ -478,9 +473,7 @@ if (!Array.prototype.splitChunks)
             chunkSize = option;
             chunkCount = parseInt(arr.length / chunkSize);
         } else {
-            option = option || {
-                chunkCount: 10
-            };
+            option = option || { chunkCount: 10 };
             if (option.chunkSize) {
                 chunkSize = option.chunkSize;
                 chunkCount = parseInt(arr.length / chunkSize);
@@ -537,7 +530,7 @@ if (!Array.prototype.count)
         return this.filter(function (a) {
             return !!(typeof clause === "function" ? clause(a) : a);
         }).length;
-    }
+    };
 
 if (!Array.prototype.orderByDescending)
     Array.prototype.orderByDescending = function (clause) {
@@ -564,17 +557,13 @@ if (!Array.prototype.flatten)
 //
 if (!Math.sequence)
     Math.sequence = function (min, max, fxn) {
-        max = max || 100;
-        min = min || 0;
         var N = [];
 
-        if (typeof fxn == "function")
-            for (var i = min; i <= max; i++) N.push(fxn(i));
-        else
-            for (var i = min; i <= max; i++) N.push(i);
+        for (var i = (min || 0); i <= (max || 100); i++) 
+            N.push(typeof fxn == "function"? fxn(i): i);
 
         return N;
-    }
+    };
 
 Date.isLeapYear = function (year) {
     return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
@@ -596,9 +585,12 @@ Date.prototype.addYears = function (value) {
     var years = Math.floor(value);
     var months = (value - years) * 12;
     this.setYear(this.getYear() + years);
-    if (months) this.addMonths(months);
+
+    if (months)
+        this.addMonths(months);
+
     return this;
-}
+};
 
 Date.prototype.addMonths = function (value) {
     var months = value % 12;
@@ -609,7 +601,9 @@ Date.prototype.addMonths = function (value) {
     date.setMonth(this.getMonth() + months);
     date.setDate(Math.min(date.getDate(), date.getDaysInMonth()));
 
-    if (years) date.addYears(years);
+    if (years) 
+        date.addYears(years);
+
     return date;
 };
 

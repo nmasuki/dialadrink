@@ -30,11 +30,12 @@ router.post("/signup", function (req, res) {
 
             var json = {
                 response: "error",
+                message: "",
                 data: {}
             };
 
             if (client && client.isAppRegistered) {
-                json.data = "Mobile Already Exist";
+                json.message = "Mobile Already Exist";
                 res.send(json);
             } else {
                 client = client || new Client.model({});
@@ -47,7 +48,7 @@ router.post("/signup", function (req, res) {
                     pwd: client.password,
                     gender: client.gender
                 });
-                
+
                 client.save(function (err) {
                     if (err) {
                         json.message = err;

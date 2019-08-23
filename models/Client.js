@@ -92,14 +92,10 @@ Client.schema.pre('save', function (next) {
     var findOption = {"$or":[]};
     if(this.phoneNumber) 
         findOption.$or.push({"delivery.phoneNumber": new RegExp(this.phoneNumber.substr(3))});
+        
+    if(this.email)
+        findOption.$or.push({"delivery.email": new RegExp(this.email.escapeRegExp(), "i")});        
     
-    
-    if(this.email){
-        var email = this.email || null;
-        if(email)
-            findOption.$or.push({"delivery.email": new RegExp(email.escapeRegExp(), "i")});        
-    }
-
     if(findOption.$or.length){
         var client = this;
         keystone.list("Order").model.find(findOption)
@@ -110,14 +106,15 @@ Client.schema.pre('save', function (next) {
                     return next(err);
 
                 client.orderCount = orders.length;
-                client.orderValue = orders.sum(order=>order.total);
-                client.lastOrderDate = orders.max(order=>order.orderDate);
+                client.orderValue = orders.sum(order => order.total);
+                client.lastOrderDate = orders.max(order => order.orderDate);
+                client.avgOrderValue = orders.avg(order => order.total);
 
                 console.log(client.fullName, client.orderCount, client.orderValue);  
                 next();
             });
     }else{
-        console.log("This should not be hit!!")
+        console.log("This should not be hit!!");
         next();
     }
 });
