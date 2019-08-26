@@ -449,7 +449,7 @@ if (!Array.prototype.sum)
 //
 if (!Array.prototype.selectMany)
     Array.prototype.selectMany = function (selector) {
-        return this.aggregate([], (a, b) => a.concat(b), selector || a => a);
+        return this.aggregate([], (a, b) => a.concat(b), selector || (a => a));
     };
 
 //
