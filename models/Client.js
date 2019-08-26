@@ -49,12 +49,12 @@ Client.schema.virtual("isAppRegistered").get(function () {
 });
 
 Client.schema.virtual("name")
-.get(() =>  ((this.firstName || '' )+ ' ' + (this.lastName || '')).trim())
-.set(function (name) {
-    name = name || "";
-    this.firstName = (name.split(' ')[0] || "").trim();
-    this.lastName =  (name.split(' ')[1] || "").trim();
-});
+    .get(() =>  ((this.firstName || '' )+ ' ' + (this.lastName || '')).trim())
+    .set(function (name) {
+        name = name || "";
+        this.firstName = (name.split(' ')[0] || "").trim();
+        this.lastName =  (name.split(' ')[1] || "").trim();
+    });
 
 Client.schema.methods.toAppObject = function(){
     function getUniqueCode(){

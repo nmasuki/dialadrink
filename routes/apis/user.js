@@ -106,9 +106,10 @@ router.post("/login", function (req, res) {
                     client.save();
                 }
             } else {
-                json.message = "Username/password do not match!";
+                json.message = "Username/Password do not match!!";
             }
 
+            console.log(json.response, json.message);
             res.send(json);
         });
 
