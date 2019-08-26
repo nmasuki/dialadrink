@@ -65,6 +65,7 @@ Client.schema.methods.toAppObject = function(){
         userid: this.id || '',
         username: this.username || this.email.split('@')[0] || 'Guest',
         user_unique_code: getUniqueCode(),
+        user_password: this.password || '',
         user_email: this.email || '',
         user_name: this.name || '',
         user_mobile: this.phoneNumber || '',
