@@ -115,51 +115,38 @@ router.post("/login", function (req, res) {
 });
 
 router.post("/update", function (req, res) {
-    var mobile = (req.body.mobile || "").cleanPhoneNumber();
-    Client.model.find({
-            phoneNumber: mobile
-        })
-        .exec((clients, err) => {
-
-            if (err)
-                return res.send({
-                    response: "error",
-                    message: "Error while reading registered users. " + err
-                });
-
-
-            var json = {
+    Client.fromAppObject(req.body, (err, client) => {
+        if (err)
+            return res.send({
                 response: "error",
-                data: {}
-            };
-
-            if (!clients || clients.length <= 0) {
-                json.data = `No client found with number '${mobile}'`;
-                return res.send(json);
-            }
-
-            clients.forEach((client, i) => {
-                client.email = req.body.email;
-                client.username = req.body.username;
-                client.city = req.body.city;
-                client.address = req.body.address;
-                client.name = req.body.name;
-
-                client.save(function (err) {
-
-                    if (err) {
-                        json.data = err;
-                    } else {
-                        json.response = "success";
-                        json.message = "Profile updated successfully";
-                        json.data = client.toAppObject();
-                    }
-
-                    if (i == 0)
-                        res.send(json);
-                });
+                message: "Error while updating user profile. " + err
             });
-        });
+
+        var json = {
+            response: "error",
+            data: {}
+        };
+
+        if(client){
+            client.save(function (err) {
+                if (err) {
+                    json.data = err;
+                } else {
+                    json.response = "success";
+                    json.message = "Profile updated successfully";
+                    json.data = client.toAppObject();
+                }
+
+                res.send(json);
+            });
+        }else{
+            res.send(json);
+        }
+    });    
 });
 
+//register_fcm
+router.post("/register_fcm", function (req, res) {
+
+});
 module.exports = router;

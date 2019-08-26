@@ -67,13 +67,13 @@ router.get('/get', function (req, res) {
 
 router.get('/add/:id/:opt', function (req, res) {
 	addToCart(req, res, function (cartItem, msg) {
-		return res.send({state: true, msg: msg, item: cartItem})
+		return res.send({state: true, msg: msg, item: cartItem});
 	});
 });
 
 router.get('/add/:id/:opt/:pieces', function (req, res) {
 	addToCart(req, res, function (cartItem, msg) {
-		return res.send({state: true, msg: msg, item: cartItem})
+		return res.send({state: true, msg: msg, item: cartItem});
 	});
 });
 

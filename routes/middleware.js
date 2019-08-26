@@ -42,7 +42,7 @@ function requestCache(duration, _key) {
     };
 }
 
-exports.globalCache = (req, res, next) => next();//requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
+exports.globalCache = (req, res, next) => next(); //requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
 
 exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 
@@ -68,7 +68,7 @@ exports.initLocals = function (req, res, next) {
         req.connection.remoteAddress || req.socket.remoteAddress;
 
     //Check mobile
-    var isMobile = (res.locals.isMobile = mobile(req));
+    res.locals.isMobile = mobile(req);
 
     //Locals only applied to views and not ajax calls
     if (req.xhr) {
@@ -116,11 +116,11 @@ exports.initLocals = function (req, res, next) {
 
 exports.initPageLocals = function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = memCache? memCache.get("__page__" + cleanId): null;
-    
-    if(cachedPage){
+    var cachedPage = memCache ? memCache.get("__page__" + cleanId) : null;
+
+    if (cachedPage) {
         res.locals.page = Object.assign(res.locals.page || {}, cachedPage || {});
-        
+
         if (typeof next == "function")
             next(err);
 
@@ -129,7 +129,9 @@ exports.initPageLocals = function (req, res, next) {
 
     var regex = new RegExp("(" + cleanId.escapeRegExp() + ")", "i");
     return keystone.list('Page').model
-        .find({ key: regex })
+        .find({
+            key: regex
+        })
         .exec((err, pages) => {
             var page = pages.orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
@@ -144,17 +146,17 @@ exports.initPageLocals = function (req, res, next) {
 };
 
 exports.initBrandsLocals = function (req, res, next) {
-    var cachedPage = memCache? memCache.get("__popularbrands__"): null;
-    
-    if(cachedPage){
+    var cachedPage = memCache ? memCache.get("__popularbrands__") : null;
+
+    if (cachedPage) {
         res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage || {});
-        
+
         if (typeof next == "function")
             next(err);
 
         return Promise.resolve(cachedPage);
     }
-    
+
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
         if (!err) {
             groups = brands.groupBy(b => b.category && b.category.name || "_delete");
@@ -177,21 +179,21 @@ exports.initBrandsLocals = function (req, res, next) {
         if (typeof next == "function")
             next(err);
     });
-}
+};
 
 exports.initBreadCrumbsLocals = function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = memCache? memCache.get("__breadcrumbs__" + cleanId): null;
-    
-    if(cachedPage){
+    var cachedPage = memCache ? memCache.get("__breadcrumbs__" + cleanId) : null;
+
+    if (cachedPage) {
         res.locals.breadcrumbs = Array.from(Object.assign(res.locals.breadcrumbs || {}, cachedPage || {}));
-        
+
         if (typeof next == "function")
             next(err);
 
         return Promise.resolve();
     }
-    
+
     //Load breadcrumbs
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
@@ -224,20 +226,20 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
             if (typeof next == "function")
                 next(err);
         });
-}
+};
 
 exports.initTopMenuLocals = function (req, res, next) {
-    var cachedPage = memCache? memCache.get("__topmenu__"): null;
-    
-    if(cachedPage){
+    var cachedPage = memCache ? memCache.get("__topmenu__") : null;
+
+    if (cachedPage) {
         res.locals.navLinks = Object.assign(res.locals.navLinks || {}, cachedPage || {});
-        
+
         if (typeof next == "function")
             next(err);
 
         return Promise.resolve();
     }
-    
+
     //TopMenu
     return keystone.list('MenuItem').model
         .find({
@@ -260,14 +262,14 @@ exports.initTopMenuLocals = function (req, res, next) {
                 })
                 .distinctBy(m => m.label.cleanId());
 
-            
+
             if (memCache)
                 memCache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
         });
-}
+};
 
 
 
@@ -287,6 +289,43 @@ exports.flashMessages = function (req, res, next) {
     next();
 };
 
+exports.requireAPIUser = function (req, res, next) {
+    if(res.locals.appUser)
+        next();
+
+    var header = req.headers.authorization || '', // get the header
+        scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
+        token = header.split(/\s+/)[1] || '', // and the encoded auth token
+        auth = new Buffer.from(token, 'hex').toString(), // convert from base64
+        parts = auth.split(/:/), // split on colon
+        username = parts[0], password = parts[1], authTime = parts[2];
+
+    if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
+        next();
+    } else if (scheme == "MOBILE" && username && password){
+        require("keystone").list("Client").model.find({
+            phoneNumber: username.cleanPhoneNumber(),
+            email: username,
+        })
+        .exec((err, clients) => {
+            if (err)
+                return next({
+                    response: "error",
+                    message: "Getting app user. " + err
+                });
+
+            var client = clients.find(c => password.comparePassword(c.password)) ||
+                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
+
+            if (client) {
+                res.locals.appUser = client.toAppObject();
+                next();
+            }
+        });
+    } else {
+		return res.status(404);
+    }
+};
 
 /**
  Prevents people from accessing protected pages when they're not signed in

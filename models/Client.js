@@ -29,6 +29,7 @@ Client.add({
     image: {type: Types.CloudinaryImage, folder: "clients"},
     username: {type: String},
     password: {type: String, noedit:true},    
+    
     tempPassword: {
         pwd: {type: String},
         expiryDate: {type: Types.Datetime, default: Date.now}
@@ -43,16 +44,13 @@ Client.add({
 Client.relationship({ref: 'Order', refPath: 'client'});
 
 Client.defaultColumns = 'firstName, lastName, phoneNumber, email, address, orderCount, orderValue, lastOrderDate';
-
-Client.schema.virtual("name").get(function () {
-    return ((this.firstName || '')+ ' ' + (this.lastName || '')).trim();
-});
-
 Client.schema.virtual("isAppRegistered").get(function () {
     return !!this.password;
 });
 
-Client.schema.virtual("name").set(function (name) {
+Client.schema.virtual("name")
+.get(() =>  ((this.firstName || '' )+ ' ' + (this.lastName || '')).trim())
+.set(function (name) {
     name = name || "";
     this.firstName = (name.split(' ')[0] || "").trim();
     this.lastName =  (name.split(' ')[1] || "").trim();
@@ -60,25 +58,25 @@ Client.schema.virtual("name").set(function (name) {
 
 Client.schema.methods.toAppObject = function(){
     function getUniqueCode(){
-        return Buffer.from(this.username + ':' + this.password).toString('base64');
+        return Buffer.from(this.username + ':' + this.password + ':' + new Date().getTime()).toString('hex');
     }
 
     return {
-        userid: this.id,
-        username: this.username || this.email.split('@')[0],
+        userid: this.id || '',
+        username: this.username || this.email.split('@')[0] || 'Guest',
         user_unique_code: getUniqueCode(),
-        user_email: this.email,
-        user_name: this.name,
-        user_mobile: this.phoneNumber,
-        user_address: this.address,
-        user_state :this.city,
-        user_city: this.city,
-        user_country: this.country,
-        user_zipcode: this.zipcode,
-        user_image: this.image,
-        user_phone_verified: this.isPhoneVerified,
-        user_reg_date: this.registrationDate,
-        user_status: this.status
+        user_email: this.email || '',
+        user_name: this.name || '',
+        user_mobile: this.phoneNumber || '',
+        user_address: this.address || '',
+        user_state :this.city || '',
+        user_city: this.city || '',
+        user_country: this.country || '',
+        user_zipcode: this.zipcode || '',
+        user_image: this.image || '',
+        user_phone_verified: this.isPhoneVerified || '',
+        user_reg_date: this.registrationDate || '',
+        user_status: this.status || ''
     };
 };
 
@@ -110,11 +108,11 @@ Client.schema.pre('save', function (next) {
                 client.lastOrderDate = orders.max(order => order.orderDate);
                 client.avgOrderValue = orders.avg(order => order.total);
 
-                console.log(client.fullName, client.orderCount, client.orderValue);  
+                console.log("Saving client details!", client.name, client.orderCount, client.orderValue);  
                 next();
             });
     }else{
-        console.log("This should not be hit!!");
+        console.error("This should never be hit!!");
         next();
     }
 });
@@ -122,33 +120,52 @@ Client.schema.pre('save', function (next) {
 Client.fromAppObject = function(obj, callback){
     return Client.model.findOne({
         $or: [
-            {username: obj.username},
-            {email: obj.user_email}
+            {phoneNumber: (obj.mobile || "").cleanPhoneNumber()},
+            {_id: obj.userid}
         ]
     })
         .exec((err, client) => {
             if(err)
                 throw err;
-            if(!client)
+            
+            if(!client && obj.createNew)
                 client = new Client.model({});
 
-            client.id = userid;
-            client.username = username || user_email.split('@')[0];
-            client.email = user_email;
-            client.name = user_name;
-            client.phoneNumber = user_mobile;
-            client.address = user_address;
-            client.city = user_state;
-            client.city = user_city;
-            client.country = user_country;
-            client.zipcode = user_zipcode;
-            client.image = user_image;
-            client.isPhoneVerified = user_phone_verified;
-            client.registrationDate = user_reg_date;
-            client.statu = user_status;                  
+            if(!client)
+                throw "User not found!";
+
+            if(obj.userid)
+                client.id = obj.userid;
+            if(obj.username)
+                client.username = client.username;
+            if(obj.user_email)
+                client.email = obj.user_email;
+            if(obj.user_name)
+                client.name = obj.user_name;
+            if(obj.user_mobile)
+                client.phoneNumber = obj.user_mobile;
+            if(obj.user_address)
+                client.address = obj.user_address;
+            if(obj.user_state)
+                client.city = obj.user_state;
+            if(obj.user_city)
+                client.city = obj.user_city;
+            if(obj.user_country)
+                client.country = obj.user_country;
+            if(obj.user_zipcode)
+                client.zipcode = obj.user_zipcode;
+            if(obj.user_image)
+                client.image = obj.user_image;
+            if(obj.user_phone_verified)
+                client.isPhoneVerified = obj.user_phone_verified;
+            if(obj.user_reg_date)
+                client.registrationDate = obj.user_reg_date;
+            if(obj.user_status)
+                client.status = obj.user_status;                  
             
             if(typeof callback == "function")
-                callback(client);
+                callback(null, client);
+
             return client;
         });
 }

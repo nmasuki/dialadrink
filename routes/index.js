@@ -43,7 +43,7 @@ exports = module.exports = function (app) {
 	for (var i in routes.apis) {
 		var path = "/api/" + (i == "index" ? "" : i);
 		if(routes.apis[i])
-			app.use(path, routes.apis[i]);
+			app.use(path, middleware.requireAPIUser, routes.apis[i]);
 	}
 
 	// Views
