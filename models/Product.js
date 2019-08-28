@@ -428,6 +428,8 @@ Product.search = function (query, next) {
     // Set locals
     var filters = {
         "$or": [{
+                'category.key': keyRegex
+            },{
                 key: keyRegex
             },
             {
