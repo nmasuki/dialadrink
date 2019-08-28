@@ -175,6 +175,7 @@ router.post("/login", function (req, res) {
                 json.response = "success";
                 json.message = "Login successfully";
                 json.data = client.toAppObject();
+                res.locals.appUser = client;
 
                 if (!client.tempPassword.used && password == client.tempPassword.pwd) {
                     client.tempPassword.used = true;
