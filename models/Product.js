@@ -205,6 +205,31 @@ Product.schema.methods.addPopularity = function (factor) {
     this.save();
 };
 
+Product.schema.methods.toAppObject = function(){
+    var obj = Object.assign({}, this.toObject(), {
+        url: 'https://www.dialadrinkkenya.com/' + d.href,
+        image: d.image.secure_url,
+        images: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
+        category: d.category ? d.category.name : null,
+        categories: d.onOffer ? (d.category ? [d.category.name, "offer"] : ["offer"]) : d.category ? [d.category.name] : [],
+        subcategory: d.subCategory ? d.subCategory.name : null,
+        ratings: d.averageRatings,
+        ratingCount: d.ratingCount,
+        quantity: d.quantity,
+        brand: d.brand ? d.brand.name : null,
+        company: d.brand && d.brand.company ? d.brand.company.name : null,
+        price: d.price,
+        currency: d.currency,
+        options: d.options
+    });
+
+    ["__v", 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
+        delete obj[i];
+    });
+
+    return obj;
+};
+
 Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
 keystone.deepPopulate(Product.schema);
@@ -438,17 +463,15 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    return Product.findPublished({
-        href: new RegExp(keyStr + "$", "i")
-    }, function (err, products) {
+    return Product.findPublished({ href: new RegExp(keyStr + "$", "i") }, function (err, products) {
         if (err || !products || !products.length)
             return Product.findByBrand(filters, function (err, products) {
                 if (err || !products || !products.length)
-                return Product.findByOption(filters, function (err, products) {
+                    return Product.findByOption(filters, function (err, products) {
                         if (err || !products || !products.length)
-                        return Product.findByCategory(filters, function (err, products) {
+                            return Product.findByCategory(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                return Product.findBySubCategory(filters, function (err, products) {
+                                    return Product.findBySubCategory(filters, function (err, products) {
                                         if (err || !products || !products.length)
                                             return Product.findPublished(filters, function (err, products) {
                                                 next(err, products.orderByDescending(p => p.hitsPerWeek));

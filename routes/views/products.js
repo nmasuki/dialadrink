@@ -5,6 +5,8 @@ function index(req, res) {
     var view = new keystone.View(req, res);
     var locals = res.locals;
 
+    console.log(req.session);
+
     // Set locals
     locals.section = 'store';
     locals.page = Object.assign(locals.page, {

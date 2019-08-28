@@ -56,30 +56,34 @@ exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 exports.initLocals = function (req, res, next) {
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
+    
     //Cart items
     res.locals.cartItems = Object.values(req.session.cart || {}).orderBy(c => c.product.name);
+    
     //Promo code applied
     res.locals.promocode = req.session.promo;
-
+    
+    //Check mobile
+    res.locals.isMobile = mobile(req);   
+    
+    //
     res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
-
+    
     //Client IP
     res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
         req.connection.remoteAddress || req.socket.remoteAddress;
 
-    //Check mobile
-    res.locals.isMobile = mobile(req);
-
-    //Locals only applied to views and not ajax calls
+    //Other locals only applied to views and not ajax calls
     if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
-            res.send({
-                success: true,
-                msg: "CSRF validation failed!"
+            return res.send({
+                response: 'error',
+                message: "CSRF validation failed!"
             });
-        else
-            next();
+        else{
+            return next();
+        }
     } else {
         var istart = new Date();
 
@@ -104,7 +108,6 @@ exports.initLocals = function (req, res, next) {
             exports.initBrandsLocals(req, res),
             exports.initPageLocals(req, res)
         ]).then(function () {
-
             next();
 
             var ms = new Date().getTime() - istart.getTime();
@@ -290,8 +293,8 @@ exports.flashMessages = function (req, res, next) {
 };
 
 exports.requireAPIUser = function (req, res, next) {
-    if(res.locals.appUser)
-        next();
+    if(res.locals.appUser || req.xhr)
+        return next();
 
     var header = req.headers.authorization || '', // get the header
         scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
@@ -301,9 +304,9 @@ exports.requireAPIUser = function (req, res, next) {
         username = parts[0], password = parts[1], authTime = parts[2];
 
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
-        next();
+        return next();
     } else if (scheme == "MOBILE" && username && password){
-        require("keystone").list("Client").model.find({
+        return keystone.list("Client").model.find({
             phoneNumber: username.cleanPhoneNumber(),
             email: username,
         })
@@ -318,8 +321,8 @@ exports.requireAPIUser = function (req, res, next) {
                 clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
             if (client) {
-                res.locals.appUser = client.toAppObject();
-                next();
+                res.locals.appUser = client;
+                return next();
             }
         });
     } else {
