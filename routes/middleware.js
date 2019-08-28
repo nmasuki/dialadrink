@@ -74,7 +74,7 @@ exports.initLocals = function (req, res, next) {
         req.connection.remoteAddress || req.socket.remoteAddress;
 
     //Other locals only applied to views and not ajax calls
-    if(!res.locals.appUser){
+    if(res.locals.appUser){
         console.log(`Api call from IP:${res.locals.clientIp}, User:${res.locals.appUser.name}`);
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
