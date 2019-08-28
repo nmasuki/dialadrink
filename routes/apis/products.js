@@ -65,7 +65,7 @@ router.get("/categories", function(req, res){
                         id: d.id,
                         slug: d.key,
                         name: d.name,
-                        icon: (d.image? d.image.secure_url: req.locals.placeholderImg),
+                        image: (d.image? d.image.secure_url: req.locals.placeholderImg),
                         title: d.title,
                         description: d.description
                     };
