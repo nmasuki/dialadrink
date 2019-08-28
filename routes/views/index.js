@@ -54,7 +54,7 @@ function search(req, res, next) {
         if (!locals.page.title || locals.page.title == keystone.get("name"))
             locals.page.title = "{1} - {2}".format(title.split(",").first(), title, keystone.get("name"));
         
-        if (req.xhr || req.locals.appUser)
+        if (req.xhr || locals.appUser)
             return res.send({
                 success: 'success',
                 title: locals.page.title,
