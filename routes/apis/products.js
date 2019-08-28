@@ -67,7 +67,7 @@ router.get("/categories", function (req, res) {
 
 router.get("/category/:category", function (req, res) {
     ProductCategory.model.find({
-            key: req.query.category.cleanId()
+            key: req.params.category.cleanId()
         })
         .exec((err, categories) => {
             var filter = {
@@ -98,7 +98,7 @@ router.get("/category/:category", function (req, res) {
                 res.send(json);
             });
         });
-})
+});
 
 router.get("/:query", function (req, res, next) {
     var query = req.params.query;
