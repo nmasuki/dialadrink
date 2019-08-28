@@ -327,7 +327,7 @@ exports.requireAPIUser = function (req, res, next) {
                     message: "Getting app user. " + err
                 });
 
-            var client = clients.find(c => password.comparePassword(c.password)) ||
+            var client = clients.find(c => password == c.password) ||
                 clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
             if (client) {
