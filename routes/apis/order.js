@@ -17,9 +17,7 @@ router.get("/:orderNo", function (req, res) {
             };
 
             order.total = order.subtotal - (order.discount || 0);
-            json.order = order.toObject({
-                virtuals: true
-            });
+            json.order = order.toObject({ virtuals: true });
 
             if (order.cart && order.cart.length)
                 json.order.cart = order.cart.map(c => c.toObject({

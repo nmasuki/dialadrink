@@ -13,6 +13,7 @@ var ProductCategory = new keystone.List('ProductCategory', {
 ProductCategory.add({
     name: {type: String, required: true, initial: true},
     menus: {type: Types.Relationship, ref: 'MenuItem', many: true},
+    image: {type: Types.CloudinaryImage, folder: "category"},
     pageTitle: {type: String},
     description: {type: Types.Html, wysiwyg: true, height: 150},
 });
