@@ -41,10 +41,10 @@ router.get("/categories", function(req, res){
                     return {
                         id: d.id,
                         slug: d.key,
-                        name: d.name,
+                        name: d.name || '',
                         image: (d.image? d.image.secure_url: res.locals.placeholderImg),
-                        title: d.title,
-                        description: d.description
+                        title: d.title || '',
+                        description: d.description || ''
                     };
                 });
             } else{            

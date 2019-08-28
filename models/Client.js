@@ -61,11 +61,8 @@ Client.schema.methods.toAppObject = function(){
     var user = this;
 
     function getUniqueCode(){
-        return Buffer.from([
-            user.phoneNumber, 
-            user.password,
-            new Date().getTime()
-        ].join[':']).toString('hex');
+        var str = [user.phoneNumber, user.password, new Date().getTime()].join(':')
+        return Buffer.from(str).toString('hex');
     }
 
     var imagePlaceHolder =  this.gender && this.gender[0].toUpperCase() == "M"?
