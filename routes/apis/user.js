@@ -206,8 +206,7 @@ router.get("/banners", function(reg, res){
             
             var json = {
                 response: "error",
-                message: "",
-                data: {}
+                message: ""
             };
 
             if(pages && pages.length){
