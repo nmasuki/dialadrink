@@ -35,7 +35,7 @@ router.get("/categories", function(req, res){
     
             if (err)
                json.message = "Error fetching drinks! " + err;
-            else if(products && products.length){
+            else if(categories && categories.length){
                 json.response = "success";
                 json.data = categories.map(d => {
                     return {
