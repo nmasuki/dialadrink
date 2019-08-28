@@ -58,7 +58,7 @@ Client.schema.virtual("name")
 
 Client.schema.methods.toAppObject = function(){
     var user = this;
-    
+
     function getUniqueCode(){
         return Buffer.from(user.phoneNumber + ':' + user.password + ':' + new Date().getTime()).toString('hex');
     }
@@ -80,7 +80,7 @@ Client.schema.methods.toAppObject = function(){
         user_city: this.city || '',
         user_country: this.country || '',
         user_zipcode: this.zipcode || '',
-        user_image: this.image || imagePlaceHolder,
+        user_image: (this.image && this.image.secure_url) || imagePlaceHolder,
         user_phone_verified: this.isPhoneVerified || '',
         user_reg_date: this.registrationDate || '',
         user_status: this.status || ''
