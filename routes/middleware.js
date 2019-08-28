@@ -310,8 +310,10 @@ exports.requireAPIUser = function (req, res, next) {
         return next();
     } else if (scheme == "MOBILE" && username && password){
         return keystone.list("Client").model.find({
-            phoneNumber: username.cleanPhoneNumber(),
-            email: username,
+            $or: [
+                { phoneNumber: username.cleanPhoneNumber()},
+                { email: username }
+            ]
         })
         .exec((err, clients) => {
             if (err)
