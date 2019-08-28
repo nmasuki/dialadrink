@@ -191,7 +191,31 @@ router.post("/login", function (req, res) {
 });
 
 router.post("/register_fcm", function (req, res) {
+    function updateToken(client){
+        console.log(`Registering FCM Code for: ${client.name}. ${req.body.regId}`);
+        
+        if(client && client.fcmCodes.indexOf(req.body.regId) < 0){
+            client.fcmCodes = (client.fcmCodes || []).push(req.body.regId);
+            req.session.fcmCodes = client.fcmCodes;
 
+            return client.save(function(err){
+                if(err)
+                    return res.send({ response: "error", message: err });
+                else
+                    return res.send({ response: "success", message: "Token updated successfuly." });
+            });
+        }
+        else if(client)
+            req.session.fcmCodes = client.fcmCodes;
+    }
+
+    req.session.fcmCodes = [req.body.regId];    
+    
+    if(res.locals.appUser)
+        return updateToken(res.locals.appUser);    
+    else{
+        console.log('Attempting to register FCMCode before login');
+    }
 });
 
 module.exports = router;
