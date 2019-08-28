@@ -47,7 +47,11 @@ router.get("/categories", function (req, res) {
                         id: d.id,
                         slug: d.key,
                         name: d.name || '',
-                        image: (d.image ? cloudinary.url(d.image.public_id, { width: 200, height:200, crop: "fit" }) : res.locals.placeholderImg),
+                        image: (d.image ? cloudinary.url(d.image.public_id, {
+                            width: 200,
+                            height: 200,
+                            crop: "fit"
+                        }) : res.locals.placeholderImg),
                         title: d.pageTitle || '',
                         description: d.description || ''
                     };
@@ -60,6 +64,41 @@ router.get("/categories", function (req, res) {
             res.send(json);
         });
 });
+
+router.get("/category/:category", function (req, res) {
+    ProductCategory.model.find({
+            key: req.query.category.cleanId()
+        })
+        .exec((err, categories) => {
+            var filter = {
+                category: {
+                    "$in": categories.map(c => c._id)
+                }
+            };
+
+            Product.findPublished(filter, (err, products) => {
+                var json = {
+                    response: "error",
+                    message: "",
+                    count: 0,
+                    data: []
+                };
+
+                if (err)
+                    json.message = "Error fetching drinks! " + err;
+                else if (products && products.length) {
+                    json.response = "success";
+                    json.count = products.length;
+                    json.data = products.map(d => d.toAppObject());
+                } else {
+                    json.response = "success";
+                    json.message = "No record matching the query";
+                }
+
+                res.send(json);
+            });
+        });
+})
 
 router.get("/:query", function (req, res, next) {
     var query = req.params.query;
