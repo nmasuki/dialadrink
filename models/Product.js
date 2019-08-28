@@ -206,6 +206,7 @@ Product.schema.methods.addPopularity = function (factor) {
 };
 
 Product.schema.methods.toAppObject = function(){
+    var d = this;
     var obj = Object.assign({}, this.toObject(), {
         url: 'https://www.dialadrinkkenya.com/' + d.href,
         image: d.image.secure_url,
@@ -219,6 +220,7 @@ Product.schema.methods.toAppObject = function(){
         brand: d.brand ? d.brand.name : null,
         company: d.brand && d.brand.company ? d.brand.company.name : null,
         price: d.price,
+        discount: d.offerPrice? d.price - d.offerPrice: 0,
         currency: d.currency,
         options: d.options
     });
@@ -437,7 +439,6 @@ Product.search = function (query, next) {
             {
                 tags: nameRegex
             },
-
             {
                 name: nameRegex
             },
@@ -463,7 +464,8 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    return Product.findPublished({ href: new RegExp(keyStr + "$", "i") }, function (err, products) {
+    return Product.findPublished({ href: new RegExp(keyStr + "$", "i")
+    }, function (err, products) {
         if (err || !products || !products.length)
             return Product.findByBrand(filters, function (err, products) {
                 if (err || !products || !products.length)

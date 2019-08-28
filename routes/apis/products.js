@@ -24,29 +24,6 @@ router.get("/", function (req, res) {
     });
 });
 
-router.get("/{query}", function(req, res, next){
-    var query = req.params.query;
-    Product.search(query, function (err, products) {
-        var json = {
-            response: "error",
-            message: "",
-            data: []
-        };
-
-        if (err)
-           json.message = "Error fetching drinks! " + err;
-        else if(products && products.length){
-            json.response = "success";
-            json.data = products.map(d => d.toAppObject());
-        } else{            
-            json.response = "success";
-            json.message = "No record matching the query";
-        }
-
-        res.send(json);
-    });
-});
-
 router.get("/categories", function(req, res){
     ProductCategory.model.find()
         .exec((err, categories) => {
@@ -77,6 +54,31 @@ router.get("/categories", function(req, res){
     
             res.send(json);
         });
+});
+
+router.get("/{query}", function(req, res, next){
+    var query = req.params.query;
+    Product.search(query, function (err, products) {
+        var json = {
+            response: "error",
+            message: "",
+            count: 0,
+            data: []
+        };
+
+        if (err)
+           json.message = "Error fetching drinks! " + err;
+        else if(products && products.length){
+            json.response = "success";
+            json.count = products.length;
+            json.data = products.map(d => d.toAppObject());
+        } else{            
+            json.response = "success";
+            json.message = "No record matching the query";
+        }
+
+        res.send(json);
+    });
 });
 
 module.exports = router;
