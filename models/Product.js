@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var extractor = require("keyword-extractor");
+var cloudinary = require('cloudinary');
 var Types = keystone.Field.Types;
 
 var Product = new keystone.List('Product', {
@@ -209,8 +210,10 @@ Product.schema.methods.toAppObject = function(){
     var d = this;
     var obj = Object.assign({}, this.toObject(), {
         url: 'https://www.dialadrinkkenya.com/' + d.href,
-        image: d.image.secure_url,
-        images: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
+        imageFullSize: d.image.secure_url,
+        imagesFullSize: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
+        image: cloudinary.url(d.image.public_id, { width: 200, height:200, crop: "fit" }),
+        images: d.altImages ? d.altImages.map(a => a && a.secure_url || cloudinary.url(a.public_id, { width: 200, height:200, crop: "fit" })) : [],
         category: d.category ? d.category.name : null,
         categories: d.onOffer ? (d.category ? [d.category.name, "offer"] : ["offer"]) : d.category ? [d.category.name] : [],
         subcategory: d.subCategory ? d.subCategory.name : null,

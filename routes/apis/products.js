@@ -1,4 +1,5 @@
 var keystone = require('keystone');
+var cloudinary = require('cloudinary');
 var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
 
@@ -46,7 +47,7 @@ router.get("/categories", function (req, res) {
                         id: d.id,
                         slug: d.key,
                         name: d.name || '',
-                        image: (d.image ? d.image.secure_url : res.locals.placeholderImg),
+                        image: (d.image ? cloudinary.url(d.image.public_id, { width: 200, height:200, crop: "fit" }) : res.locals.placeholderImg),
                         title: d.pageTitle || '',
                         description: d.description || ''
                     };
