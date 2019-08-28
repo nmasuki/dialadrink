@@ -326,6 +326,11 @@ exports.requireAPIUser = function (req, res, next) {
             if (client) {
                 res.locals.appUser = client;
                 return next();
+            }else{
+                res.status(401).send({
+                    response: "error",
+                    message: "Invalid/expired authorization header"
+                });
             }
         });
     } else {
