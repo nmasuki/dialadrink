@@ -309,6 +309,8 @@ exports.requireAPIUser = function (req, res, next) {
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
         return next();
     } else if (scheme == "MOBILE" && username && password){
+        console.log("Autorization decoded!", username, password);
+
         return keystone.list("Client").model.find({
             $or: [
                 { phoneNumber: username.cleanPhoneNumber()},
@@ -334,7 +336,7 @@ exports.requireAPIUser = function (req, res, next) {
                     console.log(`${clients.length} clients match username ${username}. Invalide password? '${password}'`);
                 else
                     console.log(`No client match the username ${username}`);
-                    
+
                 res.status(401).send({
                     response: "error",
                     message: "Invalid/expired authorization header"
