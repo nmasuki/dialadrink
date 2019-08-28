@@ -220,7 +220,7 @@ Product.schema.methods.toAppObject = function(){
         brand: d.brand ? d.brand.name : null,
         company: d.brand && d.brand.company ? d.brand.company.name : null,
         price: d.price,
-        discount: d.offerPrice? d.price - d.offerPrice: 0,
+        discount: (d.offerPrice? d.price - d.offerPrice: 0) || "",
         currency: d.currency,
         options: d.options
     });
