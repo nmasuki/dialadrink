@@ -43,7 +43,7 @@ router.get("/banners", function (req, res) {
                             id: p.id,
                             title: p.title,
                             meta: p.meta,
-                            image: cloudinary.url(b.public_id, { height:270, crop: "fit" }),
+                            image: cloudinary.url(b.public_id, { height:486, crop: "fit" }),
                             status: ""
                         };
                     });
