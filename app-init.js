@@ -108,16 +108,18 @@ keystone.set("importUrl", "https://www.dialadrinkkenya.com/");
 //Log warning into email
 if (!console._warn)
 	(function () {
-		var email = new keystone.Email('templates/email/error-log');
-		//Hack to make use of nodemailer..
-		email.transport = require("./helpers/mailer");
+		var email;
 		console._log = console.log;
 		console._warn = console.warn;
 		console._error = console.error;
 
 		function emailToEmail(title, e) {
 			try {
-
+				if (!email) {
+					email = new keystone.Email('templates/email/error-log');
+					//Hack to make use of nodemailer..
+					email.transport = require("./helpers/mailer");
+				}
 				var emailOptions = {
 					subject: keystone.get("name") + "-" + title,
 					to: {
@@ -140,8 +142,7 @@ if (!console._warn)
 
 			}
 		}
-		
-		/**
+
 		console.error = function(){
 			emailToEmail("Error!", arguments[0]);
 
@@ -168,7 +169,6 @@ if (!console._warn)
 
 			console._warn.apply(this, args);
 		};
-		/**/
-	})();
+	});
 
 module.exports = keystone;
