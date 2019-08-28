@@ -57,8 +57,10 @@ Client.schema.virtual("name")
     });
 
 Client.schema.methods.toAppObject = function(){
+    var user = this;
+    
     function getUniqueCode(){
-        return Buffer.from(this.username + ':' + this.password + ':' + new Date().getTime()).toString('hex');
+        return Buffer.from(user.phoneNumber + ':' + user.password + ':' + new Date().getTime()).toString('hex');
     }
 
     var imagePlaceHolder =  this.gender && this.gender[0].toUpperCase() == "M"?
