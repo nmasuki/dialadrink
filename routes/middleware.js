@@ -74,7 +74,9 @@ exports.initLocals = function (req, res, next) {
         req.connection.remoteAddress || req.socket.remoteAddress;
 
     //Other locals only applied to views and not ajax calls
-    if (req.xhr) {
+    if(!res.locals.appUser){
+        console.log(`Api call from IP:${res.locals.clientIp}, User:${res.locals.appUser.name}`);
+    } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
             return res.send({
@@ -162,9 +164,11 @@ exports.initBrandsLocals = function (req, res, next) {
 
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
         if (!err) {
-            groups = brands.groupBy(b => b.category && b.category.name || "_delete");
-            delete groups["_delete"];
-            delete groups["Others"];
+            groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            
+            delete groups._delete;
+            delete groups.Others;
+            delete groups.Extras;
 
             for (var i in groups)
                 groups[i] = groups[i]
@@ -273,7 +277,6 @@ exports.initTopMenuLocals = function (req, res, next) {
                 next(err);
         });
 };
-
 
 
 /**

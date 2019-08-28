@@ -155,9 +155,7 @@ router.post("/login", function (req, res) {
             message: "Username and password are required!!"
         });
 
-    Client.model.find({
-            phoneNumber: mobile
-        })
+    Client.model.find({ phoneNumber: mobile })
         .exec((err, clients) => {
 
             if (err)
@@ -186,7 +184,6 @@ router.post("/login", function (req, res) {
                 json.message = "Username/Password do not match!!";
             }
 
-            console.log(json.response, json.message);
             res.send(json);
         });
 
