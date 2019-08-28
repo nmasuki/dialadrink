@@ -7,15 +7,19 @@ var router = keystone.express.Router();
 router.get("/", function (req, res) {
     var since = new Date(req.query.since || '2015-01-01');
 
-    Product.findPublished({modifiedDate: { $gt: since}}, function (err, products) {
+    Product.findPublished({
+        modifiedDate: {
+            $gt: since
+        }
+    }, function (err, products) {
         var json = {
             response: "error",
             message: ""
         };
 
         if (err)
-           json.message = "Error fetching drinks! " + err;
-        else{
+            json.message = "Error fetching drinks! " + err;
+        else {
             json.response = "success";
             json.data = products.map(d => d.toAppObject());
         }
@@ -24,7 +28,7 @@ router.get("/", function (req, res) {
     });
 });
 
-router.get("/categories", function(req, res){
+router.get("/categories", function (req, res) {
     ProductCategory.model.find()
         .exec((err, categories) => {
             var json = {
@@ -32,31 +36,31 @@ router.get("/categories", function(req, res){
                 message: "",
                 data: []
             };
-    
+
             if (err)
-               json.message = "Error fetching drinks! " + err;
-            else if(categories && categories.length){
+                json.message = "Error fetching drinks! " + err;
+            else if (categories && categories.length) {
                 json.response = "success";
                 json.data = categories.map(d => {
                     return {
                         id: d.id,
                         slug: d.key,
                         name: d.name || '',
-                        image: (d.image? d.image.secure_url: res.locals.placeholderImg),
+                        image: (d.image ? d.image.secure_url : res.locals.placeholderImg),
                         title: d.pageTitle || '',
                         description: d.description || ''
                     };
                 });
-            } else{            
+            } else {
                 json.response = "success";
                 json.message = "No record matching the query";
             }
-    
+
             res.send(json);
         });
 });
 
-router.get("/:query", function(req, res, next){
+router.get("/:query", function (req, res, next) {
     var query = req.params.query;
     Product.search(query, function (err, products) {
         var json = {
@@ -67,12 +71,12 @@ router.get("/:query", function(req, res, next){
         };
 
         if (err)
-           json.message = "Error fetching drinks! " + err;
-        else if(products && products.length){
+            json.message = "Error fetching drinks! " + err;
+        else if (products && products.length) {
             json.response = "success";
             json.count = products.length;
             json.data = products.map(d => d.toAppObject());
-        } else{            
+        } else {
             json.response = "success";
             json.message = "No record matching the query";
         }
