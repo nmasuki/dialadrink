@@ -428,7 +428,7 @@ Product.search = function (query, next) {
     // Set locals
     var filters = {
         "$or": [{
-                'category.key': keyRegex
+                'category.key': new RegExp(keyStr + "$", "i")
             },{
                 key: keyRegex
             },
@@ -469,7 +469,8 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    return Product.findPublished({ href: new RegExp(keyStr + "$", "i")
+    return Product.findPublished({ 
+        href: new RegExp(keyStr + "$", "i")
     }, function (err, products) {
         if (err || !products || !products.length)
             return Product.findByBrand(filters, function (err, products) {
