@@ -312,6 +312,7 @@ exports.requireAPIUser = function (req, res, next) {
         return keystone.list("Client").model.find({
             $or: [
                 { phoneNumber: username.cleanPhoneNumber()},
+                { username: username },
                 { email: username }
             ]
         })
@@ -329,6 +330,11 @@ exports.requireAPIUser = function (req, res, next) {
                 res.locals.appUser = client;
                 return next();
             }else{
+                if(clients.length)
+                    console.log(`${clients.length} clients match username ${username}. Invalide password? '${password}'`);
+                else
+                    console.log(`No client match the username ${username}`);
+                    
                 res.status(401).send({
                     response: "error",
                     message: "Invalid/expired authorization header"
