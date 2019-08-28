@@ -312,7 +312,6 @@ exports.requireAPIUser = function (req, res, next) {
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
         return next();
     } else if (scheme == "MOBILE" && username && password){
-
         return keystone.list("Client").model.find({
             $or: [
                 { phoneNumber: username.cleanPhoneNumber()},

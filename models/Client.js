@@ -35,6 +35,7 @@ Client.add({
         expiryDate: {type: Types.Datetime, default: Date.now}
     },
 
+    deliveryday: {type: String},
     registrationDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     createdDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},    
@@ -60,7 +61,11 @@ Client.schema.methods.toAppObject = function(){
     var user = this;
 
     function getUniqueCode(){
-        return Buffer.from(user.phoneNumber + ':' + user.password + ':' + new Date().getTime()).toString('hex');
+        return Buffer.from([
+            user.phoneNumber, 
+            user.password,
+            new Date().getTime()
+        ].join[':']).toString('hex');
     }
 
     var imagePlaceHolder =  this.gender && this.gender[0].toUpperCase() == "M"?
@@ -83,6 +88,7 @@ Client.schema.methods.toAppObject = function(){
         user_image: (this.image && this.image.secure_url) || imagePlaceHolder,
         user_phone_verified: this.isPhoneVerified || '',
         user_reg_date: this.registrationDate || '',
+        user_deliveryday: this.deliveryday || '',
         user_status: this.status || ''
     };
 };
@@ -169,11 +175,16 @@ Client.fromAppObject = function(obj, callback){
                 client.registrationDate = obj.user_reg_date;
             if(obj.user_status)
                 client.status = obj.user_status;                  
+            if(obj.user_deliveryday)
+                client.deliveryday = obj.user_deliveryday;                  
             
+            //user_deliveryday
+
             if(typeof callback == "function")
                 callback(null, client);
 
             return client;
         });
-}
+};
+
 Client.register();
