@@ -1,4 +1,5 @@
 var keystone = require('keystone');
+var cloudinary = require('cloudinary');
 var Page = keystone.list("Page");
 var Location = keystone.list("Location");
 
