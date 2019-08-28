@@ -61,6 +61,10 @@ Client.schema.methods.toAppObject = function(){
         return Buffer.from(this.username + ':' + this.password + ':' + new Date().getTime()).toString('hex');
     }
 
+    var imagePlaceHolder =  this.gender && this.gender[0].toUpperCase() == "M"?
+        "https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg" :
+        "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg";
+
     return {
         userid: this.id || '',
         username: this.username || (this.email || '').split('@')[0] || 'Guest',
@@ -74,7 +78,7 @@ Client.schema.methods.toAppObject = function(){
         user_city: this.city || '',
         user_country: this.country || '',
         user_zipcode: this.zipcode || '',
-        user_image: this.image || '',
+        user_image: this.image || imagePlaceHolder,
         user_phone_verified: this.isPhoneVerified || '',
         user_reg_date: this.registrationDate || '',
         user_status: this.status || ''
