@@ -56,7 +56,7 @@ router.get("/categories", function(req, res){
         });
 });
 
-router.get("/{query}", function(req, res, next){
+router.get("/:query", function(req, res, next){
     var query = req.params.query;
     Product.search(query, function (err, products) {
         var json = {
