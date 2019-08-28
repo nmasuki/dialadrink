@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var Product = keystone.list("Product");
+var ProductCategory = keystone.list("ProductCategory");
 
 var router = keystone.express.Router();
 
@@ -44,6 +45,38 @@ router.get("/{query}", function(req, res, next){
 
         res.send(json);
     });
+});
+
+router.get("/categories", function(req, res){
+    ProductCategory.model.find()
+        .exec((err, categories) => {
+            var json = {
+                response: "error",
+                message: "",
+                data: []
+            };
+    
+            if (err)
+               json.message = "Error fetching drinks! " + err;
+            else if(products && products.length){
+                json.response = "success";
+                json.data = categories.map(d => {
+                    return {
+                        id: d.id,
+                        slug: d.key,
+                        name: d.name,
+                        icon: (d.image? d.image.secure_url: req.locals.placeholderImg),
+                        title: d.title,
+                        description: d.description
+                    };
+                });
+            } else{            
+                json.response = "success";
+                json.message = "No record matching the query";
+            }
+    
+            res.send(json);
+        });
 });
 
 module.exports = router;

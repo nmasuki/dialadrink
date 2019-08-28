@@ -22,7 +22,7 @@ ProductCategory.relationship({ref: 'ProductSubCategory', refPath: 'category'});
 
 ProductCategory.schema.pre('save', function(next){
     this.updateMenu(next);
-})
+});
 
 ProductCategory.schema.methods.updateMenu = function(next){
     var href = "/category/" + this.name.cleanId();
@@ -79,6 +79,6 @@ ProductCategory.schema.methods.updateMenu = function(next){
                     if(typeof next == "function")
                         next(null, this.menus);
                 });
-}
+};
 
 ProductCategory.register();
