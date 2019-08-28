@@ -306,10 +306,12 @@ exports.requireAPIUser = function (req, res, next) {
         parts = auth.split(/:/), // split on colon
         username = parts[0], password = parts[1], authTime = parts[2];
 
+    if(token)
+        console.log("Autorization decoded!", auth);
+
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
         return next();
     } else if (scheme == "MOBILE" && username && password){
-        console.log(parts, scheme == "MOBILE" && username && password);
 
         return keystone.list("Client").model.find({
             $or: [
