@@ -43,7 +43,7 @@ router.get("/categories", function(req, res){
                         slug: d.key,
                         name: d.name || '',
                         image: (d.image? d.image.secure_url: res.locals.placeholderImg),
-                        title: d.title || '',
+                        title: d.pageTitle || '',
                         description: d.description || ''
                     };
                 });
