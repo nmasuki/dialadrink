@@ -211,10 +211,8 @@ Product.schema.methods.toAppObject = function(){
 
     var cloudinaryOptions = {
         transformation: [
-            //{ effect: "cartoonify" },
-            { background: "transparent" }, 
-            //{background_removal: "remove_the_background"},
-            { width: 300, height:500, crop: "lpad" }
+            { background: "white" }, 
+            { width: 250, height:250, crop: "fill" }
         ]
     };
 
