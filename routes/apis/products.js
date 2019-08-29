@@ -35,7 +35,7 @@ router.get("/categories", function (req, res) {
         transformation: [
             //{ effect: "cartoonify" },
             { background: "white" }, 
-            { width: 250, height:250, radius: "10", crop: "fill" }
+            { width: 250, height:250, radius: "15", crop: "fill" }
         ]
     };
     
