@@ -53,6 +53,8 @@ router.get("/banners", function (req, res) {
                         };
                     });
                 });
+
+                console.log(json.data.map(b=>b.image));
             }
 
             res.send(json);
