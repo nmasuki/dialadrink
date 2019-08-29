@@ -208,12 +208,13 @@ Product.schema.methods.addPopularity = function (factor) {
 
 Product.schema.methods.toAppObject = function(){
     var d = this;
-    
+
     var cloudinaryOptions = {
         transformation: [
-            { effect: "cartoonify" },
-            { background: "white" }, 
-            { width: 250, height:250, crop: "fit" }
+            //{ effect: "cartoonify" },
+            // { background: "white" }, 
+            {background_removal: "remove_the_background"},
+            { width: 250, height:250, crop: "lpad" }
         ]
     };
 

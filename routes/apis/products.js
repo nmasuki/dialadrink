@@ -33,9 +33,9 @@ router.get("/categories", function (req, res) {
 
     var cloudinaryOptions = {
         transformation: [
-            { effect: "cartoonify" },
+            //{ effect: "cartoonify" },
             { background: "white" }, 
-            { width: 250, height:250, crop: "fit" }
+            { width: 250, height:250, crop: "lpad" }
         ]
     };
     
