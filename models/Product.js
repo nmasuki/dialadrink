@@ -146,7 +146,7 @@ Product.schema.virtual('percentOffer').get(function () {
         var percent = Math.round(100 * discount / cheapestOption.price);
         return percent;
     }
-    return null;
+    return 0;
 });
 
 Product.schema.virtual('priceValidUntil').get(function () {
@@ -214,7 +214,7 @@ Product.schema.methods.toAppObject = function(){
             //{ effect: "cartoonify" },
             { background: "transparent" }, 
             //{background_removal: "remove_the_background"},
-            { width: 250, height:250, crop: "lpad" }
+            { width: 300, height:500, crop: "lpad" }
         ]
     };
 
@@ -233,7 +233,6 @@ Product.schema.methods.toAppObject = function(){
         brand: d.brand ? d.brand.name : null,
         company: d.brand && d.brand.company ? d.brand.company.name : null,
         price: d.price,
-        discount: d.percentOffer || "",
         currency: d.currency,
         options: d.options
     });
@@ -520,7 +519,7 @@ Product.getUIFilters = function (products) {
             return {
                 t: t,
                 p: p
-            }
+            };
         }))
         .groupBy(t => t.t));
 
