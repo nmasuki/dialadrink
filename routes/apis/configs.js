@@ -44,10 +44,11 @@ router.get("/banners", function (req, res) {
                             title: p.title,
                             meta: p.meta,
                             image: cloudinary.url(b.public_id, {
-                                transformation: [
-                                    { height:400, width: 645, crop: "fill", opacity: 40 },
-                                    { overlay: b.public_id, height:400, width: 645, crop: "fit"},
-                                ]
+                                height:400, width: 645, crop: "fit",
+                                //transformation: [
+                                    //{ height:400, width: 645, crop: "fill", opacity: 40 },
+                                    //{ overlay: b.public_id, height:400, width: 645, crop: "fit"},
+                                //]
                             }),
                             status: ""
                         };
