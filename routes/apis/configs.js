@@ -43,13 +43,18 @@ router.get("/banners", function (req, res) {
                             id: p.id,
                             title: p.title,
                             meta: p.meta,
-                            image: cloudinary.url(b.public_id, { height:300, width: 525, crop: "pad", background: 'auto' }),
+                            image: cloudinary.url(b.public_id, {
+                                height: 300,
+                                width: 525,
+                                crop: "pad",
+                                background: 'auto'
+                            }),
                             status: ""
                         };
                     });
                 });
 
-                console.log(json.data.map(b=>b.image));
+                console.log(json.data.map(b => b.image));
             }
 
             res.send(json);
@@ -57,7 +62,9 @@ router.get("/banners", function (req, res) {
 });
 
 router.get("/locations", function (req, res) {
-    Location.model.find({ show: true })
+    Location.model.find({
+            show: true
+        })
         .exec((err, locations) => {
             if (err)
                 return res.send({
@@ -72,8 +79,8 @@ router.get("/locations", function (req, res) {
 
             if (locations && locations.length) {
                 json.response = "success";
-                json.data = locations.map(l=>l.toObject());
-            }else{
+                json.data = locations.map(l => l.toObject());
+            } else {
                 json.message = "No locations found!";
             }
 
