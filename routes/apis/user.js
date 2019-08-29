@@ -197,12 +197,6 @@ router.post("/login", function (req, res) {
 });
 
 router.post("/register_fcm", function (req, res) {
-    function updateToken(client) {
-        console.log(`Registering FCM Code for: ${client.name}. ${req.body.regId}`);
-
-        
-    }
-
     req.session.fcmCodes = [req.body.regId];
     var client = res.locals.appUser;
     var json = {
@@ -231,7 +225,7 @@ router.post("/register_fcm", function (req, res) {
         req.session.fcmCodes = client.fcmCodes;
         json.response = "success";
         json.message = "Token already registered!";
-        
+
         return res.send(json);
     }
 });
