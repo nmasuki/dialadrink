@@ -75,6 +75,7 @@ router.post("/", function (req, res) {
                 res.send(json);
             });
         }else{
+            console.log("Could not find user. params:", req.body);
             res.send(json);
         }
     });    

@@ -136,13 +136,13 @@ Client.fromAppObject = function(obj, callback){
     })
         .exec((err, client) => {
             if(err)
-                throw err;
+                return console.log(err);
             
             if(!client && obj.createNew)
                 client = new Client.model({});
 
             if(!client)
-                throw "User not found!";
+                return console.log("User not found! params:", obj);
 
             if(obj.userid)
                 client.id = obj.userid;
@@ -176,7 +176,6 @@ Client.fromAppObject = function(obj, callback){
                 client.deliveryday = obj.user_deliveryday;                  
             
             //user_deliveryday
-
             if(typeof callback == "function")
                 callback(null, client);
 
