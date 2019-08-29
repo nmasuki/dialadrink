@@ -1,4 +1,5 @@
 var keystone = require('keystone');
+var cloudinary = require('cloudinary');
 var Types = keystone.Field.Types;
 
 var Client = new keystone.List('Client', {
@@ -68,7 +69,13 @@ Client.schema.methods.toAppObject = function(){
     var imagePlaceHolder =  this.gender && this.gender[0].toUpperCase() == "M"?
         "https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg" :
         "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg";
-
+    
+    var cloudinaryOptions = {
+        transformation: [
+            {width: 200, height: 200, gravity: "face", radius: "max", crop: "thumb"}
+        ]
+    };
+    
     return {
         userid: this.id || '',
         username: this.username || (this.email || '').split('@')[0] || 'Guest',
@@ -82,12 +89,47 @@ Client.schema.methods.toAppObject = function(){
         user_city: this.city || '',
         user_country: this.country || '',
         user_zipcode: this.zipcode || '',
-        user_image: (this.image && this.image.secure_url) || imagePlaceHolder,
+        user_image: (this.image && this.image.secure_url && cloudinary.url(this.image.public_id, cloudinaryOptions)) || imagePlaceHolder,
         user_phone_verified: this.isPhoneVerified || '',
         user_reg_date: this.registrationDate || '',
         user_deliveryday: this.deliveryday || '',
         user_status: this.status || ''
     };
+};
+
+Client.schema.method.copyAppObject = function(obj){
+    if(!obj) 
+        return;
+    if(obj.userid)
+        client.id = obj.userid;
+    if(obj.username)
+        client.username = client.username;
+    if(obj.user_email)
+        client.email = obj.user_email;
+    if(obj.user_name)
+        client.name = obj.user_name;
+    if(obj.user_mobile)
+        client.phoneNumber = obj.user_mobile;
+    if(obj.user_address)
+        client.address = obj.user_address;
+    if(obj.user_state)
+        client.city = obj.user_state;
+    if(obj.user_city)
+        client.city = obj.user_city;
+    if(obj.user_country)
+        client.country = obj.user_country;
+    if(obj.user_zipcode)
+        client.zipcode = obj.user_zipcode;
+    if(obj.user_image)
+        client.image = obj.user_image;
+    if(obj.user_phone_verified)
+        client.isPhoneVerified = obj.user_phone_verified;
+    if(obj.user_reg_date)
+        client.registrationDate = obj.user_reg_date;
+    if(obj.user_status)
+        client.status = obj.user_status;                  
+    if(obj.user_deliveryday)
+        client.deliveryday = obj.user_deliveryday; 
 };
 
 Client.schema.pre('save', function (next) {
@@ -126,61 +168,5 @@ Client.schema.pre('save', function (next) {
         next();
     }
 });
-
-Client.fromAppObject = function(obj, callback){
-    return Client.model.findOne({
-        $or: [
-            {phoneNumber: (obj.mobile || "").cleanPhoneNumber()},
-            {_id: obj.userid}
-        ]
-    })
-        .exec((err, client) => {
-            if(err)
-                return console.log(err);
-            
-            if(!client && obj.createNew)
-                client = new Client.model({});
-
-            if(!client)
-                return console.log("User not found! params:", obj);
-
-            if(obj.userid)
-                client.id = obj.userid;
-            if(obj.username)
-                client.username = client.username;
-            if(obj.user_email)
-                client.email = obj.user_email;
-            if(obj.user_name)
-                client.name = obj.user_name;
-            if(obj.user_mobile)
-                client.phoneNumber = obj.user_mobile;
-            if(obj.user_address)
-                client.address = obj.user_address;
-            if(obj.user_state)
-                client.city = obj.user_state;
-            if(obj.user_city)
-                client.city = obj.user_city;
-            if(obj.user_country)
-                client.country = obj.user_country;
-            if(obj.user_zipcode)
-                client.zipcode = obj.user_zipcode;
-            if(obj.user_image)
-                client.image = obj.user_image;
-            if(obj.user_phone_verified)
-                client.isPhoneVerified = obj.user_phone_verified;
-            if(obj.user_reg_date)
-                client.registrationDate = obj.user_reg_date;
-            if(obj.user_status)
-                client.status = obj.user_status;                  
-            if(obj.user_deliveryday)
-                client.deliveryday = obj.user_deliveryday;                  
-            
-            //user_deliveryday
-            if(typeof callback == "function")
-                callback(null, client);
-
-            return client;
-        });
-};
 
 Client.register();

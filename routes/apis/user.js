@@ -49,19 +49,8 @@ router.get("/", function (req, res) {
 });
 
 router.post("/", function (req, res) {
-    Client.fromAppObject(req.body, (err, client) => {
-        if (err)
-            return res.send({
-                response: "error",
-                message: "Error while updating user profile. " + err
-            });
-
-        var json = {
-            response: "error",
-            message: "",
-            data: {}
-        };
-
+    function updateClient(client, jsonRes){
+        jsonRes = jsonRes || {response: "error"};
         if(client){
             client.save(function (err) {
                 if (err) {
@@ -71,14 +60,21 @@ router.post("/", function (req, res) {
                     json.message = "Profile updated successfully";
                     json.data = client.toAppObject();
                 }
-
+    
                 res.send(json);
             });
         }else{
             console.log("Could not find user. params:", req.body);
             res.send(json);
-        }
-    });    
+        }        
+    }
+
+    if(res.locals.appUser)
+        return updateClient(res.locals.appUser);
+    else{
+        console.log("Could not find user. params:", req.body);
+        res.send({response: "error", message: 'Could not find user to update'});
+    } 
 });
 
 router.post("/signup", function (req, res) {
