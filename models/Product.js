@@ -208,6 +208,7 @@ Product.schema.methods.addPopularity = function (factor) {
 
 Product.schema.methods.toAppObject = function(){
     var d = this;
+    
     var cloudinaryOptions = {
         transformation: [
             { effect: "cartoonify" },
@@ -215,6 +216,7 @@ Product.schema.methods.toAppObject = function(){
             { width: 250, height:250, crop: "fit" }
         ]
     };
+
     var obj = Object.assign({}, this.toObject(), {
         url: 'https://www.dialadrinkkenya.com/' + d.href,
         imageFullSize: d.image.secure_url,

@@ -29,7 +29,16 @@ router.get("/", function (req, res) {
     });
 });
 
-router.get("/categories", function (req, res) {
+router.get("/categories", function (req, res) {   
+
+    var cloudinaryOptions = {
+        transformation: [
+            { effect: "cartoonify" },
+            { background: "white" }, 
+            { width: 250, height:250, crop: "fit" }
+        ]
+    };
+    
     ProductCategory.model.find()
         .exec((err, categories) => {
             var json = {
@@ -47,11 +56,7 @@ router.get("/categories", function (req, res) {
                         id: d.id,
                         slug: d.key,
                         name: d.name || '',
-                        image: (d.image ? cloudinary.url(d.image.public_id, {
-                            width: 200,
-                            height: 200,
-                            crop: "fit"
-                        }) : res.locals.placeholderImg),
+                        image: (d.image ? cloudinary.url(d.image.public_id, cloudinaryOptions) : res.locals.placeholderImg),
                         title: d.pageTitle || '',
                         description: d.description || ''
                     };
