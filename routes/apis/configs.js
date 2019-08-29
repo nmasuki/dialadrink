@@ -44,10 +44,8 @@ router.get("/banners", function (req, res) {
                             title: p.title,
                             meta: p.meta,
                             image: cloudinary.url(b.public_id, {
-                                height: 300,
-                                width: 525,
-                                crop: "pad",
-                                background: 'auto'
+                                height: 450,
+                                crop: "fit",
                             }),
                             status: ""
                         };
