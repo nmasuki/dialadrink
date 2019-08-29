@@ -35,6 +35,13 @@ router.get("/banners", function (req, res) {
                 message: ""
             };
 
+            var cloudinartOptions = {
+                transformation: [
+                    { height:400, width: 645, crop: "fill", opacity: 40 },
+                    { overlay: b.public_id, height:400, width: 645, crop: "fit"},
+                ]
+            };
+
             if (pages && pages.length) {
                 json.response = "success";
                 json.data = pages.selectMany(p => {
@@ -43,7 +50,7 @@ router.get("/banners", function (req, res) {
                             id: p.id,
                             title: p.title,
                             meta: p.meta,
-                            image: cloudinary.url(b.public_id, { height:400, width: 645, crop: "fit", background:"auto" }),
+                            image: cloudinary.url(b.public_id, cloudinartOptions),
                             status: ""
                         };
                     });
