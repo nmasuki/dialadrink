@@ -5,7 +5,7 @@ var router = keystone.express.Router();
 
 router.get("/", function (req, res) {
     var client = res.locals.appUser;
-    if(client)
+    if (client)
         return res.send({
             response: "success",
             message: "User pulled from session!",
@@ -13,14 +13,16 @@ router.get("/", function (req, res) {
         });
 
     var mobile = (req.query.mobile || "").cleanPhoneNumber();
-    
+
     if (!mobile)
         return res.send({
             response: "error",
             message: "Username and password are required!!"
         });
 
-    Client.model.find({ phoneNumber: mobile })
+    Client.model.find({
+            phoneNumber: mobile
+        })
         .exec((err, clients) => {
             if (err)
                 return res.send({
@@ -49,9 +51,11 @@ router.get("/", function (req, res) {
 });
 
 router.post("/", function (req, res) {
-    function updateClient(client, jsonRes){
-        jsonRes = jsonRes || {response: "error"};
-        if(client){
+    function updateClient(client, jsonRes) {
+        jsonRes = jsonRes || {
+            response: "error"
+        };
+        if (client) {
             client.save(function (err) {
                 if (err) {
                     json.data = err;
@@ -60,21 +64,24 @@ router.post("/", function (req, res) {
                     json.message = "Profile updated successfully";
                     json.data = client.toAppObject();
                 }
-    
+
                 res.send(json);
             });
-        }else{
+        } else {
             console.log("Could not find user. params:", req.body);
             res.send(json);
-        }        
+        }
     }
 
-    if(res.locals.appUser)
+    if (res.locals.appUser)
         return updateClient(res.locals.appUser);
-    else{
+    else {
         console.log("Could not find user. params:", req.body);
-        res.send({response: "error", message: 'Could not find user to update'});
-    } 
+        res.send({
+            response: "error",
+            message: 'Could not find user to update'
+        });
+    }
 });
 
 router.post("/signup", function (req, res) {
@@ -152,7 +159,9 @@ router.post("/login", function (req, res) {
             message: "Username and password are required!!"
         });
 
-    Client.model.find({ phoneNumber: mobile })
+    Client.model.find({
+            phoneNumber: mobile
+        })
         .exec((err, clients) => {
 
             if (err)
@@ -188,30 +197,42 @@ router.post("/login", function (req, res) {
 });
 
 router.post("/register_fcm", function (req, res) {
-    function updateToken(client){
+    function updateToken(client) {
         console.log(`Registering FCM Code for: ${client.name}. ${req.body.regId}`);
-        
-        if(client && client.fcmCodes.indexOf(req.body.regId) < 0){
-            client.fcmCodes = (client.fcmCodes || []).push(req.body.regId);
-            req.session.fcmCodes = client.fcmCodes;
 
-            return client.save(function(err){
-                if(err)
-                    return res.send({ response: "error", message: err });
-                else
-                    return res.send({ response: "success", message: "Token updated successfuly." });
-            });
-        }
-        else if(client)
-            req.session.fcmCodes = client.fcmCodes;
+        
     }
 
-    req.session.fcmCodes = [req.body.regId];    
-    
-    if(res.locals.appUser)
-        return updateToken(res.locals.appUser);    
-    else{
-        console.log('Attempting to register FCMCode before login');
+    req.session.fcmCodes = [req.body.regId];
+    var client = res.locals.appUser;
+    var json = {
+        response: "error",
+        message: ''
+    };
+
+    if(!client){
+        json.message = 'Attempting to register FCMCode before login.';
+        return res.send(json);
+    }else if (!client.fcmCodes || client.fcmCodes.indexOf(req.body.regId) < 0) {
+        (client.fcmCodes || (client.fcmCodes = [])).push(req.body.regId);
+        req.session.fcmCodes = client.fcmCodes;
+
+        return client.save(function (err) {
+            if (err){
+                json.message = "Error while updating! " + err;
+            } else {
+                json.response = "success";
+                json.message = "Token updated successfuly.";
+            }
+
+            return res.send(json);  
+        });
+    } else {
+        req.session.fcmCodes = client.fcmCodes;
+        json.response = "success";
+        json.message = "Token already registered!";
+        
+        return res.send(json);
     }
 });
 
