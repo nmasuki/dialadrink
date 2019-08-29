@@ -208,12 +208,19 @@ Product.schema.methods.addPopularity = function (factor) {
 
 Product.schema.methods.toAppObject = function(){
     var d = this;
+    var cloudinaryOptions = {
+        transformation: [
+            { effect: "cartoonify" },
+            { background: "white" }, 
+            { width: 250, height:250, crop: "fit" }
+        ]
+    };
     var obj = Object.assign({}, this.toObject(), {
         url: 'https://www.dialadrinkkenya.com/' + d.href,
         imageFullSize: d.image.secure_url,
         imagesFullSize: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
-        image: cloudinary.url(d.image.public_id, { width: 200, height:200, crop: "fit" }),
-        images: d.altImages ? d.altImages.map(a => a && a.secure_url || cloudinary.url(a.public_id, { width: 200, height:200, crop: "fit" })) : [],
+        image: cloudinary.url(d.image.public_id, cloudinaryOptions),
+        images: d.altImages ? d.altImages.map(a => a && a.secure_url || cloudinary.url(a.public_id, cloudinaryOptions)) : [],
         category: d.category ? d.category.name : null,
         categories: d.onOffer ? (d.category ? [d.category.name, "offer"] : ["offer"]) : d.category ? [d.category.name] : [],
         subcategory: d.subCategory ? d.subCategory.name : null,
