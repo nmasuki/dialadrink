@@ -38,12 +38,12 @@ router.get("/banners", function (req, res) {
             if (pages && pages.length) {
                 json.response = "success";
                 json.data = pages.selectMany(p => {
-                    return p.mobileBannerImages.map(b => {
+                    return p.mobileBannerImages.reverse().map(b => {
                         return {
                             id: p.id,
                             title: p.title,
                             meta: p.meta,
-                            image: cloudinary.url(b.public_id, { height:450, crop: "fill" }),
+                            image: cloudinary.url(b.public_id, { height:450, crop: "fit" }),
                             status: ""
                         };
                     });
