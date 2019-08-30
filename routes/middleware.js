@@ -331,6 +331,8 @@ exports.requireAPIUser = function (req, res, next) {
 
             if (client) {
                 res.locals.appUser = client;
+                if(client.)
+                res.locals.clientIp
                 return next();
             }else{
                 if(clients.length)

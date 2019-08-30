@@ -3,7 +3,7 @@ var cloudinary = require('cloudinary');
 var Types = keystone.Field.Types;
 
 var Client = new keystone.List('Client', {
-    map:{name: 'firstName'},
+    map:{ name: 'name' },
     defaultSort: '-lastOrderDate',
     autokey: {path: 'key', unique: true, from: '_id'},
 });
@@ -97,7 +97,7 @@ Client.schema.methods.toAppObject = function(){
     };
 };
 
-Client.schema.method.copyAppObject = function(obj){
+Client.schema.methods.copyAppObject = function(obj){
     if(!obj) 
         return;
     if(obj.userid)
