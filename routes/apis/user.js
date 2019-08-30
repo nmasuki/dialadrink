@@ -56,6 +56,8 @@ router.post("/", function (req, res) {
             response: "error"
         };
         if (client) {
+            client.copyAppObject(req.body);
+            
             client.save(function (err) {
                 if (err) {
                     json.data = err;
