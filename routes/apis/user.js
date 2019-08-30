@@ -51,37 +51,28 @@ router.get("/", function (req, res) {
 });
 
 router.post("/", function (req, res) {
-    function updateClient(client, jsonRes) {
-        jsonRes = jsonRes || {
-            response: "error"
-        };
-        if (client) {
-            client.copyAppObject(req.body);
-            client.save(function (err) {
-                if (err) {
-                    json.data = err;
-                } else {
-                    json.response = "success";
-                    json.message = "Profile updated successfully";
-                    json.data = client.toAppObject();
-                }
+    var client = res.locals.appUser;
+    var json = { 
+        response: "error",
+        message: 'Error updating user'
+    };
 
-                res.send(json);
-            });
-        } else {
-            console.log("Could not find user. params:", req.body);
+    if (client) {
+        client.copyAppObject(req.body);
+        client.save(function (err) {
+            if (err) {
+                json.data = err;
+            } else {
+                json.response = "success";
+                json.message = "Profile updated successfully";
+                json.data = client.toAppObject();
+            }
+
             res.send(json);
-        }
-    }
-
-    if (res.locals.appUser)
-        return updateClient(res.locals.appUser);
-    else {
-        console.log("Could not find user. params:", req.body);
-        res.send({
-            response: "error",
-            message: 'Could not find user to update'
         });
+    } else {
+        console.log("Could not find user. params:", req.body);
+        res.send(json);
     }
 });
 
