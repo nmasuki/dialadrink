@@ -100,6 +100,8 @@ Client.schema.methods.toAppObject = function(){
 Client.schema.methods.copyAppObject = function(obj){
     if(!obj) 
         return;
+
+    var client = this;        
     if(obj.userid)
         client.id = obj.userid;
     if(obj.username)
