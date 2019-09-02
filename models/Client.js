@@ -71,18 +71,22 @@ Client.schema.methods.toAppObject = function(){
         "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg";
     
     var cloudinaryOptions = {
-        transformation: [
-            {width: 200, height: 200, gravity: "face", radius: "max", crop: "thumb"}
-        ]
+        transformation: [{
+            width: 200, 
+            height: 200, 
+            gravity: "face", 
+            radius: "max", 
+            crop: "thumb"
+        }]
     };
     
     return {
         userid: this.id || '',
+        user_name: this.name || '',
         username: this.username || (this.email || '').split('@')[0] || 'Guest',
         user_unique_code: getUniqueCode(),
         user_password: this.password || '',
         user_email: this.email || '',
-        user_name: this.name || '',
         user_mobile: this.phoneNumber || '',
         user_address: this.address || '',
         user_state :this.city || '',
@@ -98,9 +102,7 @@ Client.schema.methods.toAppObject = function(){
 };
 
 Client.schema.methods.copyAppObject = function(obj){
-    if(!obj) 
-        return;
-
+    if(!obj) return;
     var client = this;        
     if(obj.userid)
         client.id = obj.userid;
