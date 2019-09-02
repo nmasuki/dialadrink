@@ -9,8 +9,14 @@ router.get('/', function (req, res) {
     var json = {
         response: "success",
         data: [{
-            title: "name",
+            title: "Site Name",
             value: keystone.get('name')
+        },{
+            title: "Min Purchase Order",
+            value: 500
+        }, {
+            title: "Max Purchase Order",
+            value: 75000
         }]
     };
 
