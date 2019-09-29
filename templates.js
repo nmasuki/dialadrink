@@ -2071,9 +2071,11 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = helpers.unless.call(alias1,(depths[1] != null ? depths[1].userRating : depths[1]),{"name":"unless","hash":{},"fn":container.program(55, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                                </span>\n\n                            </div>\n                        </div><!-- end row -->\n                        \n                        "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.reviews : depth0),{"name":"if","hash":{},"fn":container.program(57, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n                    </div>\n                </div>\n            </div>\n            <div style=\"border-top: 1px solid lightgray;\" class=\"similar-products col-md-12\">\n            <h2 style=\"font-size: 15px;\">You may also like..</h2>\n"
+    + "\n                    </div>\n                </div>\n            </div>\n            <div style=\"border-top: 1px solid lightgray;\" class=\"similar-products col-md-12\">\n                <h2 style=\"font-size: 15px;\">Other's also ordered..</h2>\n"
+    + ((stack1 = helpers.each.call(alias1,(depths[1] != null ? depths[1].related : depths[1]),{"name":"each","hash":{},"fn":container.program(59, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                </div>\n            </div><!-- end row -->\n\n            <div style=\"border-top: 1px solid lightgray;\" class=\"similar-products col-md-12\">\n                <h2 style=\"font-size: 15px;\">You may also like..</h2>\n"
     + ((stack1 = helpers.each.call(alias1,(depths[1] != null ? depths[1].similar : depths[1]),{"name":"each","hash":{},"fn":container.program(59, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "            </div>\n        </div><!-- end row -->\n        <div class=\"row\">\n\n        </div>\n    </div><!-- end container -->\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"http://schema.org/\",\n  \"@type\": \"Product\",\n  \"name\": \""
+    + "                </div>\n            </div><!-- end row -->\n        <div class=\"row\">\n\n        </div>\n    </div><!-- end container -->\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"http://schema.org/\",\n  \"@type\": \"Product\",\n  \"name\": \""
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\",\n  \"image\": [\n    \""
     + alias4((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"crop":"fit"},"data":data}))
@@ -2263,9 +2265,9 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
 },"59":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "                    <div class=\"col-md-2\">\n"
-    + ((stack1 = container.invokePartial(partials.product2,depth0,{"name":"product2","data":data,"indent":"                        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "                    </div>\n";
+  return "                        <div class=\"col-md-2\">\n"
+    + ((stack1 = container.invokePartial(partials.product2,depth0,{"name":"product2","data":data,"indent":"                            ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "                        </div>\n";
 },"61":function(container,depth0,helpers,partials,data) {
     var helper;
 
