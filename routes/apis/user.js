@@ -238,11 +238,11 @@ router.post("/forgot", function(req, res){
             json.message = "Error while reading registered users. " + err;
         }
         else if(client){
-            client.tempPassword = client.tempPassword || {used: true, expiry: Date.now().addMinutes(5) };
+            client.tempPassword = client.tempPassword || {used: true, expiry: new Date().addMinutes(5).getTime() };
             
             if(!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()){
                 client.tempPassword.used = false;
-                client.tempPassword.expiry = Date.now().addMinutes(5);
+                client.tempPassword.expiry = new Date().addMinutes(5).getTime();
                 client.tempPassword.password = Array(10).join('x').split('').map((x)=>String.fromCharCode(65 + Math.round(Math.random()*25))).join('');
             }
             
