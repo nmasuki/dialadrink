@@ -229,6 +229,7 @@ router.post("/forgot", function(req, res){
         message: ''
     };
 
+    console.log("Getting user: " + phoneNumber.cleanPhoneNumber());
     Client.model.findOne({ 
         phoneNumber: phoneNumber.cleanPhoneNumber()
     })
