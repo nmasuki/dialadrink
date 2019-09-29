@@ -240,7 +240,7 @@ router.post("/forgot", function(req, res){
         else if(client){
             client.tempPassword = client.tempPassword || {used: true, expiry: Date.now().addMinutes(5) };
             
-            if(client.tempPassword.used || client.tempPassword.expiry >= Date.now()){
+            if(!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()){
                 client.tempPassword.used = false;
                 client.tempPassword.expiry = Date.now().addMinutes(5);
                 client.tempPassword.password = Array(10).join('x').split('').map((x)=>String.fromCharCode(65 + Math.round(Math.random()*25))).join('');
