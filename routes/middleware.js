@@ -63,7 +63,7 @@ exports.initLocals = function (req, res, next) {
     //Promo code applied
     res.locals.promocode = req.session.promo;
     
-    //Check mobile
+    //Check mobile device
     res.locals.isMobile = mobile(req);   
     
     //
@@ -72,10 +72,11 @@ exports.initLocals = function (req, res, next) {
     //Client IP
     res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
         req.connection.remoteAddress || req.socket.remoteAddress;
-
+    
+    var {username, password} = getAuthInfo(req);
     //Other locals only applied to views and not ajax calls
-    if(res.locals.appUser){
-        console.log(`Api call from IP:${res.locals.clientIp}, User:${res.locals.appUser.name}`);
+    if(username || password){
+        console.log(`Api call from IP:${res.locals.clientIp}, User:${username}`);
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
@@ -295,10 +296,7 @@ exports.flashMessages = function (req, res, next) {
     next();
 };
 
-exports.requireAPIUser = function (req, res, next) {
-    if(res.locals.appUser || req.xhr)
-        return next();
-
+function getAuthInfo(req){
     var header = req.headers.authorization || '', // get the header
         scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
         token = header.split(/\s+/)[1] || '', // and the encoded auth token
@@ -306,8 +304,14 @@ exports.requireAPIUser = function (req, res, next) {
         parts = auth.split(/:/), // split on colon
         username = parts[0], password = parts[1], authTime = parts[2];
 
-    //if(token)
-    //    console.log("Autorization decoded!", auth);
+    return {scheme, username, password, authTime};
+}
+
+exports.requireAPIUser = function (req, res, next) {
+    if(res.locals.appUser || req.xhr)
+        return next();
+
+    var {scheme, username, password, authTime} = getAuthInfo(req);
 
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
         return next();

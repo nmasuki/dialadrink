@@ -46,7 +46,8 @@ Product.add({
     subCategory: {type: Types.Relationship, ref: 'ProductSubCategory', filters: {product: ':category'}},
     brand: {type: Types.Relationship, ref: 'ProductBrand'},
 
-    ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true}
+    ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true},    
+    relatedProducts: {type: Types.Relationship, ref: 'Product', many: true, hidden: true},
 });
 
 Product.schema.virtual("keyWords").get(function () {
@@ -119,6 +120,7 @@ Product.schema.virtual("ratingCount").get(function () {
         return 5 + this.ratings.length;
     return 5;
 });
+
 Product.schema.virtual('quantity').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
     return cheapestOption ? cheapestOption.quantity : null;
@@ -198,7 +200,68 @@ Product.schema.methods.findSimilar = function (callback) {
             category: this.category._id || this.category
         });
 
-    return Product.findPublished(filter).exec(callback);
+    var product = this;
+    return Product.findPublished(filter).exec((err, similar)=>{
+        similar = similar.orderBy(p => Math.abs(p.popularity - product.popularity));
+        callback(err, similar);
+    });
+};
+
+Product.schema.methods.findRelated = function (callback) {
+    //Get Cart Items
+    var product = this;
+
+    return keystone.list("CartItem").model.find({product: product._id})
+        .exec((err, cartItems) => {
+            var cartIds =  cartItems.map(c=>c._id);
+            return keystone.list("Order").model.find({cart: { $in: cartIds }})
+                .deepPopulate("cart.product.category")
+                .exec((err, orders)=>{
+                    if (err)
+                        return console.log(err, orders);
+
+                    var productCounts = {};
+                    var categoryCounts = {};
+
+                    orders.forEach(order =>{
+                        order.cart.forEach(item => {
+                            if(!item || !item.product) return;
+
+                            var id = (item.product._id || item.product).toString();
+                            categoryCounts[id] = (categoryCounts[id] = categoryCounts[id] || 0) + 1;
+                            if(id != product.id)
+                                productCounts[id] = (productCounts[id] = productCounts[id] || 0) + 1;
+                            
+                        });
+                    });
+
+                    var relatedProdIds = Object.keys(productCounts).concat(product.relatedProducts.map(p=>(p._id || p).toString()));
+                    //Get products that where ordered together
+                    Product.findPublished({_id: { $in: relatedProdIds}})
+                        .exec((err, related) => {
+                            if (err)
+                                return callback(err, related);
+
+                            related = related.orderByDescending(p => p.hitsPerWeek)
+                                .orderByDescending(p => {
+                                    var score = productCounts[p.id] + (categoryCounts[p.id] || 0) * 0.5;
+
+                                    if(product.category.key == p.category.key)
+                                        score *= 0.5;
+                                    //else if( p.category.key == "extras")
+                                    //    score *= 1.75;
+                                        
+                                    return score;
+                                });
+
+                            if(typeof callback == "function")
+                                callback(null, related);
+
+                            return related;
+                        });
+                });
+        });
+    
 };
 
 Product.schema.methods.addPopularity = function (factor) {
@@ -323,7 +386,6 @@ Product.findPublished = function (filter, callback) {
         .populate('brand')
         .populate('category')
         .populate('ratings')
-        .populate('category')
         .deepPopulate("subCategory.category,priceOptions.option");
 
     if (typeof callback == "function")

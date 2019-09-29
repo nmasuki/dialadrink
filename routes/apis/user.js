@@ -222,4 +222,38 @@ router.post("/register_fcm", function (req, res) {
     }
 });
 
+router.post("/forgot", function(req, res){
+    var phoneNumber = req.body.mobile;
+    var json = {
+        response: "error",
+        message: ''
+    };
+
+    Client.model.findOne({ 
+        phoneNumber: phoneNumber.cleanPhoneNumber()
+    })
+    .exec((err, client) => {
+        if (err){
+            json.message = "Error while reading registered users. " + err;
+        }
+        else if(client){
+            client.tempPassword = client.tempPassword || {used: true, expiry: Date.now().addMinutes(5) };
+            
+            if(client.tempPassword.used || client.tempPassword.expiry >= Date.now()){
+                client.tempPassword.used = false;
+                client.tempPassword.expiry = Date.now().addMinutes(5);
+                client.tempPassword.password = Array(10).join('x').split('').map((x)=>String.fromCharCode(65 + Math.round(Math.random()*25))).join('');
+            }
+            
+            //TODO send SMS/Email.
+            json.response = "success";
+            json.data = client.tempPassword.password;
+        }else{
+            json.message = "User not found!";
+        }
+        
+        return res.send(json);
+    });
+});
+
 module.exports = router;

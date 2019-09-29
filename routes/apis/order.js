@@ -4,7 +4,6 @@ var Order = keystone.list("Order");
 var router = keystone.express.Router();
 
 router.get("/:orderNo", function (req, res) {
-
     Order.model.findOne({orderNumber: req.params.orderNo })
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {

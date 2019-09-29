@@ -135,7 +135,12 @@ function search(req, res, next) {
                 }
                 //popularity goes up
                 product.addPopularity(1);
-                view.render('product');
+                
+                product.findRelated((err, related) => {
+                    locals.related = related.slice(0, 6);
+                    view.render('product');
+                });
+                
             });
         } else
             next(err);

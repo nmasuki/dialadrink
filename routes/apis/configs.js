@@ -1,5 +1,7 @@
 var keystone = require('keystone');
 var cloudinary = require('cloudinary');
+var memCache = require("memory-cache");
+
 var Page = keystone.list("Page");
 var Location = keystone.list("Location");
 
@@ -66,9 +68,7 @@ router.get("/banners", function (req, res) {
 });
 
 router.get("/locations", function (req, res) {
-    Location.model.find({
-            show: true
-        })
+    Location.model.find({ show: true })
         .exec((err, locations) => {
             if (err)
                 return res.send({
@@ -86,6 +86,108 @@ router.get("/locations", function (req, res) {
                 json.data = locations.map(l => l.toObject());
             } else {
                 json.message = "No locations found!";
+            }
+
+            res.send(json);
+        });
+});
+
+router.get("/tiles", function (req, res, next) {   
+    var json = {
+        response: "error",
+        message: "",
+        data: []
+    };
+
+    var cloudinaryOptions = {
+        transformation: [
+            { width: 250, height:250, radius: "15", crop: "fill" }
+        ]
+    };
+    
+    var cachedPage = memCache ? memCache.get("__topmenu__") : null;
+
+    if (cachedPage) {
+        navLinks = Object.assign(navLinks || {}, cachedPage || {});
+        json.response = "success";
+        json.data = navLinks.map(d => {
+            return {
+                id: d.id,
+                slug: d.key,
+                name: d.name || '',
+                image: (d.image ? cloudinary.url(d.image.public_id, cloudinaryOptions) : res.locals.placeholderImg),
+                title: d.pageTitle || '',
+                description: d.description || ''
+            };
+        });
+        
+        return res.send(json);
+    }
+
+    //TopMenu
+    keystone.list('MenuItem').model
+        .find({
+            level: 1,
+            type: "top"
+        })
+        .sort({
+            index: 1
+        })
+        .populate('submenus')
+        .exec((err, menu) => {
+            if (err)
+                json.message = "Error fetching drinks! " + err;
+            else {
+            navLinks = menu
+                .filter(m => m.show)
+                .orderBy(m => {
+                    m.submenus = m.submenus.orderBy(n => n.index);
+                    return m.index
+                })
+                .distinctBy(m => m.label.cleanId());
+
+            if (memCache)
+                memCache.put("__topmenu__", navLinks, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+
+                json.data = categories.map(d => {
+                    return {
+                        id: d.id,
+                        slug: d.key,
+                        name: d.name || '',
+                        image: (d.image ? cloudinary.url(d.image.public_id, cloudinaryOptions) : res.locals.placeholderImg),
+                        title: d.pageTitle || '',
+                        description: d.description || ''
+                    };
+                });
+                
+                return res.send(json);
+            }
+        });
+    ProductCategory.model.find()
+        .exec((err, categories) => {
+            var json = {
+                response: "error",
+                message: "",
+                data: []
+            };
+
+            if (err)
+                json.message = "Error fetching drinks! " + err;
+            else if (categories && categories.length) {
+                json.response = "success";
+                json.data = categories.map(d => {
+                    return {
+                        id: d.id,
+                        slug: d.key,
+                        name: d.name || '',
+                        image: (d.image ? cloudinary.url(d.image.public_id, cloudinaryOptions) : res.locals.placeholderImg),
+                        title: d.pageTitle || '',
+                        description: d.description || ''
+                    };
+                });
+            } else {
+                json.response = "success";
+                json.message = "No record matching the query";
             }
 
             res.send(json);

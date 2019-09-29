@@ -8,9 +8,17 @@ router.get("/:product", function (req, res) {
     locals.breadcrumbs = locals.breadcrumbs || [];
     var regex = new RegExp(req.params.product.cleanId().trim(), "i");
 
-    locals.page = Object.assign(locals.page, {title: ""});
+    locals.page = Object.assign(locals.page, {
+        title: ""
+    });
 
-    var filter = {"$or": [{href: regex}, {href: req.params.product}]};
+    var filter = {
+        "$or": [{
+            href: regex
+        }, {
+            href: req.params.product
+        }]
+    };
 
     view.on('init', function (next) {
         keystone.list('Product').findOnePublished(filter, function (err, product) {
@@ -49,39 +57,40 @@ router.get("/:product", function (req, res) {
 
                 var lastRemovedKey, lastRemoved;
                 Object.keys(res.locals.groupedBrands).forEach(k => {
-                    if (product.category && k != product.category.name)
-                    {
+                    if (product.category && k != product.category.name) {
                         lastRemovedKey = k;
                         lastRemoved = res.locals.groupedBrands[k];
                         //delete res.locals.groupedBrands[k];
                     }
                 });
 
-                if(Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+                if (Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
                     res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
 
                 if (!Object.keys(res.locals.groupedBrands).length)
                     delete res.locals.groupedBrands;
 
-                product.findSimilar((err, products) => {
-                    if (products){
-                        locals.similar = products
-                            .orderBy(p => Math.abs(p.popularity - product.popularity))
-                            .slice(0, 6);
+                product.findSimilar((err, similar) => {
+                    if (similar) {
+                        locals.similar = similar.slice(0, 6);
 
-                        var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+                        var brands = similar.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
                         if (brands.length == 1) locals.brand = brands.first();
-                    }else{
-                        locals.similar  = [];
+                    } else {
+                        locals.similar = [];
                     }
-                    
+
                     //popularity goes up
                     product.addPopularity(1);
-                    next(err);
+
+                    product.findRelated((err, related) => {
+                        locals.related = related.slice(0, 6);
+                        next(err);
+                    });
                 });
             } else {
                 res.status(404).render('errors/404');
-            }       
+            }
         });
     });
 
@@ -90,7 +99,9 @@ router.get("/:product", function (req, res) {
 });
 
 router.get("/rate/:product/:rating", function (req, res, next) {
-    keystone.list('Product').findOnePublished({_id: req.params.product})
+    keystone.list('Product').findOnePublished({
+            _id: req.params.product
+        })
         .exec(function (err, product) {
             if (product) {
 
@@ -113,10 +124,13 @@ router.get("/rate/:product/:rating", function (req, res, next) {
 
                 }
 
-                return res.send({state: true, rating: userRating})
+                return res.send({
+                    state: true,
+                    rating: userRating
+                })
             } else {
                 res.status(404);
-            }   
+            }
         });
 });
 
