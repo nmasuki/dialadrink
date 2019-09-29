@@ -77,6 +77,7 @@ exports.initLocals = function (req, res, next) {
     //Other locals only applied to views and not ajax calls
     if(username || password){
         console.log(`Api call from IP:${res.locals.clientIp}, User:${username}`);
+        return next();
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
@@ -311,7 +312,7 @@ exports.requireAPIUser = function (req, res, next) {
     if(res.locals.appUser || req.xhr)
         return next();
 
-    var {scheme, username, password, authTime} = getAuthInfo(req);
+    var {scheme, username, password} = getAuthInfo(req);
 
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
         return next();
