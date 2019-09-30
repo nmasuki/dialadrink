@@ -243,7 +243,11 @@ router.post("/forgot", function(req, res){
             if(!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()){
                 client.tempPassword.used = false;
                 client.tempPassword.expiry = new Date().addMinutes(5).getTime();
-                client.tempPassword.password = Array(10).join('x').split('').map((x)=>String.fromCharCode(65 + Math.round(Math.random()*25))).join('');
+                client.tempPassword.password = Array(7).join('x').split('').map((x)=>String.fromCharCode(65 + Math.round(Math.random()*25))).join('');
+                
+                client.save();
+            } else {
+                
             }
             
             //TODO send SMS/Email.
