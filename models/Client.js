@@ -36,7 +36,7 @@ Client.add({
         expiryDate: {type: Types.Datetime, default: Date.now}
     },
 
-    deliveryday: {type: String},
+    deliverydays: {type: Types.TextArray, default:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
     registrationDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     createdDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},    
@@ -55,7 +55,7 @@ Client.schema.virtual("name")
         var name = (this.firstName || '') + ' ' + (this.lastName || '');
         return name.trim();
     });
-    
+
 Client.schema.virtual("name")
     .set(function (name) {
         var names = (name || "").split(' ');
@@ -94,15 +94,15 @@ Client.schema.methods.toAppObject = function(){
         user_password: this.password || '',
         user_email: this.email || '',
         user_mobile: this.phoneNumber || '',
-        user_address: this.address || '',
         user_state :this.city || '',
         user_city: this.city || '',
         user_country: this.country || '',
-        user_zipcode: this.zipcode || '',
+        user_address: this.address || '',
+        user_directions: this.additional_directions || '',
         user_image: (this.image && this.image.secure_url && cloudinary.url(this.image.public_id, cloudinaryOptions)) || imagePlaceHolder,
         user_phone_verified: this.isPhoneVerified || '',
         user_reg_date: this.registrationDate || '',
-        user_deliveryday: this.deliveryday || '',
+        user_deliverydays: this.deliverydays || '',
         user_status: this.status || ''
     };
 };
@@ -128,8 +128,8 @@ Client.schema.methods.copyAppObject = function(obj){
         client.city = obj.user_city;
     if(obj.user_country)
         client.country = obj.user_country;
-    if(obj.user_zipcode)
-        client.zipcode = obj.user_zipcode;
+    if(obj.user_additional_directions)
+        client.additional_directions = obj.user_additional_directions;
     if(obj.user_image)
         client.image = obj.user_image;
     if(obj.user_phone_verified)
@@ -138,8 +138,8 @@ Client.schema.methods.copyAppObject = function(obj){
         client.registrationDate = obj.user_reg_date;
     if(obj.user_status)
         client.status = obj.user_status;                  
-    if(obj.user_deliveryday)
-        client.deliveryday = obj.user_deliveryday; 
+    if(obj.user_deliverydays)
+        client.deliverydays = obj.user_deliverydays; 
 };
 
 Client.schema.pre('save', function (next) {
