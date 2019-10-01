@@ -51,11 +51,17 @@ Client.schema.virtual("isAppRegistered").get(function () {
 });
 
 Client.schema.virtual("name")
-    .get(() =>  ((this.firstName || '' )+ ' ' + (this.lastName || '')).trim())
+    .get(function (){
+        var name = (this.firstName || '') + ' ' + (this.lastName || '');
+        return name.trim();
+    });
+    
+Client.schema.virtual("name")
     .set(function (name) {
-        name = name || "";
-        this.firstName = (name.split(' ')[0] || "").trim();
-        this.lastName =  (name.split(' ')[1] || "").trim();
+        var names = (name || "").split(' ');
+
+        this.firstName = (names.slice(0, Math.max(1, names.length - 1)).join(' ') || "").trim();
+        this.lastName =  (names[names.length - 1] || "").trim();
     });
 
 Client.schema.methods.toAppObject = function(){

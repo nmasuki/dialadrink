@@ -1,5 +1,8 @@
+var MoveSms = require("../../helpers/movesms");
 var keystone = require('keystone');
 var Client = keystone.list("Client");
+
+var sms = new MoveSms();
 
 var router = keystone.express.Router();
 
@@ -134,11 +137,8 @@ router.post("/signup", function (req, res) {
 
                     res.send(json);
                 });
-
             }
-
         });
-
 });
 
 router.post("/login", function (req, res) {
@@ -162,12 +162,11 @@ router.post("/login", function (req, res) {
                     message: "Error while reading registered users. " + err
                 });
 
-            var client = clients.find(c => password.comparePassword(c.password)) ||
+            var encrypted = password.encryptPassword().encryptedPassword;
+            var client = clients.find(c => encrypted == c.password) ||
                 clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
-            var json = {
-                response: "error"
-            };
+            var json = { response: "error" };
 
             if (client) {
                 json.response = "success";
@@ -246,9 +245,10 @@ router.post("/forgot", function(req, res){
                 client.tempPassword.password = Array(7).join('x').split('').map((x)=>String.fromCharCode(65 + Math.round(Math.random()*25))).join('');
                 
                 client.save();
-            } else {
-                
             }
+            
+            var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
+            sms.sendSMS(client.phoneNumber, msg + "\r\n" + process.env.APP_ID);
             
             //TODO send SMS/Email.
             json.response = "success";
