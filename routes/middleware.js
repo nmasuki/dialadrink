@@ -301,7 +301,7 @@ function getAuthInfo(req){
     var header = req.headers.authorization || '', // get the header
         scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
         token = (header.split(/\s+/)[1] || '').split('|')[1], // and the encoded auth token
-        auth = new Buffer.from(token, 'hex').toString(), // convert from base64
+        auth = token && new Buffer.from(token, 'hex').toString() || "", // convert from base64
         platform = (header.split(/\s+/)[1] || '').split('|')[0],
         parts = auth.split(/:/), // split on colon
         username = parts[0], 
