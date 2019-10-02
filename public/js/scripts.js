@@ -282,7 +282,7 @@ function handleSearchingAndPaging() {
             if($(this).val())
                 $("#search").attr("src", "/assets/icon-search.png");
             else
-                $("#search").attr("src", "/assets/icon-voice-search.png");
+                $("#search").attr("src", "/assets/icon-voice-search.svg");
         }
     });
 
