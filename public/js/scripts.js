@@ -248,21 +248,60 @@ function ModalNewsletter() {
 
 }
 
+function startDictation() {
+
+    if (window.hasOwnProperty('webkitSpeechRecognition')) {
+
+      var recognition = new webkitSpeechRecognition();
+
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.lang = "en-US";
+      recognition.start();
+
+      recognition.onresult = function(e) {
+        var query = e.results[0][0].transcript;
+        recognition.stop();
+        
+        console.log(query);
+        window.location.href = "/search/" + query;
+      };
+
+      recognition.onerror = function(e) {
+        recognition.stop();
+      };
+
+    }
+  }
+
 function handleSearchingAndPaging() {
+    //{{#if isMobile}}/assets/icon-voice-search.gif{{else}}/assets/icon-search.png{{/if}}
+    $('#search_box').on('change', function(){
+        if($(this).data("mobile")){
+            if($(this).val())
+                $("#search").attr("src", "/assets/icon-search.png");
+            else
+                $("#search").attr("src", "/assets/icon-voice-search.gif");
+        }
+    });
+
     $('#search').on('click', function (e) {
         e.preventDefault();
-
+        
         var query = $('#search_box').val();
 
-        if (query !== "") {
-            console.log(query)
+        if (query) {
+            console.log(query);
             window.location.href = "/search/" + query;
+        }else{
+            startDictation.call(this);
         }
     });
 
     $(".disabled a, a.disabled").on("click", function (e) {
         e.preventDefault();
-    })
+    });
 }
 
 function handleSearchAutoComplete() {
