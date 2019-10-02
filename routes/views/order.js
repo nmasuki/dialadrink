@@ -1,5 +1,4 @@
 var keystone = require('keystone');
-var CartItem = keystone.list("CartItem");
 var Order = keystone.list("Order");
 var router = keystone.express.Router();
 
@@ -14,6 +13,7 @@ router.get("/:orderNo", function (req, res) {
             var locals = res.locals;
             order.total = order.subtotal - (order.discount || 0);
             locals.order = order.toObject({virtuals: true});
+
             if (order.cart && order.cart.length)
                 locals.order.cart = order.cart.map(c => c.toObject({virtuals: true}));            
             if (locals.order.cart.first())

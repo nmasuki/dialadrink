@@ -300,19 +300,22 @@ exports.flashMessages = function (req, res, next) {
 function getAuthInfo(req){
     var header = req.headers.authorization || '', // get the header
         scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
-        token = header.split(/\s+/)[1] || '', // and the encoded auth token
+        token = (header.split(/\s+/)[1] || '').split('|')[1], // and the encoded auth token
         auth = new Buffer.from(token, 'hex').toString(), // convert from base64
+        platform = (header.split(/\s+/)[1] || '').split('|')[0],
         parts = auth.split(/:/), // split on colon
-        username = parts[0], password = parts[1], authTime = parts[2];
+        username = parts[0], 
+        password = parts[1], 
+        authTime = parts[2];
 
-    return {scheme, username, password, authTime};
+    return {scheme, username, password, authTime, platform};
 }
 
 exports.requireAPIUser = function (req, res, next) {
     if(res.locals.appUser || req.xhr)
         return next();
 
-    var {scheme, username, password} = getAuthInfo(req);
+    var {scheme, username, password, platform} = getAuthInfo(req);
 
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
         return next();
@@ -336,6 +339,7 @@ exports.requireAPIUser = function (req, res, next) {
 
             if (client) {
                 res.locals.appUser = client;
+                client.plaform = platform;
                 
                 if(client.clientIps.indexOf(res.locals.clientIp) < 0){
                     client.clientIps.push(res.locals.clientIp);
