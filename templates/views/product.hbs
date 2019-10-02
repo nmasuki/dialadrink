@@ -279,6 +279,8 @@
                     </div>
                 </div>
             </div>
+
+            {{#if ../related}}
             <div style="border-top: 1px solid lightgray;" class="similar-products col-md-12">
                 <h2 style="font-size: 15px;">Other's also ordered..</h2>
                     {{#each ../related}}
@@ -287,8 +289,11 @@
                         </div>
                     {{/each}}
                 </div>
-            </div><!-- end row -->
+            </div>
+            <!-- end row -->
+            {{/if}}
 
+            {{#if ../similar}}
             <div style="border-top: 1px solid lightgray;" class="similar-products col-md-12">
                 <h2 style="font-size: 15px;">You may also like..</h2>
                     {{#each ../similar}}
@@ -297,7 +302,9 @@
                         </div>
                     {{/each}}
                 </div>
-            </div><!-- end row -->
+            </div>
+            <!-- end row -->
+            {{/if}}
         <div class="row">
 
         </div>
