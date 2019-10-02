@@ -13,6 +13,7 @@ var ProductCategory = new keystone.List('ProductCategory', {
 ProductCategory.add({
     name: {type: String, required: true, initial: true},
     menus: {type: Types.Relationship, ref: 'MenuItem', many: true},
+    image: {type: Types.CloudinaryImage, folder: "category"},
     pageTitle: {type: String},
     description: {type: Types.Html, wysiwyg: true, height: 150},
 });
@@ -22,7 +23,7 @@ ProductCategory.relationship({ref: 'ProductSubCategory', refPath: 'category'});
 
 ProductCategory.schema.pre('save', function(next){
     this.updateMenu(next);
-})
+});
 
 ProductCategory.schema.methods.updateMenu = function(next){
     var href = "/category/" + this.name.cleanId();
@@ -79,6 +80,6 @@ ProductCategory.schema.methods.updateMenu = function(next){
                     if(typeof next == "function")
                         next(null, this.menus);
                 });
-}
+};
 
 ProductCategory.register();

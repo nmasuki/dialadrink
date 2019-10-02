@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var extractor = require("keyword-extractor");
+var cloudinary = require('cloudinary');
 var Types = keystone.Field.Types;
 
 var Product = new keystone.List('Product', {
@@ -45,7 +46,8 @@ Product.add({
     subCategory: {type: Types.Relationship, ref: 'ProductSubCategory', filters: {product: ':category'}},
     brand: {type: Types.Relationship, ref: 'ProductBrand'},
 
-    ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true}
+    ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true},    
+    relatedProducts: {type: Types.Relationship, ref: 'Product', many: true, hidden: true},
 });
 
 Product.schema.virtual("keyWords").get(function () {
@@ -118,6 +120,7 @@ Product.schema.virtual("ratingCount").get(function () {
         return 5 + this.ratings.length;
     return 5;
 });
+
 Product.schema.virtual('quantity').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
     return cheapestOption ? cheapestOption.quantity : null;
@@ -145,7 +148,7 @@ Product.schema.virtual('percentOffer').get(function () {
         var percent = Math.round(100 * discount / cheapestOption.price);
         return percent;
     }
-    return null;
+    return 0;
 });
 
 Product.schema.virtual('priceValidUntil').get(function () {
@@ -197,12 +200,109 @@ Product.schema.methods.findSimilar = function (callback) {
             category: this.category._id || this.category
         });
 
-    return Product.findPublished(filter).exec(callback);
+    var product = this;
+    return Product.findPublished(filter).exec((err, similar)=>{
+        similar = similar.orderBy(p => Math.abs(p.popularity - product.popularity));
+        callback(err, similar);
+    });
+};
+
+Product.schema.methods.findRelated = function (callback) {
+    //Get Cart Items
+    var product = this;
+
+    return keystone.list("CartItem").model.find({product: product._id})
+        .exec((err, cartItems) => {
+            var cartIds =  cartItems.map(c=>c._id);
+            return keystone.list("Order").model.find({cart: { $in: cartIds }})
+                .deepPopulate("cart.product.category")
+                .exec((err, orders)=>{
+                    if (err)
+                        return console.log(err, orders);
+
+                    var productCounts = {};
+                    var categoryCounts = {};
+
+                    orders.forEach(order =>{
+                        order.cart.forEach(item => {
+                            if(!item || !item.product) return;
+
+                            var id = (item.product._id || item.product).toString();
+                            categoryCounts[id] = (categoryCounts[id] = categoryCounts[id] || 0) + 1;
+                            if(id != product.id)
+                                productCounts[id] = (productCounts[id] = productCounts[id] || 0) + 1;
+                            
+                        });
+                    });
+
+                    var relatedProdIds = Object.keys(productCounts).concat(product.relatedProducts.map(p=>(p._id || p).toString()));
+                    //Get products that where ordered together
+                    Product.findPublished({_id: { $in: relatedProdIds}})
+                        .exec((err, related) => {
+                            if (err)
+                                return callback(err, related);
+
+                            related = related.orderByDescending(p => p.hitsPerWeek)
+                                .orderByDescending(p => {
+                                    var score = productCounts[p.id] + (categoryCounts[p.id] || 0) * 0.5;
+
+                                    if(product.category.key == p.category.key)
+                                        score *= 0.5;
+                                    //else if( p.category.key == "extras")
+                                    //    score *= 1.75;
+                                        
+                                    return score;
+                                });
+
+                            if(typeof callback == "function")
+                                callback(null, related);
+
+                            return related;
+                        });
+                });
+        });
+    
 };
 
 Product.schema.methods.addPopularity = function (factor) {
     this.popularity = (this.popularity || 0) + (factor || 1);
     this.save();
+};
+
+Product.schema.methods.toAppObject = function(){
+    var d = this;
+
+    var cloudinaryOptions = {
+        transformation: [
+            { background: "white" }, 
+            { width: 250, height:250, crop: "fill" }
+        ]
+    };
+
+    var obj = Object.assign({}, this.toObject(), {
+        url: 'https://www.dialadrinkkenya.com/' + d.href,
+        imageFullSize: d.image.secure_url,
+        imagesFullSize: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
+        image: cloudinary.url(d.image.public_id, cloudinaryOptions),
+        images: d.altImages ? d.altImages.map(a => a && a.secure_url || cloudinary.url(a.public_id, cloudinaryOptions)) : [],
+        category: d.category ? d.category.name : null,
+        categories: d.onOffer ? (d.category ? [d.category.name, "offer"] : ["offer"]) : d.category ? [d.category.name] : [],
+        subcategory: d.subCategory ? d.subCategory.name : null,
+        ratings: d.averageRatings,
+        ratingCount: d.ratingCount,
+        quantity: d.quantity,
+        brand: d.brand ? d.brand.name : null,
+        company: d.brand && d.brand.company ? d.brand.company.name : null,
+        price: d.price,
+        currency: d.currency,
+        options: d.options
+    });
+
+    ["__v", 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
+        delete obj[i];
+    });
+
+    return obj;
 };
 
 Product.defaultColumns = 'name, image, brand, category, state, onOffer';
@@ -286,7 +386,6 @@ Product.findPublished = function (filter, callback) {
         .populate('brand')
         .populate('category')
         .populate('ratings')
-        .populate('category')
         .deepPopulate("subCategory.category,priceOptions.option");
 
     if (typeof callback == "function")
@@ -398,6 +497,8 @@ Product.search = function (query, next) {
     // Set locals
     var filters = {
         "$or": [{
+                'category.key': new RegExp(keyStr + "$", "i")
+            },{
                 key: keyRegex
             },
             {
@@ -412,7 +513,6 @@ Product.search = function (query, next) {
             {
                 tags: nameRegex
             },
-
             {
                 name: nameRegex
             },
@@ -438,19 +538,19 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    Product.findPublished({
+    return Product.findPublished({ 
         href: new RegExp(keyStr + "$", "i")
     }, function (err, products) {
         if (err || !products || !products.length)
-            Product.findByBrand(filters, function (err, products) {
+            return Product.findByBrand(filters, function (err, products) {
                 if (err || !products || !products.length)
-                    Product.findByOption(filters, function (err, products) {
+                    return Product.findByOption(filters, function (err, products) {
                         if (err || !products || !products.length)
-                            Product.findByCategory(filters, function (err, products) {
+                            return Product.findByCategory(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                    Product.findBySubCategory(filters, function (err, products) {
+                                    return Product.findBySubCategory(filters, function (err, products) {
                                         if (err || !products || !products.length)
-                                            Product.findPublished(filters, function (err, products) {
+                                            return Product.findPublished(filters, function (err, products) {
                                                 next(err, products.orderByDescending(p => p.hitsPerWeek));
                                             });
                                         else
@@ -479,7 +579,7 @@ Product.getUIFilters = function (products) {
             return {
                 t: t,
                 p: p
-            }
+            };
         }))
         .groupBy(t => t.t));
 

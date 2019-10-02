@@ -2,9 +2,8 @@
  * Created by nmasuki on 7/7/2018.
  */
 var cartUtil = function () {
-    var _cart = {},
-        _promo = null;
-    var _url = "/";
+    var _cart = {}, _promo = null;
+    var _url = "/api/";
 
     function getProductFromView(cartId) {
         var id = cartId.split('|').first();

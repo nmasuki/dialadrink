@@ -18,7 +18,7 @@ function search(req, res, next) {
         return next();
 
     //Searching h1 title
-    locals.page = Object.assign(locals.page | {}, {
+    locals.page = Object.assign(locals.page || {}, {
         h1: ((req.params.query || "").toProperCase() + " drinks").trim()
     });
 
@@ -38,12 +38,6 @@ function search(req, res, next) {
     }
 
     function renderResults(products, title) {
-        if (req.xhr)
-            return res.send({
-                success: true,
-                results: products.map(p => p.name)
-            });
-
         title = (title || "").toProperCase();
 
         var i = -1,
@@ -59,6 +53,14 @@ function search(req, res, next) {
 
         if (!locals.page.title || locals.page.title == keystone.get("name"))
             locals.page.title = "{1} - {2}".format(title.split(",").first(), title, keystone.get("name"));
+        
+        if (req.xhr || locals.appUser)
+            return res.send({
+                success: 'success',
+                title: locals.page.title,
+                meta: locals.page.meta,
+                data: products.map(p => p.name)
+            });
 
         if (products.length == 1) {
             if (locals.breadcrumbs && locals.breadcrumbs.length)
@@ -133,7 +135,12 @@ function search(req, res, next) {
                 }
                 //popularity goes up
                 product.addPopularity(1);
-                view.render('product');
+                
+                product.findRelated((err, related) => {
+                    locals.related = related.slice(0, 6);
+                    view.render('product');
+                });
+                
             });
         } else
             next(err);
@@ -196,7 +203,7 @@ router.get("/payment/:orderNo", function (req, res) {
                 label: "Payment"
             });
 
-            locals.orderUrl = pesapalHelper.getPasaPalUrl(order, req.headers.origin)
+            locals.orderUrl = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
             return view.render('checkout');
         });
 });

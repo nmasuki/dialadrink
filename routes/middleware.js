@@ -42,7 +42,7 @@ function requestCache(duration, _key) {
     };
 }
 
-exports.globalCache = (req, res, next) => next();//requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
+exports.globalCache = (req, res, next) => next(); //requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
 
 exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 
@@ -56,30 +56,38 @@ exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 exports.initLocals = function (req, res, next) {
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
+    
     //Cart items
     res.locals.cartItems = Object.values(req.session.cart || {}).orderBy(c => c.product.name);
+    
     //Promo code applied
     res.locals.promocode = req.session.promo;
-
+    
+    //Check mobile device
+    res.locals.isMobile = mobile(req);   
+    
+    //
     res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
-
+    
     //Client IP
     res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
         req.connection.remoteAddress || req.socket.remoteAddress;
-
-    //Check mobile
-    var isMobile = (res.locals.isMobile = mobile(req));
-
-    //Locals only applied to views and not ajax calls
-    if (req.xhr) {
+    
+    var {username, password} = getAuthInfo(req);
+    //Other locals only applied to views and not ajax calls
+    if(username || password){
+        console.log(`Api call from IP:${res.locals.clientIp}, User:${username}`);
+        return next();
+    } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
-            res.send({
-                success: true,
-                msg: "CSRF validation failed!"
+            return res.send({
+                response: 'error',
+                message: "CSRF validation failed!"
             });
-        else
-            next();
+        else{
+            return next();
+        }
     } else {
         var istart = new Date();
 
@@ -104,7 +112,6 @@ exports.initLocals = function (req, res, next) {
             exports.initBrandsLocals(req, res),
             exports.initPageLocals(req, res)
         ]).then(function () {
-
             next();
 
             var ms = new Date().getTime() - istart.getTime();
@@ -116,11 +123,11 @@ exports.initLocals = function (req, res, next) {
 
 exports.initPageLocals = function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = memCache? memCache.get("__page__" + cleanId): null;
-    
-    if(cachedPage){
+    var cachedPage = memCache ? memCache.get("__page__" + cleanId) : null;
+
+    if (cachedPage) {
         res.locals.page = Object.assign(res.locals.page || {}, cachedPage || {});
-        
+
         if (typeof next == "function")
             next(err);
 
@@ -129,7 +136,9 @@ exports.initPageLocals = function (req, res, next) {
 
     var regex = new RegExp("(" + cleanId.escapeRegExp() + ")", "i");
     return keystone.list('Page').model
-        .find({ key: regex })
+        .find({
+            key: regex
+        })
         .exec((err, pages) => {
             var page = pages.orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
@@ -144,22 +153,24 @@ exports.initPageLocals = function (req, res, next) {
 };
 
 exports.initBrandsLocals = function (req, res, next) {
-    var cachedPage = memCache? memCache.get("__popularbrands__"): null;
-    
-    if(cachedPage){
+    var cachedPage = memCache ? memCache.get("__popularbrands__") : null;
+
+    if (cachedPage) {
         res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage || {});
-        
+
         if (typeof next == "function")
             next(err);
 
         return Promise.resolve(cachedPage);
     }
-    
+
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
         if (!err) {
-            groups = brands.groupBy(b => b.category && b.category.name || "_delete");
-            delete groups["_delete"];
-            delete groups["Others"];
+            groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            
+            delete groups._delete;
+            delete groups.Others;
+            delete groups.Extras;
 
             for (var i in groups)
                 groups[i] = groups[i]
@@ -177,21 +188,21 @@ exports.initBrandsLocals = function (req, res, next) {
         if (typeof next == "function")
             next(err);
     });
-}
+};
 
 exports.initBreadCrumbsLocals = function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = memCache? memCache.get("__breadcrumbs__" + cleanId): null;
-    
-    if(cachedPage){
+    var cachedPage = memCache ? memCache.get("__breadcrumbs__" + cleanId) : null;
+
+    if (cachedPage) {
         res.locals.breadcrumbs = Array.from(Object.assign(res.locals.breadcrumbs || {}, cachedPage || {}));
-        
+
         if (typeof next == "function")
             next(err);
 
         return Promise.resolve();
     }
-    
+
     //Load breadcrumbs
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
@@ -224,20 +235,20 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
             if (typeof next == "function")
                 next(err);
         });
-}
+};
 
 exports.initTopMenuLocals = function (req, res, next) {
-    var cachedPage = memCache? memCache.get("__topmenu__"): null;
-    
-    if(cachedPage){
+    var cachedPage = memCache ? memCache.get("__topmenu__") : null;
+
+    if (cachedPage) {
         res.locals.navLinks = Object.assign(res.locals.navLinks || {}, cachedPage || {});
-        
+
         if (typeof next == "function")
             next(err);
 
         return Promise.resolve();
     }
-    
+
     //TopMenu
     return keystone.list('MenuItem').model
         .find({
@@ -260,15 +271,14 @@ exports.initTopMenuLocals = function (req, res, next) {
                 })
                 .distinctBy(m => m.label.cleanId());
 
-            
+
             if (memCache)
                 memCache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
         });
-}
-
+};
 
 
 /**
@@ -287,6 +297,72 @@ exports.flashMessages = function (req, res, next) {
     next();
 };
 
+function getAuthInfo(req){
+    var header = req.headers.authorization || '', // get the header
+        scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
+        token = (header.split(/\s+/)[1] || '').split('|')[1], // and the encoded auth token
+        auth = new Buffer.from(token, 'hex').toString(), // convert from base64
+        platform = (header.split(/\s+/)[1] || '').split('|')[0],
+        parts = auth.split(/:/), // split on colon
+        username = parts[0], 
+        password = parts[1], 
+        authTime = parts[2];
+
+    return {scheme, username, password, authTime, platform};
+}
+
+exports.requireAPIUser = function (req, res, next) {
+    if(res.locals.appUser || req.xhr)
+        return next();
+
+    var {scheme, username, password, platform} = getAuthInfo(req);
+
+    if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
+        return next();
+    } else if (scheme == "MOBILE" && username && password){
+        return keystone.list("Client").model.find({
+            $or: [
+                { phoneNumber: username.cleanPhoneNumber()},
+                { username: username },
+                { email: username }
+            ]
+        })
+        .exec((err, clients) => {
+            if (err)
+                return next({
+                    response: "error",
+                    message: "Getting app user. " + err
+                });
+
+            var client = clients.find(c => password == c.password) ||
+                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
+
+            if (client) {
+                res.locals.appUser = client;
+                client.plaform = platform;
+                
+                if(client.clientIps.indexOf(res.locals.clientIp) < 0){
+                    client.clientIps.push(res.locals.clientIp);
+                    client.save();
+                }
+                   
+                return next();
+            }else{
+                if(clients.length)
+                    console.log(`${clients.length} clients match username ${username}. Invalide password? '${password}'`);
+                else
+                    console.log(`No client match the username ${username}`);
+
+                res.status(401).send({
+                    response: "error",
+                    message: "Invalid/expired authorization header"
+                });
+            }
+        });
+    } else {
+		return res.status(404);
+    }
+};
 
 /**
  Prevents people from accessing protected pages when they're not signed in

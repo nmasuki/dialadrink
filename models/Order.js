@@ -1,4 +1,5 @@
 var MoveSms = require("../helpers/movesms");
+var pesapalHelper = require('../helpers/pesapal');
 var keystone = require('keystone');
 
 var Types = keystone.Field.Types;
@@ -22,6 +23,7 @@ Order.add({
         index: true
     },
 
+    platform: {type: String, default:"WEB"},
     orderNumber: {type: Number, noedit: true},
     orderDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
@@ -61,6 +63,11 @@ Order.add({
         name: {type: String, noedit: true},
         discount: {type: Number, noedit: true},
         discountType: {type: String, noedit: true},
+    },
+
+    charges: {
+        chargesName: {type: Types.TextArray},
+        chargesAmount: {type: Types.TextArray}
     },
 
     //Delivery Details
@@ -138,17 +145,17 @@ Order.schema.methods.updateClient = function(next){
         if(phoneNumber) {
             if(phoneNumber)
                 phoneNumber = phoneNumber.cleanPhoneNumber();
-            findOption["$or"].push({"phoneNumber": new RegExp(phoneNumber)});
+            findOption.$or.push({"phoneNumber": new RegExp(phoneNumber)});
         }else{
             var email = this.delivery.email || null;
             if(email){
                 var username = email.split('@')[0];
                 if(username)                    
-                    findOption["$or"].push({"email": new RegExp("^" + username)});
+                    findOption.$or.push({"email": new RegExp("^" + username)});
             }
         }
 
-        if(findOption["$or"].length)
+        if(findOption.$or.length)
             keystone.list("Client").model.findOne(findOption)
                 .exec((err, client)=>{
                     if(err)
@@ -365,20 +372,20 @@ Order.schema.methods.sendSMSNotification = function (next, message) {
 };
 
 Order.schema.methods.sendOrderNotification = function (next) {
-    var order = this;
-    if (!order.orderNumber)
-        order.orderNumber = Order.getNextOrderId();
+    var that = this;
+    if (!that.orderNumber)
+        that.orderNumber = Order.getNextOrderId();
 
     var email = new keystone.Email('templates/email/order');
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
-    var subject = "Your order #" + order.orderNumber + " - " + keystone.get("name");
+    var subject = `Your order #${that.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
     if (keystone.get("env") == "development")
         subject = "(Testing)" + subject;
 
     return new Promise((resolve, reject)=>{
-        Order.model.findOne({ _id: order._id })
+        Order.model.findOne({ _id: that._id })
             .deepPopulate('cart.product.priceOptions.option')
             .exec((err, order) => {
                 if (err)
@@ -399,7 +406,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                     page: {
                         title: keystone.get("name") + " Order"
                     },
-                    order: order
+                    order: order.toObject()
                 };
 
                 var emailOptions = {
@@ -437,7 +444,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
                         console.log(
                             "Sending order notification!",
-                            "User", emailOptions.to.email,
+                            "User", "\"" + emailOptions.to.email + "\"",
                             "Admins", "\"" + emailOptions.cc.map(u => u.email || u).join() + "\""
                         );
 
@@ -464,14 +471,107 @@ Order.schema.methods.sendOrderNotification = function (next) {
                         }
                     });
             });
-    })
+    });
 };
+
+Order.schema.set('toObject', {
+    transform: function (doc, ret, options) {
+        var charges = [];
+        
+        for(var i =0; i < doc.charges.chargesName.length; i++){
+            charges[i] = {
+                name: doc.charges.chargesName[i].camelCaseToSentence(),
+                amount: parseFloat("" + doc.charges.chargesAmount[i])
+            } ;
+        }
+
+        doc.chargesArr = charges;
+
+        return doc;
+    }
+});
 
 keystone.deepPopulate(Order.schema);
 
-Order.defaultColumns = 'orderNumber, orderDate|15%, client|15%, delivery.phoneNumber, payment.amount, state';
+Order.defaultColumns = 'orderNumber, platform, orderDate|15%, client|15%, delivery.phoneNumber, payment.amount, state';
 
 Order.register();
+
+Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
+    deliveryDetails = deliveryDetails || {};
+    promo = promo || {};
+
+    var chargesKeys = Object.keys(deliveryDetails).filter(k=>k.toLowerCase().indexOf("charge") >= 0);
+
+    var charges = chargesKeys.sum(k=>deliveryDetails[k]);
+
+    var subtotal = cart.sum(function (c) {
+        var price = c.pieces * c.price;
+        if (c.offerPrice && c.price > c.offerPrice)
+            price = c.pieces * c.offerPrice;
+        return price;
+    });
+
+    var discount = Math.round(promo.discountType == "percent" ?
+        cart.sum(c => c.pieces * c.price) * promo.discount / 100 :
+        promo.discount || 0
+    );
+
+    var order = new Order.model({
+        cart: cart.map(item => {
+            //console.log(item)
+            var cartItem = new(keystone.list("CartItem")).model({});
+
+            cartItem.date = item.date;
+            cartItem.state = item.state;
+            cartItem.pieces = item.pieces;
+            cartItem.quantity = item.quantity;
+            cartItem.product = item.product;
+
+            cartItem.save();
+            return cartItem;
+        }),
+        paymentMethod: deliveryDetails.paymentMethod == "Cash" ? "Cash on Delivery": deliveryDetails.paymentMethod,
+        payment: {
+            method: deliveryDetails.paymentMethod,
+            amount: subtotal + charges - discount
+        },
+        promo: promo,
+        clientIp: deliveryDetails.clientIp,
+        delivery: deliveryDetails
+    });
+
+    chargesKeys.forEach(k=>{
+        order.charges.chargesName.push(k);
+        order.charges.chargesAmount.push(deliveryDetails[k]);
+    });
+
+    return order.save((err) => {
+        if (err)
+            return console.warn("Error while saving Order! " + err);
+
+        if (order.payment.method == "PesaPal") {
+            var paymentUrl = `https://www.dialadrinkkenya.com/payment/${order.orderNumber}`;
+            pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
+                order.payment.url = paymentUrl;
+                if (!err)
+                    order.payment.shortUrl = shortUrl;
+                
+                order.save(() => {
+                    order.placeOrder();
+                    if(typeof callback == "function")
+                        callback(err, order);
+                });
+            });
+        } else {
+            order.placeOrder();
+            if(typeof callback == "function")
+                callback(null, order);
+        }
+
+        return order;
+    });
+};
 
 //Some random number from which to start order order Ids
 var autoId = 7000000 + (10000000 * Math.random());

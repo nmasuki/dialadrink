@@ -48,7 +48,7 @@ Blog.schema.pre("save", function (next) {
     if(!this.href)
         this.href = this.title.cleanId();
         
-    keystone.list("BlogCategory").model.find({}).exec((err, categories) => {
+    keystone.list("BlogCategory").model.find({}).exec((err, caxtegories) => {
         this.categories = categories.filter(c => {
             var regex = new RegExp(c.name, "i");
             return regex.test(this.title) || regex.test(this.content.brief) || regex.test(this.content.extended)
