@@ -53,7 +53,7 @@
                                         </td>
                                         <td class="order-td" align="right" style="text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
 										<span class="order-amount amount">
-											<span class="order-currencySymbol">{{currency}}</span>
+											<span class="order-currencySymbol">{{../currency}}</span>
                                             {{#ifgt price offerPrice}}
                                                 <span>
                                                     <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
@@ -92,6 +92,23 @@
                                     </span>
                                 </td>
                             </tr>
+
+                            {{#each chargesArr}}
+                            <tr>
+                                <th class="order-td" scope="row" colspan="2"
+                                    style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    {{name}}:
+                                </th>
+                                <td class="order-td"
+                                    style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    <span class="order-amount order-amount">
+                                        <span class="order-currencySymbol">{{../currency}}</span>
+                                        ({{formatNumber amount}})
+                                    </span>
+                                </td>
+                            </tr>
+                            {{/each}}
+
                             {{#if promo.code}}
                                 <tr style="color: lightgreen">
                                     <td class="order-td" scope="row" colspan="2"
