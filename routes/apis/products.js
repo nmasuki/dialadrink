@@ -7,12 +7,12 @@ var router = keystone.express.Router();
 
 router.get("/", function (req, res) {
     var since = new Date(req.query.since || '2015-01-01');
+    var filter = {modifiedDate: { $gt: since }};
 
-    Product.findPublished({
-        modifiedDate: {
-            $gt: since
-        }
-    }, function (err, products) {
+    if(req.query.id)
+        filter._id = typeof req.query.id == "string"? req.query.id: {"$in": req.query.id.map(id => id)};
+    
+    Product.findPublished(filter, function (err, products) {
         var json = {
             response: "error",
             message: ""

@@ -129,7 +129,7 @@ Client.schema.methods.copyAppObject = function(obj){
     if(obj.user_country)
         client.country = obj.user_country;
     if(obj.user_additional_directions)
-        client.additional_directions = obj.user_additional_directions;
+        client.additional_directions = (obj.user_directions || "Fri,Sat,Sun").split();
     if(obj.user_image)
         client.image = obj.user_image;
     if(obj.user_phone_verified)
