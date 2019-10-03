@@ -491,7 +491,7 @@ Order.schema.set('toObject', {
     transform: function (doc, ret, options) {
         var charges = [];
         
-        for(var i =0; i < doc.charges.chargesName.length; i++){
+        for(var i = 0; i < doc.charges.chargesName.length; i++){
             charges[i] = {
                 name: doc.charges.chargesName[i].camelCaseToSentence(),
                 amount: parseFloat("" + doc.charges.chargesAmount[i])
@@ -499,6 +499,13 @@ Order.schema.set('toObject', {
         }
 
         doc.chargesArr = charges;
+        doc.cart = doc.cart.map(c => c.toObject({ virtuals: true }));
+
+        var virtuals = ["currency", "discount", "chargesAmt", "subtotal", "total"];
+
+        array.forEach(v => {
+            doc[v] = this[v]; 
+        });           
 
         return doc;
     }
