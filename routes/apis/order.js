@@ -51,7 +51,7 @@ router.post("/", function (req, res){
             json.response = "success";
             var cartItems = getCartItems(req);
             var promo = req.session.promo || {};
-            var deliveryDetails = Object.assign({clientIp: res.locals && res.locals.clientIp}, client.toObject(), req.body);	
+            var deliveryDetails = Object.assign({clientIp: res.locals && res.locals.clientIp}, client.toObject());	
 
             Order.checkOutCartItems(cartItems, promo, deliveryDetails, function(err, order){
                 if (err)
