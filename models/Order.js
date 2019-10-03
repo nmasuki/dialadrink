@@ -39,7 +39,10 @@ Order.add({
     paymentMethod: {type: String, noedit: true},
     payment:  {
         method: {type: String, noedit: true},
+
+        subtotal: {type: Number, noedit: true},
         amount: {type: Number, noedit: true},
+
         smsNotificationSent: {type: Boolean, noedit: true},
         notificationSent: {type: Boolean, noedit: true},
         notificationType: {type: String, noedit: true},
@@ -92,6 +95,15 @@ Order.schema.pre('save', function (next) {
     this.updateClient(next);
 });
 
+
+Order.schema.virtual("currency").get(function () {
+    if (this.cart)
+        return this.cart
+            .filter(c=>c.currency)
+            .map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
+    return "KES";
+});
+
 Order.schema.virtual("discount").get(function () {
     if (this.cart)
         return Math.round(this.promo.discountType == "percent" ?
@@ -101,13 +113,13 @@ Order.schema.virtual("discount").get(function () {
     return 0;
 });
 
-Order.schema.virtual("currency").get(function () {
-    if (this.cart)
-        return this.cart
-            .filter(c=>c.currency)
-            .map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
-    return "KES";
-})
+Order.schema.virtual("chargesAmt").get(function () {
+    var charges = 0;
+    if(doc.charges)    
+        charges = doc.charges.chargesAmount.sum(c=>parseFloat("" + c));
+
+    return charges;
+});
 
 Order.schema.virtual("subtotal").get(function () {
     if (this.cart)
@@ -121,7 +133,7 @@ Order.schema.virtual("subtotal").get(function () {
 });
 
 Order.schema.virtual("total").get(function () {
-    return this.subtotal - this.discount;
+    return this.subtotal + this.chargesAmt - this.discount;
 });
 
 Order.schema.virtual("deliveryAddress").get(function () {
@@ -534,6 +546,7 @@ Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
         paymentMethod: deliveryDetails.paymentMethod == "Cash" ? "Cash on Delivery": deliveryDetails.paymentMethod,
         payment: {
             method: deliveryDetails.paymentMethod,
+            subtotal: subtotal,
             amount: subtotal + charges - discount
         },
         promo: promo,
