@@ -488,32 +488,47 @@ Order.schema.methods.sendOrderNotification = function (next) {
 };
 
 Order.schema.set('toObject', {
-    transform: function (doc, ret, options) {
+    transform: function (order, ret, options) {
         var charges = [];
+        ret = ret || {};
         
-        for(var i = 0; i < doc.charges.chargesName.length; i++){
+        for(var i = 0; i < order.charges.chargesName.length; i++){
             charges[i] = {
-                name: doc.charges.chargesName[i].camelCaseToSentence(),
-                amount: parseFloat("" + doc.charges.chargesAmount[i])
-            } ;
+                name: order.charges.chargesName[i].camelCaseToSentence(),
+                amount: parseFloat("" + order.charges.chargesAmount[i])
+            };
         }
 
-        doc.chargesArr = charges;
-        doc.cart = doc.cart.map(c => c.toObject({ virtuals: true }));
+        var virtuals = [
+            "id", "status", "orderNumber", 
+            "currency", "discount", 
+            "chargesAmt", "subtotal", "total",
+            "state", "orderDate","modifiedDate",
+            "client", "orderAmount",
+            "paymentMethod", "payment",
+            //"promo","delivery"
+        ];
+        
+        virtuals.forEach(v => ret[v] = order[v]);
 
-        var virtuals = ["currency", "discount", "chargesAmt", "subtotal", "total"];
+        if(order.promo)
+            ret.promo = order.promo.toObject();
+        if(order.delivery)
+            ret.delivery = order.delivery.toObject();
 
-        array.forEach(v => {
-            doc[v] = this[v]; 
-        });           
+        ret.status = "1";
 
-        return doc;
+        ret.chargesArr = charges;
+        if(order.cart.length && order.cart[0].constructor.name == "ObjectID")
+            ret.cart = order.cart.map(c => c.toObject());
+        
+        return ret;
     }
 });
 
 keystone.deepPopulate(Order.schema);
 
-Order.defaultColumns = 'orderNumber, platform, orderDate|15%, client|15%, delivery.phoneNumber, payment.amount, state';
+Order.defaultColumns = 'orderNumber, orderDate|15%, client|15%, delivery.platform, delivery.phoneNumber, payment.amount, state';
 
 Order.register();
 

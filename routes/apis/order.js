@@ -14,13 +14,16 @@ router.get("/", function(req, res){
     };
 
     Order.model.find({client: client._id})
+        .deepPopulate('cart')
         .exec((err, orders)=>{
             if (err)
                 json.message += "! " + err;
             else{
-                
+                json.data = orders.map(o=>o.toObject());
             }
-        })
+            
+            return res.send(json);
+        });
 });
 
 router.post("/", function (req, res){
@@ -89,7 +92,7 @@ router.get("/:orderNo", function (req, res) {
         data: {}
     };
 
-    Order.model.findOne({orderNumber: req.params.orderNo })
+    Order.model.findOne({$or:[{orderNumber: req.params.orderNo},{_id:req.params.orderNo}] })
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
             if (err)
@@ -97,7 +100,7 @@ router.get("/:orderNo", function (req, res) {
             else if(!order)
                 json.message += "! No matching order Number";
             else{
-                json.data = order.toObject({ virtuals: true });
+                json.data = order.toObject();
             }
             return res.send(json);
         });
