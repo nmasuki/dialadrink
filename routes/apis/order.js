@@ -51,12 +51,13 @@ router.post("/", function (req, res){
             json.response = "success";
             var cartItems = getCartItems(req);
             var promo = req.session.promo || {};
-            var deliveryDetails = Object.assign({clientIp: res.locals && res.locals.clientIp}, client.toObject());	
+            var deliveryDetails = Object.assign({}, client.toObject(), req.body, {clientIp: res.locals && res.locals.clientIp});	
 
             Order.checkOutCartItems(cartItems, promo, deliveryDetails, function(err, order){
                 if (err)
                     json.response = "error";
 
+                json.data = order.toObject();
                 json.message = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
 
                 if (!err) {

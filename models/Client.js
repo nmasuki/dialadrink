@@ -36,7 +36,7 @@ Client.add({
         expiryDate: {type: Types.Datetime, default: Date.now}
     },
 
-    plaform: {type: String},
+    platform: {type: String},
     deliverydays: {type: Types.TextArray, default:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
     registrationDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     createdDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},

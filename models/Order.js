@@ -23,7 +23,6 @@ Order.add({
         index: true
     },
 
-    platform: {type: String, default:"WEB"},
     orderNumber: {type: Number, noedit: true},
     orderDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
@@ -75,6 +74,7 @@ Order.add({
 
     //Delivery Details
     delivery: {
+        platform: {type: String, noedit: true},
         firstName: {type: String, noedit: true},
         lastName: {type: String, noedit: true},
         phoneNumber: {type: String, noedit: true},
@@ -115,8 +115,9 @@ Order.schema.virtual("discount").get(function () {
 
 Order.schema.virtual("chargesAmt").get(function () {
     var charges = 0;
-    if(doc.charges)    
-        charges = doc.charges.chargesAmount.sum(c=>parseFloat("" + c));
+    
+    if(this.charges)    
+        charges = this.charges.chargesAmount.sum(c => parseFloat("" + c));
 
     return charges;
 });
@@ -392,7 +393,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
-    var subject = `Your order #${that.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
+    var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
     if (keystone.get("env") == "development")
         subject = "(Testing)" + subject;
 
