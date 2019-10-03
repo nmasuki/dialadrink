@@ -74,7 +74,7 @@ Order.add({
 
     //Delivery Details
     delivery: {
-        platform: {type: String, noedit: true},
+        platform: {type: String, noedit: true, default: "WEB"},
         firstName: {type: String, noedit: true},
         lastName: {type: String, noedit: true},
         phoneNumber: {type: String, noedit: true},

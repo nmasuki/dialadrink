@@ -92,15 +92,32 @@ router.post("/", function (req, res){
 });
 
 function getCartItems(req){
-    var cartItems = req.body.item_id.map((id, i) => {
-        var cart = new CartItem.model({
-            _id: `${req.body.item_id[i]}|${req.body.item_opt[i]}`,
-            product: req.body.item_id[i],
-            price: req.body.item_price[i],
-            quantity: req.body.item_opt[i],
-            pieces: req.body.item_pieces[i]
+    var items = [];
+    if(typeof req.body.item_id == "string")
+    {
+        items.push({
+            _id: `${req.body.item_id}|${req.body.item_opt}`,
+            product: req.body.item_id,
+            price: req.body.item_price,
+            quantity: req.body.item_opt,
+            pieces: req.body.item_pieces
         });
+    }
+    else{
+        for(var i =0; i < req.body.item_id.length; i++){
+            items.push({
+                _id: `${req.body.item_id[i]}|${req.body.item_opt[i]}`,
+                product: req.body.item_id[i],
+                price: req.body.item_price[i],
+                quantity: req.body.item_opt[i],
+                pieces: req.body.item_pieces[i]
+            });
+        }
+    }
+        
 
+    var cartItems = items.map((item, i) => {
+        var cart = new CartItem.model(item);
         Product.findOnePublished({_id: cart.product})
             .exec((err, product) => {
                 if (err || !product)
