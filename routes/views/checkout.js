@@ -40,7 +40,7 @@ router.post("/", function (req, res, next) {
 	if (Object.keys(req.session.cart || {}).length) {
 		var promo = req.session.promo || {};		
 		var cartItems = Object.values(req.session.cart || {});
-		var deliveryDetails = Object.assign({clientIp: req.locals.clientIp}, req.body);
+		var deliveryDetails = Object.assign({clientIp: res.locals.clientIp}, req.body);
 
 		var json = {
 			state: true
@@ -74,6 +74,8 @@ router.post("/", function (req, res, next) {
 						order.orderNumber, order.payment.amount, 'KES'
 					);
 				}
+				delete req.session.cart;
+				req.session.save();
 			}
 
 			return res.send(json);
