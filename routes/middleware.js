@@ -339,7 +339,7 @@ exports.requireAPIUser = function (req, res, next) {
 
             if (client) {
                 res.locals.appUser = client;
-                client.plaform = platform;
+                client.platform = platform;
                 
                 if(client.clientIps.indexOf(res.locals.clientIp) < 0){
                     client.clientIps.push(res.locals.clientIp);

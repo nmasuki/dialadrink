@@ -94,6 +94,7 @@
                             </tr>
 
                             {{#each chargesArr}}
+                            {{#if amount}}
                             <tr>
                                 <th class="order-td" scope="row" colspan="2"
                                     style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
@@ -103,10 +104,11 @@
                                     style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
                                     <span class="order-amount order-amount">
                                         <span class="order-currencySymbol">{{../currency}}</span>
-                                        ({{formatNumber amount}})
+                                        ({{formatNumber amount}})                                        
                                     </span>
                                 </td>
                             </tr>
+                            {{/if}}
                             {{/each}}
 
                             {{#if promo.code}}

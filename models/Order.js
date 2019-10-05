@@ -23,7 +23,6 @@ Order.add({
         index: true
     },
 
-    platform: {type: String, default:"WEB"},
     orderNumber: {type: Number, noedit: true},
     orderDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
@@ -39,7 +38,10 @@ Order.add({
     paymentMethod: {type: String, noedit: true},
     payment:  {
         method: {type: String, noedit: true},
+
+        subtotal: {type: Number, noedit: true},
         amount: {type: Number, noedit: true},
+
         smsNotificationSent: {type: Boolean, noedit: true},
         notificationSent: {type: Boolean, noedit: true},
         notificationType: {type: String, noedit: true},
@@ -72,6 +74,7 @@ Order.add({
 
     //Delivery Details
     delivery: {
+        platform: {type: String, noedit: true, default: "WEB"},
         firstName: {type: String, noedit: true},
         lastName: {type: String, noedit: true},
         phoneNumber: {type: String, noedit: true},
@@ -92,6 +95,15 @@ Order.schema.pre('save', function (next) {
     this.updateClient(next);
 });
 
+
+Order.schema.virtual("currency").get(function () {
+    if (this.cart)
+        return this.cart
+            .filter(c=>c.currency)
+            .map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
+    return "KES";
+});
+
 Order.schema.virtual("discount").get(function () {
     if (this.cart)
         return Math.round(this.promo.discountType == "percent" ?
@@ -101,13 +113,14 @@ Order.schema.virtual("discount").get(function () {
     return 0;
 });
 
-Order.schema.virtual("currency").get(function () {
-    if (this.cart)
-        return this.cart
-            .filter(c=>c.currency)
-            .map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
-    return "KES";
-})
+Order.schema.virtual("chargesAmt").get(function () {
+    var charges = 0;
+    
+    if(this.charges)    
+        charges = this.charges.chargesAmount.sum(c => parseFloat("" + c));
+
+    return charges;
+});
 
 Order.schema.virtual("subtotal").get(function () {
     if (this.cart)
@@ -121,7 +134,7 @@ Order.schema.virtual("subtotal").get(function () {
 });
 
 Order.schema.virtual("total").get(function () {
-    return this.subtotal - this.discount;
+    return this.subtotal + this.chargesAmt - this.discount;
 });
 
 Order.schema.virtual("deliveryAddress").get(function () {
@@ -380,7 +393,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
-    var subject = `Your order #${that.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
+    var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
     if (keystone.get("env") == "development")
         subject = "(Testing)" + subject;
 
@@ -475,25 +488,47 @@ Order.schema.methods.sendOrderNotification = function (next) {
 };
 
 Order.schema.set('toObject', {
-    transform: function (doc, ret, options) {
+    transform: function (order, ret, options) {
         var charges = [];
+        ret = ret || {};
         
-        for(var i =0; i < doc.charges.chargesName.length; i++){
+        for(var i = 0; i < order.charges.chargesName.length; i++){
             charges[i] = {
-                name: doc.charges.chargesName[i].camelCaseToSentence(),
-                amount: parseFloat("" + doc.charges.chargesAmount[i])
-            } ;
+                name: order.charges.chargesName[i].camelCaseToSentence(),
+                amount: parseFloat("" + order.charges.chargesAmount[i])
+            };
         }
 
-        doc.chargesArr = charges;
+        var virtuals = [
+            "id", "status", "orderNumber", 
+            "currency", "discount", 
+            "chargesAmt", "subtotal", "total",
+            "state", "orderDate","modifiedDate",
+            "client", "orderAmount",
+            "paymentMethod", "payment",
+            //"promo","delivery"
+        ];
+        
+        virtuals.forEach(v => ret[v] = order[v]);
 
-        return doc;
+        if(order.promo)
+            ret.promo = order.promo.toObject();
+        if(order.delivery)
+            ret.delivery = order.delivery.toObject();
+
+        ret.status = "1";
+
+        ret.chargesArr = charges;
+        if(order.cart.length && order.cart[0].constructor.name == "ObjectID")
+            ret.cart = order.cart.map(c => c.toObject());
+        
+        return ret;
     }
 });
 
 keystone.deepPopulate(Order.schema);
 
-Order.defaultColumns = 'orderNumber, platform, orderDate|15%, client|15%, delivery.phoneNumber, payment.amount, state';
+Order.defaultColumns = 'orderNumber, orderDate|15%, client|15%, delivery.platform, delivery.phoneNumber, payment.amount, state';
 
 Order.register();
 
@@ -534,6 +569,7 @@ Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
         paymentMethod: deliveryDetails.paymentMethod == "Cash" ? "Cash on Delivery": deliveryDetails.paymentMethod,
         payment: {
             method: deliveryDetails.paymentMethod,
+            subtotal: subtotal,
             amount: subtotal + charges - discount
         },
         promo: promo,

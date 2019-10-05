@@ -5,29 +5,23 @@ var CartItem = keystone.list("CartItem");
 
 var router = keystone.express.Router();
 
-router.get("/:orderNo", function (req, res) {
-    Order.model.findOne({orderNumber: req.params.orderNo })
-        .deepPopulate('cart.product.priceOptions.option')
-        .exec((err, order) => {
-            if (!order)
-                return res.status(404).render('errors/404');
+router.get("/", function(req, res){
+    var client = res.locals.appUser;
+    var json = { 
+        response: "error",
+        message: 'Error getting user Orders.',
+        data: []
+    };
 
-            var json = {
-                response: "error",
-                data: {}
-            };
-
-            order.total = order.subtotal - (order.discount || 0);
-            json.order = order.toObject({ virtuals: true });
-
-            if (order.cart && order.cart.length)
-                json.order.cart = order.cart.map(c => c.toObject({
-                    virtuals: true
-                }));
-
-            if (json.order.cart.first())
-                json.order.currency = order.cart.first().currency;
-
+    Order.model.find({client: client._id})
+        .deepPopulate('cart')
+        .exec((err, orders)=>{
+            if (err)
+                json.message += "! " + err;
+            else{
+                json.data = orders.map(o=>o.toObject());
+            }
+            
             return res.send(json);
         });
 });
@@ -36,7 +30,7 @@ router.post("/", function (req, res){
     var client = res.locals.appUser;
     var json = { 
         response: "error",
-        message: 'Error updating user',
+        message: 'Error while placing Order!',
         data: {}
     };
 
@@ -51,12 +45,13 @@ router.post("/", function (req, res){
             json.response = "success";
             var cartItems = getCartItems(req);
             var promo = req.session.promo || {};
-            var deliveryDetails = Object.assign({clientIp: res.locals && res.locals.clientIp}, req.body);	
+            var deliveryDetails = Object.assign({}, client.toObject(), req.body, {clientIp: res.locals && res.locals.clientIp});	
 
             Order.checkOutCartItems(cartItems, promo, deliveryDetails, function(err, order){
                 if (err)
                     json.response = "error";
 
+                json.data = order.toObject();
                 json.message = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
 
                 if (!err) {
@@ -90,16 +85,55 @@ router.post("/", function (req, res){
     }
 });
 
-function getCartItems(req){
-    var cartItems = req.body.item_id.map((id, i) => {
-        var cart = new CartItem.model({
-            _id: `${req.body.item_id[i]}|${req.body.item_opt[i]}`,
-            product: req.body.item_id[i],
-            price: req.body.item_price[i],
-            quantity: req.body.item_opt[i],
-            pieces: req.body.item_pieces[i]
-        });
+router.get("/:orderNo", function (req, res) {
+    var json = {
+        response: "error",
+        message: "Error while getting order #" + req.params.orderNo,
+        data: {}
+    };
 
+    Order.model.findOne({$or:[{orderNumber: req.params.orderNo},{_id:req.params.orderNo}] })
+        .deepPopulate('cart.product.priceOptions.option')
+        .exec((err, order) => {
+            if (err)
+                json.message += "! " + err;
+            else if(!order)
+                json.message += "! No matching order Number";
+            else{
+                json.data = order.toObject();
+            }
+            return res.send(json);
+        });
+});
+
+
+function getCartItems(req){
+    var items = [];
+    if(typeof req.body.item_id == "string")
+    {
+        items.push({
+            _id: `${req.body.item_id}|${req.body.item_opt}`,
+            product: req.body.item_id,
+            price: req.body.item_price,
+            quantity: req.body.item_opt,
+            pieces: req.body.item_pieces
+        });
+    }
+    else{
+        for(var i =0; i < req.body.item_id.length; i++){
+            items.push({
+                _id: `${req.body.item_id[i]}|${req.body.item_opt[i]}`,
+                product: req.body.item_id[i],
+                price: req.body.item_price[i],
+                quantity: req.body.item_opt[i],
+                pieces: req.body.item_pieces[i]
+            });
+        }
+    }
+        
+
+    var cartItems = items.map((item, i) => {
+        var cart = new CartItem.model(item);
         Product.findOnePublished({_id: cart.product})
             .exec((err, product) => {
                 if (err || !product)
