@@ -272,7 +272,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
         if (order.delivery.phoneNumber) {
             message = `Dial a Drink: Your payment of ${order.currency||''}${order.payment.amount} ` + 
                 `for order #${order.orderNumber} has been received. Your order will be dispatched shortly. `+
-                `Thank You for using http://dialadrinkkenya.com`;
+                `Thank You for using http://pharmacydelivery.co.ke`;
             
             if(!order.payment.smsNotificationSent)
                 order.sendSMSNotification(message);                
@@ -587,7 +587,7 @@ Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
             return console.warn("Error while saving Order! " + err);
 
         if (order.payment.method == "PesaPal") {
-            var paymentUrl = `https://www.dialadrinkkenya.com/payment/${order.orderNumber}`;
+            var paymentUrl = `https://www.pharmacydelivery.co.ke/payment/${order.orderNumber}`;
             pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
                 order.payment.url = paymentUrl;
                 if (!err)

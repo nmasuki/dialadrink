@@ -22,7 +22,7 @@ function search(req, res, next) {
         h1: ((req.params.query || "").toProperCase() + " drinks").trim()
     });
 
-    locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId();
+    locals.page.canonical = "https://www.pharmacydelivery.co.ke/" + (req.params.query || "Search Results").cleanId();
 
     if (locals.breadcrumbs) {
         if (req.originalUrl.startsWith("/search"))
@@ -101,7 +101,7 @@ function search(req, res, next) {
                 product.subCategory && product.subCategory.name,
                 product.brand && product.brand.name,
             ].filter(a => !!a).join(" - ") + " | " + keystone.get("name");
-            locals.page.canonical = "https://www.dialadrinkkenya.com/" + product.href;
+            locals.page.canonical = "https://www.pharmacydelivery.co.ke/" + product.href;
 
             locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
             locals.page.keyWords = product.keyWords.join(", ");
@@ -320,7 +320,7 @@ router.get("/products.json", function (req, res) {
 
         res.send(products.map(d => {
             var obj = Object.assign({}, d.toObject(), {
-                url: 'https://www.dialadrinkkenya.com/' + d.href,
+                url: 'https://www.pharmacydelivery.co.ke/' + d.href,
                 image: d.image.secure_url,
                 images: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
                 category: d.category ? d.category.name : null,

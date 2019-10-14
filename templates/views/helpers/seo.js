@@ -1,15 +1,15 @@
 module.exports = {
 	home: {
 		meta: "We are Kenya`s biggest Whisky shop for whisky delivery within Nairobi. Sample our collection of Scotch,Bourbon & Single malts and order for free alcohol delivery",
-		title: "Alcohol Delivery Nairobi | Dial A Drink Kenya - Fast, Free delivery"
+		title: "Alcohol Delivery Nairobi | Pharmacy Delivery Kenya - Fast, Free delivery"
 	},
 	whisky: {
 		meta: "Whisky delivery in kenya at no delivery charges. We deliver single malt, scotch, Bourbon, Irish whisky etc. Get a free, fast & free whisky delivery in Nairobi",
-		title: "Whisky Delivery Nairobi | Dial A Drink Kenya - Whisky Delivery Kenya"
+		title: "Whisky Delivery Nairobi | Pharmacy Delivery Kenya - Whisky Delivery Kenya"
 	},
 	vodka: {
 		meta: "Vodka delivery Kenya | Vodka Delivery Nairobi",
-		title: "Dial A Drink Kenya l Vodka Delivery Kenya l Alcohol Delivery Nairobi"
+		title: "Pharmacy Delivery Kenya l Vodka Delivery Kenya l Alcohol Delivery Nairobi"
 	},
 	wine: {
 		meta: "Buy wine online within Nairobi and get your drink delivered to your doorstep at no delivery charges.We are Kenya`s leading wine distributors for all wine brands",
@@ -17,7 +17,7 @@ module.exports = {
 	},
 	brandy: {
 		meta: "All cognacs and brandies available and just a call and minutes away from you,buy cognac and brandies online and we will deliver your drink fast and for free.",
-		title: "Dial A Drink Kenya | Drinks Delivery Kenya | Alcohol Delivery Nairobi"
+		title: "Pharmacy Delivery Kenya | Drinks Delivery Kenya | Alcohol Delivery Nairobi"
 	},
 	beers: {
 		meta: "Beer delivery in Nairobi never felt this easy! We stock Cider,Malt,Lager & other types of beer,canned or bottled.Minimum order is a six pack,no delivery charges.",
@@ -25,7 +25,7 @@ module.exports = {
 	},
 	tequila: {
 		meta: "Dial a bottle of tequila and have it delivered fast within Nairobi.Buy tequila online in Kenya from Nairobi`s favorite online liqour store,dial a drink Kenya.",
-		title: "Tequila - Alcohol Delivery Kenya - Dial A Drink Kenya | Alcohol Delivery Nairobi"
+		title: "Tequila - Alcohol Delivery Kenya - Pharmacy Delivery Kenya | Alcohol Delivery Nairobi"
 	},
 	rum: {
 		meta: "Get all major brands of rum in Kenya delivered to you in minutes,no minimum orders and no drink delivery charges.Rum delivery in Nairobi just got simplified",
@@ -37,11 +37,11 @@ module.exports = {
 	},
 	liquers: {
 		meta: "Liquer delivery Kenya | Liquer Delivery Nairobi",
-		title: "Dial A Drink Nairobi - Nairobi Drinks Delivery | Drinks Delivery Kenya"
+		title: "Pharmacy Delivery Nairobi - Nairobi Drinks Delivery | Drinks Delivery Kenya"
 	},
 	others: {
 		meta: "Dial a drink in Nairobi and get your liqour delivered at no extra charges for dispatch to your doorstep.Our drink delivery services in Nairobi are the best!",
-		title: "Dial A Drink Nairobi | Alcohol Delivery Kenya - Fast, Free Delivery"
+		title: "Pharmacy Delivery Nairobi | Alcohol Delivery Kenya - Fast, Free Delivery"
 	},
 	searchpage: {
 		meta: "Search here for any drink you want delivered to your doorstep in minutes,no charges for drink delivery and no minimum orders!Liqour delivery is only a call away",
@@ -65,19 +65,19 @@ module.exports = {
 			title: " Scotch Whisky Kenya | Whisky Delivery Nairobi | Buy Whisky online in Kenya"
 		},
 		"tennessee-whiskies": {
-			meta: "Dial A Drink Kenya is home for Jack Daniel`s Whiskies and all other tennessee whisky brands.Call {{contactNumber}} to order and we will deliver your whisky in minutes",
+			meta: "Pharmacy Delivery Kenya is home for Jack Daniel`s Whiskies and all other tennessee whisky brands.Call {{contactNumber}} to order and we will deliver your whisky in minutes",
 			title: "Jack Daniel`s Whisky Kenya | Buy Jack Daniel`s Whisky Nairobi"
 		},
 		"red-wine": {
 			meta: "Wine delivery for Nairobi and its close environs.See our wide variety of wines including Cabernet Sauvignon,Merlot,Shiraz wines & more.Call {{contactNumber}} to order",
-			title: " Wine Delivery Kenya | Buy Wine Online in Nairobi | Dial A Drink Nairobi"
+			title: " Wine Delivery Kenya | Buy Wine Online in Nairobi | Pharmacy Delivery Nairobi"
 		},
 		"white-wine": {
 			meta: "Nairobi wine delivery services by Dial a Drink Kenya,the most reliable wineshop.Our variety includes Sauvignon Blanc,Chardonnay & more.Buy wine online today!",
-			title: "  Buy Wine online Kenya | Dial A Delivery | Dial A Drink Nairobi"
+			title: "  Buy Wine online Kenya | Dial A Delivery | Pharmacy Delivery Nairobi"
 		},
 		"rose-wine": {
-			meta: "Buy rose` wine online in Nairobi and get it delivered to your doorstep for free.Dial A Drink Kenya is the premier wine shop in Nairobi.Call {{contactNumber}} to order.",
+			meta: "Buy rose` wine online in Nairobi and get it delivered to your doorstep for free.Pharmacy Delivery Kenya is the premier wine shop in Nairobi.Call {{contactNumber}} to order.",
 			title: " "
 		}
 	}

@@ -103,7 +103,7 @@ exports.initLocals = function (req, res, next) {
         //Initiate Page details
         res.locals.page = {
             title: keystone.get("name"),
-            canonical: "https://www.dialadrinkkenya.com" + req.originalUrl
+            canonical: "https://www.pharmacydelivery.co.ke" + req.originalUrl
         };
 
         Promise.all([

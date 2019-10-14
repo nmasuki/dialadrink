@@ -4,7 +4,7 @@
 		
 	{{#each pages}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
+			<loc>https://www.pharmacydelivery.co.ke/{{trim href "/"}}</loc>
 			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
 			<changefreq>weekly</changefreq>
 			<priority>0.9</priority>
@@ -13,7 +13,7 @@
 
 	{{#each products}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
+			<loc>https://www.pharmacydelivery.co.ke/{{trim href "/"}}</loc>
 			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
 			<changefreq>weekly</changefreq>
 			<priority>{{popularityRatio}}</priority>
@@ -22,7 +22,7 @@
 
 	{{#each blogs}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/blog/{{trim href "/"}}</loc>
+			<loc>https://www.pharmacydelivery.co.ke/blog/{{trim href "/"}}</loc>
 			{{#if publishedDate}}<lastmod>{{formatDate publishedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
 			<changefreq>weekly</changefreq>
 			<priority>0.76</priority>
@@ -31,7 +31,7 @@
 
 	{{#each categories}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/category/{{lowerCase (trim key '/')}}</loc>
+			<loc>https://www.pharmacydelivery.co.ke/category/{{lowerCase (trim key '/')}}</loc>
 			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
 			<changefreq>monthly</changefreq>
 			<priority>0.75</priority>
@@ -40,7 +40,7 @@
 
 	{{#each brands}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/brand/{{lowerCase (trim key '/')}}</loc>
+			<loc>https://www.pharmacydelivery.co.ke/brand/{{lowerCase (trim key '/')}}</loc>
 			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
 			<changefreq>monthly</changefreq>
 			<priority>0.7</priority>
@@ -50,7 +50,7 @@
 	{{#each subCategories}}
 		{{#if category.key}}
 			<url>
-				<loc>https://www.dialadrinkkenya.com/category/{{lowerCase (trim category.key '/')}}/{{lowerCase (trim key '/')}}</loc>
+				<loc>https://www.pharmacydelivery.co.ke/category/{{lowerCase (trim category.key '/')}}/{{lowerCase (trim key '/')}}</loc>
 				{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
 				<changefreq>monthly</changefreq>
 				<priority>0.7</priority>

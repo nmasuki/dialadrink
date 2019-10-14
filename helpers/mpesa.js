@@ -2,7 +2,7 @@
  * Created by nmasuki on 11/4/2019.
  */
 const Mpesa = require('mpesa-node');
-const URL = 'https://www.dialadrinkkenya.com/mpesa';
+const URL = 'https://www.pharmacydelivery.co.ke/mpesa';
 
 class MPESAClient extends Mpesa{
     constructor() {

@@ -8,11 +8,11 @@ function index(req, res) {
     // Set locals
     locals.section = 'store';
     locals.page = Object.assign(locals.page, {
-        title: "Alcohol Delivery Nairobi | Dial A Drink Kenya - Fast, Free delivery",
+        title: "Alcohol Delivery Nairobi | Pharmacy Delivery Kenya - Fast, Free delivery",
         h1: "Today's Offers"
     });
 
-    locals.page.canonical = 'https://www.dialadrinkkenya.com/index.html';
+    locals.page.canonical = 'https://www.pharmacydelivery.co.ke/index.html';
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 

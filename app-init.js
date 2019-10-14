@@ -24,8 +24,8 @@ var handlebars = require('express-handlebars').create({
 // and documentation.
 
 keystone.init({
-	'name': 'Dial A Drink Kenya',
-	'brand': 'Dial A Drink Kenya',
+	'name': 'Pharmacy Delivery Kenya',
+	'brand': 'Pharmacy Delivery Kenya',
 	'port': process.env.HTTP_PORT || 4000,
 	'less': 'public',
 	'static': 'public',
@@ -103,7 +103,7 @@ keystone.set('nav', {
 	users: ['clients', 'users'],
 });
 
-keystone.set("importUrl", "https://www.dialadrinkkenya.com/");
+keystone.set("importUrl", "https://www.pharmacydelivery.co.ke/");
 
 //Log warning into email
 if (!console._warn)
