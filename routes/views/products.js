@@ -8,7 +8,7 @@ function index(req, res) {
     // Set locals
     locals.section = 'store';
     locals.page = Object.assign(locals.page, {
-        title: "Alcohol Delivery Nairobi | Pharmacy Delivery Kenya - Fast, Free delivery",
+        title: "Pharmaceutical Delivery Nairobi | Pharmacy Delivery Kenya - Fast, Free delivery",
         h1: "Today's Offers"
     });
 

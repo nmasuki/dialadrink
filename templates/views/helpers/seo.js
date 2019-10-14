@@ -1,7 +1,7 @@
 module.exports = {
 	home: {
 		meta: "We are Kenya`s biggest Whisky shop for whisky delivery within Nairobi. Sample our collection of Scotch,Bourbon & Single malts and order for free alcohol delivery",
-		title: "Alcohol Delivery Nairobi | Pharmacy Delivery Kenya - Fast, Free delivery"
+		title: "Pharmaceutical Delivery Nairobi | Pharmacy Delivery Kenya - Fast, Free delivery"
 	},
 	whisky: {
 		meta: "Whisky delivery in kenya at no delivery charges. We deliver single malt, scotch, Bourbon, Irish whisky etc. Get a free, fast & free whisky delivery in Nairobi",
@@ -9,7 +9,7 @@ module.exports = {
 	},
 	vodka: {
 		meta: "Vodka delivery Kenya | Vodka Delivery Nairobi",
-		title: "Pharmacy Delivery Kenya l Vodka Delivery Kenya l Alcohol Delivery Nairobi"
+		title: "Pharmacy Delivery Kenya l Vodka Delivery Kenya l Pharmaceutical Delivery Nairobi"
 	},
 	wine: {
 		meta: "Buy wine online within Nairobi and get your drink delivered to your doorstep at no delivery charges.We are Kenya`s leading wine distributors for all wine brands",
@@ -17,7 +17,7 @@ module.exports = {
 	},
 	brandy: {
 		meta: "All cognacs and brandies available and just a call and minutes away from you,buy cognac and brandies online and we will deliver your drink fast and for free.",
-		title: "Pharmacy Delivery Kenya | Drinks Delivery Kenya | Alcohol Delivery Nairobi"
+		title: "Pharmacy Delivery Kenya | Drinks Delivery Kenya | Pharmaceutical Delivery Nairobi"
 	},
 	beers: {
 		meta: "Beer delivery in Nairobi never felt this easy! We stock Cider,Malt,Lager & other types of beer,canned or bottled.Minimum order is a six pack,no delivery charges.",
@@ -25,11 +25,11 @@ module.exports = {
 	},
 	tequila: {
 		meta: "Dial a bottle of tequila and have it delivered fast within Nairobi.Buy tequila online in Kenya from Nairobi`s favorite online liqour store,dial a drink Kenya.",
-		title: "Tequila - Alcohol Delivery Kenya - Pharmacy Delivery Kenya | Alcohol Delivery Nairobi"
+		title: "Tequila - Pharmaceutical Delivery Kenya - Pharmacy Delivery Kenya | Pharmaceutical Delivery Nairobi"
 	},
 	rum: {
 		meta: "Get all major brands of rum in Kenya delivered to you in minutes,no minimum orders and no drink delivery charges.Rum delivery in Nairobi just got simplified",
-		title: "Drinks Delivery Nairobi | Nairobi Drinks Delivery | Kenya Alcohol Delivery"
+		title: "Drinks Delivery Nairobi | Nairobi Drinks Delivery | Kenya Pharmaceutical Delivery"
 	},
 	gin: {
 		meta: "Buy gin from the most reliable wine and spirits shop in Nairobi,we deliver a wide range of gin brands including Gilbeys,Tanqueray,Bombay Sapphire and more.",
@@ -41,11 +41,11 @@ module.exports = {
 	},
 	others: {
 		meta: "Dial a drink in Nairobi and get your liqour delivered at no extra charges for dispatch to your doorstep.Our drink delivery services in Nairobi are the best!",
-		title: "Pharmacy Delivery Nairobi | Alcohol Delivery Kenya - Fast, Free Delivery"
+		title: "Pharmacy Delivery Nairobi | Pharmaceutical Delivery Kenya - Fast, Free Delivery"
 	},
 	searchpage: {
 		meta: "Search here for any drink you want delivered to your doorstep in minutes,no charges for drink delivery and no minimum orders!Liqour delivery is only a call away",
-		title: "Drinks delivery Nairobi, Kenya | Dial a drink Kenya | Alcohol delivery Nairobi"
+		title: "Drinks delivery Nairobi, Kenya | Dial a drink Kenya | Pharmaceutical delivery Nairobi"
 	},
 	subcategories: {
 		"single-malt-whiskies": {
@@ -54,7 +54,7 @@ module.exports = {
 		},
 		"bourbon-whiskies": {
 			meta: "Bourbon whiskies delivery within Nairobi and its environs,dial a drink kenya is Nairobi`s ultimate whisky shop and our whisky delivery services are unmatched.",
-			title: " Bourbon whisky Delivery Nairobi | Whisky Delivery Kenya -Alcohol Delivery"
+			title: " Bourbon whisky Delivery Nairobi | Whisky Delivery Kenya -Pharmaceutical Delivery"
 		},
 		"irish-whiskies": {
 			meta: "Buy Jameson and other Irish whiskies at Nairobi`s most reliable online whisky shop,dial a drink kenya.Our drinks delivery service offers fast and free dispatch",
