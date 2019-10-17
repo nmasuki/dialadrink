@@ -2383,7 +2383,7 @@ this["templates"]["views"]["products"]["hbs"]["templates/views/products.hbs"] = 
     + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"                    ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "                </div>\n";
 },"6":function(container,depth0,helpers,partials,data) {
-    return "        <div class=\"row\">\n            <div class=\"col-md-12 text-center\">\n                <h2 style=\"font-size: 18px;\">No results found!</h2>\n                <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/>\n                <a href=\"/\">Back to Today's Offers</a>\n            </div>\n        </div>\n";
+    return "        <div class=\"row\">\n            <div class=\"col-md-12 text-center\">\n                <h2 style=\"font-size: 18px;\">No results found!</h2>\n                <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/>\n                <br/>\n                <a href=\"/\">Back to Today's Offers</a>\n            </div>\n        </div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : {};
 
@@ -2644,7 +2644,7 @@ this["templates"]["views"]["search"]["hbs"]["templates/views/search.hbs"] = Hand
     + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"\t\t\t\t","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "			</div>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    return "			<div class=\"col-md-12 text-center\">\n				<h2 style=\"font-size: 18px;\">No results found!</h2>\n				<img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/><br>\n				<a href=\"/\">Back to Today's Offers</a>\n			</div>\n";
+    return "			<div class=\"col-md-12 text-center\">\n				<h2 style=\"font-size: 18px;\">No results found!</h2>\n				<img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/>\n				<br>\n				<a href=\"/\">Back to Today's Offers</a>\n			</div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -2654,83 +2654,31 @@ this["templates"]["views"]["search"]["hbs"]["templates/views/search.hbs"] = Hand
 },"usePartial":true,"useData":true});
 
 this["templates"]["views"]["sitemapXml"]["hbs"]["templates/views/sitemapXml.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : {};
-
-  return "		<url>\n			<loc>https://www.dialadrinkkenya.com/"
-    + container.escapeExpression((helpers.trim || (depth0 && depth0.trim) || helpers.helperMissing).call(alias1,(depth0 != null ? depth0.href : depth0),"/",{"name":"trim","hash":{},"data":data}))
-    + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n			<changefreq>weekly</changefreq>\n			<priority>0.9</priority>\n		</url>\n";
-},"2":function(container,depth0,helpers,partials,data) {
-    return "<lastmod>"
-    + container.escapeExpression((helpers.formatDate || (depth0 && depth0.formatDate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.modifiedDate : depth0),"YYYY-MM-DDTHH:mm:ss",{"name":"formatDate","hash":{},"data":data}))
-    + "+00:00</lastmod>";
-},"4":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "		<url>\n			<loc>https://www.dialadrinkkenya.com/"
     + alias3((helpers.trim || (depth0 && depth0.trim) || alias2).call(alias1,(depth0 != null ? depth0.href : depth0),"/",{"name":"trim","hash":{},"data":data}))
     + "</loc>\n			"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n			<changefreq>weekly</changefreq>\n			<priority>"
-    + alias3(((helper = (helper = helpers.popularityRatio || (depth0 != null ? depth0.popularityRatio : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"popularityRatio","hash":{},"data":data}) : helper)))
+    + "\n			<changefreq>"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.changefreq : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.program(6, data, 0),"data":data})) != null ? stack1 : "")
+    + "</changefreq>\n			<priority>"
+    + alias3(((helper = (helper = helpers.priority || (depth0 != null ? depth0.priority : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"priority","hash":{},"data":data}) : helper)))
     + "</priority>\n		</url>\n";
-},"6":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : {};
-
-  return "		<url>\n			<loc>https://www.dialadrinkkenya.com/blog/"
-    + container.escapeExpression((helpers.trim || (depth0 && depth0.trim) || helpers.helperMissing).call(alias1,(depth0 != null ? depth0.href : depth0),"/",{"name":"trim","hash":{},"data":data}))
-    + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.publishedDate : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n			<changefreq>weekly</changefreq>\n			<priority>0.76</priority>\n		</url>\n";
-},"7":function(container,depth0,helpers,partials,data) {
+},"2":function(container,depth0,helpers,partials,data) {
     return "<lastmod>"
-    + container.escapeExpression((helpers.formatDate || (depth0 && depth0.formatDate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.publishedDate : depth0),"YYYY-MM-DDTHH:mm:ss",{"name":"formatDate","hash":{},"data":data}))
+    + container.escapeExpression((helpers.formatDate || (depth0 && depth0.formatDate) || helpers.helperMissing).call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.modifiedDate : depth0),"YYYY-MM-DDTHH:mm:ss",{"name":"formatDate","hash":{},"data":data}))
     + "+00:00</lastmod>";
-},"9":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing;
+},"4":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-  return "		<url>\n			<loc>https://www.dialadrinkkenya.com/category/"
-    + container.escapeExpression((helpers.lowerCase || (depth0 && depth0.lowerCase) || alias2).call(alias1,(helpers.trim || (depth0 && depth0.trim) || alias2).call(alias1,(depth0 != null ? depth0.key : depth0),"/",{"name":"trim","hash":{},"data":data}),{"name":"lowerCase","hash":{},"data":data}))
-    + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n			<changefreq>monthly</changefreq>\n			<priority>0.75</priority>\n		</url>\n";
-},"11":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing;
-
-  return "		<url>\n			<loc>https://www.dialadrinkkenya.com/brand/"
-    + container.escapeExpression((helpers.lowerCase || (depth0 && depth0.lowerCase) || alias2).call(alias1,(helpers.trim || (depth0 && depth0.trim) || alias2).call(alias1,(depth0 != null ? depth0.key : depth0),"/",{"name":"trim","hash":{},"data":data}),{"name":"lowerCase","hash":{},"data":data}))
-    + "</loc>\n			"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n			<changefreq>monthly</changefreq>\n			<priority>0.7</priority>\n		</url>\n";
-},"13":function(container,depth0,helpers,partials,data) {
+  return container.escapeExpression(((helper = (helper = helpers.changefreq || (depth0 != null ? depth0.changefreq : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"changefreq","hash":{},"data":data}) : helper)));
+},"6":function(container,depth0,helpers,partials,data) {
+    return "weekly";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},((stack1 = (depth0 != null ? depth0.category : depth0)) != null ? stack1.key : stack1),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
-},"14":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3=container.escapeExpression;
-
-  return "			<url>\n				<loc>https://www.dialadrinkkenya.com/category/"
-    + alias3((helpers.lowerCase || (depth0 && depth0.lowerCase) || alias2).call(alias1,(helpers.trim || (depth0 && depth0.trim) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.category : depth0)) != null ? stack1.key : stack1),"/",{"name":"trim","hash":{},"data":data}),{"name":"lowerCase","hash":{},"data":data}))
-    + "/"
-    + alias3((helpers.lowerCase || (depth0 && depth0.lowerCase) || alias2).call(alias1,(helpers.trim || (depth0 && depth0.trim) || alias2).call(alias1,(depth0 != null ? depth0.key : depth0),"/",{"name":"trim","hash":{},"data":data}),{"name":"lowerCase","hash":{},"data":data}))
-    + "</loc>\n				"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.modifiedDate : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n				<changefreq>monthly</changefreq>\n				<priority>0.7</priority>\n			</url>\n";
-},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : {};
-
-  return "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" \n		xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n		xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">\n		\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.pages : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.products : depth0),{"name":"each","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.blogs : depth0),{"name":"each","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.categories : depth0),{"name":"each","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.brands : depth0),{"name":"each","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "	\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.subCategories : depth0),{"name":"each","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "</urlset>	\n";
+  return "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" \n		xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n		xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">\n	\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.links : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\n</urlset>	\n";
 },"useData":true});
