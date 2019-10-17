@@ -195,7 +195,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     var cachedPage = memCache ? memCache.get("__breadcrumbs__" + cleanId) : null;
 
     if (cachedPage) {
-        res.locals.breadcrumbs = Array.from(Object.assign(res.locals.breadcrumbs || {}, cachedPage || {}));
+        res.locals.breadcrumbs = Array.from(Object.assign(res.locals.breadcrumbs || {}, cachedPage || {})).filter(b => b.label);
 
         if (typeof next == "function")
             next(err);
@@ -222,7 +222,10 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
             }
 
             if (breadcrumbs.length)
-                res.locals.breadcrumbs = breadcrumbs.orderBy(m => m.level).distinctBy(b => (b.href || "").toLowerCase().trim());
+                res.locals.breadcrumbs = breadcrumbs
+                    .orderBy(m => m.level)
+                    .filter(b => b.label)
+                    .distinctBy(b => (b.href || "").toLowerCase().trim());
             else
                 res.locals.breadcrumbs = [{
                     "label": "Home",

@@ -538,17 +538,15 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    return Product.findPublished({ 
-        href: new RegExp(keyStr + "$", "i")
-    }, function (err, products) {
+    return Product.findPublished({ href: new RegExp("^" + keyStr + "$", "i") }, function (err, products) {
         if (err || !products || !products.length)
-            return Product.findByBrand(filters, function (err, products) {
+            return Product.findByCategory(filters, function (err, products) {
                 if (err || !products || !products.length)
-                    return Product.findByOption(filters, function (err, products) {
+                    return Product.findBySubCategory(filters, function (err, products) {
                         if (err || !products || !products.length)
-                            return Product.findByCategory(filters, function (err, products) {
+                            return Product.findByBrand(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                    return Product.findBySubCategory(filters, function (err, products) {
+                                    return Product.findByOption(filters, function (err, products) {
                                         if (err || !products || !products.length)
                                             return Product.findPublished(filters, function (err, products) {
                                                 next(err, products.orderByDescending(p => p.hitsPerWeek));

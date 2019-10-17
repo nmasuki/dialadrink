@@ -10,7 +10,7 @@ var MenuItem = new keystone.List('MenuItem', {
 	drilldown: 'parent',
 	defaultSort: 'level',
 	map: { name: 'href' },
-	autokey: { path: 'key', from: 'href', unique: true },
+	autokey: { path: 'key', unique: true, from: '_id'},
 });
 
 MenuItem.add({

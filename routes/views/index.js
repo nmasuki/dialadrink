@@ -14,27 +14,34 @@ function search(req, res, next) {
     var locals = res.locals;
 
     // Skip to page if valid
-    if (locals.page && locals.page._id && locals.page.content)
-        return next();
+    //if (locals.page && locals.page._id && locals.page.content)
+    //    return next();
 
     //Searching h1 title
     locals.page = Object.assign(locals.page || {}, {
-        h1: ((req.params.query || "").toProperCase() + " drinks").trim()
+        h1: ((req.params.query || "").replace(/[^\w]+/g, " ").toProperCase()).trim()
     });
+
+    if(locals.page.h1.length <= 5)
+        locals.page.h1 += " Delivery in Nairobi";
 
     locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId();
 
     if (locals.breadcrumbs) {
+        locals.breadcrumbs = locals.breadcrumbs.filter(b => b.label);
         if (req.originalUrl.startsWith("/search"))
             locals.breadcrumbs.push({
                 label: "Search Results",
                 href: req.originalUrl
             });
-        else
-            locals.breadcrumbs.push({
-                label: (req.params.query || "Search Results").toProperCase(),
-                href: req.originalUrl
-            });
+        else{
+            if(!locals.breadcrumbs.find(b => b.label == locals.page.h1))
+                locals.breadcrumbs.push({
+                    label: locals.page.h1,
+                    href: req.originalUrl
+                });
+        }
+            
     }
 
     function renderResults(products, title) {
@@ -68,8 +75,17 @@ function search(req, res, next) {
             renderSingleResults(products.first());
         } else {
             locals.products = products;
-            res.locals.uifilters = Product.getUIFilters(products);
-            view.render('search');
+            locals.uifilters = Product.getUIFilters(products);
+
+            var catCount = products.distinctBy(p => p.category && p.category.id || p.category).length;
+            var subCatCount = products.distinctBy(p => p.subCategory && p.subCategory.id || p.subCategory).length;
+
+            if(catCount == 1)
+                view.render('products');
+            else if(subCatCount == 1)
+                view.render('products');
+            else
+                view.render('search');
         }
     }
 
@@ -157,9 +173,14 @@ function search(req, res, next) {
             Product.search(req.params.query, function (err, products) {
                 if (err || !products || !products.length) {
                     if (req.originalUrl.startsWith("/search"))
-                        renderResults(products);
-                    else
-                        res.status(404).render('errors/404');
+                        renderResults([]);
+                    else{
+                        // Render the page content if available
+                        if (locals.page.content)
+                            view.render('page');
+                        else
+                            res.status(404).render('errors/404');
+                    }
                 } else {
                     renderResults(products);
                 }
@@ -398,17 +419,5 @@ router.get('/google81a0290a139b9339.html', function (req, res) {
 });
 
 router.get("/:query", search);
-
-router.get("/:page", function (req, res) {
-
-    var view = new keystone.View(req, res);
-    var locals = res.locals;
-
-    // Render the page
-    if (locals.page.content)
-        view.render('page');
-    else
-        res.status(404).render('errors/404');
-});
 
 module.exports = router;
