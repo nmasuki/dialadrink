@@ -309,8 +309,8 @@ Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
 keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', function (next) {
-    var cheapestOption = this.cheapestOption || this.priceOptions.first();
     this.modifiedDate = new Date();
+    var cheapestOption = this.cheapestOption || this.priceOptions.first();
 
     if (this.alcoholContent) {
         if (this.alcoholContent > 100)
@@ -570,8 +570,7 @@ Product.search = function (query, next) {
 
 Product.getUIFilters = function (products) {
     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
-    var subCategoryGroups = Object.values(products.filter(p => p.subCategory)
-        .groupBy(p => p.subCategory._id));
+    var subCategoryGroups = Object.values(products.filter(p => p.subCategory).groupBy(p => p.subCategory._id));
     var tagsGroups = Object.values(products.filter(p => p.tags.length)
         .selectMany(p => p.tags.map(t => {
             return {
@@ -596,7 +595,7 @@ Product.getUIFilters = function (products) {
     uifilters = uifilters.concat(tagsGroups.map(g => {
         return {
             filter: g[0].t.replace(regex, "").trim(),
-            hits: g.length,
+            hits: g.length * 0.5,
             g: g
         };
     }));
@@ -616,7 +615,7 @@ Product.getUIFilters = function (products) {
         uifilters = uifilters.concat(subCategoryGroups.map(g => {
             return {
                 filter: g[0].subCategory.name.replace(regex, "").trim(),
-                hits: g.length,
+                hits: g.length * 0.7,
                 g: g
             };
         }));
@@ -625,7 +624,7 @@ Product.getUIFilters = function (products) {
         uifilters = uifilters.concat(brandGroups.map(g => {
             return {
                 filter: g[0].brand.name.replace(regex, "").trim(),
-                hits: g.length,
+                hits: g.length * 0.6,
                 g: g
             };
         }));

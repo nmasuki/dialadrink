@@ -15,6 +15,7 @@ ProductBrand.add({
     pageTitle: {type: String},
     category: {type: Types.Relationship, ref: 'ProductCategory', many: false},
     description: {type: Types.Html, wysiwyg: true, height: 150},
+    modifiedDate: {type: Date, default: Date.now},
     company: {
         name: {type: String},
         description: {type: Types.Html, wysiwyg: true, height: 150},
@@ -23,6 +24,11 @@ ProductBrand.add({
 
 ProductBrand.relationship({ref: 'Product', path: 'product', refPath: 'brand'});
 ProductBrand.defaultColumns = 'name, logo, h1, state';
+
+ProductBrand.schema.pre('save', function (next) {
+    this.modifiedDate = new Date();
+    next();
+});
 
 ProductBrand.register();
 

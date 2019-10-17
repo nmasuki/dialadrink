@@ -16,6 +16,7 @@ router.get("/:category", function (req, res) {
     locals.page = Object.assign(locals.page, {
         h1: locals.filters.category.toProperCase()
     });
+
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 
@@ -101,6 +102,7 @@ router.get("/:category/:subcategory", function (req, res) {
     locals.page = Object.assign(locals.page, {
         h1: locals.filters.category.toProperCase()
     });
+    
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 
