@@ -154,8 +154,14 @@ Product.schema.virtual('percentOffer').get(function () {
 Product.schema.virtual('priceValidUntil').get(function () {
     var today = new Date();
     var firstStr = today.toISOString().substr(0, 8) + "01";
-    var lastExpiry = new Date(firstStr);
-    return lastExpiry.addMonths(1).addSeconds(-1).toISOString();
+    var expiryStr = new Date(firstStr).addMonths(1).addSeconds(-1).toISOString();
+
+    if(expiryStr.contains("011")){
+        console.log(expiryStr);
+        expiryStr = expiryStr.replace(/^011/, "201");
+    }
+
+    return expiryStr;
 });
 
 Product.schema.virtual('popularityRatio').get(function () {
