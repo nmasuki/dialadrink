@@ -357,12 +357,10 @@ var app = {
 
 	showNotification: function (msg, from, align) {
 		var color = Math.floor((Math.random() * 4) + 1);
-		if (!$.notify)
-			app.showToast(msg)
-		else
+		if ($.notify){
 			$.notify({
 				icon: "pe-7s-gift",
-				message: "Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for every web developer."
+				message: msg
 			}, {
 				type: app.type[color],
 				timer: 4000,
@@ -371,5 +369,8 @@ var app = {
 					align: align
 				}
 			});
+		} else if(app && app.showToast){
+			app.showToast(msg);
+		}
 	}
 };
