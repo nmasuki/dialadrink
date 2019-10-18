@@ -98,7 +98,9 @@ var cartUtil = function () {
             cartItem.pieces += pieces;
             self.updateView();
 
-            app.showToast("Adding to cart!");
+            if(app && app.showToast)
+                app.showToast("Adding to cart!");
+                
             self.viewNotUpdated = true;
             return $.ajax({
                 url: _url + 'cart/add/' + productId + '/' + qty + '/' + (pieces || 1),
