@@ -208,7 +208,7 @@ Product.schema.methods.findSimilar = function (callback) {
 
     var product = this;
     return Product.findPublished(filter).exec((err, similar)=>{
-        similar = similar.orderBy(p => Math.abs(p.popularity - product.popularity));
+        similar = (similar || []).orderBy(p => Math.abs(p.popularity - product.popularity));
         callback(err, similar);
     });
 };
