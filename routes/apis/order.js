@@ -20,7 +20,7 @@ router.get("/", function(req, res){
             if (err)
                 json.message += "! " + err;
             else{
-                json.data = orders.map(o=>o.toObject());
+                json.data = orders.orderByDescending(o => o.orderDate).map(o => o.toObject());
             }
             
             return res.send(json);

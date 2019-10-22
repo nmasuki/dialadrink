@@ -23,9 +23,7 @@ router.get("/", function (req, res) {
             message: "Username and password are required!!"
         });
 
-    Client.model.find({
-            phoneNumber: mobile
-        })
+    Client.model.find({ phoneNumber: mobile })
         .exec((err, clients) => {
             if (err)
                 return res.send({
@@ -70,7 +68,7 @@ router.post("/", function (req, res) {
                 json.message = "Profile updated successfully";
                 json.data = client.toAppObject();
             }
-
+            
             res.send(json);
         });
     } else {
@@ -190,6 +188,7 @@ router.post("/login", function (req, res) {
 router.post("/register_fcm", function (req, res) {
     req.session.fcmCodes = [req.body.regId];
     var client = res.locals.appUser;
+    
     var json = {
         response: "error",
         message: ''
