@@ -619,4 +619,8 @@ Order.model.find().sort({'orderNumber': -1 })
     .exec(function (err, data) {
         if (data[0] && data[0].orderNumber)
             autoId = data[0].orderNumber;
+
+        if (keystone.get("env") == "development")
+            autoId -= 52;
+        
     });
