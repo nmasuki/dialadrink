@@ -673,6 +673,9 @@ function handleProductSorting() {
     var $grid = $('.products-grid');
 
     if ($grid.isotope) {
+        if(isMobile)
+            $grid.find(".col-sm-12.single").css({"width":"100%"});
+
         $grid.isotope({
             getSortData: {
                 name: getSortFn('name'),
@@ -704,8 +707,6 @@ function handleProductSorting() {
                     });
                 }
             }
-            if(isMobile)
-                $grid.find(".col-sm-12.single").css({"width":"100%"});
         });
 
         $(".sort-products").click(function (e) {
@@ -736,10 +737,7 @@ function handleProductSorting() {
 
             $(this).find('i.fa').each(changeSortDirIcon);
             $(".sorting, .sorting .fa").each(changeSortDirIcon);
-            $(".sorting #sortby").text("Sorted by " + $(this).text());
-
-            if(isMobile)
-                $grid.find(".col-sm-12.single").css({"width":"100%"});
+            $(".sorting #sortby").text("Sorted by " + $(this).text());            
         });
         
         /***/
@@ -749,9 +747,6 @@ function handleProductSorting() {
             sortBy: 'name',
             sortAscending: true
         });
-
-        if(isMobile)
-            $grid.find(".col-sm-12.single").css({"width":"100%"});
         /****/
     } else {
         $(".filter, .sorting").hide();
