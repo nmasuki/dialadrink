@@ -385,18 +385,21 @@
                     </div>                       
                 </div>
             </div>
-
-            {{#unless isMobile}}              
-                <script>
-                    $(document).ready(function(){
-                        var width = $(document.body).width();
-                        var left = (width - $(".inst-checkout").width())/2;
-                        if(left > 0)
-                            $(".inst-checkout").css({left: left});
-                    });
-                </script>
-            {{/unless}}
-
+      
+            <script>
+            {{#if isMobile}}   
+                window.isMobile = true;
+            {{else}}
+                window.isMobile = true;
+                $(document).ready(function(){
+                    var width = $(document.body).width();
+                    var left = (width - $(".inst-checkout").width())/2;
+                    if(left > 0)
+                        $(".inst-checkout").css({left: left});
+                });
+            {{/if}}
+            </script>
+            
         </div>
     </section>
 </main>
