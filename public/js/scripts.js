@@ -328,6 +328,8 @@ function handleSearchAutoComplete() {
                 }
             }
         });
+    else
+        setTimeout(handleSearchAutoComplete, 100);
 }
 
 function checkcookie() {
