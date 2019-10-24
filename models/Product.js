@@ -252,10 +252,10 @@ Product.schema.methods.findRelated = function (callback) {
                                 .orderByDescending(p => {
                                     var score = productCounts[p.id] + (categoryCounts[p.id] || 0) * 0.5;
 
-                                    if(product.category.key == p.category.key)
+                                    if(product.category && p.category && product.category.key == p.category.key)
                                         score *= 0.5;
-                                    //else if( p.category.key == "extras")
-                                    //    score *= 1.75;
+                                    else if(p.category && p.category.key == "extras")
+                                        score *= 1.75;
                                         
                                     return score;
                                 });
