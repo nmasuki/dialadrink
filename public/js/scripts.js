@@ -329,7 +329,7 @@ function handleSearchAutoComplete() {
             }
         });
     else
-        setTimeout(handleSearchAutoComplete, 100);
+        setTimeout(handleSearchAutoComplete, 1000);
 }
 
 function checkcookie() {
