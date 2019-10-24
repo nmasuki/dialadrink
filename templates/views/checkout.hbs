@@ -345,6 +345,13 @@
             $('#lets-okhi').animate({ width:'toggle' }, 350);
             $("#submitBtn").show();
 
+            $("[name=address]").val(data.location.title);
+            $("[name=building]").val(data.location.streetName);
+            $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
+            
+            $("#addressInputs").slideDown();
+            addressData = data;
+
             var address = data.location.title.split(',');
             if(address.indexOf(data.location.streetName) < 0)
                 address.push(data.location.streetName);
@@ -353,16 +360,9 @@
             if(address.indexOf(data.location.directions) < 0)
                 address.push(data.location.directions);
 
-            $("[name=address]").val(data.location.title);
-            $("[name=building]").val(data.location.streetName);
-            $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
-            
-            $("#addressInputs").slideDown();
-            addressData = data;
-
             var html = "";
             for(var i = 0; i < address.length; i+=2)
-                html += "<div>{0}</div>".format([address[i], address[i +1]].join(', '));
+                html += "<div>{0}</div>".format([address[i], address[i + 1]].join(', ').trim().trim(','));
 
             app.showModal({
                 title: "Confirm Address",

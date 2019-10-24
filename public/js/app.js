@@ -317,7 +317,7 @@ var app = {
 		app.hideModal();
 
 		option = option || {};
-		var title = option.title || "Dial a Drink";
+		var title = option.title || "Dial a Drink!";
 		var msg = option.msg || option.message;
 
 		var modal = $($('#modal-template').html());
@@ -362,6 +362,7 @@ var app = {
 			modal.remove();
 		});
 
+		modal.find(".modal-title").html(title);
 		modal.find(".modal-body").html(msg);
 
 		if (option.css)
