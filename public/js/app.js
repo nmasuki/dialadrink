@@ -320,23 +320,41 @@ var app = {
 		var title = option.title || "Dial a Drink";
 		var msg = option.msg || option.message;
 
-		var modal = $('#modal-template');//$($('#modal-template').html());
+		var modal = $($('#modal-template').html());
 
 		$(document.body).append(modal);
 
-		if (typeof option.ok === "function")
-			modal.find(".btn-primary").on("click", function () {
-				option.ok.apply(this, arguments);
-			});
-		else if (option.ok == false)
-			modal.find(".btn-primary").hide();
+		if(option.buttons){
+			var footer = modal.find(".btn-primary").parent();
+			footer.html("");
 
-		if (typeof option.close === "function")
-			modal.find(".btn-secondary, .close").on("click", function () {
-				option.close.apply(this, arguments);
-			});
-		else if (option.ok == false)
-			modal.find(".btn-secondary, .close").hide();
+			for(var i in option.buttons){
+				if(option.buttons[i]){
+					var btn = $('<button class="btn" id="submitBtn">' + i + '</button>');
+					footer.append(btn);
+					
+					if(typeof option.buttons[i] == "function")
+						btn.on('click', option.buttons[i]);
+				}
+			}
+
+		} else {
+
+			if (typeof option.ok === "function")
+				modal.find(".btn-primary").on("click", function () {
+					option.ok.apply(this, arguments);
+				});
+			else if (option.ok == false)
+				modal.find(".btn-primary").hide();
+
+			if (typeof option.close === "function")
+				modal.find(".btn-secondary, .close").on("click", function () {
+					option.close.apply(this, arguments);
+				});
+			else if (option.ok == false)
+				modal.find(".btn-secondary, .close").hide();
+
+		}
 
 		modal.on('hidden.bs.modal', function () {
 			$(".modal.loading").modal('hide');

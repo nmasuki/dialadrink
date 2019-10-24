@@ -371,8 +371,8 @@
                 {{/if}}
             </div>            
 
-            <div class="container inst-checkout" style="width:100%">
-                <div class="col-md-4 action-wrapper">
+            <div class="container inst-checkout" style="width:100%; display:{{#if isMobile}}block{{else}}flex{{/if}};">
+                <div class="col-md-4 action-wrapper" style="margin: 0 auto;">
                     <div class="flat-button view-cart" onclick="window.location='/cart'" style="cursor: pointer">
                         <span class="badge badge-secondary badge-pill cart-total-pieces" 
                             style="position:absolute;background-color:red;">0</span>

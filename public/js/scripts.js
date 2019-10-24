@@ -673,7 +673,7 @@ function handleProductSorting() {
     var $grid = $('.products-grid');
 
     if ($grid.isotope) {
-        if(window.isMobile && window.getWidthBrowser() <= 400)
+        if(window.isMobile && window.getWidthBrowser() <= 700)
             $grid.find(".col-sm-12.single").css({"width":"100%"});
 
         $grid.isotope({
