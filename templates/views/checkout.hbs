@@ -346,9 +346,12 @@
             $("#submitBtn").show();
 
             var address = data.location.title.split(',');
-            address.push(data.location.streetName);
-            address.push(data.location.propertyName);
-            address.push(data.location.directions);
+            if(address.indexOf(data.location.streetName) < 0)
+                address.push(data.location.streetName);
+            if(address.indexOf(data.location.propertyName) < 0)
+                address.push(data.location.propertyName);
+            if(address.indexOf(data.location.directions) < 0)
+                address.push(data.location.directions);
 
             $("[name=address]").val(data.location.title);
             $("[name=building]").val(data.location.streetName);
