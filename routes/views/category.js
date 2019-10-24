@@ -28,7 +28,6 @@ router.get("/:category", function (req, res) {
             .exec((err, categories) => {
                 if (locals.page.title == keystone.get("name"))
                     locals.page.title = "";
-
                 
                 locals.page.canonical = "https://www.dialadrinkkenya.com/" + categories.map(c => (c.key || "")).first();
 
