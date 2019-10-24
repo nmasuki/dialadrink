@@ -673,7 +673,7 @@ function handleProductSorting() {
     var $grid = $('.products-grid');
 
     if ($grid.isotope) {
-        if(isMobile)
+        if(window.isMobile && window.getWidthBrowser() <= 400)
             $grid.find(".col-sm-12.single").css({"width":"100%"});
 
         $grid.isotope({
@@ -756,6 +756,7 @@ function handleProductSorting() {
 }
 
 
+
 $(document).ready(function ($) {
     document.addEventListener('touchstart', onTouchStart, {
         passive: true
@@ -776,7 +777,7 @@ $(document).ready(function ($) {
 
         e.stopPropagation();
     });
-
+    
     handleProductSorting();
 
     loadParticles();

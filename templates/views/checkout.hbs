@@ -175,30 +175,31 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="address">Location</label>
-                            <input type="text" class="form-control" name="address" id="address"
-                                placeholder="1234 Kileleshwa" required value="{{userData.address}}">
-                            <div class="invalid-feedback">
-                                Please enter your shipping address.
+                    <div class="row" id="addressInputs" style="display: none">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="address">Location</label>
+                                <input type="text" class="form-control" name="address" id="address"
+                                    placeholder="1234 Kileleshwa" required value="{{userData.address}}">
+                                <div class="invalid-feedback">
+                                    Please enter your shipping address.
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="address2">Apartment</label>
+                                <input type="text" class="form-control" name="building" id="address2"
+                                    placeholder="Apartment or suite" value="{{userData.building}}">
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="address2">Apartment</label>
-                            <input type="text" class="form-control" name="building" id="address2"
-                                placeholder="Apartment or suite" value="{{userData.building}}">
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="address">House Number</label>
+                                <input type="text" class="form-control" name="houseNumber" id="houseNumber"
+                                    placeholder="House Number" value="{{userData.houseNumber}}">
+                            </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-8 mb-3">
-                            <label for="address">House Number</label>
-                            <input type="text" class="form-control" name="houseNumber" id="houseNumber"
-                                placeholder="House Number" value="{{userData.houseNumber}}">
-                        </div>
-                    </div>
-
                     {{!--
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="same-address">
@@ -291,9 +292,18 @@
                         <span class="msg-text"><strong>Danger!</strong> This alert box indicates a dangerous or potentially negative action.</span>
                     </div>
                     <hr class="mb-4">
-                    <button class="btn btn-primary btn-lg" type="submit">
-                        {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
-                    </button>
+
+                    <div class="row">
+                        
+                        <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
+                            Select your Location
+                        </button>
+                        
+                        <button class="btn btn-primary btn-lg" id="submitBtn" type="submit" style="display: none;">
+                            {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
+                        </button>
+
+                    </div>
                 </form>
             </div>
         </div>
@@ -325,20 +335,84 @@
         }, 500)
 {{/if}}
 
-        $(document).on("click", ".promo-redeem button", function (e) {
+        var addressData = null;
+        var handleOnSuccess = function (data) {
+            $('#lets-okhi').animate({width:'toggle'}, 350);
+            $("#submitBtn").show();
+
+            var address = data.location.title.split(',');
+            address.push(data.location.streetName);
+            address.push(data.location.propertyName);
+            address.push(data.location.directions);
+
+            $("[name=address]").val(data.location.title);
+            $("[name=building]").val(data.location.streetName);
+            $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
+            
+            $("#addressInputs").slideDown();
+            addressData = data;
+
+            app.showModal({
+                msg: "<h1>Confirm Address</h1><br/>" + $("#addressInputs").html(),
+                ok: function (e) {
+                    $(".billing-address button[type='submit']").click();
+                },
+                close: function (e) {
+                    window.location = "/";
+                }
+            });
+            
+        };
+
+        var handleOnError = function (error) {
+            $('#lets-okhi').animate({width:'toggle'}, 350);
+            $("#submitBtn").show();
+
+            $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location!</strong> " + error)
+            $(".alert-danger").slideDown();
+            $("#addressInputs").slideDown();
+        };
+
+        if($('#lets-okhi').length){
+            $(document.body).append('<script src="https://cdn.okhi.io/sandbox/web/v4/okhi.min.js"/>'); 
+            $("#addressInputs").find("[required]").removeAttr("required")         
+        }else{
+            handleOnError("Could not find element with Id 'lets-okhi'!")
+        }
+
+        $(document).on("click", '#lets-okhi', function(e){
             e.preventDefault();
-            if ($("#promocode").val()) {
-                $.get('/checkout/validatepromo/' + $("#promocode").val())
-                        .then(function (data) {
-                            if (data.state) {
-                                app.cartUtil.updateView(null, data.promo);
-                                app.showNotification(data.msg)
-                            } else {
-                                app.showModal({ title: "", msg: data.msg })
-                            }
-                        });
+            var form = $(this).parents("form");
+            $(".alert-danger").hide();
+            
+            if (form[0].checkValidity()) {
+                var that = $(this);
+                var okhi = new OkHi({ apiKey: 'r:24559ac818400601b7065cce744e2fd5' });
+                
+                var user = {
+                    phone: $("#phoneNumber").val(),
+                    firstName: $("#firstName").val(),
+                    lastName: $("#lastName").val(),
+                };
+
+                if(user.phone && user.firstName && user.lastName){                
+                    e.preventDefault();
+                    var locationManager = new okhi.LocationManager({
+                        user: user,
+                        onSuccess: handleOnSuccess,
+                        onError: handleOnError,
+                    });
+
+                    locationManager.launch();
+                }else{
+                    $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
+                    $(".alert-danger").slideDown();
+                }
+            }else{
+                $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
+                $(".alert-danger").slideDown();
             }
-        })
+        });
 
         $(document).on("click", ".billing-address button[type='submit']", function (e) {
             e.preventDefault();
@@ -352,7 +426,7 @@
                 that.attr("disabled", true);
                 $('body,html').animate({scrollTop: 0}, 800, 'swing');
 
-                var data = {saveInfo: $("#saveInfo").is(":checked")};
+                var data = Object.assign({saveInfo: $("#saveInfo").is(":checked")}, addressData || {});
                 array.forEach(function (a) { data[a.name] = a.value; });
 
                 var modal = app.showLoading("<span id='msgSpan'>Processing your order! Please wait..</span>", 60000);
@@ -405,14 +479,34 @@
                 $(".alert-danger").slideDown();
             }
         });
+        
+        $(document).on("click", ".promo-redeem button", function (e) {
+            e.preventDefault();
+            if ($("#promocode").val()) {
+                $.get('/checkout/validatepromo/' + $("#promocode").val())
+                        .then(function (data) {
+                            if (data.state) {
+                                app.cartUtil.updateView(null, data.promo);
+                                app.showNotification(data.msg)
+                            } else {
+                                app.showModal({ title: "", msg: data.msg })
+                            }
+                        });
+            }
+        })
 
         var elements = document.getElementsByTagName("INPUT");
         for (var i = 0; i < elements.length; i++) {
             elements[i].oninvalid = function (e) {
                 e.target.setCustomValidity("");
-                if (!e.target.validity.valid) {
-                    var errMessage = $(e.target).siblings(".invalid-feedback").text().trim() || "This field cannot be left blank!"
-                    e.target.setCustomValidity(errMessage);
+                if($( e.target).is(":visible")){
+                     if (!e.target.validity.valid) {
+                        var errMessage = $(e.target).siblings(".invalid-feedback").text().trim() || "This field cannot be left blank!"
+                        e.target.setCustomValidity(errMessage);
+                    }
+                }else{
+                    console.log($( e.target).attr("name") + " is not visible!");
+                    e.target.validity.valid = true;
                 }
             };
         }

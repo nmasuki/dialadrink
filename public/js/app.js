@@ -320,7 +320,7 @@ var app = {
 		var title = option.title || "Dial a Drink";
 		var msg = option.msg || option.message;
 
-		var modal = $($('#modal-template').html());
+		var modal = $('#modal-template');//$($('#modal-template').html());
 
 		$(document.body).append(modal);
 
