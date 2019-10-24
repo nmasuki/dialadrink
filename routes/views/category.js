@@ -87,7 +87,7 @@ router.get("/:category", function (req, res) {
 
     // Render View
     view.render('products');
-})
+});
 
 router.get("/:category/:subcategory", function (req, res) {
     var view = new keystone.View(req, res);

@@ -13,6 +13,7 @@ router.get('/', function (req, res) {
 	});
 
 	locals.userData = req.session.userData;
+	locals.OkHiKey = !locals.userData && process.env.OKHI_KEY;
 	locals.breadcrumbs.push({
 		href: "/cart",
 		label: "My Cart"

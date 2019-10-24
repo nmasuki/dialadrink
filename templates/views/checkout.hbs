@@ -294,17 +294,17 @@
                     <hr class="mb-4">
 
                     <div class="row">  
-                        {{#if userData.address}}      
-                            <button class="btn btn-primary btn-lg" id="submitBtn" type="submit">
-                                {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
-                            </button>
-                        {{else}}                
+                        {{#if OkHiKey}}  
                             <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
                                 <img src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" />
                                 Select your Location
                             </button>
 
                             <button class="btn btn-primary btn-lg" id="submitBtn" type="submit" style="display: none;">
+                                {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
+                            </button>
+                        {{else}}    
+                            <button class="btn btn-primary btn-lg" id="submitBtn" type="submit">
                                 {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
                             </button>
                         {{/if}}
@@ -381,18 +381,19 @@
         var handleOnError = function (error) {
             $('#lets-okhi').animate({width:'toggle'}, 350);
             $("#submitBtn").show();
+            $("#addressInputs").slideDown();
 
             $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location!</strong> " + error)
             $(".alert-danger").slideDown();
-            $("#addressInputs").slideDown();
         };
 
         if($('#lets-okhi').length){
             $(document.body).append('<script src="https://cdn.okhi.io/sandbox/web/v4/okhi.min.js"/>'); 
             $("#addressInputs").find("[required]").removeAttr("required")         
         }else{
-            handleOnError("Could not find element with Id 'lets-okhi'!")
-        }
+            $('#lets-okhi').hide();
+            $("#submitBtn").show();
+            $("#addressInputs").show();        }
 
         $(document).on("click", '#lets-okhi', function(e){
             e.preventDefault();

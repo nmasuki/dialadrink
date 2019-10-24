@@ -282,15 +282,17 @@ var cartUtil = function () {
             $(".cart-total-products").html(self.productCount());
             $(".cart-total-pieces").html(self.piecesCount());
 
-            if (!["/checkout", "/cart"].find(function (l) {
-                    return window.location.href.indexOf(l) >= 0;
-                })) {
+            var isCheckOutPage = ["/checkout", "/cart"]
+                .find(function (l) { return window.location.href.indexOf(l) >= 0; });
+
+            if (!isCheckOutPage) {
                 if (self.piecesCount() > 0)
                     $(".inst-checkout").slideDown();
                 else
                     $(".inst-checkout").slideUp();
             }else{
                 $(".shop-by-brand").hide();
+                $(".inst-checkout").hide();
             }
 
             var totalHtml = self.totalAmount().formatNumber(2);
