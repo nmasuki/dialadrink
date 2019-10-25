@@ -16,12 +16,14 @@ ProductCategory.add({
     image: {type: Types.CloudinaryImage, folder: "category"},
     pageTitle: {type: String},
     description: {type: Types.Html, wysiwyg: true, height: 150},
+    modifiedDate: {type: Date, default: Date.now},
 });
 
 ProductCategory.relationship({ref: 'Product', refPath: 'category'});
 ProductCategory.relationship({ref: 'ProductSubCategory', refPath: 'category'});
 
 ProductCategory.schema.pre('save', function(next){
+    this.modifiedDate = new Date();
     this.updateMenu(next);
 });
 

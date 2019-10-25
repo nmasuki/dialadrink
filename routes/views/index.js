@@ -7,6 +7,7 @@ var Page = keystone.list("Page");
 var Order = keystone.list("Order");
 var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
+var MenuItem = keystone.list("MenuItem");
 var Blog = keystone.list("Blog");
 
 function search(req, res, next) {
@@ -14,28 +15,19 @@ function search(req, res, next) {
     var locals = res.locals;
 
     // Skip to page if valid
-    if (locals.page && locals.page._id && locals.page.content)
-        return next();
+    //if (locals.page && locals.page._id && locals.page.content)
+    //    return next();
 
     //Searching h1 title
     locals.page = Object.assign(locals.page || {}, {
-        h1: ((req.params.query || "").toProperCase() + " drinks").trim()
+        h1: ((req.params.query || "").replace(/[^\w]+/g, " ")
+            .toProperCase()).replace(/Whiskies|Whiskey|Wine|Gin/g, "").trim()
     });
 
-    locals.page.canonical = "https://www.pharmacydelivery.co.ke/" + (req.params.query || "Search Results").cleanId();
+    if(locals.page.h1.length <= 5)
+        locals.page.h1 += " Delivery in Nairobi";
 
-    if (locals.breadcrumbs) {
-        if (req.originalUrl.startsWith("/search"))
-            locals.breadcrumbs.push({
-                label: "Search Results",
-                href: req.originalUrl
-            });
-        else
-            locals.breadcrumbs.push({
-                label: (req.params.query || "Search Results").toProperCase(),
-                href: req.originalUrl
-            });
-    }
+    locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId();
 
     function renderResults(products, title) {
         title = (title || "").toProperCase();
@@ -68,8 +60,47 @@ function search(req, res, next) {
             renderSingleResults(products.first());
         } else {
             locals.products = products;
-            res.locals.uifilters = Product.getUIFilters(products);
-            view.render('search');
+            locals.uifilters = Product.getUIFilters(products);
+
+            var categories = products.distinctBy(p => p.category && (p.category.id || p.category));
+            var subCategories = products.distinctBy(p => p.subCategory && (p.subCategory.id || p.subCategory));
+
+            if(categories.length != 1 && subCategories.length != 1)
+                return view.render('search');
+
+            if(categories.length == 1){
+                var cat = categories[0].category;
+                if(cat && cat.name){
+                    locals.page.h1 = cat.name.trim().toProperCase();
+                    locals.page.title = cat.pageTitle;
+                    locals.page.meta = cat.description || locals.page.meta || meta;
+                }
+            }
+            else if(subCategories.length == 1){
+                var subCat = categories[0].subCategory;
+                if(subCat && subCat.name){
+                    locals.page.h1 = subCat.name.trim().toProperCase();
+                    locals.page.title = subCat.pageTitle;
+                    locals.page.meta = subCat.description || locals.page.meta || meta;
+                }
+            }
+            
+            if (locals.breadcrumbs) {
+                locals.breadcrumbs = locals.breadcrumbs.filter(b => b.label);
+                if (req.originalUrl.startsWith("/search"))
+                    locals.breadcrumbs.push({
+                        label: "Search Results",
+                        href: req.originalUrl
+                    });
+                else if(!locals.breadcrumbs.find(b => b.label == locals.page.h1))
+                    locals.breadcrumbs.push({
+                        label: locals.page.h1,
+                        href: req.originalUrl
+                    });
+                                
+            }
+            
+            view.render('products');
         }
     }
 
@@ -101,7 +132,7 @@ function search(req, res, next) {
                 product.subCategory && product.subCategory.name,
                 product.brand && product.brand.name,
             ].filter(a => !!a).join(" - ") + " | " + keystone.get("name");
-            locals.page.canonical = "https://www.pharmacydelivery.co.ke/" + product.href;
+
 
             locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
             locals.page.keyWords = product.keyWords.join(", ");
@@ -157,9 +188,14 @@ function search(req, res, next) {
             Product.search(req.params.query, function (err, products) {
                 if (err || !products || !products.length) {
                     if (req.originalUrl.startsWith("/search"))
-                        renderResults(products);
-                    else
-                        res.status(404).render('errors/404');
+                        renderResults([]);
+                    else{
+                        // Render the page content if available
+                        if (locals.page.content)
+                            view.render('page');
+                        else
+                            res.status(404).render('errors/404');
+                    }
                 } else {
                     renderResults(products);
                 }
@@ -369,26 +405,124 @@ function sitemap(req, res) {
     var locals = res.locals;
     var xml = require('xml');
 
-    Page.model.find({})
-        .exec((err, pages) => locals.pages = pages.filter(p => p.href && p.content))
+    locals.links = [];
+
+    var addLinks = function(links){
+        links.forEach(l => {
+            var found = locals.links.find(p => l.href == p.href);
+            if(found){
+                if(!found.modifiedDate || found.modifiedDate < l.modifiedDate)
+                    found.modifiedDate = l.modifiedDate;                            
+                if(found.priority < l.priority)
+                    found.priority = l.priority;                    
+            } else if(l.href){
+                locals.links.push(l);
+            }
+        });
+    };
+
+    MenuItem.model
+        .find({}).sort({ index: 1, level: -1})
+        .exec((err, menus) => {
+            var links = menus.distinctBy(m => m.href)
+                .orderBy(m => m.index * 10 - (m.level) + m.href.length / 100 )
+                .map(m => {
+                    return { 
+                        href: m.href, 
+                        priority: (m.level == 0? 1.0 : 0.7 + (1.0 - 0.7) / m.level),
+                        modifiedDate: m.modifiedDate
+                    };
+                });
+
+            addLinks(links);
+        })
+        .then(Page.model.find({})
+        .exec((err, pages) => {
+            var links = pages.filter(p => p.href && p.content)
+                .map(p => { 
+                    return {
+                        href: p.href, 
+                        priority: 0.85,
+                        modifiedDate: p.modifiedDate
+                    };
+                });
+            
+            addLinks(links);
+        })
         .then(Product.findPublished({})
             .exec((err, products) => {
-                locals.products = products;
-                locals.brands = products.filter(p => p.brand).map(p => p.brand).distinctBy(b => b.id);
-                locals.subCategories = products.filter(p => p.subCategory).map(p => p.subCategory).distinctBy(b => b.id);
+                var brands = products.filter(p => p.brand).map(p => p.brand).distinctBy(b => b.id);
+                var companies = brands.filter(p => p.company && p.company.name).map(p=>p.company).distinctBy(b => b.name);
+                var subCategories = products.filter(p => p.subCategory).map(p => p.subCategory).distinctBy(b => b.id);
+
+                var links = products.map(p => {
+                    return {
+                        href: p.href,
+                        modifiedDate: p.modifiedDate,
+                        priority: 0.9999 * p.popularityRatio
+                    };
+                });
+
+                links = links.concat(subCategories.map(p => {
+                    return {
+                        href: p.key.trim('/').trim(),
+                        modifiedDate: p.modifiedDate,
+                        priority: 0.75
+                    };
+                }));
+
+                links = links.concat(brands.map(p => {
+                    return {
+                        href: p.href,
+                        modifiedDate: p.modifiedDate,
+                        priority: 0.7
+                    };
+                }));
+
+                links = links.concat(companies.map(p => {
+                    return {
+                        href: p.name.cleanId(),
+                        priority: 0.5
+                    };
+                }));
+            
+                addLinks(links);
             })
             .then(() => ProductCategory.model.find({})
-                .exec((err, categories) => locals.categories = categories)
+                .exec((err, categories) => {
+                    var links = categories.map(p =>{
+                        return {
+                            href: p.key.trim('/').trim(),
+                            modifiedDate: p.modifiedDate,
+                            priority: 0.78
+                        }
+                    });                    
+            
+                    addLinks(links);
+                })
                 .then(() => Blog.model.find({})
-                    .exec((err, blogs) => locals.blogs = blogs)
+                    .exec((err, blogs) => {
+                        var links = blogs.map(p=>{
+                            return {
+                                href: p.href,
+                                modifiedDate: p.publishedDate,
+                                priority: 0.76
+                            };
+                        });
+
+                        addLinks(links);
+                    })
                     .then(() => {
-                        view.render('sitemapXml', {
-                            layout: false
-                        }, function (err, xmlText) {
+                        locals.links = locals.links.orderBy(l => -l.priority + l.href.length / 100000);
+                        view.render('sitemapXml', { layout: false }, function (err, xmlText) {
                             res.setHeader('Content-Type', 'text/xml');
                             res.send(xmlText);
                         });
-                    }))));
+                    })
+                )
+            )
+        )
+    );
 }
 
 router.get('/sitemap', sitemap);
@@ -398,17 +532,5 @@ router.get('/google81a0290a139b9339.html', function (req, res) {
 });
 
 router.get("/:query", search);
-
-router.get("/:page", function (req, res) {
-
-    var view = new keystone.View(req, res);
-    var locals = res.locals;
-
-    // Render the page
-    if (locals.page.content)
-        view.render('page');
-    else
-        res.status(404).render('errors/404');
-});
 
 module.exports = router;

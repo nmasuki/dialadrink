@@ -371,8 +371,8 @@
                 {{/if}}
             </div>            
 
-            <div class="container inst-checkout" style="width:100%">
-                <div class="col-md-4 action-wrapper">
+            <div class="container inst-checkout" style="width:100%; display:{{#if isMobile}}block{{else}}flex{{/if}};">
+                <div class="col-md-4 action-wrapper" style="margin: 0 auto;">
                     <div class="flat-button view-cart" onclick="window.location='/cart'" style="cursor: pointer">
                         <span class="badge badge-secondary badge-pill cart-total-pieces" 
                             style="position:absolute;background-color:red;">0</span>
@@ -385,18 +385,21 @@
                     </div>                       
                 </div>
             </div>
-
-            {{#unless isMobile}}              
-                <script>
-                    $(document).ready(function(){
-                        var width = $(document.body).width();
-                        var left = (width - $(".inst-checkout").width())/2;
-                        if(left > 0)
-                            $(".inst-checkout").css({left: left});
-                    });
-                </script>
-            {{/unless}}
-
+      
+            <script>
+            {{#if isMobile}}   
+                window.isMobile = true;
+            {{else}}
+                window.isMobile = true;
+                $(document).ready(function(){
+                    var width = $(document.body).width();
+                    var left = (width - $(".inst-checkout").width())/2;
+                    if(left > 0)
+                        $(".inst-checkout").css({left: left});
+                });
+            {{/if}}
+            </script>
+            
         </div>
     </section>
 </main>

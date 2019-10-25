@@ -126,13 +126,8 @@ router.get("/tiles", function (req, res, next) {
 
     //TopMenu
     keystone.list('MenuItem').model
-        .find({
-            level: 1,
-            type: "top"
-        })
-        .sort({
-            index: 1
-        })
+        .find({ level: 1, type: "top" })
+        .sort({ index: 1 })
         .populate('submenus')
         .exec((err, menu) => {
             if (err)

@@ -16,6 +16,7 @@ router.get("/:category", function (req, res) {
     locals.page = Object.assign(locals.page, {
         h1: locals.filters.category.toProperCase()
     });
+
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 
@@ -27,6 +28,8 @@ router.get("/:category", function (req, res) {
             .exec((err, categories) => {
                 if (locals.page.title == keystone.get("name"))
                     locals.page.title = "";
+                
+                locals.page.canonical = "https://www.dialadrinkkenya.com/" + categories.map(c => (c.key || "")).first();
 
                 var title = (categories.map(c => (c.pageTitle || "")).first() ||
                     locals.page.title || categories.map(c => c.name).join(" - ")).replace(/ I /g, " | ");
@@ -86,7 +89,7 @@ router.get("/:category", function (req, res) {
 
     // Render View
     view.render('products');
-})
+});
 
 router.get("/:category/:subcategory", function (req, res) {
     var view = new keystone.View(req, res);
@@ -101,6 +104,7 @@ router.get("/:category/:subcategory", function (req, res) {
     locals.page = Object.assign(locals.page, {
         h1: locals.filters.category.toProperCase()
     });
+    
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 

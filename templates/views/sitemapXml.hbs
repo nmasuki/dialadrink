@@ -1,60 +1,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 		xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-		
-	{{#each pages}}
-		<url>
-			<loc>https://www.pharmacydelivery.co.ke/{{trim href "/"}}</loc>
-			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
-			<changefreq>weekly</changefreq>
-			<priority>0.9</priority>
-		</url>
-	{{/each}}
-
-	{{#each products}}
-		<url>
-			<loc>https://www.pharmacydelivery.co.ke/{{trim href "/"}}</loc>
-			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
-			<changefreq>weekly</changefreq>
-			<priority>{{popularityRatio}}</priority>
-		</url>
-	{{/each}}
-
-	{{#each blogs}}
-		<url>
-			<loc>https://www.pharmacydelivery.co.ke/blog/{{trim href "/"}}</loc>
-			{{#if publishedDate}}<lastmod>{{formatDate publishedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
-			<changefreq>weekly</changefreq>
-			<priority>0.76</priority>
-		</url>
-	{{/each}}
-
-	{{#each categories}}
-		<url>
-			<loc>https://www.pharmacydelivery.co.ke/category/{{lowerCase (trim key '/')}}</loc>
-			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
-			<changefreq>monthly</changefreq>
-			<priority>0.75</priority>
-		</url>
-	{{/each}}
-
-	{{#each brands}}
-		<url>
-			<loc>https://www.pharmacydelivery.co.ke/brand/{{lowerCase (trim key '/')}}</loc>
-			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
-			<changefreq>monthly</changefreq>
-			<priority>0.7</priority>
-		</url>
-	{{/each}}
 	
-	{{#each subCategories}}
-		{{#if category.key}}
-			<url>
-				<loc>https://www.pharmacydelivery.co.ke/category/{{lowerCase (trim category.key '/')}}/{{lowerCase (trim key '/')}}</loc>
-				{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
-				<changefreq>monthly</changefreq>
-				<priority>0.7</priority>
-			</url>
-		{{/if}}
+	{{#each links}}
+		<url>
+			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
+			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
+			<changefreq>{{#if changefreq}}{{changefreq}}{{else}}weekly{{/if}}</changefreq>
+			<priority>{{priority}}</priority>
+		</url>
 	{{/each}}
+
 </urlset>	

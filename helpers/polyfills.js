@@ -399,9 +399,7 @@ if (!Array.prototype.clone)
 if (!Array.prototype.nth)
     Array.prototype.nth = function (filter, index) {
         index = (index || 1) - 1;
-        filter = filter || function (f) {
-            return true;
-        };
+        filter = filter || (f => true);
         return this.filter(filter)[index];
     };
 

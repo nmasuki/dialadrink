@@ -1,6 +1,7 @@
 var keystone = require('keystone');
 var router = keystone.express.Router();
 var Order = keystone.list("Order");
+var pesapalHelper = require('../../helpers/pesapal');
 
 router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
@@ -12,6 +13,7 @@ router.get('/', function (req, res) {
 	});
 
 	locals.userData = req.session.userData;
+	locals.OkHiKey = !locals.userData && process.env.OKHI_KEY;
 	locals.breadcrumbs.push({
 		href: "/cart",
 		label: "My Cart"

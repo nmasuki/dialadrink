@@ -1,8 +1,9 @@
-var CACHE_VERSION = 49.1;
+var CACHE_VERSION = 50;
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
 function getCacheName(destination, inc) {
-    return destination + ((destination.endsWith("s")?"":"s") + "-v") + (CACHE_VERSION + ((inc || 0)/10.0));
+    inc = (inc || 0);
+    return destination + ((destination.endsWith("s")?"":"s") + "-v") + (CACHE_VERSION + (inc/10.0));
 }
 
 workbox.precaching.precacheAndRoute([

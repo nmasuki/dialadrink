@@ -14,9 +14,11 @@ ProductSubCategory.add({
     name: {type: String, required: true, initial: true},
     category: {type: Types.Relationship, ref: 'ProductCategory'},
     menus: {type: Types.Relationship, ref: 'MenuItem', many: true},
+    modifiedDate: {type: Date, default: Date.now},
 });
 
 ProductSubCategory.schema.pre('save', function(next){
+    this.modifiedDate = new Date();
     this.updateMenu(next);
 });
 

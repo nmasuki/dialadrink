@@ -328,6 +328,8 @@ function handleSearchAutoComplete() {
                 }
             }
         });
+    else
+        setTimeout(handleSearchAutoComplete, 1000);
 }
 
 function checkcookie() {
@@ -673,6 +675,9 @@ function handleProductSorting() {
     var $grid = $('.products-grid');
 
     if ($grid.isotope) {
+        if(window.isMobile && window.getWidthBrowser() <= 700)
+            $grid.find(".col-sm-12.single").css({"width":"100%"});
+
         $grid.isotope({
             getSortData: {
                 name: getSortFn('name'),
@@ -723,14 +728,18 @@ function handleProductSorting() {
             console.log('Sorting by ' + sortBy + " " + (sortAscending ? "asc" : "desc"));
 
             function changeSortDirIcon(i, el) {
-                var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortDir);
+                var sortIcon = sortDir;
+                if(sortBy == "popularity")
+                    sortIcon = sortDir == "desc"? "asc": "desc";
+
+                var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortIcon);
                 if (cls) 
                     $(el).attr("class", cls);
             }
 
             $(this).find('i.fa').each(changeSortDirIcon);
             $(".sorting, .sorting .fa").each(changeSortDirIcon);
-            $(".sorting #sortby").text("Sorted by " + $(this).text());
+            $(".sorting #sortby").text("Sorted by " + $(this).text());            
         });
         
         /***/
@@ -747,6 +756,7 @@ function handleProductSorting() {
         setTimeout(handleProductSorting, 500);
     }
 }
+
 
 
 $(document).ready(function ($) {
@@ -769,7 +779,7 @@ $(document).ready(function ($) {
 
         e.stopPropagation();
     });
-
+    
     handleProductSorting();
 
     loadParticles();

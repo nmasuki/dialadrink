@@ -154,8 +154,14 @@ Product.schema.virtual('percentOffer').get(function () {
 Product.schema.virtual('priceValidUntil').get(function () {
     var today = new Date();
     var firstStr = today.toISOString().substr(0, 8) + "01";
-    var lastExpiry = new Date(firstStr);
-    return lastExpiry.addMonths(1).addSeconds(-1).toISOString();
+    var expiryStr = new Date(firstStr).addMonths(1).addSeconds(-1).toISOString();
+
+    if(expiryStr.contains("011")){
+        console.log(expiryStr);
+        expiryStr = expiryStr.replace(/^011/, "201");
+    }
+
+    return expiryStr;
 });
 
 Product.schema.virtual('popularityRatio').get(function () {
@@ -202,7 +208,7 @@ Product.schema.methods.findSimilar = function (callback) {
 
     var product = this;
     return Product.findPublished(filter).exec((err, similar)=>{
-        similar = similar.orderBy(p => Math.abs(p.popularity - product.popularity));
+        similar = (similar || []).orderBy(p => Math.abs(p.popularity - product.popularity));
         callback(err, similar);
     });
 };
@@ -246,10 +252,10 @@ Product.schema.methods.findRelated = function (callback) {
                                 .orderByDescending(p => {
                                     var score = productCounts[p.id] + (categoryCounts[p.id] || 0) * 0.5;
 
-                                    if(product.category.key == p.category.key)
+                                    if(product.category && p.category && product.category.key == p.category.key)
                                         score *= 0.5;
-                                    //else if( p.category.key == "extras")
-                                    //    score *= 1.75;
+                                    else if(p.category && p.category.key == "extras")
+                                        score *= 1.75;
                                         
                                     return score;
                                 });
@@ -309,8 +315,8 @@ Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
 keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', function (next) {
-    var cheapestOption = this.cheapestOption || this.priceOptions.first();
     this.modifiedDate = new Date();
+    var cheapestOption = this.cheapestOption || this.priceOptions.first();
 
     if (this.alcoholContent) {
         if (this.alcoholContent > 100)
@@ -538,17 +544,15 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    return Product.findPublished({ 
-        href: new RegExp(keyStr + "$", "i")
-    }, function (err, products) {
+    return Product.findPublished({ href: new RegExp("^" + keyStr + "$", "i") }, function (err, products) {
         if (err || !products || !products.length)
-            return Product.findByBrand(filters, function (err, products) {
+            return Product.findByCategory(filters, function (err, products) {
                 if (err || !products || !products.length)
-                    return Product.findByOption(filters, function (err, products) {
+                    return Product.findBySubCategory(filters, function (err, products) {
                         if (err || !products || !products.length)
-                            return Product.findByCategory(filters, function (err, products) {
+                            return Product.findByBrand(filters, function (err, products) {
                                 if (err || !products || !products.length)
-                                    return Product.findBySubCategory(filters, function (err, products) {
+                                    return Product.findByOption(filters, function (err, products) {
                                         if (err || !products || !products.length)
                                             return Product.findPublished(filters, function (err, products) {
                                                 next(err, products.orderByDescending(p => p.hitsPerWeek));
@@ -572,8 +576,7 @@ Product.search = function (query, next) {
 
 Product.getUIFilters = function (products) {
     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
-    var subCategoryGroups = Object.values(products.filter(p => p.subCategory)
-        .groupBy(p => p.subCategory._id));
+    var subCategoryGroups = Object.values(products.filter(p => p.subCategory).groupBy(p => p.subCategory._id));
     var tagsGroups = Object.values(products.filter(p => p.tags.length)
         .selectMany(p => p.tags.map(t => {
             return {
@@ -598,7 +601,7 @@ Product.getUIFilters = function (products) {
     uifilters = uifilters.concat(tagsGroups.map(g => {
         return {
             filter: g[0].t.replace(regex, "").trim(),
-            hits: g.length,
+            hits: g.length * 0.5,
             g: g
         };
     }));
@@ -618,7 +621,7 @@ Product.getUIFilters = function (products) {
         uifilters = uifilters.concat(subCategoryGroups.map(g => {
             return {
                 filter: g[0].subCategory.name.replace(regex, "").trim(),
-                hits: g.length,
+                hits: g.length * 0.7,
                 g: g
             };
         }));
@@ -627,7 +630,7 @@ Product.getUIFilters = function (products) {
         uifilters = uifilters.concat(brandGroups.map(g => {
             return {
                 filter: g[0].brand.name.replace(regex, "").trim(),
-                hits: g.length,
+                hits: g.length * 0.6,
                 g: g
             };
         }));

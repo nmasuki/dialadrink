@@ -30,7 +30,7 @@
     "handlebars-precompiler": "^2.1.0",
     "html-pdf": "^2.2.0",
     "intersection-observer": "^0.7.0",
-    "is-mobile": "^2.0.0",
+    "is-mobile": "^2.1.0",
     "keystone": "^4.1.0",
     "keystone-email": "^1.1.0",
     "keyword-extractor": "0.0.16",

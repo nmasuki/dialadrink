@@ -3,6 +3,7 @@ var Order = keystone.list("Order");
 var Product = keystone.list("Product");
 var CartItem = keystone.list("CartItem");
 
+var pesapalHelper = require('../../helpers/pesapal');
 var router = keystone.express.Router();
 
 router.get("/", function(req, res){
@@ -19,7 +20,7 @@ router.get("/", function(req, res){
             if (err)
                 json.message += "! " + err;
             else{
-                json.data = orders.map(o=>o.toObject());
+                json.data = orders.orderByDescending(o => o.orderDate).map(o => o.toObject());
             }
             
             return res.send(json);
