@@ -103,7 +103,7 @@ keystone.set('nav', {
 	users: ['clients', 'users'],
 });
 
-keystone.set("importUrl", "https://www.pharmacydelivery.co.ke/");
+keystone.set("siteUrl", process.env.HTTP_SITE || "https://www.dialadrinkkenya.com/");
 
 //Log warning into email
 if (!console._warn)

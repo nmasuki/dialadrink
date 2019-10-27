@@ -1,8 +1,9 @@
 /**
  * Created by nmasuki on 11/4/2019.
  */
+const keystone = require('keystone');
 const Mpesa = require('mpesa-node');
-const URL = 'https://www.pharmacydelivery.co.ke/mpesa';
+const URL = `${process.env.HTTP_SITE}mpesa`;
 
 class MPESAClient extends Mpesa{
     constructor() {

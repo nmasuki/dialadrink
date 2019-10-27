@@ -410,10 +410,19 @@
                     lastName: $("#lastName").val(),
                 };
 
+                var style =  {
+                    base: {
+                        color: '#0277BD',
+                        logo: 'https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png',
+                        //name: 'OkHi',
+                    }
+                }
+
                 if(user.phone && user.firstName && user.lastName){                
                     e.preventDefault();
                     var locationManager = new okhi.LocationManager({
                         user: user,
+                        style: style,
                         onSuccess: handleOnSuccess,
                         onError: handleOnError,
                     });

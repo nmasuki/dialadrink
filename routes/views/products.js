@@ -12,7 +12,7 @@ function index(req, res) {
         h1: "Today's Offers"
     });
 
-    locals.page.canonical = 'https://www.pharmacydelivery.co.ke/index.html';
+    locals.page.canonical = `${keystone.get("siteUrl")}index.html`;
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 

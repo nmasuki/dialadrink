@@ -286,25 +286,29 @@ Product.schema.methods.toAppObject = function(){
     };
 
     var obj = Object.assign({}, this.toObject(), {
-        url: 'https://www.pharmacydelivery.co.ke/' + d.href,
+        url: keystone.get("siteUrl") + d.href,
         imageFullSize: d.image.secure_url,
         imagesFullSize: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
         image: cloudinary.url(d.image.public_id, cloudinaryOptions),
         images: d.altImages ? d.altImages.map(a => a && a.secure_url || cloudinary.url(a.public_id, cloudinaryOptions)) : [],
+        categoryId: d.category ? d.category.id : null,
         category: d.category ? d.category.name : null,
+        subCategory: d.subCategory ? d.subCategory.name : null,
         categories: d.onOffer ? (d.category ? [d.category.name, "offer"] : ["offer"]) : d.category ? [d.category.name] : [],
         subcategory: d.subCategory ? d.subCategory.name : null,
         ratings: d.averageRatings,
         ratingCount: d.ratingCount,
         quantity: d.quantity,
+        brandId: d.brand ? d.brand.id : null,
         brand: d.brand ? d.brand.name : null,
+        companyId: d.brand && d.brand.company ? d.brand.company.id : null,
         company: d.brand && d.brand.company ? d.brand.company.name : null,
         price: d.price,
         currency: d.currency,
-        options: d.options
+        options: d.options,
     });
 
-    ["__v", 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
+    ["__v", 'priceOptions', 'altImages', 'href'].forEach(i => {
         delete obj[i];
     });
 
@@ -342,13 +346,17 @@ Product.schema.pre('save', function (next) {
             if (this.brand.company && this.brand.company.name)
                 tags.push((this.brand.company.name || "").toProperCase(true));
         }
+
         if (this.category)
             tags.push(this.category.name);
+        
         if (this.subCategory)
             tags.push(this.subCategory.name);
+        
         if (this.options)
             this.options.forEach(po => tags.push(po.quantity));
-        return tags.filter(t => !!t)
+        
+        return tags.filter(t => !!t);
     }
 
     if (!this.tags || !this.tags.length)
