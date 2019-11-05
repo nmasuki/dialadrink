@@ -175,12 +175,21 @@
                         </div>
                     </div>
 
-                    <div class="row" id="addressInputs" style="display: none">
+                    <div class="row" id="addressInputs">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="address">Location</label>
+                                <div style="white-space: nowrap">
                                 <input type="text" class="form-control" name="address" id="address"
                                     placeholder="1234 Kileleshwa" required value="{{userData.address}}">
+                                
+                                    {{#if OkHiKey}}  
+                                        <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
+                                            <img src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" />
+                                        </button>
+                                    {{/if}} 
+                                </div>
+                                
                                 <div class="invalid-feedback">
                                     Please enter your shipping address.
                                 </div>
@@ -293,21 +302,10 @@
                     </div>
                     <hr class="mb-4">
 
-                    <div class="row">  
-                        {{#if OkHiKey}}  
-                            <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
-                                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" />
-                                Select your Location
-                            </button>
-
-                            <button class="btn btn-primary btn-lg" id="submitBtn" type="submit" style="display: none;">
-                                {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
-                            </button>
-                        {{else}}    
-                            <button class="btn btn-primary btn-lg" id="submitBtn" type="submit">
-                                {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
-                            </button>
-                        {{/if}}
+                    <div class="row">                          
+                        <button class="btn btn-primary btn-lg" id="submitBtn" type="submit">
+                            {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
+                        </button>  
                     </div>
                 </form>
             </div>
@@ -381,7 +379,7 @@
         var handleOnError = function (error) {
             $('#lets-okhi').animate({width:'toggle'}, 350);
             $("#submitBtn").show();
-            $("#addressInputs").slideDown();
+            $("#addressInputs").attr("required", "true").slideDown();
 
             $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location!</strong> " + error)
             $(".alert-danger").slideDown();
@@ -389,11 +387,11 @@
 
         if($('#lets-okhi').length){
             $(document.body).append('<script src="https://cdn.okhi.io/sandbox/web/v4/okhi.min.js"/>'); 
-            $("#addressInputs").find("[required]").removeAttr("required")         
+            $("#addressInputs:hidden").find("[required]").removeAttr("required")         
         }else{
             $('#lets-okhi').hide();
-            $("#submitBtn").show();
-            $("#addressInputs").show();        }
+            $("#addressInputs").attr("required", "true").show();        
+        }
 
         $(document).on("click", '#lets-okhi', function(e){
             e.preventDefault();
@@ -402,7 +400,7 @@
             
             if (form[0].checkValidity()) {
                 var that = $(this);
-                var okhi = new OkHi({ apiKey: 'r:24559ac818400601b7065cce744e2fd5' });
+                var okhi = new OkHi({ apiKey: {{{OkHiKey}}} });
                 
                 var user = {
                     phone: $("#phoneNumber").val(),
