@@ -79,7 +79,7 @@
                 {{#if alcoholContent}}
                     <div class="row">
                         <div class="col-md-12">
-                            Pharmaceutical content <span class="monospaced label label-info">{{alcoholContent}}%</span>
+                            Alcohol content <span class="monospaced label label-info">{{alcoholContent}}%</span>
                         </div>
                     </div>
                 {{/if}}
@@ -309,6 +309,7 @@
 
         </div>
     </div><!-- end container -->
+    
 <script type="application/ld+json">
 {
   "@context": "http://schema.org/",
@@ -343,7 +344,7 @@
     "availability": "http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}",
     "seller": {
       "@type": "Organization",
-      "name": "Pharmacy Delivery Kenya"
+      "name": "{{../title}}"
     }
   }
   {{/if}}

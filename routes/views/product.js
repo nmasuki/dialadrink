@@ -49,7 +49,7 @@ router.get("/:product", function (req, res) {
                     product.subCategory && product.subCategory.name,
                     product.brand && product.brand.name,
                 ].filter(a => !!a).join(" - ") + " | " + keystone.get("name");
-                locals.page.canonical = keystone.get("siteUrl") + product.href;
+                locals.page.canonical = keystone.get("url") + product.href;
 
                 locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
                 locals.page.keyWords = product.keyWords.join(", ");

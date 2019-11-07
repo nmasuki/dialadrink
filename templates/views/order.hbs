@@ -71,9 +71,9 @@
                             {{else}}
                                 <tr class="order-order_item">
                                     <td class="order-td" colspan="3" align="center">
-                                        <img style="height: 50px" src="{{siteUrl}}images/empty-cart.png" alt="Empty!"><br/>
+                                        <img style="height: 50px" src="{{{appUrl}}}/images/empty-cart.png" alt="Empty!"><br/>
                                         You have no items in your cart!!<br/>
-                                        <a href="{{siteUrl}}">Continue shopping with Dial a Drink Kenya.</a>
+                                        <a href="{{{appUrl}}}/">Continue shopping with Dial a Drink Kenya.</a>
                                     </td>
                                 </tr>
                             {{/each}}
@@ -131,7 +131,7 @@
                         <b>Payment Method:</b> {{#if paymentMethod}}{{paymentMethod}}{{else}}Cash on delivery{{/if}}
                         {{#ifne payment.method 'PesaPal'}}
                         <p style="cursor: pointer;" onclick="goPay.click()">
-                            Note: You can still pay via MPESA/Visa/Master Card <a name="goPay" href="http://www.pharmacydelivery.co.ke/payment/{{orderNumber}}">here</a>
+                            Note: You can still pay via MPESA/Visa/Master Card <a name="goPay" href="{{{appUrl}}}/payment/{{orderNumber}}">here</a>
                         </p>
                         {{/ifne}}
                     </p>

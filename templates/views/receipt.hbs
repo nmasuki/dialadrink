@@ -62,7 +62,7 @@
                                                     style="text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
                                                 <span class="order-amount amount">
                                                     <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
-                                                    <meta itemprop="url" content="{{siteUrl}}{{productUrl href}}"/>
+                                                    <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
                                                     <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
                                                     <span itemprop="priceCurrency"class="order-currencySymbol">{{currency}}</span>
                                                     {{#ifgt price offerPrice}}
@@ -82,9 +82,9 @@
                                     {{else}}
                                         <tr class="order-order_item">
                                             <td class="order-td" colspan="3" align="center">
-                                                <img src="{{siteUrl}}images/empty-cart.png" alt="Empty!" style="height: 50px"><br/>
+                                                <img src="{{{appUrl}}}/images/empty-cart.png" alt="Empty!" style="height: 50px"><br/>
                                                 You have no items in your cart!!<br/>
-                                                <a href="{{siteUrl}}">Continue shopping with Dial a Drink Kenya.</a>
+                                                <a href="{{{appUrl}}}/">Continue shopping with Dial a Drink Kenya.</a>
                                             </td>
                                         </tr>
                                     {{/each}}

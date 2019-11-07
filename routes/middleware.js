@@ -54,11 +54,17 @@ exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
  or replace it with your own templates / logic.
  */
 exports.initLocals = function (req, res, next) {
+    //App Logo
+    res.locals.appLogo = keystone.get("logo");
+    
+    //App Title
+    res.locals.appTitle = keystone.get("name");
+    
+    //App Title
+    res.locals.appUrl = keystone.get("url");
+
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
-
-    //SITE URL
-    res.locals.siteUrl = keystone.get("siteUrl");
     
     //Cart items
     res.locals.cartItems = Object.values(req.session.cart || {}).orderBy(c => c.product.name);
@@ -76,9 +82,7 @@ exports.initLocals = function (req, res, next) {
     res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
         req.connection.remoteAddress || req.socket.remoteAddress;
     
-    //HTTP Auth for API calls
     var {username, password} = getAuthInfo(req);
-
     //Other locals only applied to views and not ajax calls
     if(username || password){
         console.log(`Api call from IP:${res.locals.clientIp}, User:${username}`);
@@ -108,7 +112,7 @@ exports.initLocals = function (req, res, next) {
         //Initiate Page details
         res.locals.page = {
             title: keystone.get("name"),
-            canonical: [keystone.get("siteUrl"), req.originalUrl].map(p=>p.trim('/')).join('/')
+            canonical: "https://www.dialadrinkkenya.com" + req.originalUrl
         };
 
         Promise.all([
@@ -212,7 +216,9 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
     return keystone.list('MenuItem').model
-        .find({ key: regex })
+        .find({
+            key: regex
+        })
         .deepPopulate("parent.parent")
         .exec((err, menus) => {
             var menu = menus.orderBy(m => m.href.length).first();

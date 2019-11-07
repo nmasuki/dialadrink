@@ -587,7 +587,7 @@ Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
             return console.warn("Error while saving Order! " + err);
 
         if (order.payment.method == "PesaPal") {
-            var paymentUrl = `${keystone.get("siteUrl")}payment/${order.orderNumber}`;
+            var paymentUrl = `${keystone.get("url")}payment/${order.orderNumber}`;
             pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
                 order.payment.url = paymentUrl;
                 if (!err)

@@ -27,7 +27,7 @@ function search(req, res, next) {
     if(locals.page.h1.length <= 5)
         locals.page.h1 += " Delivery in Nairobi";
 
-    locals.page.canonical = keystone.get("siteUrl") + (req.params.query || "Search Results").cleanId();
+    locals.page.canonical = keystone.get("url") + (req.params.query || "Search Results").cleanId();
 
     function renderResults(products, title) {
         title = (title || "").toProperCase();
@@ -356,7 +356,7 @@ router.get("/products.json", function (req, res) {
 
         res.send(products.map(d => {
             var obj = Object.assign({}, d.toObject(), {
-                url: keystone.get("siteUrl") + d.href,
+                url: keystone.get("url") + d.href,
                 image: d.image.secure_url,
                 images: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
                 category: d.category ? d.category.name : null,

@@ -286,7 +286,7 @@ Product.schema.methods.toAppObject = function(){
     };
 
     var obj = Object.assign({}, this.toObject(), {
-        url: keystone.get("siteUrl") + d.href,
+        url: keystone.get("url") + d.href,
         imageFullSize: d.image.secure_url,
         imagesFullSize: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
         image: cloudinary.url(d.image.public_id, cloudinaryOptions),
