@@ -176,19 +176,18 @@
                     </div>
 
                     <div class="row" id="addressInputs">
+                        
+                        {{#if OkHiKey}}  
+                            <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
+                                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" /> Location lookup
+                            </button>
+                        {{/if}} 
+                        
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="address">Location</label>
-                                <div style="white-space: nowrap">
                                 <input type="text" class="form-control" name="address" id="address"
                                     placeholder="1234 Kileleshwa" required value="{{userData.address}}">
-                                
-                                    {{#if OkHiKey}}  
-                                        <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
-                                            <img src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" />
-                                        </button>
-                                    {{/if}} 
-                                </div>
                                 
                                 <div class="invalid-feedback">
                                     Please enter your shipping address.
@@ -387,7 +386,7 @@
 
         if($('#lets-okhi').length){
             $(document.body).append('<script src="https://cdn.okhi.io/sandbox/web/v4/okhi.min.js"/>'); 
-            $("#addressInputs:hidden").find("[required]").removeAttr("required")         
+            $("#addressInputs").find("[required]").removeAttr("required")         
         }else{
             $('#lets-okhi').hide();
             $("#addressInputs").attr("required", "true").show();        
@@ -400,7 +399,7 @@
             
             if (form[0].checkValidity()) {
                 var that = $(this);
-                var okhi = new OkHi({ apiKey: {{{OkHiKey}}} });
+                var okhi = new OkHi({ apiKey: '{{{OkHiKey}}}' });
                 
                 var user = {
                     phone: $("#phoneNumber").val(),
@@ -414,6 +413,12 @@
                         user: user,
                         onSuccess: handleOnSuccess,
                         onError: handleOnError,
+                        style: {
+                            name: {
+                                logo: '{{{appLogo}}}',
+                                name: '{{{appTitle}}}'
+                            }
+                        }
                     });
 
                     locationManager.launch();

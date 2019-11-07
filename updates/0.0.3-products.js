@@ -9,7 +9,7 @@ var ProductBrand = keystone.list('ProductBrand');
 var ProductSubCategory = keystone.list('ProductSubCategory');
 var ProductOption = keystone.list('ProductOption');
 var ProductPriceOption = keystone.list('ProductPriceOption');
-var baseUrl = keystone.get("importUrl") || "https://www.dialadrinkkenya.com/";
+var baseUrl = keystone.get("url") || "https://www.dialadrinkkenya.com/";
 
 function importCategories(products, done) {
     var _categories = products.map(p => {

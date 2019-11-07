@@ -54,6 +54,15 @@ exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
  or replace it with your own templates / logic.
  */
 exports.initLocals = function (req, res, next) {
+    //App Logo
+    res.locals.appLogo = keystone.get("logo");
+    
+    //App Title
+    res.locals.appTitle = keystone.get("name");
+    
+    //App Title
+    res.locals.appUrl = keystone.get("url");
+
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
     

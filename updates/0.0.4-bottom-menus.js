@@ -3,7 +3,7 @@ var najax = require('najax');
 var async = require('async');
 var MenuItem = keystone.list('MenuItem');
 var Page = keystone.list('Page');
-var baseUrl = keystone.get("importUrl") || "https://www.dialadrinkkenya.com/";
+var baseUrl = keystone.get("url") || "https://www.dialadrinkkenya.com/";
 
 var docParser;
 try {

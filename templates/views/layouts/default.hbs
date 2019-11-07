@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Dial A Drink</title>
+	<title>{{title}}</title>
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 	<link href="/styles/site.css" rel="stylesheet">
 
@@ -30,13 +30,13 @@
 						<span class="sr-only">Toggle navigation</span>
 						<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
 					</button>
-					<a href="/" class="navbar-brand">Dial A Drink</a>
+					<a href="/" class="navbar-brand">{{{appTitle}}}</a>
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav navbar-left">
 						{{# each navLinks}}
 							<li {{#ifeq ../section key}}class="active"{{else}}{{/ifeq}}>
-								<a href="{{ href }}">{{ label }}</a>
+								<a href="{{href}}">{{label}}</a>
 							</li>
 						{{/each}}
 					</ul>

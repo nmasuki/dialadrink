@@ -24,9 +24,11 @@ var handlebars = require('express-handlebars').create({
 // and documentation.
 
 keystone.init({
-	'name': 'Dial A Drink Kenya',
-	'brand': 'Dial A Drink Kenya',
 	'port': process.env.HTTP_PORT || 4000,
+	'name': process.env.SITE_NAME || 'Dial A Drink Kenya',
+	'url': process.env.SITE_URL || 'https://dialadrinkkenya.com',
+	'logo': process.env.SITE_LOGO || 'https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png',
+	'signin logo': process.env.ADMIN_LOGO || 'https://res.cloudinary.com/nmasuki/image/upload/c_fill/logo-email.gif',
 	'less': 'public',
 	'static': 'public',
 	'favicon': 'public/favicon.ico',
@@ -47,7 +49,6 @@ keystone.init({
 		}
 	},
 
-	'signin logo': 'https://res.cloudinary.com/nmasuki/image/upload/c_fill/logo-email.gif',
 	'cloudinary secure': true
 });
 
@@ -102,8 +103,6 @@ keystone.set('nav', {
 	blog: ["blogs", "blog-categories"],
 	users: ['clients', 'users'],
 });
-
-keystone.set("importUrl", "https://www.dialadrinkkenya.com/");
 
 //Log warning into email
 if (!console._warn)

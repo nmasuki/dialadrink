@@ -4,7 +4,7 @@
 	
 	{{#each links}}
 		<url>
-			<loc>https://www.dialadrinkkenya.com/{{trim href "/"}}</loc>
+			<loc>{{{appUrl}}}/{{trim href "/"}}</loc>
 			{{#if modifiedDate}}<lastmod>{{formatDate modifiedDate 'YYYY-MM-DDTHH:mm:ss'}}+00:00</lastmod>{{/if}}
 			<changefreq>{{#if changefreq}}{{changefreq}}{{else}}weekly{{/if}}</changefreq>
 			<priority>{{priority}}</priority>
