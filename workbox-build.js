@@ -4,8 +4,8 @@ const workboxBuild = require('workbox-build');
 const buildSW = () => {
   // This will return a Promise
   return workboxBuild.injectManifest({
-    swSrc: 'src/sw.js',
-    swDest: 'public/sw.js',
+    swSrc: 'public/sw.js',
+    swDest: 'public/sw.min.js',
     globDirectory: 'public',
     globPatterns: [
       '**\/*.{js,css,html,png}',

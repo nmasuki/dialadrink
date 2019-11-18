@@ -51,7 +51,7 @@ workbox.precaching.precacheAndRoute([
         revision: getCacheName("style")
     },
     /*{
-        url: "https://cdn.okhi.io/sandbox/web/v4/okhi.min.js",
+        url: "https://cdn.okhi.io/prod/web/v4/okhi.min.js",
         revision: getCacheName("script")
     },*/
 ], {
