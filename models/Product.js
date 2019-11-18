@@ -157,7 +157,7 @@ Product.schema.virtual('priceValidUntil').get(function () {
     var expiryStr = new Date(firstStr).addMonths(1).addSeconds(-1).toISOString();
 
     if(expiryStr.contains("011")){
-        console.log(expiryStr);
+//        console.log(expiryStr);
         expiryStr = expiryStr.replace(/^011/, "201");
     }
 
