@@ -551,11 +551,10 @@ function handleProductRating() {
         $.ajax(["/product/rate", productId, parseInt(elem.index()) + 1].join("/"));
     });
 
-    $(document).on("click", ".thumbnail.review-link", function (e) {
+    $(document).on("click", ".thumbnail", function (e) {
         var src = $(this).find("img").attr("src");
-        $(this).parents(".row.product-thumbnails")
-            .siblings("img.image-responsive")
-            .attr("src", src);
+        if(src)
+            $(".image-responsive").attr("src", src);
     });
 }
 

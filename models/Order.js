@@ -212,22 +212,27 @@ Order.schema.methods.placeOrder = function (next) {
         var pIds = order.cart.map(c=>c.product._id || c.product);
         keystone.list("Product").model.find({_id: {"$in": pIds }})
             .exec((err, products)=>{
-                var items = order.cart.map(function(c){ return {pieces: c.pieces, pid: c.product._id || c.product}});
+                var items = order.cart.map(function(c){ 
+                    return {
+                        pieces: c.pieces, 
+                        pid: c.product._id || c.product
+                    }; 
+                });
+
                 if(products)
                     products.forEach(p => {
                         var item = items.find(c => p._id.toString() == c.pid.toString());
                         item.product = p;
                     });
 
-                var itemsMsg = `Drinks:${items.map(c=>c.pieces + '*' + c.product.name).join(', ')}`; 
-
+                var itemsMsg = `Drinks:${items.map(c=>c.pieces + '*' + c.product.name).join(', ')}`;
                 var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
                 sms.sendSMS((process.env.CONTACT_PHONE_NUMBER || "254723688108"), msg);                
             });
     }
 
     this.sendOrderNotification((err, data) => {
-        console.log("Updating order state='placed'!", data)
+        console.log("Updating order state='placed'!", data);
 
         //Update order state
         this.state = 'placed';

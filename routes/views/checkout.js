@@ -2,6 +2,7 @@ var keystone = require('keystone');
 var router = keystone.express.Router();
 var Order = keystone.list("Order");
 var pesapalHelper = require('../../helpers/pesapal');
+var request = require('request');
 
 router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
@@ -13,7 +14,6 @@ router.get('/', function (req, res) {
 	});
 
 	locals.userData = req.session.userData;
-	locals.OkHiKey = !locals.userData && process.env.OKHI_KEY;
 	locals.breadcrumbs.push({
 		href: "/cart",
 		label: "My Cart"
@@ -77,6 +77,11 @@ router.post("/", function (req, res, next) {
 					);
 				}
 				
+				order.cart = cartItems;
+				//OKHi intergration
+				if(process.env.OKHI_KEY && req.body.user && req.body.location)
+					okHiIntegration(req, order, cartItems);
+				
 				delete req.session.cart;
 				req.session.save();
 			}
@@ -120,5 +125,52 @@ router.get('/validatepromo/:promocode', function (req, res) {
 			}
 		});
 });
+
+function okHiIntegration(req, order, cartItems, next){
+	var url = process.env.NODE_ENV == "production"
+		? "https://server.okhi.co/v1/interactions"
+		: "https://server.okhi.dev/v1/interactions";
+
+	var data = {
+		id: order.orderNumber,
+		useCase: "e-commerce",
+		locationId: req.body.location.placeId,
+		value: order.payment.amount,
+		user: req.body.user,
+		properties: {
+			brand: "dialadrink",
+			branch: "cbd",
+			paymentMethod: (order.payment.method || "cash"),
+			sendToQueue: true,
+			currency: "KES",
+			basket: cartItems.map(c => {
+				var item = {
+					"sku": c.product._id,
+					"value": c.product.price,
+					"name": c.product.name,
+					"description": c.product.description,
+					"category": c.product.category? c.product.category.name || c.product.category: "alcohol",
+					"quantity": c.pieces
+				};
+				return item;
+			})
+		},
+		shipping: {
+			"cost": 0,
+			"class": "Flat rate",
+			"expectedDeliveryDate": order.orderDate.addMinutes(30)
+		}
+	};
+
+	request.post(url, {
+		contentType: "application/json; charset=utf-8",
+		headers: { "api-key": process.env.OKHI_KEY },
+		data: data
+	}, function(err, a, b){
+		console.log(err, a, b);
+		if (typeof next == "function")
+			next(err, a, b);
+	});
+}
 
 exports = module.exports = router;

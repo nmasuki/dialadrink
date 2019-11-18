@@ -50,10 +50,10 @@ workbox.precaching.precacheAndRoute([
         url: "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
         revision: getCacheName("style")
     },
-    {
+    /*{
         url: "https://cdn.okhi.io/sandbox/web/v4/okhi.min.js",
         revision: getCacheName("script")
-    },
+    },*/
 ], {
     "cacheId": "dialadinkkenya",
     "directoryIndex": "/",

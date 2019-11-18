@@ -175,19 +175,26 @@
                         </div>
                     </div>
 
-                    <div class="row" id="addressInputs">
-                        
-                        {{#if OkHiKey}}  
+                    {{#if OkHiKey}}  
+                        <div class="row">
                             <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
                                 <img src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" /> Location lookup
                             </button>
-                        {{/if}} 
-                        
+                            <br>
+                            <div class="row">
+                                <label for="email">Location details</label>
+                                <div id="lets-okhi-card"></div>
+                            </div>
+                        </div>
+                    {{/if}} 
+
+                    <div class="row" id="addressInputs" style="{{#if OkHiKey}}display:none;{{/if}}">                        
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="address">Location</label>
                                 <input type="text" class="form-control" name="address" id="address"
-                                    placeholder="1234 Kileleshwa" required value="{{userData.address}}">
+                                    value="{{userData.address}}"
+                                    placeholder="1234 Kileleshwa" {{#unless OkHiKey}}required{{/unless}}/>
                                 
                                 <div class="invalid-feedback">
                                     Please enter your shipping address.
@@ -207,6 +214,7 @@
                                     placeholder="House Number" value="{{userData.houseNumber}}">
                             </div>
                         </div>
+                        
                     </div>
                     {{!--
                     <div class="custom-control custom-checkbox">
@@ -238,17 +246,17 @@
                         </div>
 
                         {{#if enablePaypal}}
-                        <div class="custom-control custom-radio">
-                            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
-                            <label class="custom-control-label" for="debit">Pay online</label>
-                        </div>
+                            <div class="custom-control custom-radio">
+                                <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
+                                <label class="custom-control-label" for="debit">Pay online</label>
+                            </div>
                         {{/if}}
                         
                         {{#if enableMPesa}}
-                        <div class="custom-control custom-radio">
-                            <input id="mpesa" name="paymentMethod" type="radio" class="custom-control-input" value="MPesa">
-                            <label class="custom-control-label" for="mpesa">M-Pesa</label>
-                        </div>
+                            <div class="custom-control custom-radio">
+                                <input id="mpesa" name="paymentMethod" type="radio" class="custom-control-input" value="MPesa">
+                                <label class="custom-control-label" for="mpesa">M-Pesa</label>
+                            </div>
                         {{/if}}
                     </div>
                     {{/if}}
@@ -312,15 +320,27 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        console.log('Function called!')
+{{#if OkHiKey}}
+<script src="https://cdn.okhi.io/sandbox/web/v4/okhi.min.js"></script>
+<script type="text/javascript"> 
+    var okhi = new OkHi({ apiKey: '{{{OkHiKey}}}' });
+    var okhiStyle = {
+        base: {
+            logo: '{{{appLogo}}}',
+            name: '{{{appTitle}}}',
+            color: '#2f93a3'
+        }
+    }
+</script>
+<script src="/js/okhi.script{{dotmin}}.js"></script>
+{{/if}}
 
+<script type="text/javascript">           
+    $(document).ready(function () {   
         window.minifiedMenu = true;
         if (addaffix) addaffix();
 
 {{#if orderUrl}}
-        console.log('Option called!');        
         var iframe = $("<iframe style='min-height: 670px' src='{{orderUrl}}'/>");        
         iframe.css({
             border: "none",
@@ -336,101 +356,13 @@
             }
         }, 500)
 {{/if}}
-
-        var addressData = null;
-        var handleOnSuccess = function (data) {
-            $('#lets-okhi').animate({ width:'toggle' }, 350);
-            $("#submitBtn").show();
-
-            $("[name=address]").val(data.location.title);
-            $("[name=building]").val(data.location.streetName);
-            $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
-            
-            $("#addressInputs").slideDown();
-            addressData = data;
-
-            var address = data.location.title.split(',');
-            if(address.indexOf(data.location.streetName) < 0)
-                address.push(data.location.streetName);
-            if(address.indexOf(data.location.propertyName) < 0)
-                address.push(data.location.propertyName);
-            if(address.indexOf(data.location.directions) < 0)
-                address.push(data.location.directions);
-
-            var html = "";
-            for(var i = 0; i < address.length; i+=2)
-                html += "<div>{0}</div>".format([address[i], address[i + 1]].join(', ').trim().trim(','));
-
-            app.showModal({
-                title: "Confirm Address",
-                msg: html,
-                buttons: {
-                    "Place Order": function (e) {
-                        $(".billing-address button[type='submit']").click();
-                    },
-                    "Close": function (e) {
-                        window.location = "/";
-                    }
-                }
-            });            
-        };
-
-        var handleOnError = function (error) {
-            $('#lets-okhi').animate({width:'toggle'}, 350);
-            $("#submitBtn").show();
-            $("#addressInputs").attr("required", "true").slideDown();
-
-            $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location!</strong> " + error)
-            $(".alert-danger").slideDown();
-        };
-
+        
         if($('#lets-okhi').length){
-            $(document.body).append('<script src="https://cdn.okhi.io/sandbox/web/v4/okhi.min.js"/>'); 
             $("#addressInputs").find("[required]").removeAttr("required")         
         }else{
             $('#lets-okhi').hide();
             $("#addressInputs").attr("required", "true").show();        
         }
-
-        $(document).on("click", '#lets-okhi', function(e){
-            e.preventDefault();
-            var form = $(this).parents("form");
-            $(".alert-danger").hide();
-            
-            if (form[0].checkValidity()) {
-                var that = $(this);
-                var okhi = new OkHi({ apiKey: '{{{OkHiKey}}}' });
-                
-                var user = {
-                    phone: $("#phoneNumber").val(),
-                    firstName: $("#firstName").val(),
-                    lastName: $("#lastName").val(),
-                };
-
-                if(user.phone && user.firstName && user.lastName){                
-                    e.preventDefault();
-                    var locationManager = new okhi.LocationManager({
-                        user: user,
-                        onSuccess: handleOnSuccess,
-                        onError: handleOnError,
-                        style: {
-                            name: {
-                                logo: '{{{appLogo}}}',
-                                name: '{{{appTitle}}}'
-                            }
-                        }
-                    });
-
-                    locationManager.launch();
-                }else{
-                    $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
-                    $(".alert-danger").slideDown();
-                }
-            }else{
-                $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
-                $(".alert-danger").slideDown();
-            }
-        });
 
         $(document).on("click", ".billing-address button[type='submit']", function (e) {
             e.preventDefault();
