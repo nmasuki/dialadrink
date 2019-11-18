@@ -63,8 +63,9 @@ exports.initLocals = function (req, res, next) {
     //App Title
     res.locals.appUrl = keystone.get("url");
 
-    //OKHi key    
-	res.locals.OkHiKey = process.env.OKHI_KEY;
+    //OKHi setup
+    res.locals.OkHiEnv = process.env.OKHI_ENV;  
+	res.locals.OkHiKey = process.env.OKHI_ENV == "prod"? process.env.OKHI_KEY: process.env.OKHI_DEV_KEY;
 
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
