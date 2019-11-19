@@ -128,7 +128,7 @@ router.get('/validatepromo/:promocode', function (req, res) {
 });
 
 function okHiIntegration(req, res, order, cartItems, next){
-	var url = process.env.NODE_ENV == "production"
+	var url = res.locals.OkHiEnv == "prod"
 		? "https://server.okhi.co/v1/interactions"
 		: "https://sandbox-server.okhi.dev/v1/interactions";
 
