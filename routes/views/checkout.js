@@ -163,16 +163,7 @@ function okHiIntegration(req, res, order, cartItems, next){
 		}
 	};
 
-	/*request.post(url , {
-		headers: { "api-key": res.locals.OkHiKey },
-		data: data
-	}, function(err, a, b){
-		console.log(err, a, b, data);
-		if (typeof next == "function")
-			next(err, a, b);
-	});
-*/
-
+	console.log("Calling OKHI api:", res.locals.OkHiKey, url);
 	najax.post({
 		url: url,
 		contentType: "application/json; charset=utf-8",
@@ -183,8 +174,8 @@ function okHiIntegration(req, res, order, cartItems, next){
 			if (typeof next == "function")
 				next(null, res);
 		},
-		error: function (err) {			
-			console.log(arguments);			
+		error: function (xhr, status, err) {			
+			console.log("Error while making Okhi API call!", status, xhr.responseText, err);
 			if (typeof next == "function")
 				next(err, url);
 		}
