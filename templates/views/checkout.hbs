@@ -324,6 +324,12 @@
             color: '#2f93a3'
         }
     }
+    {{#if userData.user}}
+    window.addressData = {
+        user: {{{json  userData.user}}},
+        location: {{{json userData.location}}}
+    }
+    {{/if}}
 </script>
 <script src="/js/okhi.script{{dotmin}}.js"></script>
 {{/if}}
@@ -369,7 +375,7 @@
                 that.attr("disabled", true);
                 $('body,html').animate({scrollTop: 0}, 800, 'swing');
 
-                var data = Object.assign({saveInfo: $("#saveInfo").is(":checked")}, addressData || {});
+                var data = Object.assign({saveInfo: $("#saveInfo").is(":checked")}, window.addressData || {});
                 array.forEach(function (a) { data[a.name] = a.value; });
 
                 var modal = app.showLoading("<span id='msgSpan'>Processing your order! Please wait..</span>", 60000);

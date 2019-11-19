@@ -227,16 +227,18 @@ Order.schema.methods.placeOrder = function (next) {
 
                 var itemsMsg = `Drinks:${items.map(c=>c.pieces + '*' + c.product.name).join(', ')}`;
                 var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
-                sms.sendSMS((process.env.CONTACT_PHONE_NUMBER || "254723688108"), msg);                
+                sms.sendSMS((process.env.CONTACT_PHONE_NUMBER || "254723688108"), msg);
+                    
+
             });
     }
 
-    this.sendOrderNotification((err, data) => {
+    order.sendOrderNotification((err, data) => {
         console.log("Updating order state='placed'!", data);
 
         //Update order state
-        this.state = 'placed';
-        this.save((err) => {
+        order.state = 'placed';
+        order.save((err) => {
             if (err)
                 console.warn(err);
             else
@@ -247,7 +249,7 @@ Order.schema.methods.placeOrder = function (next) {
             next(err);
 
         //popularity goes up 100x
-        this.cart.forEach(c => {
+        order.cart.forEach(c => {
             keystone.list("Product").findOnePublished({
                 _id: c.product._id
             }, (err, product) => {
@@ -288,7 +290,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
         //Hack to make use of nodemailer..
         email.transport = require("../helpers/mailer");
     
-        var subject = "Payment received #" + order.orderNumber + " - " + keystone.get("name");
+        var subject = `Payment received #${order.delivery.platform[0]}${order.orderNumber} - ${keystone.get("name")}`;
         if (keystone.get("env") == "development")
             subject = "(Testing) " + subject;
     
@@ -368,21 +370,18 @@ Order.schema.methods.sendPaymentNotification = function (next) {
 
 Order.schema.methods.sendSMSNotification = function (next, message) {
     var order = this;
-    
-    message = message || `Dial a Drink: Your order #${this.orderNumber} has been received.`;
-    if(this.payment.method == "PesaPal")
-        message += ` Please proceed to pay ${this.currency||''} ${this.total} online ${this.payment.shortUrl?' via ' + this.payment.shortUrl:''}`;
+    message = message || `Dial a Drink: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
+    if(order.payment.method == "PesaPal")
+        message += ` Please proceed to pay ${order.currency||''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
     else
-        message += ` You will be required to pay ${this.currency||''} ${this.total} on delivery`;
+        message += ` You will be required to pay ${order.currency||''} ${order.total} on delivery`;
                   
     return sms.sendSMS([order.delivery.phoneNumber], message.trim(), function(err, res){
         if(err)
-            console.warn.apply(this, arguments);
+            console.warn.apply(order, arguments);
         else{
             order.payment.smsNotificationSent = true;
             order.save();
-
-
         }
         if(typeof next == "function")
             next(err, res);
@@ -399,7 +398,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
     email.transport = require("../helpers/mailer");
 
     var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
-    if (keystone.get("env") == "development")
+    if (keystone.get("env") != "production")
         subject = "(Testing)" + subject;
 
     return new Promise((resolve, reject)=>{
@@ -424,6 +423,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                     page: {
                         title: keystone.get("name") + " Order"
                     },
+                    appUrl: keystone.get("url"),
                     order: order.toObject()
                 };
 
@@ -481,7 +481,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                             next(err);
 
                         if (order.delivery.phoneNumber) {
-                            message = `Dial a Drink: Your order #${order.orderNumber} has been received. ` +
+                            message = `Dial a Drink: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received. ` +
                                 `Please pay ${order.currency||''} ${order.total} ${order.payment.method? 'in ' + order.paymentMethod: ''}` +
                                 `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
                             
@@ -541,9 +541,8 @@ Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
     deliveryDetails = deliveryDetails || {};
     promo = promo || {};
 
-    var chargesKeys = Object.keys(deliveryDetails).filter(k=>k.toLowerCase().indexOf("charge") >= 0);
-
-    var charges = chargesKeys.sum(k=>deliveryDetails[k]);
+    var chargesKeys = Object.keys(deliveryDetails).filter(k => k.toLowerCase().indexOf("charge") >= 0);
+    var charges = chargesKeys.sum(k => deliveryDetails[k]);
 
     var subtotal = cart.sum(function (c) {
         var price = c.pieces * c.price;
@@ -582,7 +581,7 @@ Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
         delivery: deliveryDetails
     });
 
-    chargesKeys.forEach(k=>{
+    chargesKeys.forEach(k => {
         order.charges.chargesName.push(k);
         order.charges.chargesAmount.push(deliveryDetails[k]);
     });
@@ -625,7 +624,7 @@ Order.model.find().sort({'orderNumber': -1 })
         if (data[0] && data[0].orderNumber)
             autoId = data[0].orderNumber;
 
-        if (keystone.get("env") == "development")
+        if (keystone.get("env") != "production")
             autoId -= 52;
         
     });

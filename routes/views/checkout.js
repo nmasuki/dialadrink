@@ -2,7 +2,8 @@ var keystone = require('keystone');
 var router = keystone.express.Router();
 var Order = keystone.list("Order");
 var pesapalHelper = require('../../helpers/pesapal');
-var request = require('request');
+var request = require('request');//.defaults({'proxy':'http://127.0.0.1:8888'});
+var najax = require('najax');
 
 router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
@@ -80,7 +81,7 @@ router.post("/", function (req, res, next) {
 				order.cart = cartItems;
 				//OKHi intergration
 				if(process.env.OKHI_KEY && req.body.user && req.body.location)
-					okHiIntegration(req, order, cartItems);
+					okHiIntegration(req, res, order, cartItems);
 				
 				delete req.session.cart;
 				req.session.save();
@@ -121,20 +122,20 @@ router.get('/validatepromo/:promocode', function (req, res) {
 				res.send({
 					state: false,
 					msg: "Invalid promo code!! <br>Head over to <a href='/'>Today&apos;s Offers</a> for reduced prices"
-				})
+				});
 			}
 		});
 });
 
-function okHiIntegration(req, order, cartItems, next){
+function okHiIntegration(req, res, order, cartItems, next){
 	var url = process.env.NODE_ENV == "production"
 		? "https://server.okhi.co/v1/interactions"
-		: "https://server.okhi.dev/v1/interactions";
+		: "https://sandbox-server.okhi.dev/v1/interactions";
 
 	var data = {
 		id: order.orderNumber,
 		useCase: "e-commerce",
-		locationId: req.body.location.placeId,
+		locationId: req.body.location.id,
 		value: order.payment.amount,
 		user: req.body.user,
 		properties: {
@@ -162,14 +163,31 @@ function okHiIntegration(req, order, cartItems, next){
 		}
 	};
 
-	request.post(url, {
-		contentType: "application/json; charset=utf-8",
-		headers: { "api-key": process.env.OKHI_KEY },
+	/*request.post(url , {
+		headers: { "api-key": res.locals.OkHiKey },
 		data: data
 	}, function(err, a, b){
-		console.log(err, a, b);
+		console.log(err, a, b, data);
 		if (typeof next == "function")
 			next(err, a, b);
+	});
+*/
+
+	najax.post({
+		url: url,
+		contentType: "application/json; charset=utf-8",
+		headers: { "api-key": res.locals.OkHiKey },
+		data: data,
+		success: function (res) {
+			console.log(res);
+			if (typeof next == "function")
+				next(null, res);
+		},
+		error: function (err) {			
+			console.log(arguments);			
+			if (typeof next == "function")
+				next(err, url);
+		}
 	});
 }
 

@@ -32,6 +32,11 @@ module.exports = function MoveSMS(sender) {
             if (balance < 0)
                 return console.warn("MoveSMS balance is low. Please topup.");
 
+            if(process.env.NODE_ENV != "production"){            
+                console.log("Ignoring SMS notification for non-prod environment!");
+                return Promise.resolve(100);
+            }       
+
             return new Promise((resolve, reject) => {
                 najax.post({
                     url: url,

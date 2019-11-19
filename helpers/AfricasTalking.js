@@ -11,7 +11,7 @@ function AfricaTalkingSMS(sender) {
 
     self.balance = function balance() {
         return AfricasTalking.APPLICATION.fetchAccount().then(response=> {
-            var balance = parseFloat(response.UserData.balance.split(' ')[1])
+            var balance = parseFloat(response.UserData.balance.split(' ')[1]);
             return Promise.resolve(balance);
         });
     };

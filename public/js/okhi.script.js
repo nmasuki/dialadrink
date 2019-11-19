@@ -1,6 +1,6 @@
 
     
-window.addressData = null;
+window.addressData = window.addressData || null;
 $(document).ready(function(){    
 
     var loadLocationCard = function(user){
@@ -10,7 +10,13 @@ $(document).ready(function(){
             $("[name=address]").val(data.location.title);
             $("[name=building]").val(data.location.streetName);
             $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
-            $('#lets-okhi').hide();            
+           
+            if(data && data.user && data.location)
+                $('#lets-okhi').hide();            
+            else{
+                $('#lets-okhi').show();
+                $("#lets-okhi-card").hide();          
+            }
 
             window.addressData = data;
         };
@@ -18,6 +24,7 @@ $(document).ready(function(){
         var handleOnError = function (data){
             console.warn("Eror Implimentation not done!", arguments);
             $('#lets-okhi').show();
+            $("#lets-okhi-card").hide();
         };
 
         user = user || {
@@ -60,8 +67,7 @@ $(document).ready(function(){
     
         var handleOnError = function (error) {
             $('#lets-okhi').animate({width:'toggle'}, 350);
-            $("#submitBtn").show();
-            $("#addressInputs").attr("required", "true").slideDown();
+            $("#addressInputs").slideDown();
     
             $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location!</strong> " + error)
             $(".alert-danger").slideDown();
