@@ -222,8 +222,7 @@ router.get("/payment/:orderNo", function (req, res) {
             var locals = res.locals;
             if (order.cart && order.cart.length) {
                 locals.cartItems = (order.cart || [])
-                    .filter(c => c && c.product)
-                    .orderBy(c => c.product.name);
+                    .orderBy(c => c && c.product && c.product.name);
             } else
                 locals.cartItems = [];
 
