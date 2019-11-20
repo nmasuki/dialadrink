@@ -2,7 +2,7 @@ var keystone = require('keystone');
 var router = keystone.express.Router();
 var Order = keystone.list("Order");
 var pesapalHelper = require('../../helpers/pesapal');
-var request = require('request');//.defaults({'proxy':'http://127.0.0.1:8888'});
+var request = require('request'); //.defaults({'proxy':'http://127.0.0.1:8888'});
 var najax = require('najax');
 
 router.get('/', function (req, res) {
@@ -14,9 +14,9 @@ router.get('/', function (req, res) {
 		h1: "Your Order Details"
 	});
 
-	if(locals.userData && locals.userData.show)
+	if (req.session.userData && req.session.userData.saveInfo)
 		locals.userData = req.session.userData;
-		
+
 	locals.breadcrumbs.push({
 		href: "/cart",
 		label: "My Cart"
@@ -36,19 +36,21 @@ router.post("/", function (req, res, next) {
 	req.session.save();
 
 	if (Object.keys(req.session.cart || {}).length) {
-		var promo = req.session.promo || {};		
+		var promo = req.session.promo || {};
 		var cartItems = Object.values(req.session.cart || {});
-		var deliveryDetails = Object.assign({clientIp: res.locals.clientIp}, req.body);
+		var deliveryDetails = Object.assign({
+			clientIp: res.locals.clientIp
+		}, req.body);
 
 		var json = {
 			state: true
 		};
 
-		Order.checkOutCartItems(cartItems, promo, deliveryDetails, function(err, order){
+		Order.checkOutCartItems(cartItems, promo, deliveryDetails, function (err, order) {
 			if (err)
 				json.response = "error";
 
-			if(order.client.sessions.indexOf(req.sessionID) < 0){
+			if (order.client.sessions.indexOf(req.sessionID) < 0) {
 				order.client.sessions.push(req.sessionID);
 				order.client.save();
 			}
@@ -62,10 +64,10 @@ router.post("/", function (req, res, next) {
 				} else if (order.payment.method == "Mpesa") {
 					json.msg = "Processing payment. Please check your mobile handsets to complete the transaction.";
 					var mpesa = require('../../helpers/mpesa');
-					
+
 					mpesa.onlineCheckout(
 						order.delivery.phoneNumber,
-						order.payment.amount, 
+						order.payment.amount,
 						order.orderNumber
 					);
 				} else if (order.payment.method == "Mpesa2") {
@@ -73,16 +75,16 @@ router.post("/", function (req, res, next) {
 					var africasTalking = require('../helpers/AfricasTalking').Instance;
 
 					africasTalking.processPayment(
-						order.delivery.phoneNumber, order.orderNumber, 
+						order.delivery.phoneNumber, order.orderNumber,
 						order.orderNumber, order.payment.amount, 'KES'
 					);
 				}
-				
+
 				order.cart = cartItems;
 				//OKHi intergration
-				if(process.env.OKHI_KEY && req.body.user && req.body.location)
+				if (process.env.OKHI_KEY && req.body.user && req.body.location)
 					okHiIntegration(req, res, order, cartItems);
-				
+
 				delete req.session.cart;
 				req.session.save();
 			}
@@ -114,9 +116,9 @@ router.get('/validatepromo/:promocode', function (req, res) {
 				res.send({
 					state: promo.status == "running",
 					promo: promo.status == "running" ? (req.session.promo = promo) : null,
-					msg: promo.status == "running" 
-						?`Promo code '${promo.name || promo.code}' applied successfully!` 
-						:`The promo code you have entered is '${promo.status.toProperCase()}'!`
+					msg: promo.status == "running" ?
+						`Promo code '${promo.name || promo.code}' applied successfully!` :
+						`The promo code you have entered is '${promo.status.toProperCase()}'!`
 				});
 			} else {
 				res.send({
@@ -127,10 +129,10 @@ router.get('/validatepromo/:promocode', function (req, res) {
 		});
 });
 
-function okHiIntegration(req, res, order, cartItems, next){
-	var url = res.locals.OkHiEnv == "prod"
-		? "https://server.okhi.co/v1/interactions"
-		: "https://sandbox-server.okhi.dev/v1/interactions";
+function okHiIntegration(req, res, order, cartItems, next) {
+	var url = res.locals.OkHiEnv == "prod" ?
+		"https://server.okhi.co/v1/interactions" :
+		"https://sandbox-server.okhi.dev/v1/interactions";
 
 	var data = {
 		id: order.orderNumber,
@@ -150,7 +152,7 @@ function okHiIntegration(req, res, order, cartItems, next){
 					"value": c.product.price,
 					"name": c.product.name,
 					"description": c.product.description,
-					"category": c.product.category? c.product.category.name || c.product.category: "alcohol",
+					"category": c.product.category ? c.product.category.name || c.product.category : "alcohol",
 					"quantity": c.pieces
 				};
 				return item;
@@ -167,14 +169,16 @@ function okHiIntegration(req, res, order, cartItems, next){
 	najax.post({
 		url: url,
 		contentType: "application/json; charset=utf-8",
-		headers: { "api-key": res.locals.OkHiKey },
+		headers: {
+			"api-key": res.locals.OkHiKey
+		},
 		data: data,
 		success: function (res) {
 			console.log(res);
 			if (typeof next == "function")
 				next(null, res);
 		},
-		error: function (xhr, status, err) {			
+		error: function (xhr, status, err) {
 			console.log("Error while making Okhi API call!", status, xhr.responseText, err);
 			if (typeof next == "function")
 				next(err, url);
