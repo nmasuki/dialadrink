@@ -467,11 +467,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
             //Send Email
             var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
-            return order.sendEmailNotification(subject, 'order', {
-                layout: 'email',
-                page: {
-                    title: keystone.get("name") + " Order"
-                },
+            return order.client.sendEmailNotification(subject, 'order', {
                 appUrl: keystone.get("url"),
                 order: order.toObject()
             });
