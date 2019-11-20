@@ -6,7 +6,7 @@ function getCacheName(destination, inc) {
     return destination + ((destination.endsWith("s") ? "" : "s") + "-v") + (CACHE_VERSION + (inc / 10.0));
 }
 
-self.addEventListener("push", e => {
+self.addEventListener("push", function(e) {
     var data = e.data.json();
     console.log("Push received...");
 
