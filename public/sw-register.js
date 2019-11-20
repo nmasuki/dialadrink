@@ -9,7 +9,7 @@ function urlB64ToUint8Array(base64String) {
   var rawData = window.atob(base64);
   var outputArray = new Uint8Array(rawData.length);
 
-  for (let i = 0; i < rawData.length; ++i) {
+  for (var i = 0; i < rawData.length; ++i) {
     outputArray[i] = rawData.charCodeAt(i);
   }
 
@@ -34,8 +34,12 @@ function updateSubscriptionOnServer(subscription) {
         'X-CSRF-Token': getCookie("XSRF-TOKEN")
       }
     })
-    .then(res => console.log("Subscription data sent!", res))
-    .catch(err => console.warn("Error sending subscription!", err));
+    .then(function (res) {
+      console.log("Subscription data sent!", res);
+    })
+    .catch(function (err) {
+      console.warn("Error sending subscription!", err);
+    });
 }
 
 //Register Push notification
