@@ -11,25 +11,27 @@ var PesaPalStatusMap = {
 };
 var router = keystone.express.Router();
 
-router.post("/incomingsmsnotification", function(req, res){
+router.post("/incomingsmsnotification", function (req, res) {
 	var data = Object.assign({}, req.body || {}, req.query || {});
-	console.log("Received %s", req.url, data);	
+	console.log("Received %s", req.url, data);
 	res.status(200);
 });
 
-router.post("/optoutsmsnotification", function(req, res){
+router.post("/optoutsmsnotification", function (req, res) {
 	var data = Object.assign({}, req.body || {}, req.query || {});
-	console.log("Received %s", req.url, data);	
+	console.log("Received %s", req.url, data);
 	res.status(200);
 });
 
 
-router.post("/paymentvalidation", function(req, res){
+router.post("/paymentvalidation", function (req, res) {
 	var payment = Payment.model({});
-	
+
 	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
 	payment.save();
-	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
+	Order.model.findOne({
+			orderNumber: payment.metadata.orderNumber
+		})
 		.deepPopulate('cart.product.priceOptions.option')
 		.exec((err, order) => {
 			if (!order) {
@@ -45,13 +47,16 @@ router.post("/paymentvalidation", function(req, res){
 
 router.post("/paymentnotification", function (req, res) {
 	var payment = Payment.model({});
-	
+
 	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
 	payment.save();
 
 	console.log("Recieved AfricasTalking IPN!", payment.metadata);
-	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
+	Order.model.findOne({
+			orderNumber: payment.metadata.orderNumber
+		})
 		.deepPopulate('cart.product.priceOptions.option')
+		.populate('client')
 		.exec((err, order) => {
 			if (!order) {
 				console.log("Error while reading Order id:", payment.metadata.orderNumber);
@@ -61,7 +66,7 @@ router.post("/paymentnotification", function (req, res) {
 			console.log("Reading AfricasTalking transaction id:" + payment.transactionId + ", ref:" + payment.referenceId)
 			AfricasTalking.getPaymentDetails(payment.transactionId).then(function (response) {
 					var data = response.data;
-					res.status(data? 200: 400);
+					res.status(data ? 200 : 400);
 
 					if (data) {
 						if (data.reference)

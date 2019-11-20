@@ -422,25 +422,6 @@ Order.schema.methods.sendPaymentNotification = function (next) {
 
 };
 
-Order.schema.methods.sendSMSNotification = function (next, message) {
-    var order = this;
-    if (order.payment.method == "PesaPal")
-        message += ` Please proceed to pay ${order.currency||''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
-    else
-        message += ` You will be required to pay ${order.currency||''} ${order.total} on delivery`;
-
-    return sms.sendSMS([order.delivery.phoneNumber], message.trim(), function (err, res) {
-        if (err)
-            console.warn.apply(order, arguments);
-        else {
-            order.payment.smsNotificationSent = true;
-            order.save();
-        }
-        if (typeof next == "function")
-            next(err, res);
-    });
-};
-
 Order.schema.methods.sendOrderNotification = function (next) {
     var that = this;
     if (!that.orderNumber)

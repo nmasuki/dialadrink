@@ -18,7 +18,7 @@ var router = keystone.express.Router();
 router.post("/ipn", function (req, res) {
 	console.log("Recieved PesaPal IPN!");
 	var payment = Payment.model({});
-	
+
 	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
 	payment.save();
 
@@ -26,6 +26,7 @@ router.post("/ipn", function (req, res) {
 			orderNumber: payment.referenceId
 		})
 		.deepPopulate('cart.product.priceOptions.option')
+		.populate('client')
 		.exec((err, order) => {
 			if (err || !order) {
 				console.log("Error while reading Order id: %s", payment.referenceId, err);
@@ -41,7 +42,7 @@ router.post("/ipn", function (req, res) {
 			PesaPal.getPaymentDetails(options).then(function (data) {
 					//data -> {transaction, method, status, reference}
 					//console.log(data);
-					
+
 					if (data) {
 						if (data.reference)
 							order.payment.referenceId = data.reference;
@@ -106,6 +107,7 @@ router.get("/:orderNo", function (req, res) {
 			orderNumber: req.params.orderNo
 		})
 		.deepPopulate('cart.product.priceOptions.option')
+		.populate('client')
 		.exec((err, order) => {
 			if (!order)
 				return res.status(404).render('errors/404');
