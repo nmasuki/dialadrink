@@ -33,7 +33,6 @@ router.get('/', function (req, res) {
 router.post("/", function (req, res, next) {
 
 	req.session.userData = req.body || {};
-	req.session.userData.show = !!req.body.saveInfo;
 	req.session.save();
 
 	if (Object.keys(req.session.cart || {}).length) {
