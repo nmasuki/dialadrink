@@ -231,7 +231,7 @@ router.get("/payment/:orderNo", function (req, res) {
                 h1: `Order #${order.orderNumber} Payment. (by ${order.delivery.firstName} ${order.delivery.lastName})`
             });
 
-            if (locals.userData && locals.userData.saveInfo)
+            if (req.session.userData && req.session.userData.saveInfo)
                 locals.userData = req.session.userData;
 
             locals.breadcrumbs.push({
