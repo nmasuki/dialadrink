@@ -24,7 +24,7 @@ function search(req, res, next) {
             .toProperCase()).replace(/Whiskies|Whiskey|Wine|Gin/g, "").trim()
     });
 
-    if(locals.page.h1.length <= 5)
+    if (locals.page.h1.length <= 5)
         locals.page.h1 += " Delivery in Nairobi";
 
     locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId();
@@ -45,7 +45,7 @@ function search(req, res, next) {
 
         if (!locals.page.title || locals.page.title == keystone.get("name"))
             locals.page.title = "{1} - {2}".format(title.split(",").first(), title, keystone.get("name"));
-        
+
         if (req.xhr || locals.appUser)
             return res.send({
                 success: 'success',
@@ -65,26 +65,25 @@ function search(req, res, next) {
             var categories = products.distinctBy(p => p.category && (p.category.id || p.category));
             var subCategories = products.distinctBy(p => p.subCategory && (p.subCategory.id || p.subCategory));
 
-            if(categories.length != 1 && subCategories.length != 1)
+            if (categories.length != 1 && subCategories.length != 1)
                 return view.render('search');
 
-            if(categories.length == 1){
+            if (categories.length == 1) {
                 var cat = categories[0].category;
-                if(cat && cat.name){
+                if (cat && cat.name) {
                     locals.page.h1 = cat.name.trim().toProperCase();
                     locals.page.title = cat.pageTitle;
                     locals.page.meta = cat.description || locals.page.meta || meta;
                 }
-            }
-            else if(subCategories.length == 1){
+            } else if (subCategories.length == 1) {
                 var subCat = categories[0].subCategory;
-                if(subCat && subCat.name){
+                if (subCat && subCat.name) {
                     locals.page.h1 = subCat.name.trim().toProperCase();
                     locals.page.title = subCat.pageTitle;
                     locals.page.meta = subCat.description || locals.page.meta || meta;
                 }
             }
-            
+
             if (locals.breadcrumbs) {
                 locals.breadcrumbs = locals.breadcrumbs.filter(b => b.label);
                 if (req.originalUrl.startsWith("/search"))
@@ -92,14 +91,14 @@ function search(req, res, next) {
                         label: "Search Results",
                         href: req.originalUrl
                     });
-                else if(!locals.breadcrumbs.find(b => b.label == locals.page.h1))
+                else if (!locals.breadcrumbs.find(b => b.label == locals.page.h1))
                     locals.breadcrumbs.push({
                         label: locals.page.h1,
                         href: req.originalUrl
                     });
-                                
+
             }
-            
+
             view.render('products');
         }
     }
@@ -167,12 +166,12 @@ function search(req, res, next) {
                 }
                 //popularity goes up
                 product.addPopularity(1);
-                
+
                 product.findRelated((err, related) => {
                     locals.related = related.slice(0, 6);
                     view.render('product');
                 });
-                
+
             });
         } else
             next(err);
@@ -190,7 +189,7 @@ function search(req, res, next) {
                 if (err || !products || !products.length) {
                     if (req.originalUrl.startsWith("/search"))
                         renderResults([]);
-                    else{
+                    else {
                         // Render the page content if available
                         if (locals.page.content)
                             view.render('page');
@@ -222,7 +221,9 @@ router.get("/payment/:orderNo", function (req, res) {
 
             var locals = res.locals;
             if (order.cart && order.cart.length) {
-                locals.cartItems = (order.cart || []).orderBy(c => c.product.name);
+                locals.cartItems = (order.cart || [])
+                    .filter(c => c && c.product)
+                    .orderBy(c => c.product.name);
             } else
                 locals.cartItems = [];
 
@@ -231,9 +232,9 @@ router.get("/payment/:orderNo", function (req, res) {
                 h1: `Order #${order.orderNumber} Payment. (by ${order.delivery.firstName} ${order.delivery.lastName})`
             });
 
-            if(locals.userData && locals.userData.show)
+            if (locals.userData && locals.userData.show)
                 locals.userData = req.session.userData;
-                
+
             locals.breadcrumbs.push({
                 href: "/cart",
                 label: "My Cart"
@@ -284,15 +285,16 @@ router.get("/location/:location", function (req, res) {
                     `?center=${center.lat}%2c%20${center.lng}` +
                     `&zoom=13&size=640x400&maptype=roadmap` +
                     `&${markers.join('&')}&key=${process.env.GOOGLE_API_KEY1}`;
-                
+
                 locals.mobileMapUrl = locals.mapUrl.replace("640x400", "300x300");
 
                 locals.locations = locations;
 
-                locals.breadcrumbs = locals.breadcrumbs.concat(locations.map(l=>{
+                locals.breadcrumbs = locals.breadcrumbs.concat(locations.map(l => {
                     return {
                         href: l.href,
-                        label: l.name                    }                    
+                        label: l.name
+                    }
                 }));
             }
 
@@ -410,29 +412,32 @@ function sitemap(req, res) {
 
     locals.links = [];
 
-    var addLinks = function(links){
+    var addLinks = function (links) {
         links.forEach(l => {
             var found = locals.links.find(p => l.href == p.href);
-            if(found){
-                if(!found.modifiedDate || found.modifiedDate < l.modifiedDate)
-                    found.modifiedDate = l.modifiedDate;                            
-                if(found.priority < l.priority)
-                    found.priority = l.priority;                    
-            } else if(l.href){
+            if (found) {
+                if (!found.modifiedDate || found.modifiedDate < l.modifiedDate)
+                    found.modifiedDate = l.modifiedDate;
+                if (found.priority < l.priority)
+                    found.priority = l.priority;
+            } else if (l.href) {
                 locals.links.push(l);
             }
         });
     };
 
     MenuItem.model
-        .find({}).sort({ index: 1, level: -1})
+        .find({}).sort({
+            index: 1,
+            level: -1
+        })
         .exec((err, menus) => {
             var links = menus.distinctBy(m => m.href)
-                .orderBy(m => m.index * 10 - (m.level) + m.href.length / 100 )
+                .orderBy(m => m.index * 10 - (m.level) + m.href.length / 100)
                 .map(m => {
-                    return { 
-                        href: m.href, 
-                        priority: (m.level == 0? 1.0 : 0.7 + (1.0 - 0.7) / m.level),
+                    return {
+                        href: m.href,
+                        priority: (m.level == 0 ? 1.0 : 0.7 + (1.0 - 0.7) / m.level),
                         modifiedDate: m.modifiedDate
                     };
                 });
@@ -440,92 +445,94 @@ function sitemap(req, res) {
             addLinks(links);
         })
         .then(Page.model.find({})
-        .exec((err, pages) => {
-            var links = pages.filter(p => p.href && p.content)
-                .map(p => { 
-                    return {
-                        href: p.href, 
-                        priority: 0.85,
-                        modifiedDate: p.modifiedDate
-                    };
-                });
-            
-            addLinks(links);
-        })
-        .then(Product.findPublished({})
-            .exec((err, products) => {
-                var brands = products.filter(p => p.brand).map(p => p.brand).distinctBy(b => b.id);
-                var companies = brands.filter(p => p.company && p.company.name).map(p=>p.company).distinctBy(b => b.name);
-                var subCategories = products.filter(p => p.subCategory).map(p => p.subCategory).distinctBy(b => b.id);
+            .exec((err, pages) => {
+                var links = pages.filter(p => p.href && p.content)
+                    .map(p => {
+                        return {
+                            href: p.href,
+                            priority: 0.85,
+                            modifiedDate: p.modifiedDate
+                        };
+                    });
 
-                var links = products.map(p => {
-                    return {
-                        href: p.href,
-                        modifiedDate: p.modifiedDate,
-                        priority: 0.9999 * p.popularityRatio
-                    };
-                });
-
-                links = links.concat(subCategories.map(p => {
-                    return {
-                        href: p.key.trim('/').trim(),
-                        modifiedDate: p.modifiedDate,
-                        priority: 0.75
-                    };
-                }));
-
-                links = links.concat(brands.map(p => {
-                    return {
-                        href: p.href,
-                        modifiedDate: p.modifiedDate,
-                        priority: 0.7
-                    };
-                }));
-
-                links = links.concat(companies.map(p => {
-                    return {
-                        href: p.name.cleanId(),
-                        priority: 0.5
-                    };
-                }));
-            
                 addLinks(links);
             })
-            .then(() => ProductCategory.model.find({})
-                .exec((err, categories) => {
-                    var links = categories.map(p =>{
+            .then(Product.findPublished({})
+                .exec((err, products) => {
+                    var brands = products.filter(p => p.brand).map(p => p.brand).distinctBy(b => b.id);
+                    var companies = brands.filter(p => p.company && p.company.name).map(p => p.company).distinctBy(b => b.name);
+                    var subCategories = products.filter(p => p.subCategory).map(p => p.subCategory).distinctBy(b => b.id);
+
+                    var links = products.map(p => {
+                        return {
+                            href: p.href,
+                            modifiedDate: p.modifiedDate,
+                            priority: 0.9999 * p.popularityRatio
+                        };
+                    });
+
+                    links = links.concat(subCategories.map(p => {
                         return {
                             href: p.key.trim('/').trim(),
                             modifiedDate: p.modifiedDate,
-                            priority: 0.78
-                        }
-                    });                    
-            
+                            priority: 0.75
+                        };
+                    }));
+
+                    links = links.concat(brands.map(p => {
+                        return {
+                            href: p.href,
+                            modifiedDate: p.modifiedDate,
+                            priority: 0.7
+                        };
+                    }));
+
+                    links = links.concat(companies.map(p => {
+                        return {
+                            href: p.name.cleanId(),
+                            priority: 0.5
+                        };
+                    }));
+
                     addLinks(links);
                 })
-                .then(() => Blog.model.find({})
-                    .exec((err, blogs) => {
-                        var links = blogs.map(p=>{
+                .then(() => ProductCategory.model.find({})
+                    .exec((err, categories) => {
+                        var links = categories.map(p => {
                             return {
-                                href: p.href,
-                                modifiedDate: p.publishedDate,
-                                priority: 0.76
-                            };
+                                href: p.key.trim('/').trim(),
+                                modifiedDate: p.modifiedDate,
+                                priority: 0.78
+                            }
                         });
 
                         addLinks(links);
                     })
-                    .then(() => {
-                        locals.links = locals.links.orderBy(l => -l.priority + l.href.length / 100000);
-                        view.render('sitemapXml', { layout: false }, function (err, xmlText) {
-                            res.setHeader('Content-Type', 'text/xml');
-                            res.send(xmlText);
-                        });
-                    })
+                    .then(() => Blog.model.find({})
+                        .exec((err, blogs) => {
+                            var links = blogs.map(p => {
+                                return {
+                                    href: p.href,
+                                    modifiedDate: p.publishedDate,
+                                    priority: 0.76
+                                };
+                            });
+
+                            addLinks(links);
+                        })
+                        .then(() => {
+                            locals.links = locals.links.orderBy(l => -l.priority + l.href.length / 100000);
+                            view.render('sitemapXml', {
+                                layout: false
+                            }, function (err, xmlText) {
+                                res.setHeader('Content-Type', 'text/xml');
+                                res.send(xmlText);
+                            });
+                        })
+                    )
                 )
             )
-        )
-    );
+        );
 }
 
 router.get('/sitemap', sitemap);
