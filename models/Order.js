@@ -450,7 +450,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
             _id: that._id
         })
         .deepPopulate('cart.product.priceOptions.option')
-        .deepPopulate('client')
+        .populate('client')
         .exec((err, order) => {
             if (err)
                 return Promise.reject(next(err));
