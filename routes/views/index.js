@@ -231,7 +231,9 @@ router.get("/payment/:orderNo", function (req, res) {
                 h1: `Order #${order.orderNumber} Payment. (by ${order.delivery.firstName} ${order.delivery.lastName})`
             });
 
-            locals.userData = req.session.userData;
+            if(locals.userData && locals.userData.show)
+                locals.userData = req.session.userData;
+                
             locals.breadcrumbs.push({
                 href: "/cart",
                 label: "My Cart"

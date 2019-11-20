@@ -1,3 +1,7 @@
 {
-    "jshint.options": {"esversion": 6},
+    "jshint.options": {
+        "esversion": 6
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
 }

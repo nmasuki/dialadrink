@@ -56,39 +56,45 @@ exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 exports.initLocals = function (req, res, next) {
     //App Logo
     res.locals.appLogo = keystone.get("logo");
-    
+
     //App Title
     res.locals.appTitle = keystone.get("name");
-    
+
     //App Title
     res.locals.appUrl = keystone.get("url");
 
+    //Push Notification VAPID public key
+    res.locals.vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
+
     //OKHi setup
-    res.locals.OkHiEnv = process.env.OKHI_ENV;  
-	res.locals.OkHiKey = process.env.OKHI_ENV == "prod"? process.env.OKHI_KEY: process.env.OKHI_DEV_KEY;
+    res.locals.OkHiEnv = process.env.OKHI_ENV;
+    res.locals.OkHiKey = process.env.OKHI_ENV == "prod" ? process.env.OKHI_KEY : process.env.OKHI_DEV_KEY;
 
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
-    
+
     //Cart items
     res.locals.cartItems = Object.values(req.session.cart || {}).orderBy(c => c.product.name);
-    
+
     //Promo code applied
     res.locals.promocode = req.session.promo;
-    
+
     //Check mobile device
-    res.locals.isMobile = mobile(req);   
-    
+    res.locals.isMobile = mobile(req);
+
     //
     res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
-    
+
     //Client IP
     res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
         req.connection.remoteAddress || req.socket.remoteAddress;
-    
-    var {username, password} = getAuthInfo(req);
+
+    var {
+        username,
+        password
+    } = getAuthInfo(req);
     //Other locals only applied to views and not ajax calls
-    if(username || password){
+    if (username || password) {
         console.log(`Api call from IP:${res.locals.clientIp}, User:${username}`);
         return next();
     } else if (req.xhr) {
@@ -98,7 +104,7 @@ exports.initLocals = function (req, res, next) {
                 response: 'error',
                 message: "CSRF validation failed!"
             });
-        else{
+        else {
             return next();
         }
     } else {
@@ -180,7 +186,7 @@ exports.initBrandsLocals = function (req, res, next) {
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
         if (!err) {
             groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
-            
+
             delete groups._delete;
             delete groups.Others;
             delete groups.Extras;
@@ -236,9 +242,9 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
 
             if (breadcrumbs.length)
                 res.locals.breadcrumbs = breadcrumbs
-                    .orderBy(m => m.level)
-                    .filter(b => b.label)
-                    .distinctBy(b => (b.href || "").toLowerCase().trim());
+                .orderBy(m => m.level)
+                .filter(b => b.label)
+                .distinctBy(b => (b.href || "").toLowerCase().trim());
             else
                 res.locals.breadcrumbs = [{
                     "label": "Home",
@@ -313,70 +319,128 @@ exports.flashMessages = function (req, res, next) {
     next();
 };
 
-function getAuthInfo(req){
+function getAuthInfo(req) {
     var header = req.headers.authorization || '', // get the header
         scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
         token = (header.split(/\s+/)[1] || '').split('|')[1] || "", // and the encoded auth token
         auth = new Buffer.from(token, 'hex').toString(), // convert from base64
-        platform = (header.split(/\s+/)[1] || '').split('|')[0],
+        platform = (header.split(/\s+/)[1] || '').split('|')[0] || 'WEB',
         parts = auth.split(/:/), // split on colon
-        username = parts[0], 
-        password = parts[1], 
+        username = parts[0],
+        password = parts[1],
         authTime = parts[2];
 
-    return {scheme, username, password, authTime, platform};
+    return {
+        scheme,
+        username,
+        password,
+        authTime,
+        platform
+    };
 }
 
 exports.requireAPIUser = function (req, res, next) {
-    if(res.locals.appUser || req.xhr)
-        return next();
+    function setAppUser(client) {
+        if (client) {
+            res.locals.appUser = client;
+            req.session.platform = platform;
 
-    var {scheme, username, password, platform} = getAuthInfo(req);
+            var tosave = false;
+            if (client.sessions.indexOf(req.sessionID) < 0) {
+                client.sessions.push(req.sessionID);
+                tosave = true;
+            }
 
-    if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk"){
+            if (client.clientIps.indexOf(res.locals.clientIp) < 0) {
+                client.clientIps.push(res.locals.clientIp);
+                tosave = true;
+            }
+
+            if (tosave)
+                client.save();
+
+            req.session.save();
+        }
+
+        return !!client;
+    }
+
+    function setAppUserFromSession(callback) {
+        return keystone.list("Client").model
+            .findOne({
+                sessions: {
+                    "$elemMatch": {
+                        $eq: req.sessionID
+                    }
+                }
+            })
+            .exec((err, client) => {
+                var ok = setAppUser(client);
+                if (typeof callback == "function")
+                    callback(ok);
+            });
+    }
+
+    if (res.locals.appUser || req.xhr)
+        return setAppUserFromSession(() => next());
+
+    var {
+        scheme,
+        username,
+        password,
+        platform
+    } = getAuthInfo(req);
+
+    if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk") {
         return next();
-    } else if (scheme == "MOBILE" && username && password){
+    } else if (scheme == "MOBILE" && username && password) {
         return keystone.list("Client").model.find({
-            $or: [
-                { phoneNumber: username.cleanPhoneNumber()},
-                { username: username },
-                { email: username }
+            $or: [{
+                    phoneNumber: username.cleanPhoneNumber()
+                },
+                {
+                    username: username
+                },
+                {
+                    email: username
+                }
             ]
-        })
-        .exec((err, clients) => {
+        }).exec((err, clients) => {
             if (err)
                 return next({
                     response: "error",
-                    message: "Getting app user. " + err
+                    message: "NotAuthorized! " + err
                 });
 
             var client = clients.find(c => password == c.password) ||
                 clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
-            if (client) {
-                res.locals.appUser = client;
-                client.platform = platform;
-                
-                if(client.clientIps.indexOf(res.locals.clientIp) < 0){
-                    client.clientIps.push(res.locals.clientIp);
-                    client.save();
-                }
-                   
+            if (setAppUser(client)) {
                 return next();
-            }else{
-                if(clients.length)
+            } else {
+                if (clients.length)
                     console.log(`${clients.length} clients match username ${username}. Invalide password? '${password}'`);
                 else
                     console.log(`No client match the username ${username}`);
 
                 res.status(401).send({
                     response: "error",
-                    message: "Invalid/expired authorization header"
+                    message: "NotAuthorized"
                 });
             }
         });
     } else {
-		return res.status(404);
+        //TODO: GET Client by sessionID       
+        return setAppUserFromSession(ok => {
+            if (ok)
+                return next();
+            else
+                return res.status(404).send({
+                    response: "error",
+                    message: "NotAuthorized"
+                });
+        });
+
     }
 };
 

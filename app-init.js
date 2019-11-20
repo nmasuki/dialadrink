@@ -142,7 +142,7 @@ if (!console._warn)
 			}
 		}
 
-		console.error = function(){
+		console.error = function () {
 			emailToEmail("Error!", arguments[0]);
 
 			var args = Array.from(arguments);
@@ -151,7 +151,7 @@ if (!console._warn)
 			console._error.apply(this, args);
 		};
 
-		console.log = function(){
+		console.log = function () {
 			emailToEmail("Info!", arguments[0]);
 
 			var args = Array.from(arguments);
@@ -160,7 +160,7 @@ if (!console._warn)
 			console._log.apply(this, args);
 		};
 
-		console.warn = function(){
+		console.warn = function () {
 			emailToEmail("Warning!", arguments[0]);
 
 			var args = Array.from(arguments);

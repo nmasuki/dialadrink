@@ -1,10 +1,16 @@
 var MoveSms = require("../../helpers/movesms");
 var keystone = require('keystone');
 var Client = keystone.list("Client");
+var webpush = require("web-push");
 
 var sms = new MoveSms();
 
 var router = keystone.express.Router();
+
+var publicVapidKey = process.env.VAPID_PUBLIC_KEY;
+var privateVapidKey = process.env.VAPID_KEY;
+
+webpush.setVapidDetails(`mailto:${process.env.DEVELOPER_EMAIL}`, publicVapidKey, privateVapidKey);
 
 router.get("/", function (req, res) {
     var client = res.locals.appUser;
@@ -139,86 +145,6 @@ router.post("/signup", function (req, res) {
         });
 });
 
-router.post("/login", function (req, res) {
-    var mobile = (req.body.mobile || "").cleanPhoneNumber();
-    var password = req.body.password || "12345";
-
-    if (!mobile || !password)
-        return res.send({
-            response: "error",
-            message: "Username and password are required!!"
-        });
-
-    Client.model.find({
-            phoneNumber: mobile
-        })
-        .exec((err, clients) => {
-
-            if (err)
-                return res.send({
-                    response: "error",
-                    message: "Error while reading registered users. " + err
-                });
-
-            var encrypted = password.encryptPassword().encryptedPassword;
-            var client = clients.find(c => encrypted == c.password) ||
-                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
-
-            var json = { response: "error" };
-
-            if (client) {
-                json.response = "success";
-                json.message = "Login successfully";
-                json.data = client.toAppObject();
-                res.locals.appUser = client;
-
-                if (!client.tempPassword.used && password == client.tempPassword.pwd) {
-                    client.tempPassword.used = true;
-                    client.save();
-                }
-            } else {
-                json.message = "Username/Password do not match!!";
-            }
-
-            res.send(json);
-        });
-
-});
-
-router.post("/register_fcm", function (req, res) {
-    req.session.fcmCodes = [req.body.regId];
-    var client = res.locals.appUser;
-    
-    var json = {
-        response: "error",
-        message: ''
-    };
-
-    if(!client){
-        json.message = 'Attempting to register FCMCode before login.';
-        return res.send(json);
-    }else if (!client.fcmCodes || client.fcmCodes.indexOf(req.body.regId) < 0) {
-        (client.fcmCodes || (client.fcmCodes = [])).push(req.body.regId);
-        req.session.fcmCodes = client.fcmCodes;
-
-        return client.save(function (err) {
-            if (err){
-                json.message = "Error while updating! " + err;
-            } else {
-                json.response = "success";
-                json.message = "Token updated successfuly.";
-            }
-
-            return res.send(json);  
-        });
-    } else {
-        req.session.fcmCodes = client.fcmCodes;
-        json.response = "success";
-        json.message = "Token already registered!";
-
-        return res.send(json);
-    }
-});
 
 router.post("/forgot", function(req, res){
     var phoneNumber = req.body.mobile;
@@ -259,5 +185,101 @@ router.post("/forgot", function(req, res){
         return res.send(json);
     });
 });
+
+router.post("/login", function (req, res) {
+    var mobile = (req.body.mobile || "").cleanPhoneNumber();
+    var password = req.body.password || "12345";
+
+    if (!mobile || !password)
+        return res.send({
+            response: "error",
+            message: "Username and password are required!!"
+        });
+
+    Client.model.find({ phoneNumber: mobile })
+        .exec((err, clients) => {
+
+            if (err)
+                return res.send({
+                    response: "error",
+                    message: "Error while reading registered users. " + err
+                });
+
+            var encrypted = password.encryptPassword().encryptedPassword;
+            var client = clients.find(c => encrypted == c.password) ||
+                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
+
+            var json = { response: "error" };
+
+            if (client) {
+                json.response = "success";
+                json.message = "Login successfully";
+                json.data = client.toAppObject();
+                res.locals.appUser = client;
+
+                if(client.sessions.indexOf(req.sessionID) < 0)
+                    client.sessions.push(req.sessionID);
+
+                if (!client.tempPassword.used && password == client.tempPassword.pwd) {
+                    client.tempPassword.used = true;
+                    client.save();
+                }
+            } else {
+                json.message = "Username/Password do not match!!";
+            }
+
+            res.send(json);
+        });
+
+});
+
+router.post("/webpush", function (req, res) {
+    req.session.webpush = req.body;
+    
+    var json = {
+        response: "success",
+        message: 'Token updated successfuly!'
+    };
+
+    return req.session.save(function (err) {
+        if (err){
+            json.response = "error";
+            json.message = "Error while updating! " + err;
+        }
+        else
+            return res.status(201).send(json);
+        
+        return res.send(json);  
+    });
+});
+
+router.get('/webpush', function(req, res, next){
+    res.send(req.session.webpush || {});
+});
+
+router.post("/fcm", function (req, res) {
+    req.session.fcm = req.body.regId;
+    
+    var json = {
+        response: "success",
+        message: 'Token updated successfuly!'
+    };
+
+    return req.session.save(function (err) {
+        if (err){
+            json.response = "error";
+            json.message = "Error while updating! " + err;
+        }
+        else
+            return res.status(201).send(json);
+        
+        return res.send(json);  
+    });
+});
+
+router.get('/fcm', function(req, res, next){
+    res.send(req.session.fcm || {});
+});
+
 
 module.exports = router;

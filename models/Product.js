@@ -11,10 +11,20 @@ var Product = new keystone.List('Product', {
 
 
 Product.add({
-    href: {type: String, initial: true, required: true},
-    name: {type: String, initial: true},
+    href: {
+        type: String,
+        initial: true,
+        required: true
+    },
+    name: {
+        type: String,
+        initial: true
+    },
 
-    alcoholContent: {type: Number, initial: true},
+    alcoholContent: {
+        type: Number,
+        initial: true
+    },
 
     priceOptions: {
         type: Types.Relationship,
@@ -24,30 +34,88 @@ Product.add({
         noedit: true,
     },
 
-    onOffer: {type: Types.Boolean},
-    inStock: {type: Types.Boolean},
-    isGiftPack: {type: Types.Boolean},
+    onOffer: {
+        type: Types.Boolean
+    },
+    inStock: {
+        type: Types.Boolean
+    },
+    isGiftPack: {
+        type: Types.Boolean
+    },
 
-    state: {type: Types.Select, options: 'draft, published, archived', default: 'draft', index: true},
-    image: {type: Types.CloudinaryImage, folder: "products"},
-    altImages: {type: Types.CloudinaryImages, folder: "products"},
-    youtubeUrl: {type: String},
+    state: {
+        type: Types.Select,
+        options: 'draft, published, archived',
+        default: 'draft',
+        index: true
+    },
+    image: {
+        type: Types.CloudinaryImage,
+        folder: "products"
+    },
+    altImages: {
+        type: Types.CloudinaryImages,
+        folder: "products"
+    },
+    youtubeUrl: {
+        type: String
+    },
 
-    pageTitle: {type: String},
-    tags: {type: Types.TextArray},
-    description: {type: Types.Html, wysiwyg: true, height: 150},
-    
-    publishedDate: {type: Date, default: Date.now},
-    modifiedDate: {type: Date, default: Date.now},
+    pageTitle: {
+        type: String
+    },
+    tags: {
+        type: Types.TextArray
+    },
+    description: {
+        type: Types.Html,
+        wysiwyg: true,
+        height: 150
+    },
 
-    popularity: {type: Number, noedit: true},
+    publishedDate: {
+        type: Date,
+        default: Date.now
+    },
+    modifiedDate: {
+        type: Date,
+        default: Date.now
+    },
 
-    category: {type: Types.Relationship, ref: 'ProductCategory'},
-    subCategory: {type: Types.Relationship, ref: 'ProductSubCategory', filters: {product: ':category'}},
-    brand: {type: Types.Relationship, ref: 'ProductBrand'},
+    popularity: {
+        type: Number,
+        noedit: true
+    },
 
-    ratings: {type: Types.Relationship, ref: 'ProductRating', many: true, hidden: true},    
-    relatedProducts: {type: Types.Relationship, ref: 'Product', many: true, hidden: true},
+    category: {
+        type: Types.Relationship,
+        ref: 'ProductCategory'
+    },
+    subCategory: {
+        type: Types.Relationship,
+        ref: 'ProductSubCategory',
+        filters: {
+            product: ':category'
+        }
+    },
+    brand: {
+        type: Types.Relationship,
+        ref: 'ProductBrand'
+    },
+
+    ratings: {
+        type: Types.Relationship,
+        ref: 'ProductRating',
+        many: true,
+        hidden: true
+    },
+    relatedProducts: {
+        type: Types.Relationship,
+        ref: 'Product',
+        many: true,
+        hidden: true
+    },
 });
 
 Product.schema.virtual("keyWords").get(function () {
@@ -156,8 +224,8 @@ Product.schema.virtual('priceValidUntil').get(function () {
     var firstStr = today.toISOString().substr(0, 8) + "01";
     var expiryStr = new Date(firstStr).addMonths(1).addSeconds(-1).toISOString();
 
-    if(expiryStr.contains("011")){
-//        console.log(expiryStr);
+    if (expiryStr.contains("011")) {
+        //        console.log(expiryStr);
         expiryStr = expiryStr.replace(/^011/, "201");
     }
 
@@ -207,7 +275,7 @@ Product.schema.methods.findSimilar = function (callback) {
         });
 
     var product = this;
-    return Product.findPublished(filter).exec((err, similar)=>{
+    return Product.findPublished(filter).exec((err, similar) => {
         similar = (similar || []).orderBy(p => Math.abs(p.popularity - product.popularity));
         callback(err, similar);
     });
@@ -217,33 +285,43 @@ Product.schema.methods.findRelated = function (callback) {
     //Get Cart Items
     var product = this;
 
-    return keystone.list("CartItem").model.find({product: product._id})
+    return keystone.list("CartItem").model.find({
+            product: product._id
+        })
         .exec((err, cartItems) => {
-            var cartIds =  cartItems.map(c=>c._id);
-            return keystone.list("Order").model.find({cart: { $in: cartIds }})
+            var cartIds = cartItems.map(c => c._id);
+            return keystone.list("Order").model.find({
+                    cart: {
+                        $in: cartIds
+                    }
+                })
                 .deepPopulate("cart.product.category")
-                .exec((err, orders)=>{
+                .exec((err, orders) => {
                     if (err)
                         return console.log(err, orders);
 
                     var productCounts = {};
                     var categoryCounts = {};
 
-                    orders.forEach(order =>{
+                    orders.forEach(order => {
                         order.cart.forEach(item => {
-                            if(!item || !item.product) return;
+                            if (!item || !item.product) return;
 
                             var id = (item.product._id || item.product).toString();
                             categoryCounts[id] = (categoryCounts[id] = categoryCounts[id] || 0) + 1;
-                            if(id != product.id)
+                            if (id != product.id)
                                 productCounts[id] = (productCounts[id] = productCounts[id] || 0) + 1;
-                            
+
                         });
                     });
 
-                    var relatedProdIds = Object.keys(productCounts).concat(product.relatedProducts.map(p=>(p._id || p).toString()));
+                    var relatedProdIds = Object.keys(productCounts).concat(product.relatedProducts.map(p => (p._id || p).toString()));
                     //Get products that where ordered together
-                    Product.findPublished({_id: { $in: relatedProdIds}})
+                    Product.findPublished({
+                            _id: {
+                                $in: relatedProdIds
+                            }
+                        })
                         .exec((err, related) => {
                             if (err)
                                 return callback(err, related);
@@ -252,22 +330,22 @@ Product.schema.methods.findRelated = function (callback) {
                                 .orderByDescending(p => {
                                     var score = productCounts[p.id] + (categoryCounts[p.id] || 0) * 0.5;
 
-                                    if(product.category && p.category && product.category.key == p.category.key)
+                                    if (product.category && p.category && product.category.key == p.category.key)
                                         score *= 0.5;
-                                    else if(p.category && p.category.key == "extras")
+                                    else if (p.category && p.category.key == "extras")
                                         score *= 1.75;
-                                        
+
                                     return score;
                                 });
 
-                            if(typeof callback == "function")
+                            if (typeof callback == "function")
                                 callback(null, related);
 
                             return related;
                         });
                 });
         });
-    
+
 };
 
 Product.schema.methods.addPopularity = function (factor) {
@@ -275,13 +353,18 @@ Product.schema.methods.addPopularity = function (factor) {
     this.save();
 };
 
-Product.schema.methods.toAppObject = function(){
+Product.schema.methods.toAppObject = function () {
     var d = this;
 
     var cloudinaryOptions = {
-        transformation: [
-            { background: "white" }, 
-            { width: 250, height:250, crop: "fill" }
+        transformation: [{
+                background: "white"
+            },
+            {
+                width: 250,
+                height: 250,
+                crop: "fill"
+            }
         ]
     };
 
@@ -477,6 +560,7 @@ Product.findByOption = function (filter, callback) {
                     "$in": options.map(b => b._id)
                 }
             };
+
             keystone.list('ProductPriceOption').model.find(filter)
                 .exec((err, options) => {
                     if (err || !options)
@@ -504,7 +588,7 @@ Product.search = function (query, next) {
     var filters = {
         "$or": [{
                 'category.key': new RegExp(keyStr + "$", "i")
-            },{
+            }, {
                 key: keyRegex
             },
             {
@@ -544,7 +628,9 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    return Product.findPublished({ href: new RegExp("^" + keyStr + "$", "i") }, function (err, products) {
+    return Product.findPublished({
+        href: new RegExp("^" + keyStr + "$", "i")
+    }, function (err, products) {
         if (err || !products || !products.length)
             return Product.findByCategory(filters, function (err, products) {
                 if (err || !products || !products.length)
@@ -617,7 +703,7 @@ Product.getUIFilters = function (products) {
         }));
     }
 
-    if(subCategoryGroups.length > 3)
+    if (subCategoryGroups.length > 3)
         uifilters = uifilters.concat(subCategoryGroups.map(g => {
             return {
                 filter: g[0].subCategory.name.replace(regex, "").trim(),
@@ -626,7 +712,7 @@ Product.getUIFilters = function (products) {
             };
         }));
 
-    if(brandGroups.length > 2)
+    if (brandGroups.length > 2)
         uifilters = uifilters.concat(brandGroups.map(g => {
             return {
                 filter: g[0].brand.name.replace(regex, "").trim(),

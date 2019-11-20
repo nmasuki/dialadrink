@@ -42,7 +42,6 @@ Location.schema.pre('save', function (next) {
 					location = JSON.parse(json);
 					if (location.results && location.results[0] && location.results[0].geometry){
 						$this.location = location.results[0].geometry.location;
-
 					}
 				}
 				next();

@@ -12,7 +12,10 @@ var sms = new MoveSms();
 
 var Order = new keystone.List('Order', {
     defaultSort: '-orderDate',
-    autokey: { path: 'key', from: 'orderNumber' },
+    autokey: {
+        path: 'key',
+        from: 'orderNumber'
+    },
 });
 
 Order.add({
@@ -23,33 +26,97 @@ Order.add({
         index: true
     },
 
-    orderNumber: {type: Number, noedit: true},
-    orderDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
-    modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
-    
-    smsNotificationSent: {type: Boolean, noedit: true},
-    notificationSent: {type: Boolean, noedit: true},    
+    orderNumber: {
+        type: Number,
+        noedit: true
+    },
+    orderDate: {
+        type: Types.Datetime,
+        index: true,
+        default: Date.now,
+        noedit: true
+    },
+    modifiedDate: {
+        type: Types.Datetime,
+        index: true,
+        default: Date.now,
+        noedit: true
+    },
 
-    cart: {type: Types.Relationship, ref: 'CartItem', many: true, noedit: true},
-    client: {type: Types.Relationship, ref: 'Client', noedit: true},
-    orderAmount: {type: Number, noedit: true},
-    
+    smsNotificationSent: {
+        type: Boolean,
+        noedit: true
+    },
+    notificationSent: {
+        type: Boolean,
+        noedit: true
+    },
+
+    cart: {
+        type: Types.Relationship,
+        ref: 'CartItem',
+        many: true,
+        noedit: true
+    },
+    client: {
+        type: Types.Relationship,
+        ref: 'Client',
+        noedit: true
+    },
+    orderAmount: {
+        type: Number,
+        noedit: true
+    },
+
     //Payment Details
-    paymentMethod: {type: String, noedit: true},
-    payment:  {
-        method: {type: String, noedit: true},
+    paymentMethod: {
+        type: String,
+        noedit: true
+    },
+    payment: {
+        method: {
+            type: String,
+            noedit: true
+        },
 
-        subtotal: {type: Number, noedit: true},
-        amount: {type: Number, noedit: true},
+        subtotal: {
+            type: Number,
+            noedit: true
+        },
+        amount: {
+            type: Number,
+            noedit: true
+        },
 
-        smsNotificationSent: {type: Boolean, noedit: true},
-        notificationSent: {type: Boolean, noedit: true},
-        notificationType: {type: String, noedit: true},
-        
-        url: {type: String, noedit: true},
-        shortUrl: {type: String, noedit: true},
-        referenceId: {type: String, noedit: true},
-        transactionId: {type: String, noedit: true},
+        smsNotificationSent: {
+            type: Boolean,
+            noedit: true
+        },
+        notificationSent: {
+            type: Boolean,
+            noedit: true
+        },
+        notificationType: {
+            type: String,
+            noedit: true
+        },
+
+        url: {
+            type: String,
+            noedit: true
+        },
+        shortUrl: {
+            type: String,
+            noedit: true
+        },
+        referenceId: {
+            type: String,
+            noedit: true
+        },
+        transactionId: {
+            type: String,
+            noedit: true
+        },
         state: {
             type: String,
             //options: 'Pending, Submited, Cancelled, Paid',
@@ -61,28 +128,72 @@ Order.add({
 
     //Promo details
     promo: {
-        code: {type: String, noedit: true},
-        name: {type: String, noedit: true},
-        discount: {type: Number, noedit: true},
-        discountType: {type: String, noedit: true},
+        code: {
+            type: String,
+            noedit: true
+        },
+        name: {
+            type: String,
+            noedit: true
+        },
+        discount: {
+            type: Number,
+            noedit: true
+        },
+        discountType: {
+            type: String,
+            noedit: true
+        },
     },
 
     charges: {
-        chargesName: {type: Types.TextArray},
-        chargesAmount: {type: Types.TextArray}
+        chargesName: {
+            type: Types.TextArray
+        },
+        chargesAmount: {
+            type: Types.TextArray
+        }
     },
 
     //Delivery Details
     delivery: {
-        platform: {type: String, noedit: true, default: "WEB"},
-        firstName: {type: String, noedit: true},
-        lastName: {type: String, noedit: true},
-        phoneNumber: {type: String, noedit: true},
-        email: {type: String, noedit: true},
-        address: {type: String, noedit: true},
-        building: {type: String, noedit: true},
-        houseNumber: {type: String, noedit: true},
-        clientIp: {type: String, noedit: true}
+        platform: {
+            type: String,
+            noedit: true,
+            default: "WEB"
+        },
+        firstName: {
+            type: String,
+            noedit: true
+        },
+        lastName: {
+            type: String,
+            noedit: true
+        },
+        phoneNumber: {
+            type: String,
+            noedit: true
+        },
+        email: {
+            type: String,
+            noedit: true
+        },
+        address: {
+            type: String,
+            noedit: true
+        },
+        building: {
+            type: String,
+            noedit: true
+        },
+        houseNumber: {
+            type: String,
+            noedit: true
+        },
+        clientIp: {
+            type: String,
+            noedit: true
+        }
     },
 
 });
@@ -99,7 +210,7 @@ Order.schema.pre('save', function (next) {
 Order.schema.virtual("currency").get(function () {
     if (this.cart)
         return this.cart
-            .filter(c=>c.currency)
+            .filter(c => c.currency)
             .map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
     return "KES";
 });
@@ -115,8 +226,8 @@ Order.schema.virtual("discount").get(function () {
 
 Order.schema.virtual("chargesAmt").get(function () {
     var charges = 0;
-    
-    if(this.charges)    
+
+    if (this.charges)
         charges = this.charges.chargesAmount.sum(c => parseFloat("" + c));
 
     return charges;
@@ -150,56 +261,60 @@ Order.schema.virtual("deliveryAddress").get(function () {
 });
 
 var clients = [];
-Order.schema.methods.updateClient = function(next){
+Order.schema.methods.updateClient = function (next) {
     var order = this;
-    if(order.delivery){
-        var findOption = {"$or":[]};
+    if (order.delivery) {
+        var findOption = {
+            "$or": []
+        };
         var phoneNumber = (this.delivery.phoneNumber || "").trim();
-        if(phoneNumber) {
-            if(phoneNumber)
+
+        if (phoneNumber) {
+            if (phoneNumber)
                 phoneNumber = phoneNumber.cleanPhoneNumber();
-            findOption.$or.push({"phoneNumber": new RegExp(phoneNumber)});
-        }else{
-            var email = this.delivery.email || null;
-            if(email){
-                var username = email.split('@')[0];
-                if(username)                    
-                    findOption.$or.push({"email": new RegExp("^" + username)});
+            findOption.$or.push({
+                "phoneNumber": new RegExp(phoneNumber)
+            });
+        } else {
+            var email = (this.delivery.email || "").trim();
+            if (email) {
+                findOption.$or.push({
+                    "email": new RegExp(email.escapeRegExp(), "i")
+                });
             }
         }
 
-        if(findOption.$or.length)
+        if (findOption.$or.length)
             keystone.list("Client").model.findOne(findOption)
-                .exec((err, client)=>{
-                    if(err)
-                        return console.warn(err);
-                    
-                    var delivery = order.delivery.toObject();
-                    client = client || clients.find(c=>c.phoneNumber == phoneNumber || c.email == email);
-                    if(client){
-                        client.clientIps.push(order.clientIp);
-                        if(client.createdDate < order.orderDate)
-                            for(var i in delivery){
-                                if(delivery[i] && typeof delivery[i] != "function")
-                                    client[i] = delivery[i];                                
-                            }
-                    }else{
-                        client = keystone.list("Client").model(delivery);
-                        client.createdDate = order.orderDate;
-                        client.clientIps.push(order.clientIp);
-                        clients.push(client);
-                    }
+            .exec((err, client) => {
+                if (err)
+                    return console.warn(err);
 
-                    client.save(function(){
-                        order.client = client;
-                        if(typeof next == "function")
-                            next();
-                    });                    
-                });   
-        else if(typeof next == "function")
+                var delivery = order.delivery.toObject();
+                client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
+                if (client) {
+                    client.clientIps.push(order.clientIp);
+                    if (client.createdDate < order.orderDate)
+                        for (var i in delivery) {
+                            if (delivery[i] && typeof delivery[i] != "function")
+                                client[i] = delivery[i];
+                        }
+                } else {
+                    client = keystone.list("Client").model(delivery);
+                    client.createdDate = order.orderDate;
+                    client.clientIps.push(order.clientIp);
+                }
+
+                client.save(function () {
+                    order.client = client;
+                    if (typeof next == "function")
+                        next();
+                });
+            });
+        else if (typeof next == "function")
             next();
-    }else{
-        if(typeof next == "function")
+    } else {
+        if (typeof next == "function")
             next();
     }
 };
@@ -207,29 +322,31 @@ Order.schema.methods.updateClient = function(next){
 Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!");
     var order = this;
-    if(!order.notificationSent){
+    if (!order.notificationSent) {
         order.notificationSent = true;
-        var pIds = order.cart.map(c=>c.product._id || c.product);
-        keystone.list("Product").model.find({_id: {"$in": pIds }})
-            .exec((err, products)=>{
-                var items = order.cart.map(function(c){ 
+        var pIds = order.cart.map(c => c.product._id || c.product);
+        keystone.list("Product").model.find({
+                _id: {
+                    "$in": pIds
+                }
+            })
+            .exec((err, products) => {
+                var items = order.cart.map(function (c) {
                     return {
-                        pieces: c.pieces, 
+                        pieces: c.pieces,
                         pid: c.product._id || c.product
-                    }; 
+                    };
                 });
 
-                if(products)
+                if (products)
                     products.forEach(p => {
                         var item = items.find(c => p._id.toString() == c.pid.toString());
                         item.product = p;
                     });
 
-                var itemsMsg = `Drinks:${items.map(c=>c.pieces + '*' + c.product.name).join(', ')}`;
+                var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`;
                 var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
                 sms.sendSMS((process.env.CONTACT_PHONE_NUMBER || "254723688108"), msg);
-                    
-
             });
     }
 
@@ -265,125 +382,61 @@ Order.schema.methods.sendPaymentNotification = function (next) {
     if (!order.orderNumber)
         order.orderNumber = Order.getNextOrderId();
 
-    return new Promise((resolve, reject)=>{
+    if (order.payment.notificationSent) {
+        var msg = "Payment notification already sent.";
 
-        if (order.payment.notificationSent) {
-            console.log("Payment notification already sent.");
-            if (typeof next == "function")
-                next("Payment notification already sent.");
+        console.log(msg);
+        if (typeof next == "function")
+            next(msg);
 
-            return reject("Payment notification already sent.");
-        }
-    
+        return Promise.reject(msg);
+    }
+
+    var subject = `Payment received #${order.delivery.platform[0]}${order.orderNumber} - ${keystone.get("name")}`;
+    if (order.client && order.client._id) {
         //Send SMS notification
         if (order.delivery.phoneNumber) {
-            message = `Dial a Drink: Your payment of ${order.currency||''}${order.payment.amount} ` + 
-                `for order #${order.orderNumber} has been received. Your order will be dispatched shortly. `+
+            message = `Dial a Drink: Your payment of ${order.currency||''}${order.payment.amount} ` +
+                `for order #${order.orderNumber} has been received. Your order will be dispatched shortly. ` +
                 `Thank You for using http://dialadrinkkenya.com`;
-            
-            if(!order.payment.smsNotificationSent)
-                order.sendSMSNotification(message);                
-        }
-    
-        var email = new keystone.Email('templates/email/receipt');
-    
-        //Hack to make use of nodemailer..
-        email.transport = require("../helpers/mailer");
-    
-        var subject = `Payment received #${order.delivery.platform[0]}${order.orderNumber} - ${keystone.get("name")}`;
-        if (keystone.get("env") == "development")
-            subject = "(Testing) " + subject;
-    
-        var locals = {
-            layout: 'email',
-            page: {
-                title: keystone.get("name") + " Order"
-            },
-            order: order
-        };
-    
-        var emailOptions = {
-            subject: subject,
-            to: {
-                name: order.delivery.firstName,
-                email: order.delivery.email || "simonkimari@gmail.com"
-            },
-            cc: [],
-            from: {
-                name: keystone.get("name"),
-                email: process.env.EMAIL_FROM
-            }
-        };
-    
-        keystone.list("User").model.find({
-                receivesOrders: true
-            })
-            .exec((err, users) => {
-                if (err)
-                    return reject(console.log(err));
-    
-                if (users && users.length)
-                    users.forEach(u => {
-                        if (!emailOptions.to.email)
-                            emailOptions.to.email = u.email;
-                        if (emailOptions.to.email != u.email)
-                            emailOptions.cc.push(u.toObject());
-                    });            
-                else {
-                    console.warn("No users have the receivesOrders right!");
-                    if (keystone.get("env") == "production")
-                        emailOptions.cc.push("simonkimari@gmail.com");
-                    else
-                        emailOptions.cc.push("nmasuki@gmail.com");
-                }
-    
-                console.log(
-                    "Sending Payment notification!",
-                    "User", order.delivery.email,
-                    "Admins", emailOptions.cc.map(u => u.email || u).join()
-                );
-    
-                email.send(locals, emailOptions, (err, a) => {
-                    console.log("Payment notification Sent!", err, a)
-                    if (err)
-                        return reject(console.warn(err));
-    
-                    order.payment.notificationSent = true;
-                    order.save(resolve);
-                });            
-    
-                if (typeof next == "function")
-                    next(err);
-            });
-    
-        this.cart.forEach(c => {
-                keystone.list("Product").findOnePublished({
-                    _id: c.product._id
-                }, (err, product) => {
-                    if (product)
-                        product.addPopularity(100);
+
+            if (!order.payment.smsNotificationSent)
+                order.client.sendSMSNotification(message).then(() => {
+                    order.payment.smsNotificationSent = true;
+                    order.save();
                 });
-            });
-    });
+        }
+
+        //Sent Emmail Notification
+        order.client.sendEmailNotification(subject, 'receipt', {
+            order: order
+        }).then(() => {
+            order.payment.notificationSent = true;
+            order.save(resolve);
+        });
+
+    } else {
+        //TODO: Read client by client._id/phoneNumber/email/create then send as above
+        console.error("Block not implemented yet!");
+    }
 
 };
 
 Order.schema.methods.sendSMSNotification = function (next, message) {
     var order = this;
-    message = message || `Dial a Drink: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
-    if(order.payment.method == "PesaPal")
+    if (order.payment.method == "PesaPal")
         message += ` Please proceed to pay ${order.currency||''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
     else
         message += ` You will be required to pay ${order.currency||''} ${order.total} on delivery`;
-                  
-    return sms.sendSMS([order.delivery.phoneNumber], message.trim(), function(err, res){
-        if(err)
+
+    return sms.sendSMS([order.delivery.phoneNumber], message.trim(), function (err, res) {
+        if (err)
             console.warn.apply(order, arguments);
-        else{
+        else {
             order.payment.smsNotificationSent = true;
             order.save();
         }
-        if(typeof next == "function")
+        if (typeof next == "function")
             next(err, res);
     });
 };
@@ -393,111 +446,63 @@ Order.schema.methods.sendOrderNotification = function (next) {
     if (!that.orderNumber)
         that.orderNumber = Order.getNextOrderId();
 
-    var email = new keystone.Email('templates/email/order');
-    //Hack to make use of nodemailer..
-    email.transport = require("../helpers/mailer");
+    return Order.model.findOne({
+            _id: that._id
+        })
+        .deepPopulate('cart.product.priceOptions.option')
+        .deepPopulate('client')
+        .exec((err, order) => {
+            if (err)
+                return Promise.reject(next(err));
 
-    var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
-    if (keystone.get("env") != "production")
-        subject = "(Testing)" + subject;
+            if (!order)
+                return Promise.reject(next(`Order [${order._id}}] not found!`));
 
-    return new Promise((resolve, reject)=>{
-        Order.model.findOne({ _id: that._id })
-            .deepPopulate('cart.product.priceOptions.option')
-            .exec((err, order) => {
-                if (err)
-                    return reject(next(err));
+            if (!order.cart.length) {
+                if (that.cart.length)
+                    order.cart = that.cart;
+                else
+                    return Promise.reject(next("Error while getting cart Items"));
+            }
 
-                if (!order)
-                    return reject(next(`Order [${order._id}}] not found!`));
+            //Send SMS 
+            if (order.delivery.phoneNumber) {
+                message = `Dial a Drink: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received. ` +
+                    `Please pay ${order.currency||''} ${order.total} ${order.payment.method? 'in ' + order.paymentMethod: ''}` +
+                    `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
 
-                if (!order.cart.length) {
-                    if (that.cart.length)
-                        order.cart = that.cart;
-                    else
-                        return reject(next("Error while getting cart Items"));
-                }
+                if (order.payment.method == "PesaPal")
+                    message += ` Please proceed to pay ${order.currency||''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
+                else
+                    message += ` You will be required to pay ${order.currency||''} ${order.total} on delivery`;
 
-                var locals = {
-                    layout: 'email',
-                    page: {
-                        title: keystone.get("name") + " Order"
-                    },
-                    appUrl: keystone.get("url"),
-                    order: order.toObject()
-                };
-
-                var emailOptions = {
-                    subject: subject,
-                    to: {
-                        name: order.delivery.firstName,
-                        email: order.delivery.email
-                    },
-                    cc: [],
-                    from: {
-                        name: keystone.get("name"),
-                        email: process.env.EMAIL_FROM
-                    }
-                };
-
-                keystone.list("User").model.find({ receivesOrders: true })
-                    .exec((err, users) => {
-                        if (err)
-                            return console.log(err);
-
-                        if (users && users.length) {
-                            users.forEach(u => {
-                                if (!emailOptions.to.email)
-                                    emailOptions.to.email = u.email;
-                                if (emailOptions.to.email != u.email)
-                                    emailOptions.cc.push(u.toObject());
-                            });
-                        } else {
-                            console.warn("No users have the receivesOrders rights!");
-                            if (keystone.get("env") == "production")
-                                emailOptions.cc.push("simonkimari@gmail.com");
-                            else
-                                emailOptions.cc.push("nmasuki@gmail.com");                    
-                        }
-
-                        console.log(
-                            "Sending order notification!",
-                            "User", "\"" + emailOptions.to.email + "\"",
-                            "Admins", "\"" + emailOptions.cc.map(u => u.email || u).join() + "\""
-                        );
-
-                        email.send(locals, emailOptions, (err, a) => {
-                            if(err)
-                                return reject(console.warn("Error while sending email.", err.info));
-
-                            console.log("Order notification Sent!", a);
-                            order.notificationSent = true;
-                            order.save();
-                               
-                            resolve();                   
-                        });
-
-                        if (typeof next == "function")
-                            next(err);
-
-                        if (order.delivery.phoneNumber) {
-                            message = `Dial a Drink: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received. ` +
-                                `Please pay ${order.currency||''} ${order.total} ${order.payment.method? 'in ' + order.paymentMethod: ''}` +
-                                `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
-                            
-                            order.sendSMSNotification(message);                
-                        }
+                if (order.client && order.client._id) {
+                    order.client.sendSMSNotification(message).then(() => {
+                        order.smsNotificationSent = true;
+                        order.save();
                     });
+                }
+            }
+
+            //Send Email
+            var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
+            return order.sendEmailNotification(subject, 'order', {
+                layout: 'email',
+                page: {
+                    title: keystone.get("name") + " Order"
+                },
+                appUrl: keystone.get("url"),
+                order: order.toObject()
             });
-    });
+        });;
 };
 
 Order.schema.set('toObject', {
     transform: function (order, ret, options) {
         var charges = [];
         ret = ret || {};
-        
-        for(var i = 0; i < order.charges.chargesName.length; i++){
+
+        for (var i = 0; i < order.charges.chargesName.length; i++) {
             charges[i] = {
                 name: order.charges.chargesName[i].camelCaseToSentence(),
                 amount: parseFloat("" + order.charges.chargesAmount[i])
@@ -505,28 +510,28 @@ Order.schema.set('toObject', {
         }
 
         var virtuals = [
-            "id", "status", "orderNumber", 
-            "currency", "discount", 
+            "id", "status", "orderNumber",
+            "currency", "discount",
             "chargesAmt", "subtotal", "total",
-            "state", "orderDate","modifiedDate",
+            "state", "orderDate", "modifiedDate",
             "client", "orderAmount",
             "paymentMethod", "payment",
             //"promo","delivery"
         ];
-        
+
         virtuals.forEach(v => ret[v] = order[v]);
 
-        if(order.promo)
+        if (order.promo)
             ret.promo = order.promo.toObject();
-        if(order.delivery)
+        if (order.delivery)
             ret.delivery = order.delivery.toObject();
 
         ret.status = "1";
 
         ret.chargesArr = charges;
-        if(order.cart.length && order.cart[0].constructor.name == "ObjectID")
+        if (order.cart.length && order.cart[0].constructor.name == "ObjectID")
             ret.cart = order.cart.map(c => c.toObject());
-        
+
         return ret;
     }
 });
@@ -537,7 +542,7 @@ Order.defaultColumns = 'orderNumber, orderDate|15%, client|15%, delivery.platfor
 
 Order.register();
 
-Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
+Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     deliveryDetails = deliveryDetails || {};
     promo = promo || {};
 
@@ -570,7 +575,7 @@ Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
             cartItem.save();
             return cartItem;
         }),
-        paymentMethod: deliveryDetails.paymentMethod == "Cash" ? "Cash on Delivery": deliveryDetails.paymentMethod,
+        paymentMethod: deliveryDetails.paymentMethod == "Cash" ? "Cash on Delivery" : deliveryDetails.paymentMethod,
         payment: {
             method: deliveryDetails.paymentMethod,
             subtotal: subtotal,
@@ -596,16 +601,16 @@ Order.checkOutCartItems = function(cart, promo, deliveryDetails, callback){
                 order.payment.url = paymentUrl;
                 if (!err)
                     order.payment.shortUrl = shortUrl;
-                
+
                 order.save(() => {
                     order.placeOrder();
-                    if(typeof callback == "function")
+                    if (typeof callback == "function")
                         callback(err, order);
                 });
             });
         } else {
             order.placeOrder();
-            if(typeof callback == "function")
+            if (typeof callback == "function")
                 callback(null, order);
         }
 
@@ -618,7 +623,9 @@ var autoId = 7000000 + (10000000 * Math.random());
 
 Order.getNextOrderId = () => (autoId = (autoId + 100));
 
-Order.model.find().sort({'orderNumber': -1 })
+Order.model.find().sort({
+        'orderNumber': -1
+    })
     .limit(1)
     .exec(function (err, data) {
         if (data[0] && data[0].orderNumber)
@@ -626,5 +633,5 @@ Order.model.find().sort({'orderNumber': -1 })
 
         if (keystone.get("env") != "production")
             autoId -= 52;
-        
+
     });

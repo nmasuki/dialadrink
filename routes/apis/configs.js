@@ -13,7 +13,7 @@ router.get('/', function (req, res) {
         data: [{
             title: "Site Name",
             value: keystone.get('name')
-        },{
+        }, {
             title: "Min Purchase Order",
             value: 500
         }, {
@@ -27,7 +27,7 @@ router.get('/', function (req, res) {
 
 router.get("/banners", function (req, res) {
     var filters = {
-        $where: 'this.mobileBannerImages && this.mobileBannerImages.length > 1'
+        $where: 'this.mobileBannerImages && this.mobileBannerImages.length >= 1'
     };
 
     Page.model.find(filters)
@@ -68,7 +68,9 @@ router.get("/banners", function (req, res) {
 });
 
 router.get("/locations", function (req, res) {
-    Location.model.find({ show: true })
+    Location.model.find({
+            show: true
+        })
         .exec((err, locations) => {
             if (err)
                 return res.send({
@@ -92,7 +94,7 @@ router.get("/locations", function (req, res) {
         });
 });
 
-router.get("/tiles", function (req, res, next) {   
+router.get("/tiles", function (req, res, next) {
     var json = {
         response: "error",
         message: "",
@@ -100,11 +102,14 @@ router.get("/tiles", function (req, res, next) {
     };
 
     var cloudinaryOptions = {
-        transformation: [
-            { width: 250, height:250, radius: "15", crop: "fill" }
-        ]
+        transformation: [{
+            width: 250,
+            height: 250,
+            radius: "15",
+            crop: "fill"
+        }]
     };
-    
+
     var cachedPage = memCache ? memCache.get("__topmenu__") : null;
 
     if (cachedPage) {
@@ -120,29 +125,34 @@ router.get("/tiles", function (req, res, next) {
                 description: d.description || ''
             };
         });
-        
+
         return res.send(json);
     }
 
     //TopMenu
     keystone.list('MenuItem').model
-        .find({ level: 1, type: "top" })
-        .sort({ index: 1 })
+        .find({
+            level: 1,
+            type: "top"
+        })
+        .sort({
+            index: 1
+        })
         .populate('submenus')
         .exec((err, menu) => {
             if (err)
                 json.message = "Error fetching drinks! " + err;
             else {
-            navLinks = menu
-                .filter(m => m.show)
-                .orderBy(m => {
-                    m.submenus = m.submenus.orderBy(n => n.index);
-                    return m.index
-                })
-                .distinctBy(m => m.label.cleanId());
+                navLinks = menu
+                    .filter(m => m.show)
+                    .orderBy(m => {
+                        m.submenus = m.submenus.orderBy(n => n.index);
+                        return m.index
+                    })
+                    .distinctBy(m => m.label.cleanId());
 
-            if (memCache)
-                memCache.put("__topmenu__", navLinks, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+                if (memCache)
+                    memCache.put("__topmenu__", navLinks, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
 
                 json.data = categories.map(d => {
                     return {
@@ -154,7 +164,7 @@ router.get("/tiles", function (req, res, next) {
                         description: d.description || ''
                     };
                 });
-                
+
                 return res.send(json);
             }
         });

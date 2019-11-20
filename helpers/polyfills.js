@@ -51,10 +51,10 @@ if (!Object.isEmpty)
             Object.prototype.toString.call(obj) === '[object Object]';
 
         if (isObj) {
-            for (var o in obj) 
-                if (obj.hasOwnProperty(o)) 
-                    return false;                
-            
+            for (var o in obj)
+                if (obj.hasOwnProperty(o))
+                    return false;
+
             return true;
         } else {
             console.warn("isEmpty function only accept an Object");
@@ -234,21 +234,36 @@ if (!Number.prototype.format)
 //String formating
 if (!String.prototype.format)
     String.prototype.format = function () {
-        var formated = this;
-        for (i in arguments) {
-            if (arguments.hasOwnProperty(i)) {
-                var regex = new RegExp("(\\{" + i + "\\})", "g");
-                var value = arguments[i];
-                try {
-                    if (ko && ko.unwrap)
-                        value = ko.unwrap(value);
-                } catch (e) {
-                    //ignore
-                }
+        var formated = this.toString();
 
-                formated = formated.replace(regex, value);
+        var matches = (formated.match(/\{([^}]+)\}/gm) || []).map(m => m.trim('{}'));
+        if (matches && matches.length) {
+            for (var i in matches) {
+                if (!matches.hasOwnProperty(i))
+                    continue;
+
+                var key = matches[i];
+                try {
+                    var regex = new RegExp("(\\{" + key.escapeRegExp() + "\\})", "g");
+                    var obj = Array.from(arguments).find(function (o) {
+                        return o && o[key];
+                    }) || {};
+                    var value = obj[key] || arguments[key] || "";
+
+                    try {
+                        if (ko && ko.unwrap)
+                            value = ko.unwrap(value);
+                    } catch (e) {
+                        //ignore
+                    }
+
+                    formated = formated.replace(regex, value);
+                } catch (ex) {
+                    console.log(ex);
+                }
             }
         }
+
         return formated;
     };
 
@@ -382,7 +397,10 @@ if (!String.prototype.encryptPassword)
 
         salt = (salt || process.env.SALT || bcrypt.genSaltSync());
         encryptedPassword = bcrypt.hashSync(this.toString(), salt.toString());
-        return {salt, encryptedPassword};
+        return {
+            salt,
+            encryptedPassword
+        };
     };
 
 if (!String.prototype.comparePassword)
@@ -471,7 +489,9 @@ if (!Array.prototype.splitChunks)
             chunkSize = option;
             chunkCount = parseInt(arr.length / chunkSize);
         } else {
-            option = option || { chunkCount: 10 };
+            option = option || {
+                chunkCount: 10
+            };
             if (option.chunkSize) {
                 chunkSize = option.chunkSize;
                 chunkCount = parseInt(arr.length / chunkSize);
@@ -557,8 +577,8 @@ if (!Math.sequence)
     Math.sequence = function (min, max, fxn) {
         var N = [];
 
-        for (var i = (min || 0); i <= (max || 100); i++) 
-            N.push(typeof fxn == "function"? fxn(i): i);
+        for (var i = (min || 0); i <= (max || 100); i++)
+            N.push(typeof fxn == "function" ? fxn(i) : i);
 
         return N;
     };
@@ -599,7 +619,7 @@ Date.prototype.addMonths = function (value) {
     date.setMonth(this.getMonth() + months);
     date.setDate(Math.min(date.getDate(), date.getDaysInMonth()));
 
-    if (years) 
+    if (years)
         date.addYears(years);
 
     return date;

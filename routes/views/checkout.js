@@ -14,7 +14,9 @@ router.get('/', function (req, res) {
 		h1: "Your Order Details"
 	});
 
-	locals.userData = req.session.userData;
+	if(locals.userData && locals.userData.show)
+		locals.userData = req.session.userData;
+		
 	locals.breadcrumbs.push({
 		href: "/cart",
 		label: "My Cart"
@@ -29,16 +31,10 @@ router.get('/', function (req, res) {
 });
 
 router.post("/", function (req, res, next) {
-	if (req.body.saveInfo) { //Save option for next cashout
-		req.session.userData = req.body;
-		req.session.save((err, a) => {
-			if (err)
-				return res.send({
-					state: false,
-					msg: err.message
-				});
-		});
-	}
+
+	req.session.userData = req.body || {};
+	req.session.userData.show = !!req.body.saveInfo;
+	req.session.save();
 
 	if (Object.keys(req.session.cart || {}).length) {
 		var promo = req.session.promo || {};		
@@ -52,6 +48,11 @@ router.post("/", function (req, res, next) {
 		Order.checkOutCartItems(cartItems, promo, deliveryDetails, function(err, order){
 			if (err)
 				json.response = "error";
+
+			if(order.client.sessions.indexOf(req.sessionID) < 0){
+				order.client.sessions.push(req.sessionID);
+				order.client.save();
+			}
 
 			json.msg = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
 
@@ -116,7 +117,7 @@ router.get('/validatepromo/:promocode', function (req, res) {
 					promo: promo.status == "running" ? (req.session.promo = promo) : null,
 					msg: promo.status == "running" 
 						?`Promo code '${promo.name || promo.code}' applied successfully!` 
-						: `The promo code you have entered is '${promo.status.toProperCase()}'!`
+						:`The promo code you have entered is '${promo.status.toProperCase()}'!`
 				});
 			} else {
 				res.send({
