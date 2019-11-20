@@ -246,7 +246,7 @@ if (!String.prototype.format)
                 try {
                     var regex = new RegExp("(\\{" + key.escapeRegExp() + "\\})", "g");
                     var obj = Array.from(arguments).find(function (o) {
-                        return o && o[key];
+                        return typeof o != "string" && o && o[key];
                     }) || {};
                     var value = obj[key] || arguments[key] || "";
 
