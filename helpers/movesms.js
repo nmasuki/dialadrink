@@ -16,7 +16,7 @@ module.exports = function MoveSMS(sender) {
                     if (typeof next == "function")
                         next(null, balance);
                 },
-                error: function (error) {
+                error: function (xhr, status, error) {
                     reject(error);
                     if (typeof next == "function")
                         next(error);
@@ -55,7 +55,7 @@ module.exports = function MoveSMS(sender) {
                         if (typeof next == "function")
                             next(null, balance);
                     },
-                    error: function (error) {
+                    error: function (xhr, status, error) {
                         console.warn("Error sending SMS!", error);
 
                         reject(error);
@@ -64,8 +64,8 @@ module.exports = function MoveSMS(sender) {
                     }
                 });
             });
-        }).catch(function (err) {
-            return console.warn("Can't send SMS!", err);
+        }).catch(function (xhr, status, error) {
+            return console.warn("Can't send SMS!", error);
         });
 
     };
