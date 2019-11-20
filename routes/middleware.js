@@ -25,7 +25,7 @@ function requestCache(duration, _key) {
             let key = '__express__' + (isMobile ? "_mobile_" : "") + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
             let cacheContent = memCache.get(key);
             if (cacheContent) {
-                return res.send(cacheContent);
+                return res.status(304).send(cacheContent);
             } else {
                 var resSend = res.send;
                 res.send = (body) => {
