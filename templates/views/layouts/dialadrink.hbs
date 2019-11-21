@@ -388,11 +388,11 @@
                 </div>
             </div>
       
-            <script>
+            <script type="text/javascript">
             {{#if isMobile}}   
                 window.isMobile = true;
             {{else}}
-                window.isMobile = true;
+                window.isMobile = false;
                 $(document).ready(function(){
                     var width = $(document.body).width();
                     var left = (width - $(".inst-checkout").width())/2;
