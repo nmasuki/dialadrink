@@ -316,7 +316,7 @@
   "@type": "Product",
   "name": "{{{name}}}",
   "image": [
-    "{{cloudinaryUrl image crop='fit'}}"
+    "{{cloudinaryUrl image crop='fit' width='300'}}"
    ],
   "description": "{{{truncate (cleanHtml description) 500 ' '}}}",
   "brand": {
@@ -333,12 +333,10 @@
   "offers": {
     "@type": "Offer",
     "priceCurrency": "{{currency}}",
-    {{#if offerPrice}}
     "price": "{{price}}", 
+    {{#if offerPrice}}
     "highPrice": "{{price}}",
-    "lowPrice": "{{offerPrice}}",
-    {{else}}
-    "price": "{{price}}",    
+    "lowPrice": "{{offerPrice}}",  
     {{/if}}
     "priceValidUntil": "{{priceValidUntil}}",
     "availability": "http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}",
@@ -346,8 +344,7 @@
       "@type": "Organization",
       "name": "{{../title}}"
     }
-  }
-  {{/if}}
+  }{{/if}}
 }
 </script>
 
