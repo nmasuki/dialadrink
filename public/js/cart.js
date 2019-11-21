@@ -2,7 +2,8 @@
  * Created by nmasuki on 7/7/2018.
  */
 var cartUtil = function () {
-    var _cart = {}, _promo = null;
+    var _cart = {},
+        _promo = null;
     var _url = "/api/";
 
     function getProductFromView(cartId) {
@@ -98,9 +99,9 @@ var cartUtil = function () {
             cartItem.pieces += pieces;
             self.updateView();
 
-            if(app && app.showToast)
+            if (app && app.showToast)
                 app.showToast("Adding to cart!");
-                
+
             self.viewNotUpdated = true;
             return $.ajax({
                 url: _url + 'cart/add/' + productId + '/' + qty + '/' + (pieces || 1),
@@ -110,6 +111,10 @@ var cartUtil = function () {
                     app.showToast(pieces + " " + data.item.product.name + " added to cart!", 1500, "green");
                     _cart[cartId] = fillIn(Object.assign(cartItem, data.item));
                     self.updateView();
+
+                    //Register for push notification
+                    if (typeof window.subscribeToPushNotification == "function")
+                        window.subscribeToPushNotification();
                 },
                 fail: function () {
                     console.warn("Added to cart fails. Could not reach Server");
@@ -283,14 +288,16 @@ var cartUtil = function () {
             $(".cart-total-pieces").html(self.piecesCount());
 
             var isCheckOutPage = ["/checkout", "/cart"]
-                .find(function (l) { return window.location.href.indexOf(l) >= 0; });
+                .find(function (l) {
+                    return window.location.href.indexOf(l) >= 0;
+                });
 
             if (!isCheckOutPage) {
                 if (self.piecesCount() > 0)
                     $(".inst-checkout").slideDown();
                 else
                     $(".inst-checkout").slideUp();
-            }else{
+            } else {
                 $(".shop-by-brand").hide();
                 $(".inst-checkout").hide();
             }
