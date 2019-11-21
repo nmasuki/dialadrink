@@ -113,8 +113,8 @@ var cartUtil = function () {
                     self.updateView();
 
                     //Register for push notification
-                    if (typeof window.subscribeToPushNotification == "function")
-                        window.subscribeToPushNotification();
+                    if (typeof window.subscribeToPush == "function")
+                        window.subscribeToPush();
                 },
                 fail: function () {
                     console.warn("Added to cart fails. Could not reach Server");

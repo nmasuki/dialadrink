@@ -67,14 +67,14 @@ function initializePush(swReg) {
         updateSubscriptionOnServer(subscription);
       } else {
         console.log('User is NOT subscribed.');
-        window.subscribeToPushNotification = function () {
+        window.subscribeToPush = function () {
           if (Notification.permission === 'denied') {
             console.log("Push Messaging Blocked.");
             updateSubscriptionOnServer(null);
           } else {
             subscribeToPushNotification(swReg);
           }
-          delete window.subscribeToPushNotification;
+          delete window.subscribeToPush;
         };
       }
     });
