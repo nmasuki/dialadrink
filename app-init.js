@@ -123,7 +123,7 @@ if (!console._warn)
 					subject: keystone.get("name") + "-" + title,
 					to: {
 						name: keystone.get("name") + " Developer",
-						email: process.env.DEVELOPER_EMAIL || "nmasuki@gmail.com"
+						email: process.env.DEVELOPER_EMAIL
 					},
 					from: {
 						name: keystone.get("name"),

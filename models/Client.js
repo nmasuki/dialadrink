@@ -386,7 +386,7 @@ Client.schema.methods.sendEmailNotification = function (subject, template, local
             if (keystone.get("env") == "production")
                 emailOptions.cc.push("simonkimari@gmail.com");
             else
-                emailOptions.cc.push("nmasuki@gmail.com");
+                emailOptions.cc.push(process.env.DEVELOPER_EMAIL);
         }
 
         console.log(
@@ -427,7 +427,7 @@ Client.schema.methods.sendEmailNotification = function (subject, template, local
                     if (keystone.get("env") == "production")
                         emailOptions.cc.push("simonkimari@gmail.com");
                     else
-                        emailOptions.cc.push("nmasuki@gmail.com");
+                        emailOptions.cc.push(process.env.DEVELOPER_EMAIL);
                 }
 
                 console.log(
