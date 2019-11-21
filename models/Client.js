@@ -364,7 +364,7 @@ Client.schema.methods.sendEmailNotification = function (subject, template, local
     locals = Object.assign({
         layout: 'email',
         page: {
-            title: keystone.get("name") + subject
+            title: keystone.get("name")
         }
     }, locals || {});
 

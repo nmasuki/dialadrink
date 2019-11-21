@@ -67,7 +67,15 @@ function initializePush(swReg) {
         updateSubscriptionOnServer(subscription);
       } else {
         console.log('User is NOT subscribed.');
-        subscribeToPushNotification(swReg);
+        window.subscribeToPushNotification = function () {
+          if (Notification.permission === 'denied') {
+            console.log("Push Messaging Blocked.");
+            updateSubscriptionOnServer(null);
+          } else {
+            subscribeToPushNotification(swReg);
+          }
+          delete window.subscribeToPushNotification;
+        };
       }
     });
 }
@@ -96,9 +104,4 @@ if ('serviceWorker' in navigator) {
         console.error('Service Worker Error', error);
       });
   });
-
-  if (Notification.permission === 'denied') {
-    console.log("Push Messaging Blocked.");
-    updateSubscriptionOnServer(null);
-  }
 }
