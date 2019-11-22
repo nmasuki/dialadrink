@@ -48,7 +48,7 @@ ClientNotification.add({
 		type: Types.Select,
 		options: 'pending, sent, rejected',
 		default: 'pending',
-		index: true
+		noedit: true
 	},
 
 	message: {
