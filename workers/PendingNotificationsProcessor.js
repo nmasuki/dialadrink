@@ -71,7 +71,7 @@ function doWork(err, notifications, next) {
                 return Promise.resolve().then(markAsRejected);
             }))
             .then(function () {
-                var grouped = notifications.groupBy(n => n.broudcast._id);
+                var grouped = notifications.groupBy(n => n.broudcast && (n.broudcast._id || n.broudcast));
 
                 Object.values(grouped).forEach(g => {
                     console.log("Group", g);
