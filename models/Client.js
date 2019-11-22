@@ -384,7 +384,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
         client: client,
     }, locals || {});
 
-    if (fs.existsSync(`../templates/email/${body}`))
+    if (fs.existsSync(`templates/email/${body}.hbs`))
         email = new keystone.Email(`templates/email/${body}`);
     else {
         email = new keystone.Email(`templates/email/content`);
