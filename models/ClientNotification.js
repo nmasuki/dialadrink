@@ -71,5 +71,5 @@ ClientNotification.add({
 	},
 });
 
-ClientNotification.defaultColumns = 'message.title, type|10%, status|10%, client, createdDate';
+ClientNotification.defaultColumns = 'createdDate, scheduleDate, client, message.title, type|10%, status|10%';
 ClientNotification.register();
