@@ -380,6 +380,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
         page: {
             title: keystone.get("name")
         },
+        appUrl: keystone.get("url"),
         client: client,
     }, locals || {});
 
