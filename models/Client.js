@@ -355,7 +355,7 @@ Client.schema.methods.sendSMSNotification = function (message) {
     if (!client.phoneNumber || !client.phoneNumber.trim())
         return Promise.reject("SMS does not allow empty phoneNumber");
 
-    return sms.sendSMS([client.phoneNumber], message.trim(), function (err, res) {
+    return sms.sendSMS([client.phoneNumber], message.format(client).trim(), function (err, res) {
         if (err)
             console.error.apply(order, arguments);
         else {
