@@ -187,6 +187,6 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 	});
 });
 
-ClientNotificationBroudcast.defaultColumns = 'messageTitle, status|15%, type, target.count, target.type, target.by, scheduleDate, createdDate';
+ClientNotificationBroudcast.defaultColumns = 'createdDate, scheduleDate, messageTitle, status|15%, type, target.count, target.type, target.by';
 
 ClientNotificationBroudcast.register();
