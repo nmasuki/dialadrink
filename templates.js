@@ -1,5 +1,8 @@
 this["templates"] = this["templates"] || {};
 this["templates"]["email"] = this["templates"]["email"] || {};
+this["templates"]["email"]["content"] = this["templates"]["email"]["content"] || {};
+this["templates"]["email"]["content"]["hbs"] = this["templates"]["email"]["content"]["hbs"] || {};
+
 this["templates"]["email"]["error-log"] = this["templates"]["email"]["error-log"] || {};
 this["templates"]["email"]["error-log"]["hbs"] = this["templates"]["email"]["error-log"]["hbs"] || {};
 
@@ -114,6 +117,14 @@ this["templates"]["views"]["search"]["hbs"] = this["templates"]["views"]["search
 
 this["templates"]["views"]["sitemapXml"] = this["templates"]["views"]["sitemapXml"] || {};
 this["templates"]["views"]["sitemapXml"]["hbs"] = this["templates"]["views"]["sitemapXml"]["hbs"] || {};
+
+this["templates"]["email"]["content"]["hbs"]["templates/email/content.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper;
+
+  return "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"20\" border=\"0\">\n    <tbody>\n    <tr>\n        <td style=\"padding:48px 48px 0\" valign=\"top\">\n            <div id=\"order-body_content_inner\"\n                 style=\"color:#737373;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:14px;line-height:150%;text-align:left\">\n                "
+    + ((stack1 = ((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"content","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "\n            </div>\n        </td>\n    </tr>\n    </tbody>\n</table>\n";
+},"useData":true});
 
 this["templates"]["email"]["error-log"]["hbs"]["templates/email/error-log.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, alias1=container.escapeExpression;
