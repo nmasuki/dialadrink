@@ -1,6 +1,8 @@
 var keystone = require('keystone');
-var lockFile = require('lockfile');
 var Order = keystone.list("Order");
+var WorkProcessor = require('../helpers/WorkProcessor');
+
+var self = module.exports = new WorkProcessor(getWork, doWork);
 
 function getWork(next, done) {
     var filter = {
@@ -45,25 +47,3 @@ function doWork(err, orders, next) {
             next();
     }
 }
-
-var self = {
-    run: function () {
-        if (!self.lockFile)
-            getWork(doWork);
-        else
-            lockFile.lock(self.lockFile, function (err) {
-                if (err)
-                    return console.warn("Could not aquire lock.", self.lockFile, err);
-
-                getWork(function () {
-                    var promise = doWork.apply(this, arguments);
-                    if (!promise)
-                        lockFile.unlock(self.lockFile);
-                    else
-                        promise.finally(() => lockFile.unlock(self.lockFile));
-                });
-            });
-    }
-};
-
-module.exports = self;

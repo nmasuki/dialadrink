@@ -8,7 +8,7 @@ var Types = keystone.Field.Types;
 
 var Promo = new keystone.List('Promo', {
 	map: {name: 'code'},
-	autokey: {path: 'key', from: 'orderNumber', unique: true},
+	autokey: {path: 'key', from: 'code', unique: true},
 });
 
 Promo.add({
@@ -17,6 +17,10 @@ Promo.add({
 	discount: {type: Number },//Percentage 
 	discountType: { type: Types.Select, options: 'percent, KES', default: 'percent', index: true },
 	startDate: {type: Types.Datetime, index: true, default: Date.now},
+	notifications:{
+		shouldSend:{type: Boolean, default:false},
+		clientCount:{type: Number, default: 20}
+	},
 	endDate: {type: Types.Datetime }
 });
 
@@ -30,14 +34,7 @@ Promo.schema.virtual('status').get(function(){
 		return 'running';
 	else 
 		return 'unknown';
-})
+});
 
 Promo.defaultColumns = 'code, name|20%, discount|10%, discountType, startDate|10%, endDate|10%';
 Promo.register();
-
-Promo.model.find().sort({'id': -1}).limit(1)
-	.exec(function (err, data) {
-		if (data[0] && data[0].orderNumber)
-			autoId = data[0].orderNumber;
-	});
-

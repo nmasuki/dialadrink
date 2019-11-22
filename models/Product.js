@@ -9,7 +9,6 @@ var Product = new keystone.List('Product', {
     }
 });
 
-
 Product.add({
     href: {
         type: String,

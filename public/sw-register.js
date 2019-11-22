@@ -92,9 +92,7 @@ if ('serviceWorker' in navigator) {
         console.log('Service Worker is registered', swReg);
         if ('PushManager' in window) {
           console.log('Push is supported!');
-          setTimeout(function () {
-            initializePush(swReg);
-          }, 5000);
+          initializePush(swReg);
         } else {
           console.warn('Push messaging is not supported');
         }

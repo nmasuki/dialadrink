@@ -102,6 +102,7 @@ keystone.set('nav', {
 	'content-and-seo': ['menu-items', 'pages'],
 	blog: ["blogs", "blog-categories"],
 	users: ['clients', 'users'],
+	notifications: ['client-notification-broudcasts', 'client-notifications']
 });
 
 //Log warning into email

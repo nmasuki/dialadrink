@@ -1,6 +1,7 @@
 var keystone = require('keystone');
 var cloudinary = require('cloudinary');
 var webpush = require("web-push");
+
 var FCM = require('fcm-node');
 var MoveSms = require("../helpers/movesms");
 
@@ -11,7 +12,7 @@ var Types = keystone.Field.Types;
 
 var Client = new keystone.List('Client', {
     map: {
-        name: 'name'
+        name: 'firstName'
     },
     defaultSort: '-lastOrderDate',
     autokey: {
@@ -139,6 +140,11 @@ Client.relationship({
     refPath: 'client'
 });
 
+Client.relationship({
+    ref: 'ClientNotification',
+    refPath: 'client'
+});
+
 Client.defaultColumns = 'firstName, lastName, phoneNumber, email, address, orderCount, orderValue, lastOrderDate';
 Client.schema.virtual("isAppRegistered").get(function () {
     return !!this.password;
@@ -244,27 +250,34 @@ Client.schema.methods.getSessions = function (next) {
         }
     };
     var opt = keystone.get("session options");
+    return new Promise((resolve, reject) => {
+        db.collection('app_sessions')
+            .find(filter).toArray((err, sessions) => {
+                if (err)
+                    reject(err);
 
-    db.collection('app_sessions')
-        .find(filter).toArray((err, sessions) => {
-            if (sessions)
-                sessions = sessions.map(s => {
-                    var sess = JSON.parse(s.session || "{}");
+                if (sessions)
+                    sessions = sessions.map(s => {
+                        var sess = JSON.parse(s.session || "{}");
 
-                    sess._id = s._id;
-                    if (opt && opt.cookie)
-                        sess.startDate = s.expires.addSeconds(opt.cookie.maxAge / 1000);
+                        sess._id = s._id;
+                        if (opt && opt.cookie)
+                            sess.startDate = s.expires.addSeconds(opt.cookie.maxAge / 1000);
 
-                    return sess;
-                });
+                        return sess;
+                    });
 
-            next(err, sessions);
-        });
+                if (!err)
+                    resolve(sessions);
+                if (typeof next == "function")
+                    next(err, sessions);
+            });
+    });
 };
 
 Client.schema.methods.sendNotification = function (title, body, icon, data) {
     var client = this;
-    client.getSessions((err, sessions) => {
+    return client.getSessions((err, sessions) => {
         if (err)
             return console.log("Error getting sessions!");
 
@@ -278,7 +291,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
             console.log(`Sending notifications to ${client.name}`);
 
             //Send WebPush
-            webpushTokens.forEach(subscription => {
+            var promises = webpushTokens.map(subscription => {
                 var payload = {
                     title: title.fomart(client),
                     body: body.fomart(client),
@@ -286,7 +299,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                     data: data
                 };
 
-                webpush.sendNotification(subscription, JSON.stringify(payload))
+                return webpush.sendNotification(subscription, JSON.stringify(payload))
                     .then(res => {
                         console.log(`Notification sent to ${client.name}`);
                         client.lastNotificationDate = new Date();
@@ -296,7 +309,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
             });
 
             //Send FCM Push
-            fcmTokens.forEach(token => {
+            promises.concat(fcmTokens.map(token => {
                 var payload = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
                     to: token,
                     //collapse_key: 'your_collapse_key',
@@ -309,20 +322,26 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                     data: data
                 };
 
-                fcm.send(payload, function (err, response) {
+                return new Promise((resolve, reject) => fcm.send(payload, function (err, response) {
                     if (err) {
                         console.error("Error sendin FCM!", err);
+                        reject(err);
                     } else {
                         console.log("FCM successfully sent with response: ", response);
                         client.lastNotificationDate = new Date();
                         client.save();
+
+                        resolve(client);
                     }
-                });
-            });
+                }));
+            }));
 
             console.log(`Sessions: ${sessions.length}, WebTokens:${webpushTokens.length}, FCMTokens:${fcmTokens.length}`);
+
+            return Promise.all(promises);
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms
+            return Promise.reject("User has no push token associeted!");
         }
     });
 };
@@ -346,27 +365,35 @@ Client.schema.methods.sendSMSNotification = function (message) {
     });
 };
 
-Client.schema.methods.sendEmailNotification = function (subject, template, locals = null, copyAdmins = true) {
-    if (!template)
+Client.schema.methods.sendEmailNotification = function (subject, body, locals = null, copyAdmins = true) {
+    if (!body)
         throw "'templete' is required!";
     if (!subject)
         throw "'subject' is required!";
 
     var client = this;
-    var email = new keystone.Email(`templates/email/${template}`);
+    var email;
+
+    locals = Object.assign({
+        layout: 'email',
+        page: {
+            title: keystone.get("name")
+        },
+        client: client,
+    }, locals || {});
+
+    if (fs.existsSync(`../templates/email/${body}`))
+        email = new keystone.Email(`templates/email/${body}`);
+    else {
+        email = new keystone.Email(`templates/email/content`);
+        locals.content = body;
+    }
 
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
     if (keystone.get("env") == "development")
         subject = "(Testing) " + subject;
-
-    locals = Object.assign({
-        layout: 'email',
-        page: {
-            title: keystone.get("name")
-        }
-    }, locals || {});
 
     var emailOptions = {
         subject: subject,
@@ -450,7 +477,7 @@ Client.schema.methods.sendEmailNotification = function (subject, template, local
                 });
             });
     }
-}
+};
 
 Client.schema.pre('save', function (next) {
     this.modifiedDate = Date.now();

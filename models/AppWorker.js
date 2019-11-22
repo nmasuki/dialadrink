@@ -73,4 +73,6 @@ AppWorker.schema.virtual("nextRun")
         return nextRun;
     });
 
+AppWorker.defaultColumns = 'name|25%, runRequency|10%, lastRun, createdDate, isActive|10%';
+
 AppWorker.register();

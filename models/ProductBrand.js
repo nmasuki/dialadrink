@@ -23,7 +23,7 @@ ProductBrand.add({
 });
 
 ProductBrand.relationship({ref: 'Product', path: 'product', refPath: 'brand'});
-ProductBrand.defaultColumns = 'name, logo, h1, state';
+ProductBrand.defaultColumns = 'name, logo, pageTitle, category';
 
 ProductBrand.schema.pre('save', function (next) {
     this.modifiedDate = new Date();

@@ -1,5 +1,7 @@
 var keystone = require('keystone');
-var lockFile = require('lockfile');
+var WorkProcessor = require('../helpers/WorkProcessor');
+
+var self = module.exports = new WorkProcessor(getWork, doWork);
 
 function getWork(next) {
     const db = keystone.mongoose.connection;
@@ -83,32 +85,3 @@ function doWork(err, sessions, next) {
         });
     });
 }
-
-var self = {
-    run: function () {
-        if (!self.lockFile)
-            getWork(doWork);
-        else
-            lockFile.lock(self.lockFile, function (err) {
-                if (err)
-                    return console.warn("Could not aquire lock.", self.lockFile, err);
-
-                getWork(function () {
-                    var promise = doWork.apply(this, arguments);
-                    if (!promise) {
-                        self.nextRun = new Date().addMinutes(5);
-                        lockFile.unlock(self.lockFile);
-                    } else {
-                        promise.finally(work => {
-                            if (!work)
-                                self.nextRun = new Date().addMinutes(5);
-
-                            lockFile.unlock(self.lockFile);
-                        });
-                    }
-                });
-            });
-    }
-};
-
-module.exports = self;

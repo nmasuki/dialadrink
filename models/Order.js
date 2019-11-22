@@ -10,13 +10,7 @@ var sms = new MoveSms();
  * ==========
  */
 
-var Order = new keystone.List('Order', {
-    defaultSort: '-orderDate',
-    autokey: {
-        path: 'key',
-        from: 'orderNumber'
-    },
-});
+var Order = new keystone.List('Order');
 
 Order.add({
     state: {
@@ -471,7 +465,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                 appUrl: keystone.get("url"),
                 order: order.toObject()
             });
-        });;
+        });
 };
 
 Order.schema.set('toObject', {
