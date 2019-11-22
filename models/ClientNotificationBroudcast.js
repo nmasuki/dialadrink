@@ -157,7 +157,7 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 							});
 						});
 
-						return;
+						return next();
 					}
 
 					//So as not to overwhelm the clients with notifications, send at most once every 2 days
@@ -182,10 +182,8 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 					});
 				}
 
-				next();
-			});
-		
-		
+				return next();
+			});	
 	});
 });
 
