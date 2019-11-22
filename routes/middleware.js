@@ -96,7 +96,7 @@ exports.initLocals = function (req, res, next) {
     //Other locals only applied to views and not ajax calls
     if (username || password) {
         console.log(`Api call from IP:${res.locals.clientIp}, User:${username}`);
-        return next();
+        return setAppUserFromSession(req, res, () => next());
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
         if (!csrf_token || !keystone.security.csrf.validate(req, csrf_token))
@@ -105,7 +105,7 @@ exports.initLocals = function (req, res, next) {
                 message: "CSRF validation failed!"
             });
         else {
-            return next();
+            return setAppUserFromSession(req, res, () => next());
         }
     } else {
         var istart = new Date();
@@ -134,7 +134,7 @@ exports.initLocals = function (req, res, next) {
             setAppUserFromSession(req, res, () => next());
 
             var ms = new Date().getTime() - istart.getTime();
-            if (keystone.get("env") == "development" || ms > 1000)
+            if (keystone.get("env") == "development" || ms > 300)
                 console.log("Initiated Locals in ", ms, "ms");
         });
     }
@@ -412,7 +412,7 @@ var setAppUser = function (req, res, client) {
 
 var setAppUserFromSession = function (req, res, callback) {
     if (res.locals.appUser)
-        return Promise.resolve();
+        return Promise.resolve(true);
 
     return keystone.list("Client").model
         .findOne({
