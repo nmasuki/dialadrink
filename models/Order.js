@@ -10,7 +10,13 @@ var sms = new MoveSms();
  * ==========
  */
 
-var Order = new keystone.List('Order');
+var Order = new keystone.List('Order', {
+    defaultSort: '-orderDate',
+    autokey: {
+        path: 'key',
+        from: 'orderNumber'
+    },
+});
 
 Order.add({
     state: {
