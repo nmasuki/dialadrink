@@ -9,7 +9,8 @@ var Types = keystone.Field.Types;
 var ClientNotification = new keystone.List('ClientNotification', {
 	map: {
 		name: 'message.title'
-	}
+	},
+	defaultSort: '-createdDate',
 });
 
 ClientNotification.add({

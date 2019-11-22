@@ -12,6 +12,7 @@ var ClientNotificationBroudcast = new keystone.List('ClientNotificationBroudcast
 	    map: {
 	    	name: 'messageTitle'
 	    },
+	    defaultSort: '-createdDate',
 });
 
 ClientNotificationBroudcast.add({
