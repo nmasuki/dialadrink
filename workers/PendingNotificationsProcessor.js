@@ -74,7 +74,8 @@ function doWork(err, notifications, next) {
                 var grouped = notifications.groupBy(n => n.broudcast._id);
 
                 Object.values(grouped).forEach(g => {
-                    if (g.all(n => n.status == 'sent')) {
+                    console.log("Group", g);
+                    if (!g.find(n => n.status != 'sent')) {
                         var b = g[0].broudcast;
                         b.status = 'sent';
                         b.save();
