@@ -68,7 +68,7 @@ exports.initLocals = function (req, res, next) {
 
     //OKHi setup
     res.locals.OkHiEnv = process.env.OKHI_ENV;
-    res.locals.OkHiKey = process.env.OKHI_ENV == "prod" ? process.env.OKHI_KEY : process.env.OKHI_DEV_KEY;
+    res.locals.OkHiKey = res.locals.OkHiEnv == "prod" ? process.env.OKHI_KEY : process.env.OKHI_DEV_KEY;
 
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
@@ -131,7 +131,7 @@ exports.initLocals = function (req, res, next) {
             exports.initBrandsLocals(req, res),
             exports.initPageLocals(req, res)
         ]).then(function () {
-            next();
+            setAppUserFromSession(() => next());
 
             var ms = new Date().getTime() - istart.getTime();
             if (keystone.get("env") == "development" || ms > 1000)
@@ -302,7 +302,6 @@ exports.initTopMenuLocals = function (req, res, next) {
         });
 };
 
-
 /**
  Fetches and clears the flashMessages before a view is rendered
  */
@@ -319,70 +318,12 @@ exports.flashMessages = function (req, res, next) {
     next();
 };
 
-function getAuthInfo(req) {
-    var header = req.headers.authorization || '', // get the header
-        scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
-        token = (header.split(/\s+/)[1] || '').split('|')[1] || "", // and the encoded auth token
-        auth = new Buffer.from(token, 'hex').toString(), // convert from base64
-        platform = (header.split(/\s+/)[1] || '').split('|')[0] || 'WEB',
-        parts = auth.split(/:/), // split on colon
-        username = parts[0],
-        password = parts[1],
-        authTime = parts[2];
-
-    return {
-        scheme,
-        username,
-        password,
-        authTime,
-        platform
-    };
-}
-
 exports.requireAPIUser = function (req, res, next) {
-    function setAppUser(client) {
-        if (client) {
-            res.locals.appUser = client;
-            req.session.platform = platform;
 
-            var tosave = false;
-            if (client.sessions.indexOf(req.sessionID) < 0) {
-                client.sessions.push(req.sessionID);
-                tosave = true;
-            }
-
-            if (client.clientIps.indexOf(res.locals.clientIp) < 0) {
-                client.clientIps.push(res.locals.clientIp);
-                tosave = true;
-            }
-
-            if (tosave)
-                client.save();
-
-            req.session.save();
-        }
-
-        return !!client;
-    }
-
-    function setAppUserFromSession(callback) {
-        return keystone.list("Client").model
-            .findOne({
-                sessions: {
-                    "$elemMatch": {
-                        $eq: req.sessionID
-                    }
-                }
-            })
-            .exec((err, client) => {
-                var ok = setAppUser(client);
-                if (typeof callback == "function")
-                    callback(ok);
-            });
-    }
-
-    if (res.locals.appUser || req.xhr)
-        return setAppUserFromSession(() => next());
+    if (res.locals.appUser)
+        return next();
+    else if (req.xhr)
+        return setAppUserFromSession(req, res, () => next());
 
     var {
         scheme,
@@ -442,6 +383,70 @@ exports.requireAPIUser = function (req, res, next) {
         });
 
     }
+};
+
+var setAppUser = function (req, res, client) {
+    if (client) {
+        res.locals.appUser = client;
+        req.session.platform = platform;
+
+        var tosave = false;
+        if (client.sessions.indexOf(req.sessionID) < 0) {
+            client.sessions.push(req.sessionID);
+            tosave = true;
+        }
+
+        if (client.clientIps.indexOf(res.locals.clientIp) < 0) {
+            client.clientIps.push(res.locals.clientIp);
+            tosave = true;
+        }
+
+        if (tosave)
+            client.save();
+
+        req.session.save();
+    }
+
+    return !!client;
+};
+
+var setAppUserFromSession = function (req, res, callback) {
+    if (res.locals.appUser)
+        return Promise.resolve();
+
+    return keystone.list("Client").model
+        .findOne({
+            sessions: {
+                "$elemMatch": {
+                    $eq: req.sessionID
+                }
+            }
+        })
+        .exec((err, client) => {
+            var ok = setAppUser(req, res, client);
+            if (typeof callback == "function")
+                callback(ok);
+        });
+};
+
+var getAuthInfo = function (req) {
+    var header = req.headers.authorization || '', // get the header
+        scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
+        token = (header.split(/\s+/)[1] || '').split('|')[1] || "", // and the encoded auth token
+        auth = new Buffer.from(token, 'hex').toString(), // convert from base64
+        platform = (header.split(/\s+/)[1] || '').split('|')[0] || 'WEB',
+        parts = auth.split(/:/), // split on colon
+        username = parts[0],
+        password = parts[1],
+        authTime = parts[2];
+
+    return {
+        scheme,
+        username,
+        password,
+        authTime,
+        platform
+    };
 };
 
 /**
