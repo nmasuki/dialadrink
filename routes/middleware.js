@@ -42,7 +42,7 @@ function requestCache(duration, _key) {
     };
 }
 
-exports.globalCache = /*(req, res, next) => next(); //**/ requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
+exports.globalCache = (req, res, next) => next(); //**/ requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
 
 exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 
