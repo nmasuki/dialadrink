@@ -138,9 +138,9 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 					}else if (broudcast.type == "email"){
 						clients = clients.filter(c => c.email);
 					}else if (broudcast.type == "push"){
-						clients.forEach(c => {
+						Promise.all(clients.map(c => {
 							var count = 0;
-							c.getSessions().then(sessions => {
+							return c.getSessions().then(sessions => {
 								var pushOrFCM = sessions.find(s => s.webpush || s.fcm);
 								if (pushOrFCM && ++count <= broudcast.target.count) {
 									var n = new ClientNotification.model({
@@ -155,9 +155,9 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 									n.save();
 								}
 							});
-						});
-
-						return next();
+						}))
+						.then(() =>  next())
+						.catch(err => next(err));
 					}
 
 					//So as not to overwhelm the clients with notifications, send at most once every 2 days

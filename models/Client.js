@@ -293,8 +293,8 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
             //Send WebPush
             var promises = webpushTokens.map(subscription => {
                 var payload = {
-                    title: title.fomart(client),
-                    body: body.fomart(client),
+                    title: title.format(client),
+                    body: body.format(client).replace(/<(?:.|\n)*?>/gm, ''),
                     icon: icon,
                     data: data
                 };
@@ -315,8 +315,8 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                     //collapse_key: 'your_collapse_key',
 
                     notification: {
-                        title: title.fomart(client),
-                        body: body.fomart(client)
+                        title: title.format(client),
+                        body: body.format(client).replace(/<(?:.|\n)*?>/gm, '')
                     },
 
                     data: data

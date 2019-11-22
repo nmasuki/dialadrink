@@ -28,6 +28,7 @@ function getWork(next, done) {
     ClientNotification.model
         .find(filter).sort(sort)
         .populate('client')
+        .populate('broudcast')
         .exec((err, notifications) => {
             if (err)
                 return next(err);
@@ -70,6 +71,16 @@ function doWork(err, notifications, next) {
                 return Promise.resolve().then(markAsRejected);
             }))
             .then(function () {
+                var grouped = notifications.groupedBy(n => n.broudcast._id);
+
+                Object.values(grouped).forEach(g => {
+                    if (g.all(n => n.status == 'sent')) {
+                        var b = g[0].broudcast;
+                        b.status = 'sent';
+                        b.save();
+                    }
+                });
+
                 if (typeof next == "function")
                     next();
             });
