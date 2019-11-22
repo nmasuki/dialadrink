@@ -54,6 +54,7 @@ exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
  or replace it with your own templates / logic.
  */
 exports.initLocals = function (req, res, next) {
+
     //App Logo
     res.locals.appLogo = keystone.get("logo");
 
@@ -131,10 +132,9 @@ exports.initLocals = function (req, res, next) {
             exports.initBrandsLocals(req, res),
             exports.initPageLocals(req, res)
         ]).then(function () {
-            setAppUserFromSession(req, res, () => next());
-
+            next();
             var ms = new Date().getTime() - istart.getTime();
-            if (keystone.get("env") == "development" || ms > 1000)
+            if (keystone.get("env") == "development" || ms > 300)
                 console.log("Initiated Locals in ", ms, "ms");
         });
     }
@@ -319,76 +319,23 @@ exports.flashMessages = function (req, res, next) {
 };
 
 exports.requireAPIUser = function (req, res, next) {
+    //GET Client by sessionID       
+    return setAppUserFromSession(req, res, (err, client) => {
+        if (client || res.locals.appUser || req.xhr)
+            return next();
 
-    if (res.locals.appUser)
-        return next();
-    else if (req.xhr)
-        return setAppUserFromSession(req, res, () => next());
-
-    var {
-        scheme,
-        username,
-        password,
-        platform
-    } = getAuthInfo(req);
-
-    if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk") {
-        return next();
-    } else if (scheme == "MOBILE" && username && password) {
-        return keystone.list("Client").model.find({
-            $or: [{
-                    phoneNumber: username.cleanPhoneNumber()
-                },
-                {
-                    username: username
-                },
-                {
-                    email: username
-                }
-            ]
-        }).exec((err, clients) => {
+        return setAppUserFromAuth(req, res, err => {
             if (err)
-                return next({
-                    response: "error",
-                    message: "NotAuthorized! " + err
-                });
-
-            var client = clients.find(c => password == c.password) ||
-                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
-
-            if (setAppUser(client)) {
-                return next();
-            } else {
-                if (clients.length)
-                    console.log(`${clients.length} clients match username ${username}. Invalide password? '${password}'`);
-                else
-                    console.log(`No client match the username ${username}`);
-
-                res.status(401).send({
-                    response: "error",
-                    message: "NotAuthorized"
-                });
-            }
+                return res.status(401).send(err);
+            
+            return next();
         });
-    } else {
-        //TODO: GET Client by sessionID       
-        return setAppUserFromSession(req, res, ok => {
-            if (ok)
-                return next();
-            else
-                return res.status(404).send({
-                    response: "error",
-                    message: "NotAuthorized"
-                });
-        });
-
-    }
+    });
 };
 
 var setAppUser = function (req, res, client) {
     if (client) {
         res.locals.appUser = client;
-        req.session.platform = platform;
 
         var tosave = false;
         if (client.sessions.indexOf(req.sessionID) < 0) {
@@ -407,7 +354,52 @@ var setAppUser = function (req, res, client) {
         req.session.save();
     }
 
-    return !!client;
+    return client;
+};
+
+var setAppUserFromAuth = function (req, res, next) {
+    var { scheme,  username, password, platform } = getAuthInfo(req);
+
+    req.session.platform = platform;
+    if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk") {
+        return next();
+    } else if (scheme == "MOBILE" && username && password) {
+        return keystone.list("Client").model.find({
+            $or: [
+                { phoneNumber: username.cleanPhoneNumber() },
+                { username: username },
+                { email: username }
+            ]
+        }).exec((err, clients) => {
+            if (err)
+                return next({
+                    response: "error",
+                    message: "NotAuthorized! " + err
+                });
+
+            var client = clients.find(c => password == c.password) ||
+                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
+
+            if (setAppUser(client)) {
+                return next(null, client);
+            } else {
+                if (clients.length)
+                    console.log(`${clients.length} clients match username ${username}. Invalide password? '${password}'`);
+                else
+                    console.log(`No client match the username ${username}`);
+
+                return next({
+                    response: "error",
+                    message: "NotAuthorized"
+                });
+            }
+        });
+    } else {
+        return next({
+            response: "error",
+            message: "NotAuthorized"
+        });
+    }
 };
 
 var setAppUserFromSession = function (req, res, callback) {
@@ -423,9 +415,16 @@ var setAppUserFromSession = function (req, res, callback) {
             }
         })
         .exec((err, client) => {
-            var ok = setAppUser(req, res, client);
-            if (typeof callback == "function")
-                callback(ok);
+            if(err){
+                if (typeof callback == "function")
+                    callback(err);
+            }
+
+            setAppUser(req, res, client);
+
+            err = client ? null : new Error("No client matches seccionId:" + req.sessionID);
+            if (typeof callback == "function")            
+                callback(err, client);
         });
 };
 
