@@ -30,8 +30,7 @@ ClientNotification.add({
 
 	client: {
 		type: Types.Relationship,
-		ref: 'Client',
-		noedit: true
+		ref: 'Client'
 	},
 	broudcast: {
 		type: Types.Relationship,
