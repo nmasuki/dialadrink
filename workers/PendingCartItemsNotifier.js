@@ -74,10 +74,32 @@ function doWork(err, sessions, next) {
 
             if (clients)
                 clients.forEach(c => {
-                    c.sendNotification(title, body, null, {
-                        sessionId: s._id,
-                        buttons: ["Continue Shopping"]
+                    var date = new Date().toISOString();
+
+                    var scheduleDate = new Date(date.substr(0, 10));
+                    var scheduleTime = date.substr(11).split(":");
+
+                    if(scheduleTime[0] > 21 - 3){
+                        scheduleTime[0] = 18 - 3;
+                        scheduleDate = scheduleDate.addDays(1);
+                    }
+
+                    var n = new ClientNotification.model({
+                        client: c,
+                        scheduleDate: new Date(scheduleDate.toISOString().substr(0, 10) + "T" + scheduleTime.join(":")),
+                        type: "push",
+                        status: 'pending',
+                        message: {
+                            title: title.format(c),
+                            body: body.format(c),
+                            data:{
+                                sessionId: s._id,
+                                buttons: ["Continue Shopping"]
+                            }
+                        }
                     });
+
+                    n.save();
                 });
 
             if (typeof next == "function")
