@@ -131,7 +131,7 @@ exports.initLocals = function (req, res, next) {
             exports.initBrandsLocals(req, res),
             exports.initPageLocals(req, res)
         ]).then(function () {
-            setAppUserFromSession(() => next());
+            setAppUserFromSession(req, res, () => next());
 
             var ms = new Date().getTime() - istart.getTime();
             if (keystone.get("env") == "development" || ms > 1000)
@@ -372,7 +372,7 @@ exports.requireAPIUser = function (req, res, next) {
         });
     } else {
         //TODO: GET Client by sessionID       
-        return setAppUserFromSession(ok => {
+        return setAppUserFromSession(req, res, ok => {
             if (ok)
                 return next();
             else
