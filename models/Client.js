@@ -356,7 +356,7 @@ Client.schema.methods.sendSMSNotification = function (message) {
     if (!client.phoneNumber || !client.phoneNumber.trim())
         return Promise.reject("SMS does not allow empty phoneNumber");
 
-    return sms.sendSMS([client.phoneNumber], message.format(client).trim(), function (err, res) {
+    return sms.sendSMS([client.phoneNumber], message.replace(/<(?:.|\n)*?>/gm, '').format(client).trim(), function (err, res) {
         if (err)
             console.error.apply(order, arguments);
         else {
@@ -388,7 +388,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
         email = new keystone.Email(`templates/email/${body}`);
     else {
         email = new keystone.Email(`templates/email/content`);
-        locals.content = body;
+        locals.content = body.format(client);
     }
 
     //Hack to make use of nodemailer..
