@@ -380,11 +380,11 @@ var setAppUserFromAuth = function (req, res, next) {
             var client = clients.find(c => password == c.password) ||
                 clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
-            if (setAppUser(client)) {
+            if (setAppUser(req, res, client)) {
                 return next(null, client);
             } else {
                 if (clients.length)
-                    console.log(`${clients.length} clients match username ${username}. Invalide password? '${password}'`);
+                    console.log(`${clients.length} clients match username ${username}. Invalid password? '${password}'`);
                 else
                     console.log(`No client match the username ${username}`);
 
@@ -422,7 +422,7 @@ var setAppUserFromSession = function (req, res, callback) {
 
             setAppUser(req, res, client);
 
-            err = client ? null : new Error("No client matches seccionId:" + req.sessionID);
+            err = client ? null : new Error("No client matches sessionId:" + req.sessionID);
             if (typeof callback == "function")            
                 callback(err, client);
         });
