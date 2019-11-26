@@ -341,7 +341,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
             return Promise.all(promises);
         } else {
-            //TODO: NO webpush/fcm tokens to push to. Consider using sms
+            //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
             return Promise.reject("User has no push token associeted!");
         }
     });

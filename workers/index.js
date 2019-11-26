@@ -93,6 +93,7 @@ if (process.env.ENABLE_BACKGROUNDWORKER) {
 
       //Make next pass after a short delay
       setTimeout(() => loadWorkers(makePass), process.env.WORK_DELAY || 60000);
+      
     } else {
       console.log("No workers found. Exiting workes..");
     }

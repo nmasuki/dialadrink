@@ -50,18 +50,24 @@ AppWorker.add({
     }
 });
 
+var intervalMap = {
+    'every minute': 60 * 1000,
+    'hourly': 60 * 60 * 1000,
+    'daily': 24 * 60 * 60 * 1000,
+    'weekly': 7 * 24 * 60 * 60 * 1000,
+    'monthly': 30 * 24 * 60 * 60 * 1000,
+    'yearly': 365.25 * 24 * 60 * 60 * 1000
+};
+
 AppWorker.schema.virtual("runInterval")
     .get(function () {
-        var f = {
-            'every minute': 60 * 1000,
-            'hourly': 60 * 60 * 1000,
-            'daily': 24 * 60 * 60 * 1000,
-            'weekly': 7 * 24 * 60 * 60 * 1000,
-            'monthly': 30 * 24 * 60 * 60 * 1000,
-            'yearly': 365.25 * 24 * 60 * 60 * 1000
-        };
+        return intervalMap[this.runRequency] || intervalMap.hourly;
+    });
 
-        return f[this.runRequency] || f.hourly;
+AppWorker.schema.virtual("runInterval")
+    .set(function(value){
+        var sortByNearestMatch = Object.keys(intervalMap).orderBy(k => Math.abs(intervalMap[k] - value));
+        this.runRequency = sortByNearestMatch[0];
     });
 
 AppWorker.schema.virtual("nextRun")
