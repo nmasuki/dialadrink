@@ -48,37 +48,35 @@ function doWork(err, notifications, next) {
         notifications = notifications.filter(n => n.client);
         console.log(notifications.length + " client notifications to send..");
         return Promise.all(notifications.map(n => {
-                var markAsSent = function () {
-                    n.status = "sent";
-                    n.save();
-                };
-
-                var markAsRejected = function (error) {
-                    n.status = "rejected";
-                    n.save();
+                var markNotification = function(status){
+                    return function () {
+                        n.status = status;
+                        n.save();
+                    };
                 };
 
                 if (n.type == "sms")
                     return n.client.sendSMSNotification(n.message.body, n)
-                        .then(markAsSent).catch(markAsRejected);
+                        .then(markNotification('sent')).catch(markNotification('reject'));
                 if (n.type == "email")
                     return n.client.sendEmailNotification(n.message.title, n.message.body, n)
-                        .then(markAsSent).catch(markAsRejected);
+                        .then(markNotification('sent')).catch(markNotification('reject'));
                 if (n.type == "push")
                     return n.client.sendNotification(n.message.title, n.message.body, n.message.icon, n)
-                        .then(markAsSent).catch(markAsRejected);
+                        .then(markNotification('sent')).catch(markNotification('reject'));
 
-                return Promise.resolve().then(markAsRejected);
+                return Promise.resolve().then(markNotification('reject'));
             }))
-            .then(function () {
-                var grouped = notifications.groupBy(n => n.broudcast && (n.broudcast._id || n.broudcast));
+            .finally(function () {
+                var grouped = notifications.groupBy(n => n.broudcast && (n.broudcast._id || n.broudcast) || '');
 
                 Object.values(grouped).forEach(g => {
-                    console.log("Group", g);
                     if (!g.find(n => n.status != 'sent')) {
                         var b = g[0].broudcast;
-                        b.status = 'sent';
-                        b.save();
+                        if(b){
+                            b.status = 'sent';
+                            b.save();
+                        }
                     }
                 });
 

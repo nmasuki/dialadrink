@@ -561,8 +561,14 @@ if (!Array.prototype.orderByDescending)
 
 if (!Array.prototype.max)
     Array.prototype.max = function (clause) {
+        var ordered = this.orderByDescending(clause);
+        return ordered.map(clause).first();
+    };
+
+if (!Array.prototype.max)
+    Array.prototype.max = function (clause) {
         var ordered = this.orderBy(clause);
-        return ordered.map(clause).last();
+        return ordered.map(clause).first();
     };
 
 if (!Array.prototype.flatten)
@@ -638,9 +644,11 @@ Date.prototype.addMinutes = function (value) {
 };
 
 Date.prototype.addSeconds = function (value) {
-    var date = new Date(this.toISOString());
-    date.setTime(date.getTime() + (value * 1000));
-    return date;
+    return this.addMilliseconds(value * 1000);
+};
+
+Date.prototype.addMilliseconds = function(value){
+    return new Date(this.getTime() + value);
 };
 
 Number.prototype.pad = function pad(width, z) {
@@ -655,8 +663,6 @@ if (!Promise.prototype.finally)
             /* onFulfilled */
             res => Promise.resolve(onFinally()).then(() => res),
             /* onRejected */
-            err => Promise.resolve(onFinally()).then(() => {
-                throw err;
-            })
+            err => Promise.resolve(onFinally()).then(() => console.warn(err))
         );
     };

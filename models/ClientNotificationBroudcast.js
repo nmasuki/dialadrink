@@ -144,13 +144,18 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 							return c.getSessions().then(sessions => {
 								var pushOrFCM = sessions.find(s => s.webpush || s.fcm);
 								if (pushOrFCM && ++count <= broudcast.target.count) {
+									var msg = broudcast.msg;
+
+									msg.title = msg.title.format(c);
+									msg.body = msg.body.format(c);
+
 									var n = new ClientNotification.model({
 										client: c,
 										broudcast: broudcast,
 										scheduleDate: broudcast.scheduleDate,
 										type: broudcast.type,
 										status: 'pending',
-										message: broudcast.msg
+										message: msg
 									});
 
 									n.save();
@@ -188,6 +193,6 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 	});
 });
 
-ClientNotificationBroudcast.defaultColumns = 'createdDate, scheduleDate, messageTitle, status|15%, type, target.count, target.type, target.by';
+ClientNotificationBroudcast.defaultColumns = 'messageTitle, createdDate, scheduleDate, status|15%, type, target.count, target.type, target.by';
 
 ClientNotificationBroudcast.register();
