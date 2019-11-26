@@ -13,8 +13,9 @@ function WorkProcessor(getWork, doWork) {
 
                 getWork(function () {
                     var promise = doWork.apply(this, arguments);
-                    if (!promise)
-                        promise = promise = Promise.resolve();
+
+                    if (!promise || promise.costructor.name != 'Promise')
+                        promise = Promise.resolve(promise || 0);
                     
                     promise.finally(() => lockFile.unlock(self.lockFile));
                 });
