@@ -393,7 +393,7 @@ if (!String.prototype.truncate)
 
 if (!String.prototype.encryptPassword)
     String.prototype.encryptPassword = function (salt) {
-        bcrypt = require('bcrypt');
+        var bcrypt = require('bcrypt');
 
         salt = (salt || process.env.SALT || bcrypt.genSaltSync());
         encryptedPassword = bcrypt.hashSync(this.toString(), salt.toString());
