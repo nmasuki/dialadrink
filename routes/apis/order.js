@@ -24,6 +24,7 @@ router.get("/", function(req, res){
             if (err)
                 json.message += "! " + err;
             else{
+                json.response = "success";
                 json.data = orders.orderByDescending(o => o.orderDate).map(o => o.toObject());
             }
             
@@ -96,8 +97,14 @@ router.get("/:orderNo", function (req, res) {
         message: "Error while getting order #" + req.params.orderNo,
         data: {}
     };
+    var filter = {$or:[]};
 
-    Order.model.findOne({$or:[{orderNumber: req.params.orderNo},{_id:req.params.orderNo}] })
+    if (/^\d+$/.test(req.params.orderNo))
+        filter.$or.push({ orderNumber: req.params.orderNo });
+    else
+        filter.$or.push({ _id: req.params.orderNo });
+
+    Order.model.findOne(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
             if (err)

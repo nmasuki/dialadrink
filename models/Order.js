@@ -506,15 +506,14 @@ Order.schema.set('toObject', {
         //created, placed, dispatched, delivered, pending, cancelled, paid
         var time = (new Date().getTime() - order.orderDate.getTime()) / (1000 * 60);
         if (['created', 'placed'].indexOf(ret.state) >= 0) {
-            if (time > 3 * 60){
+            if (time > 3 * 60)
                 ret.status = "4";
-            } else if (time > 45) {
+            else if (time > 45) 
                 ret.status = "3";
-            } else if (time > 5) {
+            else if (time > 5) 
                 ret.status = "1";
-            } else {
-                ret.status = "0";
-            }
+            else 
+                ret.status = "0";            
         }else{
             var map = {
                 pending: "0", 
