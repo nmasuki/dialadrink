@@ -109,11 +109,11 @@ router.get("/:orderNo", function (req, res) {
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
             
-            if (err)
+            if (err){
                 json.message += "! " + err;
-            else if(!order)
+            } else if(!order){
                 json.message += "! No matching order Number";
-            else{
+            }else{
                 delete json.message;
                 json.response = "success";
                 json.data = order.toObject();
