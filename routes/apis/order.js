@@ -20,7 +20,8 @@ router.get("/", function(req, res){
     ];
 
     Order.model.find({'delivery.phoneNumber':{ $in:phoneNos}})
-        .deepPopulate('cart')
+        .deepPopulate('cart.product')
+        .populate('')
         .exec((err, orders)=>{
             if (err)
                 json.message += "! " + err;
