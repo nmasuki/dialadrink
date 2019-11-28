@@ -18,6 +18,7 @@ router.get("/", function(req, res){
         client.phoneNumber.cleanPhoneNumber(), 
         client.phoneNumber.cleanPhoneNumber().replace(/\+?245/, "0")
     ];
+
     Order.model.find({'delivery.phoneNumber':{ $in:phoneNos}})
         .deepPopulate('cart')
         .exec((err, orders)=>{
@@ -107,13 +108,17 @@ router.get("/:orderNo", function (req, res) {
     Order.model.findOne(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
+            
             if (err)
                 json.message += "! " + err;
             else if(!order)
                 json.message += "! No matching order Number";
             else{
+                delete json.message;
+                json.response = "success";
                 json.data = order.toObject();
             }
+
             return res.send(json);
         });
 });
