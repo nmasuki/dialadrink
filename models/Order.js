@@ -503,8 +503,28 @@ Order.schema.set('toObject', {
         if (order.delivery)
             ret.delivery = order.delivery.toObject();
 
-        ret.status = "1";
-
+        //created, placed, dispatched, delivered, pending, cancelled, paid
+        var time = (new Date().getTime() - order.orderDate.getTime()) / (1000 * 60);
+        if (['created', 'placed'].indexOf(ret.state) >= 0) {
+            if (time > 3 * 60){
+                ret.status = "4";
+            } else if (time > 45) {
+                ret.status = "3";
+            } else if (time > 5) {
+                ret.status = "1";
+            } else {
+                ret.status = "0";
+            }
+        }else{
+            var map = {
+                pending: "0", 
+                dispatched: "1",
+                cancelled: "2",  
+                delivered: "3", 
+                paid: "4"
+            };
+            ret.status = map[order.state] || map.cancelled;
+        }
         ret.chargesArr = charges;
         if (order.cart.length && order.cart[0].constructor.name == "ObjectID")
             ret.cart = order.cart.map(c => c.toObject());
