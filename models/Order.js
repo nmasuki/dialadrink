@@ -1,6 +1,7 @@
 var MoveSms = require("../helpers/movesms");
 var pesapalHelper = require('../helpers/pesapal');
 var keystone = require('keystone');
+var CartItem = keystone.list("CartItem");
 
 var Types = keystone.Field.Types;
 var sms = new MoveSms();
@@ -322,35 +323,7 @@ Order.schema.methods.updateClient = function (next) {
 Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!");
     var order = this;
-    if (!order.notificationSent) {
-        order.notificationSent = true;
-        var pIds = order.cart.map(c => c.product._id || c.product);
-        keystone.list("Product").model.find({
-                _id: {
-                    "$in": pIds
-                }
-            })
-            .exec((err, products) => {
-                var items = order.cart.map(function (c) {
-                    return {
-                        pieces: c.pieces,
-                        pid: c.product._id || c.product
-                    };
-                });
-
-                if (products)
-                    products.forEach(p => {
-                        var item = items.find(c => p._id.toString() == c.pid.toString());
-                        item.product = p;
-                    });
-
-                var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`;
-                var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
-                sms.sendSMS((process.env.CONTACT_PHONE_NUMBER || "254723688108"), msg);
-            });
-    }
-
-    order.sendOrderNotification((err, data) => {
+    order.sendOrderNotification().then((data) => {
         console.log("Updating order state='placed'!", data);
 
         //Update order state
@@ -363,12 +336,12 @@ Order.schema.methods.placeOrder = function (next) {
         });
 
         if (typeof next == "function")
-            next(err);
+            next(err, data);
 
-        //popularity goes up 100x
+        //popularity goes up +100
         order.cart.forEach(c => {
             keystone.list("Product").findOnePublished({
-                _id: c.product._id
+                _id: c.product._id || c.product
             }, (err, product) => {
                 if (product)
                     product.addPopularity(100);
@@ -427,27 +400,37 @@ Order.schema.methods.sendOrderNotification = function (next) {
     if (!that.orderNumber)
         that.orderNumber = Order.getNextOrderId();
 
-    return Order.model.findOne({
-            _id: that._id
-        })
+    return Order.model.findOne({ _id: that._id })
         .deepPopulate('cart.product.priceOptions.option')
         .populate('client')
         .exec((err, order) => {
             if (err)
-                return Promise.reject(next(err));
+                return Promise.reject(err);
 
             if (!order)
-                return Promise.reject(next(`Order [${order._id}}] not found!`));
+                return Promise.reject(`Order [${order._id}}] not found!`);
 
             if (!order.cart.length) {
                 if (that.cart.length)
                     order.cart = that.cart;
                 else
-                    return Promise.reject(next("Error while getting cart Items"));
+                    return Promise.reject("Error while getting cart Items!!");
+            }
+
+            var promise = Promise.resolve();
+
+            //Send SMS Notification to vender
+            if(!order.notificationSent){
+                order.notificationSent = true;
+                var items = order.cart;
+                var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`;
+                var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
+
+                promise.then(() => sms.sendSMS((process.env.CONTACT_PHONE_NUMBER || "254723688108"), msg));
             }
 
             //Send SMS 
-            if (order.delivery.phoneNumber) {
+            if (order.delivery.phoneNumber && !order.smsNotificationSent) {
                 message = `Dial a Drink: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received. ` +
                     `Please pay ${order.currency||''} ${order.total} ${order.payment.method? 'in ' + order.paymentMethod: ''}` +
                     `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
@@ -458,18 +441,17 @@ Order.schema.methods.sendOrderNotification = function (next) {
                     message += ` You will be required to pay ${order.currency||''} ${order.total} on delivery`;
 
                 if (order.client && order.client._id) {
-                    order.client.sendSMSNotification(message).then(() => {
-                        order.smsNotificationSent = true;
-                        order.save();
-                    });
+                    promise.then(() => order.client.sendSMSNotification(message).then(() => order.smsNotificationSent = true));
                 }
             }
 
             //Send Email
             var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
-            return order.client.sendEmailNotification(subject, 'order', {
-                appUrl: keystone.get("url"),
-                order: order.toObject()
+            return promise.then(() => order.save()).then(() => {
+                return order.client.sendEmailNotification(subject, 'order', {
+                    appUrl: keystone.get("url"),
+                    order: order.toObject()
+                });
             });
         });
 };
@@ -524,6 +506,7 @@ Order.schema.set('toObject', {
             };
             ret.status = map[order.state] || map.cancelled;
         }
+
         ret.chargesArr = charges;
         if (order.cart.length && order.cart[0].constructor.name == "ObjectID")
             ret.cart = order.cart.map(c => c.toObject());
@@ -560,7 +543,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     var order = new Order.model({
         cart: cart.map(item => {
             //console.log(item)
-            var cartItem = new(keystone.list("CartItem")).model({});
+            var cartItem = new CartItem.model({});
 
             cartItem.date = item.date;
             cartItem.state = item.state;
