@@ -1,4 +1,3 @@
-
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
@@ -51,17 +50,24 @@ CartItem.schema.virtual("image").get(function () {
     return this.product ? this.product.image: null;
 });
 
+CartItem.schema.virtual("price").set(function (value) {
+    this._price = value;
+});
+
 CartItem.schema.virtual("price").get(function () {
     if(!this.product || !this.product.options)
-        return 0;
+        return this._price;
         //throw "Missing [product] in cart";
 
     var priceOption = this.product.options.find(o => o.quantity === this.quantity) || {};
     var price = priceOption.offerPrice && priceOption.price > priceOption.offerPrice
         ? priceOption.offerPrice
         : priceOption.price;
+    
+    if (price && !this._price)
+        this._price = price;
 
-    return price;
+    return price || this._price;
 });
 
 CartItem.schema.virtual("currency").get(function () {

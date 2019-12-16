@@ -169,6 +169,7 @@ Client.schema.methods.toAppObject = function () {
     var user = this;
 
     function getUniqueCode() {
+        //var sep = ["-----", new Date().getTime(), "-----"].join('');
         var str = [user.phoneNumber, user.password, new Date().getTime()].join(':')
         return Buffer.from(str).toString('hex');
     }

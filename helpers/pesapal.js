@@ -9,13 +9,15 @@ var PesaPal = require('pesapaljs').init({
 
 function shortenUrlBitly(longUrl, next){
     var bitly = new Bitly.BitlyClient(process.env.BITLY_ACCESS_TOKEN, {});
-    bitly.shorten(longUrl).then(function(result){
+    return bitly.shorten(longUrl).then(function(result){
 		console.log("URL shortened: ", result.url, longUrl);
-        next(null, result.url);
+		if(typeof next == "function")
+        	next(null, result.url);
     })
     .catch(function(error) {
 		console.warn("Error while doing URL shortening..", error);
-        next(error);
+        if (typeof next == "function")
+        	next(error);
     });
 }
 
@@ -26,12 +28,14 @@ function shoternUrlGoogle(longUrl, next) {
 	googl.setKey(process.env.GOOGLE_API_KEY1);
 
 	// Shorten a long url and output the result
-	googl.shorten(longUrl)
+	return googl.shorten(longUrl)
 		.then(function (shortUrl) {
-			next(null, shortUrl);
+			if (typeof next == "function")
+				next(null, shortUrl);
 		})
 		.catch(function (err) {
-			next(err.message);
+			if (typeof next == "function")
+				next(err.message);
 		});
 }
 
@@ -48,7 +52,8 @@ function shoternUrlGoogleOld(longUrl, next) {
 				next(null, res);
 		},
 		error: function (err) {
-			next(err, url);
+			if (typeof next == "function")
+				next(err, url);
 		}
 	});
 }
@@ -111,4 +116,4 @@ function getPasaPalUrlOld(order, host) {
 module.exports = {
     getPasaPalUrl: getPasaPalUrl,
     shoternUrl: shortenUrlBitly
-}
+};

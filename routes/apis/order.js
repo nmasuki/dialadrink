@@ -20,7 +20,8 @@ router.get("/", function(req, res){
     ];
 
     Order.model.find({'delivery.phoneNumber':{ $in:phoneNos}})
-        .deepPopulate('cart')
+        .deepPopulate('cart.product')
+        .populate('')
         .exec((err, orders)=>{
             if (err)
                 json.message += "! " + err;
@@ -52,14 +53,19 @@ router.post("/", function (req, res){
             json.response = "success";
             var cartItems = getCartItems(req);
             var promo = req.session.promo || {};
-            var deliveryDetails = Object.assign({}, client.toObject(), req.body, {clientIp: res.locals && res.locals.clientIp});	
+            var deliveryDetails = Object.assign({ }, 
+                client.toObject(), req.body, 
+                {
+                    platform: req.session.platform,
+                    clientIp: res.locals && res.locals.clientIp
+                });	
 
             Order.checkOutCartItems(cartItems, promo, deliveryDetails, function(err, order){
                 if (err)
                     json.response = "error";
 
                 json.data = order.toObject();
-                json.message = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
+                json.message = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch.";
 
                 if (!err) {
                     if (order.payment.method == "PesaPal") {
@@ -129,39 +135,24 @@ function getCartItems(req){
     if(typeof req.body.item_id == "string")
     {
         items.push({
-            _id: `${req.body.item_id}|${req.body.item_opt}`,
+            cartId: `${req.body.item_id}|${req.body.item_opt}`,
             product: req.body.item_id,
-            price: req.body.item_price,
+            price: parseFloat(req.body.item_price),
             quantity: req.body.item_opt,
-            pieces: req.body.item_pieces
+            pieces: parseInt(req.body.item_pieces)
         });
-    }
-    else{
+    } else {
         for(var i =0; i < req.body.item_id.length; i++){
             items.push({
-                _id: `${req.body.item_id[i]}|${req.body.item_opt[i]}`,
+                cartId: `${req.body.item_id[i]}|${req.body.item_opt[i]}`,
                 product: req.body.item_id[i],
-                price: req.body.item_price[i],
+                price: parseFloat(req.body.item_price[i]),
                 quantity: req.body.item_opt[i],
-                pieces: req.body.item_pieces[i]
+                pieces: parseInt(req.body.item_pieces[i])
             });
         }
-    }
-        
+    }       
 
-    var cartItems = items.map((item, i) => {
-        var cart = new CartItem.model(item);
-        Product.findOnePublished({_id: cart.product})
-            .exec((err, product) => {
-                if (err || !product)
-                    return console.warn(`Error while processing App order item:${id}. ${err}`);
-                //popularity goes up 10x
-                product.addPopularity(10);
-            });
-
-        return cart;
-    });
-
-    return cartItems;
+    return items;
 }
 module.exports = router;

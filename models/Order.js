@@ -1,6 +1,7 @@
 var MoveSms = require("../helpers/movesms");
 var pesapalHelper = require('../helpers/pesapal');
 var keystone = require('keystone');
+var CartItem = keystone.list("CartItem");
 
 var Types = keystone.Field.Types;
 var sms = new MoveSms();
@@ -193,6 +194,10 @@ Order.add({
         clientIp: {
             type: String,
             noedit: true
+        },
+        locationMeta: {
+            type: String,
+            noedit: true
         }
     },
 
@@ -238,7 +243,7 @@ Order.schema.virtual("subtotal").get(function () {
         return this.cart.sum(function (c) {
             var price = c.pieces * c.price;
             if (c.offerPrice && c.price > c.offerPrice)
-                price = c.pieces * c.offerPrice
+                price = c.pieces * c.offerPrice;
             return price;
         });
     return 0;
@@ -246,6 +251,16 @@ Order.schema.virtual("subtotal").get(function () {
 
 Order.schema.virtual("total").get(function () {
     return this.subtotal + this.chargesAmt - this.discount;
+});
+
+Order.schema.virtual("deliveryLocation").get(function () {
+    if (this.delivery.locationMeta)
+        return JSON.parse(this.delivery.locationMeta);
+    return null;
+});
+
+Order.schema.virtual("deliveryLocation").set(function (location) {
+    this.delivery.locationMeta = location ? JSON.stringify(location) : null;
 });
 
 Order.schema.virtual("deliveryAddress").get(function () {
@@ -322,35 +337,7 @@ Order.schema.methods.updateClient = function (next) {
 Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!");
     var order = this;
-    if (!order.notificationSent) {
-        order.notificationSent = true;
-        var pIds = order.cart.map(c => c.product._id || c.product);
-        keystone.list("Product").model.find({
-                _id: {
-                    "$in": pIds
-                }
-            })
-            .exec((err, products) => {
-                var items = order.cart.map(function (c) {
-                    return {
-                        pieces: c.pieces,
-                        pid: c.product._id || c.product
-                    };
-                });
-
-                if (products)
-                    products.forEach(p => {
-                        var item = items.find(c => p._id.toString() == c.pid.toString());
-                        item.product = p;
-                    });
-
-                var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`;
-                var msg = `${order.payment.method} Order recieved from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
-                sms.sendSMS((process.env.CONTACT_PHONE_NUMBER || "254723688108"), msg);
-            });
-    }
-
-    order.sendOrderNotification((err, data) => {
+    order.sendOrderNotification().then((data) => {
         console.log("Updating order state='placed'!", data);
 
         //Update order state
@@ -363,12 +350,12 @@ Order.schema.methods.placeOrder = function (next) {
         });
 
         if (typeof next == "function")
-            next(err);
+            next(err, data);
 
-        //popularity goes up 100x
+        //popularity goes up +100
         order.cart.forEach(c => {
             keystone.list("Product").findOnePublished({
-                _id: c.product._id
+                _id: c.product._id || c.product
             }, (err, product) => {
                 if (product)
                     product.addPopularity(100);
@@ -396,7 +383,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
     if (order.client && order.client._id) {
         //Send SMS notification
         if (order.delivery.phoneNumber) {
-            message = `Dial a Drink: Your payment of ${order.currency||''}${order.payment.amount} ` +
+            message = `DIALADRINK: Your payment of ${order.currency||''}${order.payment.amount} ` +
                 `for order #${order.orderNumber} has been received. Your order will be dispatched shortly. ` +
                 `Thank You for using http://dialadrinkkenya.com`;
 
@@ -407,7 +394,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
                 });
         }
 
-        //Sent Emmail Notification
+        //Sent Email Notification
         order.client.sendEmailNotification(subject, 'receipt', {
             order: order
         }).then(() => {
@@ -427,49 +414,85 @@ Order.schema.methods.sendOrderNotification = function (next) {
     if (!that.orderNumber)
         that.orderNumber = Order.getNextOrderId();
 
-    return Order.model.findOne({
-            _id: that._id
-        })
+    return Order.model.findOne({ _id: that._id })
         .deepPopulate('cart.product.priceOptions.option')
         .populate('client')
         .exec((err, order) => {
             if (err)
-                return Promise.reject(next(err));
+                return Promise.reject(err);
 
             if (!order)
-                return Promise.reject(next(`Order [${order._id}}] not found!`));
+                return Promise.reject(`Order [${order._id}}] not found!`);
 
             if (!order.cart.length) {
                 if (that.cart.length)
                     order.cart = that.cart;
                 else
-                    return Promise.reject(next("Error while getting cart Items"));
+                    return Promise.reject("Error while getting cart Items!!");
+            }
+
+            var promise = Promise.resolve();
+
+            //Send SMS Notification to vender
+            if(!order.notificationSent){
+                order.notificationSent = true;
+                var items = order.cart;
+                var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`.trim();
+                var msg = `${order.payment.method} order received from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
+                var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
+                var location = order.deliveryLocation;
+
+                /*/if (location && location.url){
+                    msg += " " + location.url;
+                    promise.then(() => sms.sendSMS(vendorNumber, msg));
+                }
+                else /** */
+                if(location)
+                {
+                    var mapUrl = location.url || `http://maps.google.com/maps?daddr=${location.lat},${location.lng}`;
+                    
+                    var p = new Promise((resolve, reject) => {
+                        pesapalHelper.shoternUrl(mapUrl, function (err, shortUrl) {
+                            location.url2 = mapUrl;
+                            if (!err){
+                                location.shortUrl = shortUrl;
+                                msg += " " + shortUrl;
+                                order.deliveryLocation = location;
+                                resolve(shortUrl);
+                            }else
+                                reject(err);
+
+                            return sms.sendSMS(vendorNumber, msg);
+                        });
+                    });
+
+                    promise.then(() => p);
+                }else{
+                    promise.then(() => sms.sendSMS(vendorNumber, msg));
+                }
             }
 
             //Send SMS 
-            if (order.delivery.phoneNumber) {
-                message = `Dial a Drink: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received. ` +
-                    `Please pay ${order.currency||''} ${order.total} ${order.payment.method? 'in ' + order.paymentMethod: ''}` +
-                    `${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
+            if (order.delivery.phoneNumber && !order.smsNotificationSent) {
+                message = `DIALADRINK: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
 
                 if (order.payment.method == "PesaPal")
-                    message += ` Please proceed to pay ${order.currency||''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
+                    message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
                 else
-                    message += ` You will be required to pay ${order.currency||''} ${order.total} on delivery`;
+                    message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}`;
 
                 if (order.client && order.client._id) {
-                    order.client.sendSMSNotification(message).then(() => {
-                        order.smsNotificationSent = true;
-                        order.save();
-                    });
+                    promise.then(() => order.client.sendSMSNotification(message).then(() => order.smsNotificationSent = true));
                 }
             }
 
             //Send Email
             var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
-            return order.client.sendEmailNotification(subject, 'order', {
-                appUrl: keystone.get("url"),
-                order: order.toObject()
+            return promise.then(() => order.save()).then(() => {
+                return order.client.sendEmailNotification(subject, 'order', {
+                    appUrl: keystone.get("url"),
+                    order: order.toObject()
+                });
             });
         });
 };
@@ -524,6 +547,7 @@ Order.schema.set('toObject', {
             };
             ret.status = map[order.state] || map.cancelled;
         }
+
         ret.chargesArr = charges;
         if (order.cart.length && order.cart[0].constructor.name == "ObjectID")
             ret.cart = order.cart.map(c => c.toObject());
@@ -560,7 +584,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     var order = new Order.model({
         cart: cart.map(item => {
             //console.log(item)
-            var cartItem = new(keystone.list("CartItem")).model({});
+            var cartItem = new CartItem.model({});
 
             cartItem.date = item.date;
             cartItem.state = item.state;
@@ -579,8 +603,12 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         },
         promo: promo,
         clientIp: deliveryDetails.clientIp,
-        delivery: deliveryDetails
+        location: deliveryDetails.location,
+        delivery: deliveryDetails,
     });
+
+    if(deliveryDetails.location)
+        order.deliveryLocation = deliveryDetails.location;
 
     chargesKeys.forEach(k => {
         order.charges.chargesName.push(k);
