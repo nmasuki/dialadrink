@@ -7,6 +7,8 @@ $(document).ready(function(){
         $('#lets-okhi').hide();
 
         var handleOnSuccess = function (data){
+            window.addressData = data;
+
             $("[name=address]").val(data.location.title);
             $("[name=building]").val(data.location.streetName);
             $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
@@ -18,11 +20,12 @@ $(document).ready(function(){
                 $("#lets-okhi-card").hide();          
             }
 
-            window.addressData = data;
         };
         
         var handleOnError = function (data){
-            console.warn("Eror Implimentation not done!", arguments);
+            window.addressData = null;
+            
+            console.warn("Error Implimentation not done!", arguments);
             $('#lets-okhi').show();
             $("#lets-okhi-card").hide();
         };
@@ -34,9 +37,11 @@ $(document).ready(function(){
         };
 
         if(user.firstName && user.lastName && user.phone && user.phone.length >= 10){
-            if( window.locationCard)
+            window.addressData = null;
+            
+            if (window.locationCard){
                 window.locationCard .user = user;
-            else{
+            } else {
                 var element = document.getElementById("lets-okhi-card");
 
                 window.locationCard = new okhi.LocationCard({
@@ -52,6 +57,8 @@ $(document).ready(function(){
 
     var loadLocationLookUp = function(user){
         var handleOnSuccess = function (data) {
+            window.addressData = data;
+
             $('#lets-okhi').animate({ width:'toggle' }, 350);
             $("#submitBtn").show();
     
@@ -60,12 +67,13 @@ $(document).ready(function(){
             $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
             
             $("#addressInputs").slideDown();
-            addressData = data;
             
             loadLocationCard();           
         };
     
         var handleOnError = function (error) {
+            window.addressData = data;
+            
             $('#lets-okhi').animate({width:'toggle'}, 350);
             $("#addressInputs").slideDown();
     

@@ -16,33 +16,14 @@ function getWork(next) {
         }]
     };
 
-    if (self.worker.sequence){
-        try{
-            var ltExpirtDate = new Date(self.worker.sequence);
-            filter.$and.push({
-                expires: {
-                    $gt: ltExpirtDate
-                }
-            });
-        }catch(e){
-            console.log(e);
-        }
-    }
-
-    if (opt && opt.cookie){
-        var expiryDate = new Date().addSeconds(opt.cookie.maxAge / 1000).addDays(-5)
-        if (process.env.NODE_ENV == "production") //skip this filter in testing
-            filter.$and.push({
-                expires: {
-                    $lt: expiryDate
-                }
-            });
+    if(process.env.NODE_ENV == "development"){
+        filter.$and.push({session: /(254720805835)/});
     }
 
     db.collection('app_sessions')
         .find(filter)
-        //.sort({ expires: -1 })
-        //.limit(50)
+        .sort({ expires: -1 })
+        .limit(50)
         .toArray((err, sessions) => {
             if (sessions && sessions.length) {
                 console.log(`Found ${sessions.length} sessions with pending cart items..`);
@@ -60,7 +41,6 @@ function getWork(next) {
                 });
 
                 if(sessions.length){
-
                     var maxSeq = sessions.max(s => s.expires);
                     if(maxSeq)
                         maxSeq = new Date(maxSeq).addMilliseconds(10).toISOString();
@@ -73,6 +53,19 @@ function getWork(next) {
                     self.worker.sequence = maxSeq;
                     self.worker.save();
                 }
+
+                var startDate = new Date().addDays(-30);
+                var endDate = new Date().addDays(-5);
+
+                sessions = sessions.filter(s => {
+                    var cartItems = Object.values(s.cart);
+                    return cartItems.some(c => {
+                        var efDate = c.modifiedDate || c.date;
+                        return efDate > startDate && efDate <= endDate;
+                    });
+                });
+                
+                console.log(`${sessions.length} within notification period..`);
 
                 sessions = sessions.filter(s => s.webpush || s.fcm);
                 console.log(`${sessions.length} sessions have push token..`);
@@ -99,32 +92,42 @@ function doWork(err, sessions, next) {
 
             if (clients)
                 clients.forEach(c => {
-                    var date = new Date().toISOString();
-
-                    var scheduleDate = new Date(date.substr(0, 10));
-                    var scheduleTime = date.substr(11).split(":");
-
-                    if(scheduleTime[0] > 21 - 3){
-                        scheduleTime[0] = 18 - 3;
-                        scheduleDate = scheduleDate.addDays(1);
-                    }
-
-                    var n = new ClientNotification.model({
-                        client: c,
-                        scheduleDate: new Date(scheduleDate.toISOString().substr(0, 10) + "T" + scheduleTime.join(":")),
+                    ClientNotification.model.find({
                         type: "push",
-                        status: 'pending',
-                        message: {
-                            title: title.format(c),
-                            body: body.format(c),
-                            data:{
-                                sessionId: s._id,
-                                buttons: ["Continue Shopping"]
-                            }
-                        }
-                    });
+                        status: 'pending'
+                    }).exec((err, pending) => {
+                        if (err)
+                            return console.error(err);
 
-                    n.save();
+                        if(pending && pending.length)
+                            return;
+
+                        var date = new Date().toISOString();
+                        var scheduleDate = new Date(date.substr(0, 10));
+                        var scheduleTime = date.substr(11).split(":");
+
+                        if (scheduleTime[0] > 21 - 3) {
+                            scheduleTime[0] = 18 - 3;
+                            scheduleDate = scheduleDate.addDays(1);
+                        }
+
+                        var n = new ClientNotification.model({
+                            client: c,
+                            scheduleDate: new Date(scheduleDate.toISOString().substr(0, 10) + "T" + scheduleTime.join(":")),
+                            type: "push",
+                            status: 'pending',
+                            message: {
+                                title: title.format(c),
+                                body: body.format(c),
+                                data: {
+                                    sessionId: s._id,
+                                    buttons: ["Continue Shopping"]
+                                }
+                            }
+                        });
+
+                        n.save();
+                    });                    
                 });
 
             if (typeof next == "function")

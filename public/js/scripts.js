@@ -552,8 +552,8 @@ function handleProductRating() {
     });
 
     $(document).on("click", ".thumbnail", function (e) {
-        var src = $(this).find("img").attr("src");
-        if(src)
+        var src = $(this).find("img").data("img");
+        if (src)
             $(".image-responsive").attr("src", src);
     });
 }

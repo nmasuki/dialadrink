@@ -118,7 +118,7 @@ exports.initLocals = function (req, res, next) {
         res.locals.contactNumber = "+" + (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
 
         //To use uglified files in production
-        res.locals.dotmin = keystone.get("env") != "development" ? ".min" : "";
+        res.locals.dotmin = keystone.get("env") == "production" ? ".min" : "";
 
         //Initiate Page details
         res.locals.page = {

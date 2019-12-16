@@ -15,6 +15,7 @@ function addToCart(req, res, callback) {
 	if (cart[cartId]) {
 
 		cart[cartId].pieces += pieces;
+		cart[cartId].modifiedDate = new Date();
 
 		//popularity goes up 10x
 		Product.findOnePublished({_id: cart[cartId].product._id }, (err, product)=>{
@@ -40,7 +41,6 @@ function addToCart(req, res, callback) {
 				var price = option.offerPrice && option.price > option.offerPrice? option.offerPrice: option.price;
 
 				cart[cartId] = new CartItem.model({
-					_id: cartId,
 					product: product,
 					price: price,
 					quantity: option.quantity,
