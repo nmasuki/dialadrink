@@ -553,8 +553,11 @@ function handleProductRating() {
 
     $(document).on("click", ".thumbnail", function (e) {
         var src = $(this).find("img").data("img");
-        if (src)
-            $(".image-responsive").attr("src", src).data("src", src);
+        if (src){
+            $(".image-responsive")
+                .attr("src", src)
+                .parent().css({ "background-image": "url('" + src + "')" });
+        }
     });
 }
 
