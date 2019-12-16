@@ -17,7 +17,10 @@ function loadWorkers(next) {
       return console.warn(err);
 
     files.filter(f => f.endsWith('.lock'))
-      .forEach(f => fs.unlink(__dirname + "/../locks/" + f));
+      .forEach(f =>{
+        if (fs.existsSync(__dirname + "/../locks/" + f)) 
+          fs.unlink(__dirname + "/../locks/" + f);
+      });
 
     fs.readdir(__dirname, (err, files) => {
       var modules = files

@@ -16,33 +16,14 @@ function getWork(next) {
         }]
     };
 
-    if (self.worker.sequence){
-        try{
-            var ltExpirtDate = new Date(self.worker.sequence);
-            filter.$and.push({
-                expires: {
-                    $gt: ltExpirtDate
-                }
-            });
-        }catch(e){
-            console.log(e);
-        }
-    }
-
-    if (opt && opt.cookie){
-        var expiryDate = new Date().addSeconds(opt.cookie.maxAge / 1000).addDays(-5)
-        if (process.env.NODE_ENV == "production") //skip this filter in testing
-            filter.$and.push({
-                expires: {
-                    $lt: expiryDate
-                }
-            });
+    if(process.env.NODE_ENV == "development"){
+        filter.$and.push({session: /(254720805835)/});
     }
 
     db.collection('app_sessions')
         .find(filter)
-        //.sort({ expires: -1 })
-        //.limit(50)
+        .sort({ expires: -1 })
+        .limit(50)
         .toArray((err, sessions) => {
             if (sessions && sessions.length) {
                 console.log(`Found ${sessions.length} sessions with pending cart items..`);
@@ -60,7 +41,6 @@ function getWork(next) {
                 });
 
                 if(sessions.length){
-
                     var maxSeq = sessions.max(s => s.expires);
                     if(maxSeq)
                         maxSeq = new Date(maxSeq).addMilliseconds(10).toISOString();
@@ -73,6 +53,18 @@ function getWork(next) {
                     self.worker.sequence = maxSeq;
                     self.worker.save();
                 }
+
+                var startDate = new Date().addDays(-30);
+                var endDate = new Date().addDays(-5);
+
+                sessions = sessions.filter(s => {
+                    var cartItems = Object.values(s.cart);
+                    return cartItems.some(c => {
+                        var efDate = c.modifiedDate || c.date;
+                        return efDate > startDate && efDate <= endDate;
+                    });
+                });
+                console.log(`${sessions.length} within notification period..`);
 
                 sessions = sessions.filter(s => s.webpush || s.fcm);
                 console.log(`${sessions.length} sessions have push token..`);

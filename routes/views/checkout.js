@@ -38,9 +38,7 @@ router.post("/", function (req, res, next) {
 	if (Object.keys(req.session.cart || {}).length) {
 		var promo = req.session.promo || {};
 		var cartItems = Object.values(req.session.cart || {});
-		var deliveryDetails = Object.assign({
-			clientIp: res.locals.clientIp
-		}, req.body);
+		var deliveryDetails = Object.assign({ clientIp: res.locals.clientIp }, req.body);
 
 		var json = {
 			state: true
