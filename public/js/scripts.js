@@ -554,7 +554,7 @@ function handleProductRating() {
     $(document).on("click", ".thumbnail", function (e) {
         var src = $(this).find("img").data("img");
         if (src)
-            $(".image-responsive").attr("src", src);
+            $(".image-responsive").attr("src", src).data("src", src);
     });
 }
 
