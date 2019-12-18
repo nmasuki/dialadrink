@@ -105,6 +105,9 @@ keystone.set('nav', {
 	notifications: ['client-notification-broudcasts', 'client-notifications']
 });
 
+//Trust Proxy IP
+keystone.app.set('trust proxy', true);
+
 //Log warning into email
 if (!console._warn)
 	(function () {
