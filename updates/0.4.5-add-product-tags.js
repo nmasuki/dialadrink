@@ -12,6 +12,7 @@ var definedTags = [
 
 exports = module.exports = function (done) {
     var next = function(){
+        console.log("Update done.", __filename);
         Product.model.find({})
             .exec((err, products) => {
                 if (err)
