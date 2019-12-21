@@ -106,7 +106,7 @@ keystone.set('nav', {
 });
 
 //Trust Proxy IP
-keystone.app.set('trust proxy', true);
+keystone.set('trust proxy', true);
 
 //Log warning into email
 if (!console._warn)

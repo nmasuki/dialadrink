@@ -357,7 +357,7 @@ if (!String.prototype.cleanId)
 if (!String.prototype.sanitizePhoneNumber)
     String.prototype.cleanPhoneNumber = String.prototype.sanitizePhoneNumber = function sanitizePhoneNumber(countryCode) {
         var phone = (this || "").replace(/[\W]+/g, "");
-        countryCode = countryCode || "254";
+        countryCode = countryCode || String.countryCode || "254";
 
         if (!phone)
             return "";

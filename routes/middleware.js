@@ -103,7 +103,6 @@ exports.initLocals = function (req, res, next) {
                 message: "CSRF validation failed!"
             });
         else {
-            console.log(`Ajax API call from IP:${res.locals.clientIp}, User:${username}`);
             return next();
         }
     } else {
@@ -313,6 +312,7 @@ exports.flashMessages = function (req, res, next) {
     res.locals.messages = _.some(flashMessages, function (msgs) {
         return msgs.length;
     }) ? flashMessages : false;
+    
     next();
 };
 

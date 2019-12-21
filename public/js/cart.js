@@ -345,7 +345,9 @@ $(function () {
                     that.data("loadedAt", new Date().getTime());
                     $("#cart-info").html(html);
                     app.cartUtil.viewNotUpdated = false;
-                } else
+                } else if (html.status == "error")
+                    console.error(html.message);
+                else
                     app.cartUtil.updateView(window.cart = html);
             });
         }
@@ -431,9 +433,7 @@ $(function () {
             };
 
             $.ajax({
-                headers: {
-                    'X-CSRF-Token': app.csrf_token
-                },
+                headers: { 'X-CSRF-Token': app.csrf_token },
                 type: 'get',
                 url: '/cart/checkout/' + name + "/" + location + "/" + cell + "/" + email + "/" + street + "/" + building + "/" + houseno,
                 data: data,
@@ -446,12 +446,11 @@ $(function () {
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log(XMLHttpRequest, textStatus, errorThrown)
                 }
-            })
+            });
         } //checkout if the form is filled
         else {
             var msg = "Please fill all the fields and try again";
             $('.checkout-error').html(msg);
         }
-    }) //checkout event
-
-})
+    }); //checkout event
+});
