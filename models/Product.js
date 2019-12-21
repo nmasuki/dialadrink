@@ -430,7 +430,7 @@ Product.schema.pre('save', function (next) {
             tags.push(this.subCategory.name);
         if (this.options)
             this.options.forEach(po => tags.push(po.quantity));
-            
+
         return tags.filter(t => !!t);
     }
 
@@ -439,7 +439,7 @@ Product.schema.pre('save', function (next) {
 
     this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"))
     this.tags = this.tags.distinctBy().orderBy();
-    
+
     next();
 });
 
@@ -468,7 +468,9 @@ Product.schema.set('toJSON', {
 Product.register();
 
 Product.findPublished = function (filter, callback) {
-    filter = Object.assign(filter || {}, { state: 'published' });
+    filter = Object.assign(filter || {}, {
+        state: 'published'
+    });
     var a = keystone.list('Product').model.find(filter)
         .sort({
             popularity: -1
@@ -578,7 +580,7 @@ Product.findByOption = function (filter, callback) {
         });
 };
 
-Product.search = function (query, next) {
+Product.search = function (query, next, deepSearch) {
     var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, ".*?");
     var keyStr = query.cleanId().trim().escapeRegExp();
 
@@ -628,33 +630,42 @@ Product.search = function (query, next) {
         ]
     };
 
+    var allProducts = [];
     //Searching by brand then category then product
-    return Product.findPublished({ href: new RegExp("^" + keyStr + "$", "i") }, function (err, products) {
-        if (err || !products || !products.length)
+    return Product.findPublished({
+        href: new RegExp("^" + keyStr + "$", "i")
+    }, function (err, products) {
+        if (deepSearch || err || !products || !products.length) {
+            if (products && products.length) allProducts = allProducts.concat(products);
             return Product.findByCategory(filters, function (err, products) {
-                if (err || !products || !products.length)
+                if (deepSearch || err || !products || !products.length) {
+                    if (products && products.length) allProducts = allProducts.concat(products);
                     return Product.findBySubCategory(filters, function (err, products) {
-                        if (err || !products || !products.length)
+                        if (deepSearch || err || !products || !products.length) {
+                            if (products && products.length) allProducts = allProducts.concat(products);
                             return Product.findByBrand(filters, function (err, products) {
-                                if (err || !products || !products.length)
+                                if (deepSearch || err || !products || !products.length) {
+                                    if (products && products.length) allProducts = allProducts.concat(products);
                                     return Product.findByOption(filters, function (err, products) {
-                                        if (err || !products || !products.length)
+                                        if (deepSearch || err || !products || !products.length) {
+                                            if (products && products.length) allProducts = allProducts.concat(products);
                                             return Product.findPublished(filters, function (err, products) {
-                                                next(err, products.orderByDescending(p => p.hitsPerWeek));
+                                                if (products && products.length) allProducts = allProducts.concat(products);
+                                                next(err, allProducts.orderByDescending(p => p.hitsPerWeek));
                                             });
-                                        else
+                                        } else
                                             next(err, products.orderByDescending(p => p.hitsPerWeek));
                                     });
-                                else
+                                } else
                                     next(err, products.orderByDescending(p => p.hitsPerWeek));
                             });
-                        else
+                        } else
                             next(err, products.orderByDescending(p => p.hitsPerWeek));
                     });
-                else
+                } else
                     next(err, products.orderByDescending(p => p.hitsPerWeek));
             });
-        else
+        } else
             next(err, products.orderByDescending(p => p.hitsPerWeek));
     });
 };

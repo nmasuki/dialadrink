@@ -1,7 +1,9 @@
 var keystone = require('keystone');
 var Product = keystone.list('Product');
+var ProductCategory = keystone.list('ProductCategory');
 
 var definedTags = [
+    "Cognac", "VS", "VSOP", "XO",
     "Scotch", "Bourbon", "Single Malt", "Irish", "Blended", "Japanese", "Rye", "Malt", "Tennessee", "Grain", 
     "Single Pot Still", "Corn", "White", "Red", "Dry", "Rose", "Sparkling", "Riesling", 
     "Pinot Gris", "Sauvignon Blanc", "Cabernet Sauvignon", "Chardonnay", "Pinot Noir", "Zinfandel", "Syrah", 
@@ -12,24 +14,31 @@ var definedTags = [
 
 exports = module.exports = function (done) {
     var next = function(){
-        console.log("Update done.", __filename);
-        Product.model.find({})
-            .exec((err, products) => {
-                if (err)
-                    return console.log(err);
-                    
-                products.forEach(p => p.save());
+        console.log("Update done!", __filename);
+        ProductCategory.model.findOne({name: 'Cognac'})
+            .exec((err, cat) => {
+                Product.model.find({})
+                    .exec((err, products) => {
+                        if (err)
+                            return console.log(err);                        
+
+                        products.forEach(p => {
+                            if (cat && p.tags.contains(cat.name))
+                                p.category = cat;
+                            p.save();
+                        });
+                    });
             });
             
         done();
     };
 
+
+
     Product.model.find({})
         .exec((err, products) => {
             if (err)
                 return console.log(err);
-
-
 
             var tags = [];//products.selectMany(p => p.tags).filter(t => t);
             tags = tags
@@ -55,16 +64,18 @@ exports = module.exports = function (done) {
                         p.save(function (err) {
                             if (err) return;
                             if (added)
-                            console.log(`Added tag:'${t}' to '${p.name}'`);
+                                console.log(`Added tag:'${t}' to '${p.name}'`);
+                            
+                            if (i >= tags.length - 1)
+                                next();
                         });
 
-                        if (i >= tags.length - 1)
-                            next();
+                        
                     });
 
                     if (products.length == 0 && i >= tags.length - 1)
                         next();
-                });
+                }, true);
             }); 
 
             if(tags.length == 0)
