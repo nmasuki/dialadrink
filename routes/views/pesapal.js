@@ -22,9 +22,7 @@ router.post("/ipn", function (req, res) {
 	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
 	payment.save();
 
-	Order.model.findOne({
-			orderNumber: payment.referenceId
-		})
+	Order.model.findOne({ orderNumber: payment.referenceId })
 		.deepPopulate('cart.product.priceOptions.option')
 		.populate('client')
 		.exec((err, order) => {
@@ -41,8 +39,6 @@ router.post("/ipn", function (req, res) {
 			console.log("Reading PesaPal transaction id:" + payment.transactionId + ", ref:" + payment.referenceId)
 			PesaPal.getPaymentDetails(options).then(function (data) {
 					//data -> {transaction, method, status, reference}
-					//console.log(data);
-
 					if (data) {
 						if (data.reference)
 							order.payment.referenceId = data.reference;

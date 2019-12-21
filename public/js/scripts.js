@@ -1,9 +1,15 @@
 var touch = false,
     clickEv = 'click';
 
+function getCookie(name) {
+    var start = document.cookie.indexOf(name) + name.length + 1;
+    var sepPos = document.cookie.indexOf(";", start);
+    return document.cookie.substr(start, (sepPos < 0 ? document.cookie.length : sepPos) - start);
+}
+
 $.ajaxSetup({
     beforeSend: function (xhr) {
-        xhr.setRequestHeader('X-CSRF-Token', $('meta[name="_csrf"]').attr('content'));
+        xhr.setRequestHeader('X-CSRF-Token', getCookie("XSRF-TOKEN"));
     }
 });
 
@@ -553,8 +559,11 @@ function handleProductRating() {
 
     $(document).on("click", ".thumbnail", function (e) {
         var src = $(this).find("img").data("img");
-        if (src)
-            $(".image-responsive").attr("src", src).data("src", src);
+        if (src){
+            $(".image-responsive")
+                .attr("src", src)
+                .parent().css({ "background-image": "url('" + src + "')" });
+        }
     });
 }
 

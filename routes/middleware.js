@@ -87,16 +87,13 @@ exports.initLocals = function (req, res, next) {
     res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
 
     //Client IP
-    res.locals.clientIp = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
-        req.connection.remoteAddress || req.socket.remoteAddress;
+    var possibleIps = [req.ip, (req.headers['x-forwarded-for'] || '').split(',').pop(), req.connection.remoteAddress, req.socket.remoteAddress];
+    res.locals.clientIp = possibleIps.find(ip => ip && ip != '127.0.0.1' && ip != '::1');
 
-    var {
-        username,
-        password
-    } = getAuthInfo(req);
+    var { username, password } = getAuthInfo(req);
     //Other locals only applied to views and not ajax calls
     if (username || password) {
-        console.log(`Api call from IP:${res.locals.clientIp}, User:${username}`);
+        console.log(`API call from IP:${res.locals.clientIp}, User:${username}`);
         return next();
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
@@ -315,6 +312,7 @@ exports.flashMessages = function (req, res, next) {
     res.locals.messages = _.some(flashMessages, function (msgs) {
         return msgs.length;
     }) ? flashMessages : false;
+    
     next();
 };
 

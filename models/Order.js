@@ -577,7 +577,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     });
 
     var discount = Math.round(promo.discountType == "percent" ?
-        cart.sum(c => c.pieces * c.price) * promo.discount / 100 :
+        cart.sum(c => c.offerPrice && c.price > c.offerPrice ? 0 : c.pieces * c.price) * promo.discount / 100:
         promo.discount || 0
     );
 
