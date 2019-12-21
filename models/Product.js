@@ -430,7 +430,8 @@ Product.schema.pre('save', function (next) {
             tags.push(this.subCategory.name);
         if (this.options)
             this.options.forEach(po => tags.push(po.quantity));
-        return tags.filter(t => !!t)
+            
+        return tags.filter(t => !!t);
     }
 
     if (!this.tags || !this.tags.length)

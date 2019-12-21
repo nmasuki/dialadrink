@@ -63,7 +63,7 @@ router.get("/:category", function (req, res) {
                     locals.products = products;                    
 
                     var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
-                    if (brands.length == 1) locals.brand = brand;
+                    if (brands.length == 1) locals.brand = brands[0];
 
                     res.locals.uifilters = Product.getUIFilters(products);
 
