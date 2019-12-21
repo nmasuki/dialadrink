@@ -24,9 +24,6 @@ function search(req, res, next) {
             .toProperCase()).replace(/Whiskies|Whiskey|Wine|Gin/g, "").trim()
     });
 
-    if (locals.page.h1.length <= 5)
-        locals.page.h1 += " Delivery in Nairobi";
-
     locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId();
 
     function renderResults(products, title) {
@@ -68,24 +65,24 @@ function search(req, res, next) {
             if (categories.length != 1 && subCategories.length != 1)
                 return view.render('search');
 
-            /*
-            if (categories.length == 1) {
-                var cat = categories[0].category;
-                if (cat && cat.name) {
-                    locals.page.h1 = cat.name.trim().toProperCase();
-                    locals.page.title = cat.pageTitle;
-                    locals.page.meta = cat.description || locals.page.meta || meta;
-                }
-            } else if (subCategories.length == 1) {
-                var subCat = categories[0].subCategory;
-                if (subCat && subCat.name) {
-                    locals.page.h1 = subCat.name.trim().toProperCase();
-                    locals.page.title = subCat.pageTitle;
-                    locals.page.meta = subCat.description || locals.page.meta || meta;
+            if (locals.page.h1.length <= 5){
+                if (categories.length == 1) {
+                    var cat = categories[0].category;
+                    if (cat && cat.name) {
+                        locals.page.h1 += " " + cat.name.trim().toProperCase();
+                        //locals.page.title = cat.pageTitle;
+                        //locals.page.meta = cat.description || locals.page.meta || meta;
+                    }
+                } else if (subCategories.length == 1) {
+                    var subCat = categories[0].subCategory;
+                    if (subCat && subCat.name) {
+                        locals.page.h1 += " " + subCat.name.trim().toProperCase();
+                        //locals.page.title = subCat.pageTitle;
+                        //locals.page.meta = subCat.description || locals.page.meta || meta;
+                    }
                 }
             }
-            */
-           
+
             if (locals.breadcrumbs) {
                 locals.breadcrumbs = locals.breadcrumbs.filter(b => b.label);
                 if (req.originalUrl.startsWith("/search"))
