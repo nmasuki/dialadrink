@@ -637,21 +637,24 @@ Product.search = function (query, next, deepSearch) {
     }, function (err, products) {
         if (deepSearch || err || !products || !products.length) {
             if (products && products.length) allProducts = allProducts.concat(products);
-            return Product.findByCategory(filters, function (err, products) {
+            return Product.findPublished(filters, function (err, products) {
                 if (deepSearch || err || !products || !products.length) {
                     if (products && products.length) allProducts = allProducts.concat(products);
-                    return Product.findBySubCategory(filters, function (err, products) {
+                    return Product.findByCategory(filters, function (err, products) {
                         if (deepSearch || err || !products || !products.length) {
                             if (products && products.length) allProducts = allProducts.concat(products);
-                            return Product.findByBrand(filters, function (err, products) {
+                            return Product.findBySubCategory(filters, function (err, products) {
                                 if (deepSearch || err || !products || !products.length) {
                                     if (products && products.length) allProducts = allProducts.concat(products);
-                                    return Product.findByOption(filters, function (err, products) {
+                                    return Product.findByBrand(filters, function (err, products) {
                                         if (deepSearch || err || !products || !products.length) {
                                             if (products && products.length) allProducts = allProducts.concat(products);
-                                            return Product.findPublished(filters, function (err, products) {
-                                                if (products && products.length) allProducts = allProducts.concat(products);
-                                                next(err, allProducts.orderByDescending(p => p.hitsPerWeek));
+                                            return Product.findByOption(filters, function (err, products) {
+                                                if (deepSearch || err || !products || !products.length) {
+                                                    if (products && products.length) allProducts = allProducts.concat(products);
+                                                    next(err, allProducts.orderByDescending(p => p.hitsPerWeek));
+                                                } else
+                                                    next(err, products.orderByDescending(p => p.hitsPerWeek));
                                             });
                                         } else
                                             next(err, products.orderByDescending(p => p.hitsPerWeek));
@@ -665,6 +668,7 @@ Product.search = function (query, next, deepSearch) {
                 } else
                     next(err, products.orderByDescending(p => p.hitsPerWeek));
             });
+
         } else
             next(err, products.orderByDescending(p => p.hitsPerWeek));
     });
