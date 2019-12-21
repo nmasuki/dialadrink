@@ -430,14 +430,15 @@ Product.schema.pre('save', function (next) {
             tags.push(this.subCategory.name);
         if (this.options)
             this.options.forEach(po => tags.push(po.quantity));
-        return tags.filter(t => !!t)
+            
+        return tags.filter(t => !!t);
     }
 
     if (!this.tags || !this.tags.length)
         this.tags = defaultTags.call(this);
 
     this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"))
-    this.tags = this.tags.distinctBy();
+    this.tags = this.tags.distinctBy().orderBy();
     
     next();
 });

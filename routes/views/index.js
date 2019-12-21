@@ -68,6 +68,7 @@ function search(req, res, next) {
             if (categories.length != 1 && subCategories.length != 1)
                 return view.render('search');
 
+            /*
             if (categories.length == 1) {
                 var cat = categories[0].category;
                 if (cat && cat.name) {
@@ -83,7 +84,8 @@ function search(req, res, next) {
                     locals.page.meta = subCat.description || locals.page.meta || meta;
                 }
             }
-
+            */
+           
             if (locals.breadcrumbs) {
                 locals.breadcrumbs = locals.breadcrumbs.filter(b => b.label);
                 if (req.originalUrl.startsWith("/search"))
