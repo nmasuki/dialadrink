@@ -436,7 +436,8 @@ Product.schema.pre('save', function (next) {
     if (!this.tags || !this.tags.length)
         this.tags = defaultTags.call(this);
 
-    this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre")).discount();
+    this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"))
+    this.tags = this.tags.distinctBy();
     
     next();
 });
