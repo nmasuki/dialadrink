@@ -30,16 +30,14 @@ exports = module.exports = function (done) {
 
 
 
-            var tags = products.selectMany(p => p.tags).filter(t => t);
+            var tags = [];//products.selectMany(p => p.tags).filter(t => t);
             tags = tags
                 .filter(t => t.length <= 20)            
                 .map(t => t.replace("  ", " ").replace('`', "'"))
                 .map(t => t.replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"))
-                //.map(t => t.replace(/(\d+(.\d+)?)\s+(litre)/i, "$1 $3"))
                 .map(t => t.trim().toProperCase())
                 .concat(definedTags)
-                .distinctBy(t => t.toLowerCase())
-                .orderBy();
+                .distinctBy(t => t.toLowerCase());
             
             tags.forEach((t, i) => {
                 Product.search(t, (err, products)=>{
@@ -47,13 +45,17 @@ exports = module.exports = function (done) {
                         return console.log(err);
 
                     products.forEach(p => {
+                        var added = false;
                         if (!p.tags.contains(pt => pt && pt.trim().toLowerCase().contains(t.toLowerCase()))) {
                             p.tags.push(t);
-                            p.save(function(err){
-                                if(err) return;
-                                console.log(`Added tag:'${t}' to '${p.name}'`);
-                            });
+                            added =true;
                         }
+
+                        p.save(function (err) {
+                            if (err) return;
+                            if (added)
+                            console.log(`Added tag:'${t}' to '${p.name}'`);
+                        });
 
                         if (i >= tags.length - 1)
                             next();
