@@ -312,7 +312,7 @@ String.prototype.trim = function (charlist) {
 
 //
 if (!String.prototype.contains)
-    String.prototype.contains = function (search) {
+    String.prototype.contains = String.prototype.any = function (search) {
         if (typeof search == "function")
             return this.map(search).any(true);
         else if (search)

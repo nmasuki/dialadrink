@@ -436,6 +436,8 @@ Product.schema.pre('save', function (next) {
     if (!this.tags || !this.tags.length)
         this.tags = defaultTags.call(this);
 
+    this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre")).discount();
+    
     next();
 });
 
@@ -464,9 +466,7 @@ Product.schema.set('toJSON', {
 Product.register();
 
 Product.findPublished = function (filter, callback) {
-    filter = Object.assign(filter || {}, {
-        state: 'published'
-    });
+    filter = Object.assign(filter || {}, { state: 'published' });
     var a = keystone.list('Product').model.find(filter)
         .sort({
             popularity: -1
@@ -627,9 +627,7 @@ Product.search = function (query, next) {
     };
 
     //Searching by brand then category then product
-    return Product.findPublished({
-        href: new RegExp("^" + keyStr + "$", "i")
-    }, function (err, products) {
+    return Product.findPublished({ href: new RegExp("^" + keyStr + "$", "i") }, function (err, products) {
         if (err || !products || !products.length)
             return Product.findByCategory(filters, function (err, products) {
                 if (err || !products || !products.length)
