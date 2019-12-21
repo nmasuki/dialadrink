@@ -4,9 +4,8 @@ var cloudinary = require('cloudinary');
 var Types = keystone.Field.Types;
 
 var Product = new keystone.List('Product', {
-    map: {
-        name: 'name'
-    }
+    map: { name: 'name' },
+    autokey: { from: 'name', path: 'key' },
 });
 
 Product.add({

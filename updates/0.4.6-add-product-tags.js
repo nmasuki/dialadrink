@@ -28,6 +28,9 @@ exports = module.exports = function (done) {
                             p.save();
                         });
                     });
+                    
+                if(cat)
+                    cat.save();
             });
             
         done();

@@ -7,7 +7,7 @@ var Types = keystone.Field.Types;
  */
 
 var ProductCategory = new keystone.List('ProductCategory', {
-    autokey: {from: '_id', path: 'key', unique: true},
+    autokey: {from: 'name', path: 'key', unique: true},
 });
 
 ProductCategory.add({
