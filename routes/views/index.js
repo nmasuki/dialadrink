@@ -24,7 +24,7 @@ function search(req, res, next) {
             .toProperCase()).replace(/Whiskies|Whiskey|Wine|Gin/g, "").trim()
     });
 
-    locals.page.canonical = [keystone.get('url'), (req.params.query || "Search Results").cleanId()]
+    locals.page.canonical = [keystone.get('url'), (req.params.query || "").cleanId()]
         .filter(p => p).map(p => p.trim('/')).join('/');
 
     function renderResults(products, title) {
@@ -35,7 +35,7 @@ function search(req, res, next) {
         while (products[++i] && meta.length < 100) {
             meta += (meta ? ", " : "") + products[i].name;
             if (title.length < 40)
-                title += (title ? ", " : "") + products[i].name;
+                title += (title ? (i ? ", " : " - ") : "") + products[i].name;
         }
 
         if (!locals.page.meta)
@@ -60,13 +60,13 @@ function search(req, res, next) {
             locals.products = products;
             locals.uifilters = Product.getUIFilters(products);
 
-            var categories = products.distinctBy(p => p.category && (p.category.id || p.category));
-            var subCategories = products.distinctBy(p => p.subCategory && (p.subCategory.id || p.subCategory));
+            var categories = products.filter(p => p.category).distinctBy(p => p.category.id || p.category);
+            var subCategories = products.filter(p => p.subCategory).distinctBy(p => p.subCategory.id || p.subCategory);
 
-            if (categories.length != 1 && subCategories.length != 1)
-                return view.render('products');
+            if (categories.length > 2 || subCategories.length > 1)
+                return view.render('search');
 
-            if (locals.page.h1.length <= 5){
+            if (locals.page.h1.length <= 5) {
                 if (categories.length == 1) {
                     var cat = categories[0].category;
                     if (cat && cat.name) {
@@ -186,7 +186,7 @@ function search(req, res, next) {
             Product.search(req.params.query, function (err, products) {
                 if (err || !products || !products.length) {
                     if (req.originalUrl.startsWith("/search"))
-                        renderResults([]);
+                        renderResults([], req.params.query);
                     else {
                         // Render the page content if available
                         if (locals.page.content)
@@ -195,7 +195,7 @@ function search(req, res, next) {
                             res.status(404).render('errors/404');
                     }
                 } else {
-                    renderResults(products);
+                    renderResults(products, req.params.query);
                 }
             });
         }
@@ -317,7 +317,6 @@ router.get("/pricelist", function (req, res) {
         function printPdf(err, html, next) {
             if (html) {
                 var pdf = require('html-pdf');
-
                 let filename = encodeURIComponent("drinks pricelist") + '.pdf';
 
                 // Setting response to 'attachment' (download).
