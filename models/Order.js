@@ -355,9 +355,8 @@ Order.schema.methods.placeOrder = function (next) {
 
         //popularity goes up +100
         order.cart.forEach(c => {
-            keystone.list("Product").findOnePublished({
-                _id: c.product._id || c.product
-            }, (err, product) => {
+            if(c.isNew) c.save();
+            keystone.list("Product").findOnePublished({ _id: c.product._id || c.product }, (err, product) => {
                 if (product)
                     product.addPopularity(100);
             });
