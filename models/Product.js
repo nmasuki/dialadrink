@@ -474,8 +474,9 @@ Product.schema.pre('save', function (next) {
         "drink": "",
         "dial a drink":""
     };
-    this.tags = this.tags.map(t => keyWordMap[t.toLowerCase()] == undefined? t: keyWordMap[t.toLowerCase()]).filter(t => t);
-    this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"))
+
+    this.tags = this.tags.filter(t => t).map(t => keyWordMap[t.toLowerCase()] == undefined ? t : keyWordMap[t.toLowerCase()]);
+    this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"));
     this.tags = this.tags.distinctBy(t => t.toLowerCase().trim()).orderBy();
 
     var p = this;
