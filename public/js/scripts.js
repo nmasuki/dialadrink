@@ -664,7 +664,7 @@ function handleProductSorting() {
             if (property == 'price' && data.offerPrice)
                 return data.offerPrice;
             if(property == 'popularity')
-                return data.popularityRatio; // -data[property];
+                return -data.popularityRatio; // -data[property];
             if(property == 'size'){
                 if(data.options && data.options.length)
                     return data.options.max(function(o){ return getSize(o.quantity);});
@@ -720,13 +720,13 @@ function handleProductSorting() {
             $(this).parents(".dropdown-menu").hide();
 
             var sortBy = $(this).data('sortby') || 'name';
-            var sortAscending = !(app.getCookie('sortBy') == sortBy && (app.getCookie('sortDir') || 'asc') == 'asc');
+            var sortAscending = !(app.getCookie('sortBy') == sortBy && ($grid.data("sortDir") || 'asc') == 'asc');
             var sortDir = (sortAscending ? "asc" : "desc");
 
             $grid.isotope({ sortBy: sortBy, sortAscending: sortAscending });
-
-            app.setCookie("sortBy", sortBy);
-            app.setCookie("sortDir", sortDir);
+            $grid.data("sortDir", sortDir);
+            app.setCookie("sortBy", sortBy).setCookie("sortDir", sortDir);
+            
             console.log('Sorting by ' + sortBy + " " + sortDir);
 
             function changeSortDirIcon(i, el) {
