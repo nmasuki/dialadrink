@@ -468,7 +468,9 @@ Product.schema.pre('save', function (next) {
         "delivery": "",
         "free": "",
         "nairobi": "",
-        "price": "Best price",
+        "price": "",
+        "best price": "",
+        "drostdhof": "",
         "drink": "",
         "dial a drink":""
     };
