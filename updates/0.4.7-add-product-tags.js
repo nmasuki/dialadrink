@@ -60,7 +60,11 @@ exports = module.exports = function (done) {
                     products.forEach(p => {
                         var added = false;
                         if (!p.tags.contains(pt => pt && pt.trim().toLowerCase().contains(t.toLowerCase()))) {
-                            p.tags = p.tags.filter(pt => pt && t.toLowerCase().contains(pt.trim().toLowerCase()))
+                            p.tags = p.tags.filter(pt => {
+                                if (!pt) return false;
+                                pt = pt.trim().toLowerCase();
+                                return pt == t.toLowerCase() || !t.toLowerCase().contains(pt);
+                            }) ;
                             p.tags.push(t);
                             added =true;
                         }

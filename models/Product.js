@@ -438,6 +438,14 @@ Product.schema.pre('save', function (next) {
 
     this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"))
     this.tags = this.tags.distinctBy().orderBy();
+    this.tags.forEach(t => {
+        p.tags = p.tags.filter(pt => {
+            if(!pt) return false;
+            pt = pt.trim().toLowerCase();
+            t = t.toLowerCase();
+            return pt == t || !t.contains(pt);
+        });
+    });
 
     next();
 });
