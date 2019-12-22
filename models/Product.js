@@ -472,10 +472,11 @@ Product.schema.pre('save', function (next) {
         "best price": "",
         "drostdhof": "",
         "drink": "",
-        "dial a drink":""
+        "dial a drink":"",
+        "buy": ""
     };
 
-    this.tags = this.tags.filter(t => t).map(t => keyWordMap[t.toLowerCase()] == undefined ? t : keyWordMap[t.toLowerCase()]);
+    this.tags = this.tags.filter(t => t).map(t => keyWordMap[t.trim().toLowerCase()] == undefined ? t : keyWordMap[t.trim().toLowerCase()]);
     this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"));
     this.tags = this.tags.distinctBy(t => t.toLowerCase().trim()).orderBy();
 
@@ -750,7 +751,7 @@ Product.getUIFilters = function (products) {
     uifilters = uifilters.concat(tagsGroups.map(g => {
         return {
             filter: g[0].t.replace(regex, "").trim(),
-            hits: g.length * 0.75,
+            hits: g.length * 0.85,
             g: g
         };
     }));
@@ -791,7 +792,7 @@ Product.getUIFilters = function (products) {
         .distinctBy(f => f.g.map(p => p.id).orderBy(i => i).join("|"));
 
     strUIfilters.forEach(s => {
-        if (l <= 70) {
+        if (l <= 78) {
             i += 1;
             l += (s.filter || s).length;
         }
