@@ -735,8 +735,7 @@ function handleProductSorting() {
                     sortIcon = sortDir == "desc"? "asc": "desc";
 
                 var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortIcon);
-                if (cls) 
-                    $(el).attr("class", cls);
+                if (cls) $(el).attr("class", cls);
             }
 
             $(this).find('i.fa').each(changeSortDirIcon);
