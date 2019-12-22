@@ -15,23 +15,25 @@ var definedTags = [
 exports = module.exports = function (done) {
     var next = function(){
         console.log("Update done!", __filename);
-        ProductCategory.model.findOne({name: 'Cognac'})
-            .exec((err, cat) => {
-                Product.model.find({})
-                    .exec((err, products) => {
-                        if (err)
-                            return console.log(err);                        
+        setTimeout(function () {
+            ProductCategory.model.findOne({ name: 'Cognac' })
+                .exec((err, cat) => {
+                    Product.model.find({})
+                        .exec((err, products) => {
+                            if (err)
+                                return console.log(err);
 
-                        products.forEach(p => {
-                            if (cat && p.tags.contains(cat.name))
-                                p.category = cat;
-                            p.save();
+                            products.forEach(p => {
+                                if (cat && p.tags.contains(cat.name))
+                                    p.category = cat;
+                                p.save();
+                            });
                         });
-                    });
-                    
-                if(cat)
-                    cat.save();
-            });
+
+                    if (cat)
+                        cat.save();
+                });
+        }, 5000);
             
         done();
     };
@@ -59,9 +61,10 @@ exports = module.exports = function (done) {
 
                     products.forEach(p => {
                         var added = false;
-                        if (!p.tags.contains(pt => pt && pt.trim().toLowerCase().contains(t.toLowerCase()))) {
+                        if (!p.tags.filter(t => t.length <= 20).contains(pt => pt && pt.trim().toLowerCase().contains(t.toLowerCase()))) {
                             p.tags = p.tags.filter(pt => {
                                 if (!pt) return false;
+                                if (pt.length > 20) return true;
                                 pt = pt.trim().toLowerCase();
                                 return pt == t.toLowerCase() || !t.toLowerCase().contains(pt);
                             }) ;
@@ -72,7 +75,7 @@ exports = module.exports = function (done) {
                         p.save(function (err) {
                             if (err) return;
                             if (added)
-                                console.log(`Added tag:'${t}' to '${p.name}'`);
+                                console.log(`Added tag:'${t}' to '${p.name}'`, p.tags.join(', '));
                             
                             if (i >= tags.length - 1)
                                 next();
