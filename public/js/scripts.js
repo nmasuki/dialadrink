@@ -719,18 +719,15 @@ function handleProductSorting() {
         $(".sort-products").click(function (e) {
             $(this).parents(".dropdown-menu").hide();
 
-            var sortBy = $(this).data('sortby') || 'name';
-            var sortAscending = !($grid.data('sortedBy') == sortBy && ($grid.data('sortDir') || 'asc') == 'asc');
+            var sortBy = app.getCookie('sortBy') || 'popularity';
+            var sortAscending = !(app.getCookie('sortBy') == sortBy && (app.getCookie('sortDir') || 'asc') == 'asc');
             var sortDir = (sortAscending ? "asc" : "desc");
 
-            $grid.isotope({
-                sortBy: sortBy,
-                sortAscending: sortAscending
-            });
+            $grid.isotope({ sortBy: sortBy, sortAscending: sortAscending });
 
-            $grid.data("sortedBy", sortBy);
-            $grid.data("sortDir", (sortAscending ? "asc" : "desc"));
-            console.log('Sorting by ' + sortBy + " " + (sortAscending ? "asc" : "desc"));
+            app.setCookie("sortBy", sortBy);
+            app.setCookie("sortDir", sortDir);
+            console.log('Sorting by ' + sortBy + " " + sortDir);
 
             function changeSortDirIcon(i, el) {
                 var sortIcon = sortDir;
@@ -748,11 +745,11 @@ function handleProductSorting() {
         });
         
         /***/
-        $grid.data("sortDir", "asc");
-        $grid.data("sortedBy", "name");
+        var sortBy = app.getCookie("sortBy") || "name";
+        var sortDir = app.getCookie("sortDir") || "asc";
         $grid.isotope({
-            sortBy: 'name',
-            sortAscending: true
+            sortBy: sortBy,
+            sortAscending: sortDir == "asc"
         });
         /****/
     } else {

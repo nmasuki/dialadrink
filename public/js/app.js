@@ -8,10 +8,23 @@ function getCookie(name) {
 	return document.cookie.substr(start, (sepPos < 0 ? document.cookie.length : sepPos) - start);
 }
 
+function setCookie(name, value, days) {
+	var expires = "";
+	if (days) {
+		var date = new Date().addDatys(days);
+		expires = "; expires=" + date.toUTCString();
+	}
+	document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
 var app = {
 	csrf_token: getCookie("XSRF-TOKEN"), // $('meta[name="_csrf"]').attr('content'),
 
 	type: ['', 'info', 'success', 'warning', 'danger'],
+
+	getCookie: getCookie,
+
+	setCookie: setCookie,
 
 	cartUtil: new window.cartUtil(),
 
