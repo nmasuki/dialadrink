@@ -186,7 +186,7 @@ function search(req, res, next) {
             Product.search(req.params.query, function (err, products) {
                 if (err || !products || !products.length) {
                     if (req.originalUrl.startsWith("/search"))
-                        renderResults([], req.params.query);
+                        renderResults([], req.params.query.replace(/\W/, " "));
                     else {
                         // Render the page content if available
                         if (locals.page.content)
@@ -195,7 +195,7 @@ function search(req, res, next) {
                             res.status(404).render('errors/404');
                     }
                 } else {
-                    renderResults(products, req.params.query);
+                    renderResults(products, req.params.query.replace(/\W/, " "));
                 }
             });
         }
