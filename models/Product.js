@@ -436,10 +436,10 @@ Product.schema.pre('save', function (next) {
     if (!this.tags || !this.tags.length)
         this.tags = defaultTags.call(this);
 
-    var longTags = this.tags.filter(t => t.length > 20 && t.contains(" "));
+    var longTags = this.tags.filter(t => t && t.length > 20 && t.contains(" "));
 
     if (longTags.length){
-        this.tags = this.tags.filter(t => t.length <= 20 || !t.contains(" "));
+        this.tags = this.tags.filter(t => t && t.length <= 20 || !t.contains(" "));
         var sentence = longTags.join(", ").replace(/(&nbsp;?)/g, " ")
             .replace(/\W/g, function (x) { return (x.trim() + " "); })
             .truncate(500);
