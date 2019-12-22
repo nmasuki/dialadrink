@@ -451,10 +451,28 @@ Product.schema.pre('save', function (next) {
             remove_duplicates: true
         });
 
-        keyWords = keyWords.filter(s => s && s.length > 2);
-        this.tags = this.tags.concat(keyWords);
+        this.tags = this.tags.concat(keyWords.filter(s => s && s.length > 2));
     }
 
+    if (this.tags.some(t => t == "Whisky") && !this.tags.some(t => t == "Whiskey"))
+        this.tags.push("Whiskey");
+
+    if (this.tags.some(t => t == "Whiskey") && !this.tags.some(t => t == "Whisky"))
+        this.tags.push("Whisky");
+
+    var keyWordMap = {
+        "alcohol": "",
+        "content": "",
+        "kenya": "",
+        "extras": "",
+        "delivery": "",
+        "free": "",
+        "nairobi": "",
+        "price": "Best price",
+        "drink": "",
+        "dial a drink":""
+    };
+    this.tags = this.tags.map(t => keyWordMap[t.toLowerCase()] == undefined? t: keyWordMap[t.toLowerCase()]).filter(t => t);
     this.tags = this.tags.map(t => t.replace("  ", " ").replace('`', "'").replace(/(\d+(.\d+)?)\s+(m?l)/i, "$1$3").replace("Litre", "litre"))
     this.tags = this.tags.distinctBy(t => t.toLowerCase().trim()).orderBy();
 

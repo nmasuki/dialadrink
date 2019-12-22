@@ -3,7 +3,7 @@ var Product = keystone.list('Product');
 var ProductCategory = keystone.list('ProductCategory');
 
 var definedTags = [
-    "Cognac", "VSOP", "VS", "XO",
+    "Cognac", "VSOP", "VS", "XO","Chocolate", "Cream",
     "Scotch", "Bourbon", "Single Malt", "Irish", "Blended", "Japanese", "Rye", "Malt", "Tennessee", "Grain", 
     "Single Pot Still", "Corn", "White", "Red", "Dry", "Rose", "Sparkling", "Riesling", 
     "Pinot Gris", "Sauvignon Blanc", "Cabernet Sauvignon", "Chardonnay", "Pinot Noir", "Zinfandel", "Syrah", 
