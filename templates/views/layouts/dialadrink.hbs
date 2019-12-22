@@ -336,10 +336,10 @@
                                     <span id="sortby" style="padding-left: 5px;">Sorted by Name</span>
                                     <i class="fa fa-sort-amount-asc" style="float: right; padding:6px;"></i>
                                 </span>
-                                <ul class="dropdown-menu" style="display: none; left: -67%;">
+                                <ul class="dropdown-menu" style="display: none; left: -30%;">
                                     <li class="noselect sort-products" data-sortby="name">Name<i class="fa fa-sort-alpha-asc" style="float: right;padding-right: 5px;"></i></li>
                                     <li class="noselect sort-products" data-sortby="price">Price<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
-                                    <li class="noselect sort-products" data-sortby="popularity">Popularity<i class="fa fa-sort-alpha-asc" style="float: right;padding-right: 5px;"></i></li>
+                                    <li class="noselect sort-products" data-sortby="popularity">Popularity<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
                                     <li class="noselect sort-products" data-sortby="size">Quantity<i class="fa fa-sort-numeric-asc" style="float: right;padding-right: 5px;"></i></li>
                                 </ul>             
                             </div>
@@ -364,7 +364,9 @@
                             <div style="float: left; min-width: 80px"><b style="">{{@key}}</b>:</div> 
                             {{#each this}}
                                 <a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a>
+                                {{#unless @last}}
                                 <span style="color: #F44336"> | </span>
+                                {{/unless}}
                             {{/each}}
                         </div>
                     {{/each}}
