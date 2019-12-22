@@ -436,7 +436,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
             //Send SMS Notification to vender
             if(!order.notificationSent){
                 order.notificationSent = true;
-                var items = order.cart;
+                var items = order.cart.filter(c => !!c);
                 var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`.trim();
                 var msg = `${order.payment.method} order received from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
                 var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
@@ -447,8 +447,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                     promise.then(() => sms.sendSMS(vendorNumber, msg));
                 }
                 else /** */
-                if(location)
-                {
+                if(location){
                     var mapUrl = location.url || `http://maps.google.com/maps?daddr=${location.lat},${location.lng}`;
                     
                     var p = new Promise((resolve, reject) => {
@@ -583,15 +582,8 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
 
     var order = new Order.model({
         cart: cart.map(item => {
-            //console.log(item)
-            var cartItem = new CartItem.model({});
-
-            cartItem.date = item.date;
-            cartItem.state = item.state;
-            cartItem.pieces = item.pieces;
-            cartItem.quantity = item.quantity;
-            cartItem.product = item.product;
-
+            delete item._id;
+            var cartItem = new CartItem.model(item);
             cartItem.save();
             return cartItem;
         }),
@@ -647,9 +639,7 @@ var autoId = 7000000 + (10000000 * Math.random());
 
 Order.getNextOrderId = () => (autoId = (autoId + 100));
 
-Order.model.find().sort({
-        'orderNumber': -1
-    })
+Order.model.find().sort({ 'orderNumber': -1 })
     .limit(1)
     .exec(function (err, data) {
         if (data[0] && data[0].orderNumber)
