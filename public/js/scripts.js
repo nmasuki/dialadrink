@@ -719,7 +719,7 @@ function handleProductSorting() {
         $(".sort-products").click(function (e) {
             $(this).parents(".dropdown-menu").hide();
 
-            var sortBy = app.getCookie('sortBy') || 'popularity';
+            var sortBy = $(this).data('sortby') || 'name';
             var sortAscending = !(app.getCookie('sortBy') == sortBy && (app.getCookie('sortDir') || 'asc') == 'asc');
             var sortDir = (sortAscending ? "asc" : "desc");
 
@@ -745,12 +745,8 @@ function handleProductSorting() {
         });
         
         /***/
-        var sortBy = app.getCookie("sortBy") || "name";
-        var sortDir = app.getCookie("sortDir") || "asc";
-        $grid.isotope({
-            sortBy: sortBy,
-            sortAscending: sortDir == "asc"
-        });
+        var sortBy = app.getCookie("sortBy") || "popularity";
+        $(".sort-products[data-sortby=" + sortBy + "]").trigger('click');
         /****/
     } else {
         $(".filter, .sorting").hide();

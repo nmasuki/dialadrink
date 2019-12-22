@@ -3,6 +3,7 @@
  */
 
 function getCookie(name) {
+	if (!name || document.cookie.indexOf(name) == -1) return null;
 	var start = document.cookie.indexOf(name) + name.length + 1;
 	var sepPos = document.cookie.indexOf(";", start);
 	return document.cookie.substr(start, (sepPos < 0 ? document.cookie.length : sepPos) - start);
