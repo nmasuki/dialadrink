@@ -241,6 +241,7 @@ Order.schema.virtual("chargesAmt").get(function () {
 Order.schema.virtual("subtotal").get(function () {
     if (this.cart)
         return this.cart.sum(function (c) {
+            if(!c) return 0;
             var price = c.pieces * c.price;
             if (c.offerPrice && c.price > c.offerPrice)
                 price = c.pieces * c.offerPrice;
