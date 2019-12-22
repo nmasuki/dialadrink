@@ -24,7 +24,8 @@ function search(req, res, next) {
             .toProperCase()).replace(/Whiskies|Whiskey|Wine|Gin/g, "").trim()
     });
 
-    locals.page.canonical = "https://www.dialadrinkkenya.com/" + (req.params.query || "Search Results").cleanId();
+    locals.page.canonical = [keystone.get('url'), (req.params.query || "Search Results").cleanId()]
+        .filter(p => p).map(p => p.trim('/')).join('/');
 
     function renderResults(products, title) {
         title = (title || "").toProperCase();
@@ -63,7 +64,7 @@ function search(req, res, next) {
             var subCategories = products.distinctBy(p => p.subCategory && (p.subCategory.id || p.subCategory));
 
             if (categories.length != 1 && subCategories.length != 1)
-                return view.render('search');
+                return view.render('products');
 
             if (locals.page.h1.length <= 5){
                 if (categories.length == 1) {
@@ -95,7 +96,6 @@ function search(req, res, next) {
                         label: locals.page.h1,
                         href: req.originalUrl
                     });
-
             }
 
             view.render('products');
@@ -124,14 +124,13 @@ function search(req, res, next) {
                 href: "/" + product.href
             });
 
+            locals.page.canonical = [keystone.get('url'), product.href].map(p => p.trim('/')).join('/');
             locals.page.title = product.pageTitle || [
                 product.name,
                 product.category && product.category.name,
                 product.subCategory && product.subCategory.name,
                 product.brand && product.brand.name,
             ].filter(a => !!a).join(" - ") + " | " + keystone.get("name");
-
-            locals.page.canonical = "https://www.dialadrinkkenya.com/" + product.href;
 
             locals.userRating = product.ratings && product.ratings.find(r => r.userId === req.session.id);
             locals.page.keyWords = product.keyWords.join(", ");
@@ -359,7 +358,7 @@ router.get("/products.json", function (req, res) {
 
         res.send(products.map(d => {
             var obj = Object.assign({}, d.toObject(), {
-                url: 'https://www.dialadrinkkenya.com/' + d.href,
+                url: [keystone.get('url'), d.href].filter(p => p).map(p => p.trim('/')).join('/'),
                 image: d.image.secure_url,
                 images: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
                 category: d.category ? d.category.name : null,

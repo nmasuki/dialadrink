@@ -5,7 +5,7 @@ var url = require('url');
 var Crawler = require('../helpers/Crawler');
 var MenuItem = keystone.list('MenuItem');
 var Page = keystone.list('Page');
-var baseUrl = keystone.get("url") || "https://www.dialadrinkkenya.com/";
+var baseUrl = keystone.get("url");
 
 var docParser;
 try {

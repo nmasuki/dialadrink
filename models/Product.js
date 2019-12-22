@@ -367,7 +367,7 @@ Product.schema.methods.toAppObject = function () {
     };
 
     var obj = Object.assign({}, this.toObject(), {
-        url: 'https://www.dialadrinkkenya.com/' + d.href,
+        url: [keystone.get('url'), d.href].map(p=>p.trim('/')).join('/'),
         imageFullSize: d.image.secure_url,
         imagesFullSize: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
         image: cloudinary.url(d.image.public_id, cloudinaryOptions),

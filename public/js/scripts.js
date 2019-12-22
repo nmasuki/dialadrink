@@ -317,11 +317,8 @@ function handleSearchAutoComplete() {
                 $.ajax({
                     url: "/search/" + request.term,
                     dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function (data) {
-                        response(data.results);
+                    success: function (results) {
+                        response(results.data);
                     }
                 });
             },

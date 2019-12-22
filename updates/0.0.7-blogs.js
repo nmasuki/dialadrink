@@ -4,7 +4,7 @@ var cloudinary = require("cloudinary");
 var User = keystone.list('User');
 var Blog = keystone.list('Blog');
 var BlogCategory = keystone.list('BlogCategory');
-var baseUrl = keystone.get("url") || "https://www.dialadrinkkenya.com/";
+var baseUrl = keystone.get("url");
 
 var docParser;
 try {

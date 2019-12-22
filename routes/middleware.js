@@ -120,7 +120,7 @@ exports.initLocals = function (req, res, next) {
         //Initiate Page details
         res.locals.page = {
             title: keystone.get("name"),
-            canonical: "https://www.dialadrinkkenya.com" + req.originalUrl
+            canonical: [res.locals.appUrl, req.originalUrl].filter(p => p).map(p => p.trim('/')).join('/')
         };
 
         Promise.all([
@@ -312,7 +312,7 @@ exports.flashMessages = function (req, res, next) {
     res.locals.messages = _.some(flashMessages, function (msgs) {
         return msgs.length;
     }) ? flashMessages : false;
-    
+
     next();
 };
 
