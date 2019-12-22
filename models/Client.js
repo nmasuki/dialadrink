@@ -505,9 +505,7 @@ Client.schema.pre('save', function (next) {
     if (findOption.$or.length) {
         var client = this;
         keystone.list("Order").model.find(findOption)
-            .sort({
-                orderDate: -1
-            })
+            .sort({ orderDate: -1 })
             .deepPopulate('cart.product.priceOptions.option')
             .exec((err, orders) => {
                 if (err)
