@@ -750,7 +750,7 @@ Product.getUIFilters = function (products) {
     uifilters = uifilters.concat(tagsGroups.map(g => {
         return {
             filter: g[0].t.replace(regex, "").trim(),
-            hits: g.length * 0.5,
+            hits: g.length * 0.75,
             g: g
         };
     }));
