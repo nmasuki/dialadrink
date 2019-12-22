@@ -720,11 +720,11 @@ function handleProductSorting() {
             $(this).parents(".dropdown-menu").hide();
 
             var sortBy = $(this).data('sortby') || 'name';
-            var sortAscending = !(app.getCookie('sortBy') == sortBy && ($grid.data("sortDir") || 'asc') == 'asc');
+            var sortAscending = !($grid.data("sortBy") == sortBy && ($grid.data("sortDir") || 'asc') == 'asc');
             var sortDir = (sortAscending ? "asc" : "desc");
 
             $grid.isotope({ sortBy: sortBy, sortAscending: sortAscending });
-            $grid.data("sortDir", sortDir);
+            $grid.data("sortBy", sortBy).data("sortDir", sortDir);
             app.setCookie("sortBy", sortBy).setCookie("sortDir", sortDir);
             
             console.log('Sorting by ' + sortBy + " " + sortDir);
