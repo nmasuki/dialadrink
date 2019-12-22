@@ -3,7 +3,7 @@ var Product = keystone.list('Product');
 var ProductCategory = keystone.list('ProductCategory');
 
 var definedTags = [
-    "Cognac", "VS", "VSOP", "XO",
+    "Cognac", "VSOP", "VS", "XO",
     "Scotch", "Bourbon", "Single Malt", "Irish", "Blended", "Japanese", "Rye", "Malt", "Tennessee", "Grain", 
     "Single Pot Still", "Corn", "White", "Red", "Dry", "Rose", "Sparkling", "Riesling", 
     "Pinot Gris", "Sauvignon Blanc", "Cabernet Sauvignon", "Chardonnay", "Pinot Noir", "Zinfandel", "Syrah", 
@@ -60,6 +60,7 @@ exports = module.exports = function (done) {
                     products.forEach(p => {
                         var added = false;
                         if (!p.tags.contains(pt => pt && pt.trim().toLowerCase().contains(t.toLowerCase()))) {
+                            p.tags = p.tags.filter(pt => pt && t.toLowerCase().contains(pt.trim().toLowerCase()))
                             p.tags.push(t);
                             added =true;
                         }
