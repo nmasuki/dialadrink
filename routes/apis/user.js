@@ -103,11 +103,13 @@ router.get("/check/:mobile", function (req, res){
             var json = {
                 response: "error",
                 message: "",
+                isRegistered: false,
                 data: {}
             };
 
-            if (client && client.isAppRegistered) {
+            if (client) {
                 json.response = "success";
+                json.isRegistered = !!client.isAppRegistered;
             } else {
                 json.message = "User not yet registered!";
             }
@@ -203,7 +205,7 @@ router.post("/forgot", function(req, res){
             }
             
             var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
-            sms.sendSMS(client.phoneNumber, msg + "\r\n" + process.env.APP_ID);
+            sms.sendSMS(client.phoneNumber, msg + "\r\n" + process.env.APP_ID || "");
             
             //TODO send SMS/Email.
             json.response = "success";
