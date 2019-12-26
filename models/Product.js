@@ -473,7 +473,8 @@ Product.schema.pre('save', function (next) {
         "drostdhof": "",
         "drink": "",
         "dial a drink":"",
-        "buy": ""
+        "buy": "",
+        "price in kenya": ""
     };
 
     this.tags = this.tags.filter(t => t).map(t => keyWordMap[t.trim().toLowerCase()] == undefined ? t : keyWordMap[t.trim().toLowerCase()]);

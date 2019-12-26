@@ -83,6 +83,39 @@ router.post("/", function (req, res) {
     }
 });
 
+router.get("/check/:mobile", function (req, res){
+    var mobile = (req.params.mobile || "").cleanPhoneNumber();
+    if (!mobile)
+        return res.send({
+            response: "error",
+            message: "Mobile number required!!"
+        });
+
+    Client.model.find({ phoneNumber: mobile })
+        .exec((err, clients) => {
+            if (err)
+                return res.send({
+                    response: "error",
+                    message: "Error while reading registered users. " + err
+                });
+
+            var client = clients && clients[0];
+            var json = {
+                response: "error",
+                message: "",
+                data: {}
+            };
+
+            if (client && client.isAppRegistered) {
+                json.response = "success";
+            } else {
+                json.message = "User not yet registered!";
+            }
+
+            res.send(json);
+        });
+});
+
 router.post("/signup", function (req, res) {
     var mobile = (req.body.mobile || "").cleanPhoneNumber();
     var password = req.body.password || "";
@@ -94,9 +127,7 @@ router.post("/signup", function (req, res) {
             message: "Username and password are required!!"
         });
 
-    Client.model.find({
-            phoneNumber: mobile
-        })
+    Client.model.find({ phoneNumber: mobile })
         .exec((err, clients) => {
 
             if (err)
@@ -115,7 +146,7 @@ router.post("/signup", function (req, res) {
             };
 
             if (client && client.isAppRegistered) {
-                json.message = "Mobile Already Exist";
+                json.message = "User is already registered!";
                 res.send(json);
             } else {
                 client = client || new Client.model({});
@@ -144,7 +175,6 @@ router.post("/signup", function (req, res) {
             }
         });
 });
-
 
 router.post("/forgot", function(req, res){
     var phoneNumber = req.body.mobile;
