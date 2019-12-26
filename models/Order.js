@@ -339,7 +339,7 @@ Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!");
     var order = this;
     order.sendOrderNotification().then((data) => {
-        console.log("Updating order state='placed'!", data);
+        console.log("Updating order state='placed'!", data.orderNumber);
 
         //Update order state
         order.state = 'placed';
