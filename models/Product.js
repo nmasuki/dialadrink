@@ -520,13 +520,9 @@ Product.schema.set('toJSON', {
 Product.register();
 
 Product.findPublished = function (filter, callback) {
-    filter = Object.assign(filter || {}, {
-        state: 'published'
-    });
+    filter = Object.assign(filter || {}, { state: 'published'  });
     var a = keystone.list('Product').model.find(filter)
-        .sort({
-            popularity: -1
-        })
+        .sort({ popularity: -1 })
         .populate('brand')
         .populate('category')
         .populate('ratings')

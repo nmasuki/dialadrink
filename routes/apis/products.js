@@ -22,7 +22,7 @@ router.get("/", function (req, res) {
             json.message = "Error fetching drinks! " + err;
         else {
             json.response = "success";
-            json.data = products.map(d => d.toAppObject());
+            json.data = products.orderBy(p => p.hitsPerWeek).map(d => d.toAppObject());
         }
 
         res.send(json);
