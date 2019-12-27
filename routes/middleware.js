@@ -93,7 +93,7 @@ exports.initLocals = function (req, res, next) {
     var { username, password } = getAuthInfo(req);
     //Other locals only applied to views and not ajax calls
     if (username || password) {
-        console.log(`API call from IP:${res.locals.clientIp || ""}, User:${username}`);
+        //console.log(`API call from IP:${res.locals.clientIp || ""}, User:${username}`);
         return next();
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
