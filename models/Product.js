@@ -382,7 +382,8 @@ Product.schema.methods.toAppObject = function () {
         company: d.brand && d.brand.company ? d.brand.company.name : null,
         price: d.price,
         currency: d.currency,
-        options: d.options
+        options: d.options,
+        inStock: !!d.inStock
     });
 
     ["__v", 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
