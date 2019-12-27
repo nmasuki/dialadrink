@@ -110,8 +110,6 @@ router.get("/check/:mobile", function (req, res){
             if (client) {
                 json.response = "success";
                 json.isRegistered = !!client.isAppRegistered;
-            } else {
-                json.message = "User not yet registered!";
             }
 
             res.send(json);
