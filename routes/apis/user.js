@@ -101,16 +101,10 @@ router.get("/check/:mobile", function (req, res){
 
             var client = clients && clients[0];
             var json = {
-                response: "error",
+                response: "success",
                 message: "",
-                isRegistered: false,
-                data: {}
+                isRegistered: !!(client && client.isAppRegistered)
             };
-
-            if (client) {
-                json.response = "success";
-                json.isRegistered = !!client.isAppRegistered;
-            }
 
             res.send(json);
         });
