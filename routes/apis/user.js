@@ -140,6 +140,7 @@ router.post("/signup", function (req, res) {
             };
 
             if (client && client.isAppRegistered) {
+                json.response = "success";
                 json.message = "User is already registered!";
                 res.send(json);
             } else {
