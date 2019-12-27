@@ -40,6 +40,7 @@ router.get("/categories", function (req, res) {
     };
     
     ProductCategory.model.find()
+        .populate("menus")
         .exec((err, categories) => {
             var json = {
                 response: "error",
@@ -51,7 +52,13 @@ router.get("/categories", function (req, res) {
                 json.message = "Error fetching drinks! " + err;
             else if (categories && categories.length) {
                 json.response = "success";
-                json.data = categories.map(d => {
+                json.data = categories.orderBy(c => {
+                    var menu = c.menus
+                        .filter(m => m.type == "top")
+                        .orderBy(m => m.index)[0];
+
+                    return menu? menu.index: 100;
+                }).map(d => {
                     return {
                         id: d.id,
                         slug: d.key,
