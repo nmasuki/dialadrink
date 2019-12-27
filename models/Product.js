@@ -355,12 +355,19 @@ Product.schema.methods.toAppObject = function () {
     var d = this;
 
     var cloudinaryOptions = {
-        transformation: [{
-                background: "white"
-            },
+        transformation: [{ background: "white" },
             {
                 width: 250,
                 height: 250,
+                crop: "fill"
+            }
+        ]
+    };
+    var cloudinarySmallImageOptions = {
+        transformation: [{ background: "white" },
+            {
+                width: 24,
+                height: 24,
                 crop: "fill"
             }
         ]
@@ -370,6 +377,8 @@ Product.schema.methods.toAppObject = function () {
         url: [keystone.get('url'), d.href].map(p=>p.trim('/')).join('/'),
         imageFullSize: d.image.secure_url,
         imagesFullSize: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
+        imageSmallSize: cloudinary.url(d.image.public_id, cloudinarySmallImageOptions),
+        imagesSmallSize: d.altImages ? d.altImages.map(a => cloudinary.url(a.public_id, cloudinarySmallImageOptions)): [],
         image: cloudinary.url(d.image.public_id, cloudinaryOptions),
         images: d.altImages ? d.altImages.map(a => a && a.secure_url || cloudinary.url(a.public_id, cloudinaryOptions)) : [],
         category: d.category ? d.category.name : null,
@@ -382,11 +391,11 @@ Product.schema.methods.toAppObject = function () {
         company: d.brand && d.brand.company ? d.brand.company.name : null,
         price: d.price,
         currency: d.currency,
-        options: d.options,
-        inStock: !!d.inStock
+        inStock: !!d.inStock,
+        hitsPerWeek: d.hitsPerWeek
     });
 
-    ["__v", 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
+    ["__v", 'options', 'cheapestOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
         delete obj[i];
     });
 

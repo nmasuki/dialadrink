@@ -1,5 +1,4 @@
 var keystone = require('keystone');
-
 var CartItem = keystone.list("CartItem");
 var Product = keystone.list("Product");
 
@@ -18,9 +17,9 @@ function addToCart(req, res, callback) {
 		cart[cartId].modifiedDate = new Date();
 
 		//popularity goes up 10x
-		Product.findOnePublished({_id: cart[cartId].product._id }, (err, product)=>{
+		Product.findOnePublished({_id: cart[cartId].product._id }, (err, product) => {
 			if(err)
-				console.err(err);
+				return console.err(err);
 			product.addPopularity(10);
 			cart[cartId].name = product.name;
 		});
@@ -85,12 +84,12 @@ router.get('/update/:id/:pieces', function (req, res) {
 	if (typeof(cart[id]) != "undefined") {
 		console.log("Updating cart", id, 'value', parseInt(pieces));
 		cart[id].pieces = parseInt(pieces);
-		res.send({state: true, msg: 'success', item: cart[id]})
+		res.send({state: true, msg: 'success', item: cart[id]});
 	} else {
-		res.send({state: false, msg: 'Cart not found!!'})
+		res.send({state: false, msg: 'Cart not found!!'});
 	}
 
-})
+});
 
 router.get('/remove/:id', function (req, res) {
 	var id = req.params.id;
@@ -103,7 +102,8 @@ router.get('/remove/:id', function (req, res) {
 });
 
 router.get('/empty', function (req, res) {
-	delete req.session.data;
+	delete req.session.cart;
+	req.session.save();
 });
 
 exports = module.exports = router;

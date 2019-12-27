@@ -19,7 +19,7 @@ router.get("/", function(req, res){
         client.phoneNumber.cleanPhoneNumber().replace(/\+?245/, "0")
     ];
 
-    Order.model.find({'delivery.phoneNumber':{ $in:phoneNos}})
+    Order.model.find({'delivery.phoneNumber':{ $in:phoneNos }})
         .deepPopulate('cart.product')
         .populate('')
         .exec((err, orders)=>{
@@ -53,12 +53,10 @@ router.post("/", function (req, res){
             json.response = "success";
             var cartItems = getCartItems(req);
             var promo = req.session.promo || {};
-            var deliveryDetails = Object.assign({ }, 
-                client.toObject(), req.body, 
-                {
-                    platform: req.session.platform,
-                    clientIp: res.locals && res.locals.clientIp
-                });	
+            var deliveryDetails = Object.assign({ }, client.toObject(), req.body, {
+                platform: req.session.platform,
+                clientIp: res.locals && res.locals.clientIp
+            });	
 
             Order.checkOutCartItems(cartItems, promo, deliveryDetails, function(err, order){
                 if (err)
