@@ -54,7 +54,7 @@ router.get("/categories", function (req, res) {
                 json.response = "success";
                 json.data = categories.orderBy(c => {
                     var menu = c.menus
-                        .filter(m => m.type == "top")
+                        .filter(m => m.level == 1 && m.type == "top")
                         .orderBy(m => m.index)[0];
 
                     return menu? menu.index: 100;
