@@ -142,6 +142,8 @@ router.post("/signup", function (req, res) {
             if (client && client.isAppRegistered) {
                 json.response = "success";
                 json.message = "User is already registered!";
+                json.data = client.toAppObject();
+
                 res.send(json);
             } else {
                 client = client || new Client.model({});
