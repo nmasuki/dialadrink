@@ -496,6 +496,14 @@ Order.schema.methods.sendOrderNotification = function (next) {
         });
 };
 
+Order.schema.method.toAppObject = function(){
+    var obj = Object.assign(this.toObject(), {
+        product: this.product.toAppObject()
+    });
+    
+    return obj;
+};
+
 Order.schema.set('toObject', {
     transform: function (order, ret, options) {
         var charges = [];

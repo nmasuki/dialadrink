@@ -10,24 +10,22 @@ router.get("/", function(req, res){
     var client = res.locals.appUser;
     var json = { 
         response: "error",
-        message: 'Error getting user Orders.',
         data: []
     };
 
     var phoneNos = [
         client.phoneNumber.cleanPhoneNumber(), 
-        client.phoneNumber.cleanPhoneNumber().replace(/\+?245/, "0")
+        client.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
     ];
 
     Order.model.find({'delivery.phoneNumber':{ $in:phoneNos }})
         .deepPopulate('cart.product')
-        .populate('')
-        .exec((err, orders)=>{
-            if (err)
-                json.message += "! " + err;
-            else{
+        .exec((err, orders) => {
+            if (err){
+                json.message = "Error getting user Orders! " + err;
+            } else {
                 json.response = "success";
-                json.data = orders.orderByDescending(o => o.orderDate).map(o => o.toObject());
+                json.data = orders.orderByDescending(o => o.orderDate).map(o => o.toAppObject());
             }
             
             return res.send(json);

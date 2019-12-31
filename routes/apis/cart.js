@@ -9,7 +9,7 @@ function addToCart(req, res, callback) {
 	var opt = req.params.opt;
 	var pieces = parseInt(req.params.pieces || 1);
 
-	var cartId = id + "|" + opt;
+	var cartId = id + (opt ? "|" + opt: "");
 	var cart = req.session.cart || (req.session.cart = {});
 	if (cart[cartId]) {
 
@@ -86,7 +86,9 @@ router.get('/update/:id/:pieces', function (req, res) {
 		cart[id].pieces = parseInt(pieces);
 		res.send({state: true, msg: 'success', item: cart[id]});
 	} else {
-		res.send({state: false, msg: 'Cart not found!!'});
+		addToCart(req, res, function (cartItem, msg) {
+			return res.send({state: true, msg: msg, item: cartItem});
+		});
 	}
 
 });
