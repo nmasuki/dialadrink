@@ -87,7 +87,7 @@ CartItem.schema.virtual("cartId").get(function () {
     return (this.product && (this.product._id || this.product)) + "|" + this.quantity;
 });
 
-CartItem.schema.method.toAppObject = function () {
+CartItem.schema.methods.toAppObject = function () {
     var obj = Object.assign(this.toObject(), {
         product: this.product && this.product.toAppObject ? this.product.toAppObject() : {}
     });
