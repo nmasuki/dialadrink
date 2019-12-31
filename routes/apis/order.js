@@ -25,7 +25,12 @@ router.get("/", function(req, res){
                 json.message = "Error getting user Orders! " + err;
             } else {
                 json.response = "success";
-                json.data = orders.orderByDescending(o => o.orderDate).map(o => o.toAppObject());
+                json.data = orders.orderByDescending(o => o.orderDate)
+                    .map(o => {
+                        var obj = o.toAppObject();
+
+                        return obj;
+                    });
             }
             
             return res.send(json);
