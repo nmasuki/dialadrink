@@ -496,7 +496,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
         });
 };
 
-Order.schema.method.toAppObject = function(){
+Order.schema.method.toAppObject = function () {
     var obj = Object.assign(this.toObject(), {
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
