@@ -87,6 +87,15 @@ CartItem.schema.virtual("cartId").get(function () {
     return (this.product && (this.product._id || this.product)) + "|" + this.quantity;
 });
 
+CartItem.schema.method.toAppObject = function () {
+    var obj = Object.assign(this.toObject(), {
+        product: this.product && this.product.toAppObject ? this.product.toAppObject() : {}
+    });
+
+
+    return obj;
+};
+
 CartItem.schema.set('toObject', {
     virtual: true,
     transform: function (doc, ret, options) {

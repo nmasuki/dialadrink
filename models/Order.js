@@ -498,7 +498,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
 Order.schema.method.toAppObject = function(){
     var obj = Object.assign(this.toObject(), {
-        product: this.product.toAppObject()
+        cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
     
     return obj;
@@ -556,7 +556,7 @@ Order.schema.set('toObject', {
         }
 
         ret.chargesArr = charges;
-        if (order.cart.length && order.cart[0].constructor.name == "ObjectID")
+        if (order.cart.length && order.cart[0].constructor.name != "ObjectID")
             ret.cart = order.cart.map(c => c.toObject());
 
         return ret;
