@@ -13,6 +13,11 @@ router.get("/", function(req, res){
         data: []
     };
 
+    if(!client){
+        json.message = "Error getting user Orders! We could not resolve the logged in user..";
+        return res.send(json);
+    }
+
     var phoneNos = [
         client.phoneNumber.cleanPhoneNumber(), 
         client.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
