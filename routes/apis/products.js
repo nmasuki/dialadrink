@@ -26,6 +26,8 @@ router.get("/", function (req, res) {
                 .selectMany(d => {
                     return d.options.map(o => {
                         var obj = Object.assign(d.toAppObject(), o);
+                        obj.price = obj.price || 0;
+                        obj.offerPrice = obj.offerPrice || 0;
                         return obj;
                     });                    
                 });
