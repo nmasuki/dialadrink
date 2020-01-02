@@ -390,10 +390,10 @@ Product.schema.methods.toAppObject = function () {
         currency: d.currency,
         inStock: !!d.inStock,
         hitsPerWeek: d.hitsPerWeek,
-        
+
         quantity: d.quantity,
-        price: d.price || 0,
-        offerPrice: d.offerPrice || 0,
+        price: d.price,
+        offerPrice: d.offerPrice,
     });
 
     ["__v", 'options', 'cheapestOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
