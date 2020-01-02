@@ -196,17 +196,17 @@ Product.schema.virtual('quantity').get(function () {
 
 Product.schema.virtual('currency').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption ? cheapestOption.currency || "KES" : null;
+    return cheapestOption ? cheapestOption.currency || "KES" : "KES";
 });
 
 Product.schema.virtual('price').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption ? cheapestOption.price : null;
+    return cheapestOption ? cheapestOption.price : 0;
 });
 
 Product.schema.virtual('offerPrice').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption ? cheapestOption.offerPrice : null;
+    return cheapestOption ? cheapestOption.offerPrice : 0;
 });
 
 Product.schema.virtual('percentOffer').get(function () {
@@ -385,13 +385,15 @@ Product.schema.methods.toAppObject = function () {
         subcategory: d.subCategory ? d.subCategory.name : null,
         ratings: d.averageRatings,
         ratingCount: d.ratingCount,
-        quantity: d.quantity,
         brand: d.brand ? d.brand.name : null,
         company: d.brand && d.brand.company ? d.brand.company.name : null,
-        price: d.price,
         currency: d.currency,
         inStock: !!d.inStock,
-        hitsPerWeek: d.hitsPerWeek
+        hitsPerWeek: d.hitsPerWeek,
+        
+        quantity: d.quantity,
+        price: d.price || 0,
+        offerPrice: d.offerPrice || 0,
     });
 
     ["__v", 'options', 'cheapestOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
