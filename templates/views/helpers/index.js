@@ -229,6 +229,10 @@ module.exports = function () {
         return (a || "").toLowerCase().toProperCase()
     };
 
+    _helpers.titleReplacePipe = function (a) {
+        return (a || "").replace(' I ', " | ");
+    }
+
     _helpers.contains = function (a, b) {
         return (a || "").toString().contains(b);
     };
