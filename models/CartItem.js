@@ -15,32 +15,60 @@ var CartItem = new keystone.List('CartItem', {
 CartItem.add({
     date: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
     modifiedDate: {type: Types.Datetime, index: true, default: Date.now, noedit: true},
+    
+    name: {type: String},    
     pieces: {type: Number, noedit: true},
+    
+    quantity: {type: String},
+    price: {type: Number, noedit: true},
+    offerPrice: {type: Number, noedit: true},
+    
+    product: {type: Types.Relationship, ref: 'Product'},
+
     state: {
         type: Types.Select,
         options: 'placed, dispatched, delivered, paid, completed',
         default: 'placed',
         index: true
-    },
-    product: {type: Types.Relationship, ref: 'Product'},
-    name: {type: String},
-    quantity: {type: String}
+    }
 });
 
 CartItem.schema.pre('save', function (next) {
-    var pId = this.product && this.product._id || this.product;
-    this.name = this.product ? this.product.name : this.name;
+    var that = this;
 
-    if(this.product && this.product.name)
+    var pId = that.product && that.product._id || that.product;
+    that.name = that.productName;
+
+    if (that.name)
         return next();
     if(!pId)
         return next();
     
     keystone.list('Product').model.findOne({_id: pId})
         .exec((err, product) => {
-            this.name = product && product.name || this._id;
+            that.name = product && product.name || that._id;
             next();
         });
+});
+
+CartItem.schema.virtual("priceOption").get(function () {
+    var priceOption = {
+        quantity: this.quantity,
+        price: this.price,
+        offerPrice: this.offerPrice
+    };
+
+    if (priceOption.price > 0)
+        return priceOption;
+
+    priceOption = item.product.options.find(o => o.quantity === item.quantity) || item.product.cheapestOption;    
+    if(priceOption){
+        this.price = priceOption.price;
+        this.offerPrice = priceOption.offerPrice;
+        this.save();
+    }
+
+    return priceOption;
 });
 
 CartItem.schema.virtual("productName").get(function () {
@@ -49,34 +77,6 @@ CartItem.schema.virtual("productName").get(function () {
 
 CartItem.schema.virtual("image").get(function () {
     return this.product ? this.product.image: null;
-});
-
-CartItem.schema.virtual("price").set(function (value) {
-    this._price = value;
-});
-
-CartItem.schema.virtual("price").get(function () {
-    if(!this.product || !this.product.options)
-        return this._price;
-        //throw "Missing [product] in cart";
-
-    var priceOption = this.product.options.find(o => o.quantity === this.quantity) || {};
-    var price = priceOption.offerPrice && priceOption.price > priceOption.offerPrice
-        ? priceOption.offerPrice
-        : priceOption.price;
-    
-    if (price && !this._price)
-        this._price = price;
-
-    return price || this._price;
-});
-
-CartItem.schema.virtual("currency").get(function () {
-    if(!this.product || !this.product.options)
-        return 'KES';
-
-    var priceOption = this.product.options.find(o => o.quantity === this.quantity);
-    return (priceOption || {}).currency;
 });
 
 CartItem.schema.virtual("total").get(function () {
@@ -88,10 +88,14 @@ CartItem.schema.virtual("cartId").get(function () {
 });
 
 CartItem.schema.methods.toAppObject = function () {
+    var priceOption = this.priceOption;
+    
     var obj = Object.assign(this.toObject(), {
+        price: priceOption.price,
+        offerPrice: priceOption.offerPrice,
+        quantity: priceOption.quantity,
         product: this.product && this.product.toAppObject ? this.product.toAppObject() : {}
     });
-
 
     return obj;
 };
@@ -99,9 +103,8 @@ CartItem.schema.methods.toAppObject = function () {
 CartItem.schema.set('toObject', {
     virtual: true,
     transform: function (doc, ret, options) {
-        var whitelist = ['cartId', 'date', 'pieces', 'state', 'product', 'quantity', 'image', 'price', 'currency', 'total'];
+        var whitelist = ['cartId', 'date', 'pieces', 'state', 'product', 'image', 'quantity', 'price', 'offerPrice', 'currency', 'total'];
         whitelist.forEach(i => ret[i] = doc[i]);
-        ret._id = (doc.product && doc.product._id) + "|" + doc.quantity;
         return ret;
     }
 });
@@ -112,5 +115,5 @@ CartItem.schema.set('toJSON', {
     }
 });
 
-CartItem.defaultColumns = 'date, product, pieces|20%, quantity|20%';
+CartItem.defaultColumns = 'date, product|20%, quantity|20%, pieces, price';
 CartItem.register();

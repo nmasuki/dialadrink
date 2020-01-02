@@ -22,7 +22,13 @@ router.get("/", function (req, res) {
             json.message = "Error fetching drinks! " + err;
         else {
             json.response = "success";
-            json.data = products.orderBy(p => p.hitsPerWeek).map(d => d.toAppObject());
+            json.data = products.orderBy(p => p.hitsPerWeek)
+                .selectMany(d => {
+                    return d.options.map(o => {
+                        var obj = Object.assign(d.toAppObject(), o.toObject());
+                        return obj;
+                    });                    
+                });
         }
 
         res.send(json);

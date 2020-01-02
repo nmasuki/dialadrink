@@ -97,6 +97,7 @@ Product.add({
             product: ':category'
         }
     },
+
     brand: {
         type: Types.Relationship,
         ref: 'ProductBrand'
@@ -108,6 +109,7 @@ Product.add({
         many: true,
         hidden: true
     },
+
     relatedProducts: {
         type: Types.Relationship,
         ref: 'Product',
@@ -503,6 +505,7 @@ Product.schema.pre('save', function (next) {
 
 Product.schema.set('toObject', {
     transform: function (doc, ret, options) {
+        
         var whitelist = [
             'href', 'name', 'priceOptions', 'onOffer', 'inStock',
             'state', 'image', 'altImages', 'pageTitle', 'description',
@@ -512,6 +515,7 @@ Product.schema.set('toObject', {
             'quantity', 'currency', 'price', 'offerPrice',
             'priceValidUntil', 'percentOffer'
         ];
+
         whitelist.forEach(i => ret[i] = doc[i]);
         return ret;
     }
@@ -541,19 +545,13 @@ Product.findPublished = function (filter, callback) {
 };
 
 Product.findOnePublished = function (filter, callback) {
-    filter = Object.assign({
-        state: 'published'
-    }, filter || {});
+    filter = Object.assign({ state: 'published' }, filter || {});
     var a = keystone.list('Product').model.findOne(filter)
-        .sort({
-            popularity: -1
-        })
+        .sort({ popularity: -1 })
         .populate('brand')
         .populate('category')
-        .populate('subCategory')
         .populate('ratings')
-        .populate('category')
-        .deepPopulate("priceOptions.option");
+        .deepPopulate("subCategory.category,priceOptions.option");
 
     if (typeof callback == "function")
         a.exec(callback);
