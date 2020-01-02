@@ -61,6 +61,7 @@ CartItem.schema.virtual("priceOption").get(function () {
     if (priceOption.price > 0)
         return priceOption;
 
+    var item = this;
     priceOption = item.product.options.find(o => o.quantity === item.quantity) || item.product.cheapestOption;    
     if(priceOption){
         this.price = priceOption.price;
