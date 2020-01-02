@@ -25,7 +25,7 @@ router.get("/", function (req, res) {
             json.data = products.orderBy(p => p.hitsPerWeek)
                 .selectMany(d => {
                     return d.options.map(o => {
-                        var obj = Object.assign(d.toAppObject(), o.toObject());
+                        var obj = Object.assign(d.toAppObject(), o);
                         return obj;
                     });                    
                 });
