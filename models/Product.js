@@ -154,7 +154,7 @@ Product.schema.virtual('options').get(function () {
     return this.priceOptions.map(op => ({
         _id: op._id,
         quantity: (op.option || {}).quantity,
-        currency: op.currency || "KES",
+        currency: (op.currency || "KES").replace('Ksh', "KES"),
         offerPrice: op.offerPrice,
         price: op.price,
     })).distinctBy(op => op.quantity);
@@ -196,7 +196,7 @@ Product.schema.virtual('quantity').get(function () {
 
 Product.schema.virtual('currency').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption ? cheapestOption.currency || "KES" : "KES";
+    return (cheapestOption ? cheapestOption.currency || "KES" : "KES").replace('Ksh', "KES");
 });
 
 Product.schema.virtual('price').get(function () {
@@ -390,10 +390,10 @@ Product.schema.methods.toAppObject = function () {
         currency: d.currency,
         inStock: !!d.inStock,
         hitsPerWeek: d.hitsPerWeek,
-
-        quantity: d.quantity,
+        //Use cheapest option for price
         price: d.price,
         offerPrice: d.offerPrice,
+        quantity: d.quantity,        
     });
 
     ["__v", 'options', 'cheapestOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
