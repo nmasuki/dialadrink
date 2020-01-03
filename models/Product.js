@@ -155,8 +155,8 @@ Product.schema.virtual('options').get(function () {
         _id: op._id,
         quantity: (op.option || {}).quantity,
         currency: (op.currency || "KES").replace('Ksh', "KES"),
-        offerPrice: op.offerPrice,
-        price: op.price,
+        offerPrice: op.offerPrice || 0,
+        price: op.price || 0,
     })).distinctBy(op => op.quantity);
 });
 

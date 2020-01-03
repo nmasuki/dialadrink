@@ -24,7 +24,7 @@ router.get("/", function(req, res){
     ];
 
     Order.model.find({'delivery.phoneNumber':{ $in:phoneNos }})
-        .deepPopulate('cart.product')
+        .deepPopulate('cart.product.priceOptions.option,cart.product.category,cart.product.subcategory,cart.product.company')
         .exec((err, orders) => {
             if (err){
                 json.message = "Error getting user Orders! " + err;
