@@ -221,11 +221,12 @@ Product.schema.virtual('percentOffer').get(function () {
 
 Product.schema.virtual('priceValidUntil').get(function () {
     var today = new Date();
+
     var firstStr = today.toISOString().substr(0, 8) + "01";
     var expiryStr = new Date(firstStr).addMonths(1).addSeconds(-1).toISOString();
 
     if (expiryStr.contains("011")) {
-        //        console.log(expiryStr);
+        console.log(expiryStr);
         expiryStr = expiryStr.replace(/^011/, "201");
     }
 
@@ -233,8 +234,7 @@ Product.schema.virtual('priceValidUntil').get(function () {
 });
 
 Product.schema.virtual('popularityRatio').get(function () {
-    var max = 1.0,
-        min = 0.75;
+    var max = 1.0, min = 0.75;
     var ratio = this.hitsPerWeek / topHitsPerWeek;
 
     if (ratio)
@@ -255,9 +255,7 @@ Product.schema.virtual('hitsPerWeek').get(function () {
 
 Product.schema.methods.findSimilar = function (callback) {
     var filter = {
-        _id: {
-            "$ne": this._id
-        },
+        _id: { "$ne": this._id },
         "$or": []
     };
 
@@ -374,26 +372,33 @@ Product.schema.methods.toAppObject = function () {
 
     var obj = Object.assign({}, this.toObject(), {
         url: [keystone.get('url'), d.href].map(p=>p.trim('/')).join('/'),
+        
         imageFullSize: d.image.secure_url,
         imagesFullSize: d.altImages ? d.altImages.map(a => a && a.secure_url) : [],
+        
         imageSmallSize: cloudinary.url(d.image.public_id, cloudinarySmallImageOptions),
         imagesSmallSize: d.altImages ? d.altImages.map(a => cloudinary.url(a.public_id, cloudinarySmallImageOptions)): [],
+        
         image: cloudinary.url(d.image.public_id, cloudinaryOptions),
         images: d.altImages ? d.altImages.map(a => a && a.secure_url || cloudinary.url(a.public_id, cloudinaryOptions)) : [],
+        
         category: d.category ? d.category.name : null,
         categories: d.onOffer ? (d.category ? [d.category.name, "offer"] : ["offer"]) : d.category ? [d.category.name] : [],
+        
+        company: d.brand && d.brand.company ? d.brand.company.name : null,
         subcategory: d.subCategory ? d.subCategory.name : null,
+        brand: d.brand ? d.brand.name : null,
+
         ratings: d.averageRatings,
         ratingCount: d.ratingCount,
-        brand: d.brand ? d.brand.name : null,
-        company: d.brand && d.brand.company ? d.brand.company.name : null,
-        currency: d.currency,
         inStock: !!d.inStock,
         hitsPerWeek: d.hitsPerWeek,
+        
         //Use cheapest option for price
         price: d.price,
         offerPrice: d.offerPrice,
         quantity: d.quantity,        
+        currency: d.currency,
     });
 
     ["__v", 'options', 'cheapestOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {

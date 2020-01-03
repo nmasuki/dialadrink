@@ -95,8 +95,11 @@ CartItem.schema.methods.toAppObject = function () {
         price: priceOption.price,
         offerPrice: priceOption.offerPrice,
         quantity: priceOption.quantity,
-        product: this.product && this.product.toAppObject ? this.product.toAppObject() : {}
+        //product: this.product && this.product.toAppObject ? this.product.toAppObject() : null,
+        productId: this.product && this.product.id
     });
+
+    
 
     return obj;
 };
