@@ -402,14 +402,24 @@ var setAppUserFromSession = function (req, res, callback) {
     if (res.locals.appUser)
         return Promise.resolve();
 
-    return keystone.list("Client").model
-        .findOne({
+    var filter = {
+        $or: [{
             sessions: {
                 "$elemMatch": {
                     $eq: req.sessionID
                 }
             }
-        })
+        }]
+    };
+    
+    if (req.session.userData){
+        filter.$or.push({
+            phoneNumber: req.session.userData.phoneNumber.cleanPhoneNumber()
+        });
+    }
+
+    return keystone.list("Client").model
+        .findOne(filter)
         .exec((err, client) => {
             if(err){
                 if (typeof callback == "function")
