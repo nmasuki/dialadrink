@@ -99,7 +99,7 @@ CartItem.schema.methods.toAppObject = function () {
         productId: this.product && this.product.id
     });
 
-    //delete obj.product;
+    delete obj.product;
 
     return obj;
 };
