@@ -34,16 +34,20 @@
                 <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
                 <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
                 <span itemprop="priceCurrency">{{currency}}</span>
-                {{#ifgt price offerPrice}}
-                    <span>
-                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                            <span>{{formatNumber price}}</span>
+                {{#if offerPrice}}
+                    {{#ifgt price offerPrice}}
+                        <span>
+                            <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                <span>{{formatNumber price}}</span>
+                            </span>
+                        <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
                         </span>
-                    <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
-                    </span>
-                {{else}}
+                    {{else}}
+                        <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
+                    {{/ifgt}}
+                {{else}}                
                     <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
-                {{/ifgt}}
+                {{/if}}
             </span>
             <br>
             <div class="dropdown">
