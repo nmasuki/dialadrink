@@ -201,7 +201,7 @@ Product.schema.virtual('currency').get(function () {
 
 Product.schema.virtual('price').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption ? cheapestOption.price : 0;
+    return cheapestOption ? cheapestOption.price : null;
 });
 
 Product.schema.virtual('offerPrice').get(function () {
@@ -216,7 +216,8 @@ Product.schema.virtual('percentOffer').get(function () {
         var percent = Math.round(100 * discount / cheapestOption.price);
         return percent;
     }
-    return 0;
+
+    return null;
 });
 
 Product.schema.virtual('priceValidUntil').get(function () {
