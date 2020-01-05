@@ -213,11 +213,13 @@ Order.schema.pre('save', function (next) {
 
 
 Order.schema.virtual("currency").get(function () {
+    var currency = null;
     if (this.cart)
-        return this.cart
-            .filter(c => c.currency)
-            .map(c => c.currency.replace("Ksh", "KES")).distinct().join(',');
-    return "KES";
+        currency = this.cart.filter(c => c.currency)
+            .map(c => c.currency.toUpperCase().replace("KSH", "KES"))
+            .distinct().join(',');
+            
+    return (currency || "KES").trim();
 });
 
 Order.schema.virtual("discount").get(function () {
