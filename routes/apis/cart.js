@@ -77,9 +77,9 @@ router.get('/add/:id/:opt/:pieces', function (req, res) {
 });
 
 router.get('/update/:id/:pieces', function (req, res) {
-	var cart = req.session.cart;
-	var id = req.params.id;
-	var pieces = req.params.pieces;
+	var pieces = req.params.pieces || "1";
+	var cart = req.session.cart || (req.session.cart);
+	var id = Object.keys(cart).find(key => key.startsWith((req.params.id || "").trim()));
 
 	if (typeof(cart[id]) != "undefined") {
 		console.log("Updating cart", id, 'value', parseInt(pieces));

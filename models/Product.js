@@ -206,12 +206,12 @@ Product.schema.virtual('price').get(function () {
 
 Product.schema.virtual('offerPrice').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption ? cheapestOption.offerPrice : 0;
+    return cheapestOption && cheapestOption.offerPrice > 0? cheapestOption.offerPrice : 0;
 });
 
 Product.schema.virtual('percentOffer').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    if (cheapestOption && cheapestOption.price > cheapestOption.offerPrice) {
+    if (cheapestOption && cheapestOption.offerPrice > 0 && cheapestOption.price > cheapestOption.offerPrice) {
         var discount = cheapestOption.price - cheapestOption.offerPrice;
         var percent = Math.round(100 * discount / cheapestOption.price);
         return percent;
