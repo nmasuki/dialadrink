@@ -206,7 +206,7 @@ Product.schema.virtual('price').get(function () {
 
 Product.schema.virtual('offerPrice').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption && cheapestOption.offerPrice > 0? cheapestOption.offerPrice : 0;
+    return cheapestOption && cheapestOption.offerPrice > 0? cheapestOption.offerPrice : null;
 });
 
 Product.schema.virtual('percentOffer').get(function () {
