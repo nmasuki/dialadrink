@@ -47,16 +47,16 @@
                                                 </td>
                                                 <td class="order-td" style="text-align:left;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
                                                     {{pieces}} *
-                                                    {{#ifgt price offerPrice}}
+                                                    {{#if percentOffer}}
                                                         <span>
-                                                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                                            <span>{{price}}</span>
+                                                            <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                                                <span>{{price}}</span>
+                                                            </span>
+                                                            <span>{{offerPrice}}</span>
                                                         </span>
-                                                        <span>{{offerPrice}}</span>
-                                                    </span>
                                                     {{else}}
                                                         <span>{{price}}</span>
-                                                    {{/ifgt}}
+                                                    {{/if}}
                                                 </td>
                                                 <td class="order-td" align="right"
                                                     style="text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
@@ -65,7 +65,7 @@
                                                     <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
                                                     <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
                                                     <span itemprop="priceCurrency"class="order-currencySymbol">{{currency}}</span>
-                                                    {{#ifgt price offerPrice}}
+                                                    {{#if percentOffer}}
                                                         <span>
                                                             <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                                                 <span>{{formatNumber (prod pieces price)}}</span>
@@ -73,8 +73,8 @@
                                                             <span itemprop="price">{{formatNumber (prod pieces offerPrice)}}</span>
                                                         </span>
                                                     {{else}}
-                                                        <span>{{formatNumber (prod pieces price)}}</span>
-                                                    {{/ifgt}}
+                                                        <span itemprop="price">{{formatNumber (prod pieces price)}}</span>
+                                                    {{/if}}
                                                 </span>
                                                 </td>
                                             </tr>

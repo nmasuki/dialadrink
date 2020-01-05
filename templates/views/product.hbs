@@ -43,7 +43,7 @@
                     <div class="col-md-5 bottom-rule">
                         <h2 style="margin-top:5px" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
                             <span itemprop="priceCurrency">{{currency}}</span>
-                            {{#ifgt price offerPrice}}
+                            {{#if percentOffer}}
                                 <span>
                                     <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                         <span>{{formatNumber price}}</span>
@@ -54,7 +54,7 @@
                                 </span>
                             {{else}}
                                 <span itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
-                            {{/ifgt}}
+                            {{/if}}
                         </h2>
                     </div>
 
