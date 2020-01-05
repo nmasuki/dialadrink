@@ -1,4 +1,4 @@
-{{#ifgt price offerPrice}}
+{{#if percentOffer}}
     <a href="{{productUrl href}}" aria-label="{{{percentOffer}}}% off on {{{name}}}" style="position: absolute; display :block; color: black;">
         <div class="product-promo">
             <span>
@@ -6,12 +6,12 @@
             </span>
         </div>
     </a>
-{{/ifgt}}
+{{/if}}
 
 <div class="featured-image" style="text-align :center;" aria-label="Access product {{{name}}}" id="product{{_id}}">
     <div class="product-hover-blind"></div>
     
-    <a class="product-hover" href="{{productUrl href}}" aria-label="{{{percentOffer}}}% off on {{{name}}}">
+    <a class="product-hover" href="{{productUrl href}}">
         <img src="https://res.cloudinary.com/nmasuki/image/upload/v1561049835/icons/magnify.png">
     </a>   
 
