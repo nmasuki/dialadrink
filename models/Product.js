@@ -211,7 +211,7 @@ Product.schema.virtual('offerPrice').get(function () {
 
 Product.schema.virtual('percentOffer').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    if (cheapestOption && cheapestOption.offerPrice > 0 && cheapestOption.price > cheapestOption.offerPrice) {
+    if (cheapestOption && cheapestOption.offerPrice && cheapestOption.price > cheapestOption.offerPrice) {
         var discount = cheapestOption.price - cheapestOption.offerPrice;
         var percent = Math.round(100 * discount / cheapestOption.price);
         return percent;
