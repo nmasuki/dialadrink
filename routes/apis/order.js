@@ -145,7 +145,7 @@ function getCartItems(req){
             quantity: req.body.item_opt,
             pieces: parseInt(req.body.item_pieces)
         });
-    } else {
+    } else if (req.body.item_id) {
         for(var i =0; i < req.body.item_id.length; i++){
             items.push({
                 cartId: `${req.body.item_id[i]}|${req.body.item_opt[i]}`,
@@ -155,7 +155,9 @@ function getCartItems(req){
                 pieces: parseInt(req.body.item_pieces[i])
             });
         }
-    }       
+    }  else {
+        items = Object.values(req.session.cart);
+    }     
 
     return items;
 }

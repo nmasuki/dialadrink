@@ -581,7 +581,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     deliveryDetails = deliveryDetails || {};
     promo = promo || {};
 
-    var chargesKeys = Object.keys(deliveryDetails).filter(k => k.toLowerCase().indexOf("charge") >= 0);
+    var chargesKeys = Object.keys(deliveryDetails).filter(k => ["charge", "commission"].any(c => k.toLowerCase().contains(c)));
     var charges = chargesKeys.sum(k => deliveryDetails[k]);
 
     var subtotal = cart.sum(function (c) {
