@@ -427,7 +427,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
         return new Promise((resolve, reject) => {
             email.send(locals, emailOptions, (err, a) => {
-                console.log("Email notification Sent!", err, a);
+                console.log("Email notification Sent!", err || "");
                 if (err)
                     reject(console.warn(err));
 
@@ -468,7 +468,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
                 return new Promise((resolve, reject) => {
                     email.send(locals, emailOptions, (err, a) => {
-                        console.log("Email notification Sent!", err, a);
+                        console.log("Email notification Sent!", err || "");
                         if (err)
                             reject(console.warn(err));
 

@@ -92,6 +92,7 @@ CartItem.schema.methods.toAppObject = function () {
     var priceOption = this.priceOption;
     
     var obj = Object.assign(this.toObject(), {
+        currency: priceOption.currency,
         price: priceOption.price,
         offerPrice: priceOption.offerPrice,
         quantity: priceOption.quantity,
