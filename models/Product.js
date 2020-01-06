@@ -226,10 +226,9 @@ Product.schema.virtual('priceValidUntil').get(function () {
     var firstStr = today.toISOString().substr(0, 8) + "01";
     var expiryStr = new Date(firstStr).addMonths(1).addSeconds(-1).toISOString();
 
-    if (expiryStr.startsWith("01")) {
-        expiryStr = expiryStr.replace(/^01/, "201");
-    }
-
+    if (expiryStr.startsWith("01")) 
+        expiryStr = expiryStr.replace(/^01/, "20");
+    
     return expiryStr;
 });
 
