@@ -34,18 +34,14 @@
                 <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
                 <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
                 <span itemprop="priceCurrency">{{currency}}</span>
-                {{#if offerPrice}}
-                    {{#if percentOffer}}
-                        <span>
-                            <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                <span>{{formatNumber price}}</span>
-                            </span>
-                        <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                {{#if percentOffer}}
+                    <span>
+                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                            <span>{{formatNumber price}}</span>
                         </span>
-                    {{else}}
-                        <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
-                    {{/if}}
-                {{else}}                
+                        <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                    </span>
+                {{else}}
                     <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
                 {{/if}}
             </span>
@@ -68,7 +64,7 @@
                             {{#each options }}
                                 <a href="#" class="add-to-cart"
                                     data-qty="{{quantity}}" data-product="{{../_id}}">
-                                    {{quantity}} - {{currency}} {{price }}
+                                    {{quantity}} - {{currency}} {{price}}
                                 </a>
                             {{/each}}
                         </div>

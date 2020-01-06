@@ -218,7 +218,7 @@ Order.schema.virtual("currency").get(function () {
         currency = this.cart.filter(c => c.currency)
             .map(c => c.currency.toUpperCase().replace("KSH", "KES"))
             .distinct().join(',');
-            
+
     return (currency || "KES").trim();
 });
 
@@ -249,6 +249,7 @@ Order.schema.virtual("subtotal").get(function () {
                 price = c.pieces * c.offerPrice;
             return price;
         });
+
     return 0;
 });
 
@@ -272,7 +273,7 @@ Order.schema.virtual("deliveryAddress").get(function () {
 
     for (var i in delivery) {
         if (i != 'userId' && delivery[i] && typeof delivery[i] != "function")
-            address += "{0}:{1}<br>\r\n".format(i.toProperCase(), delivery[i].toString().toProperCase())
+            address += "{0}:{1}<br>\r\n".format(i.toProperCase(), delivery[i].toString().toProperCase());
     }
 
     return address;
@@ -397,9 +398,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
         }
 
         //Sent Email Notification
-        order.client.sendEmailNotification(subject, 'receipt', {
-            order: order
-        }).then(() => {
+        order.client.sendEmailNotification(subject, 'receipt', { order: order }).then(() => {
             order.payment.notificationSent = true;
             order.save(resolve);
         });

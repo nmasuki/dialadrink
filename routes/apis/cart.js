@@ -4,51 +4,67 @@ var Product = keystone.list("Product");
 
 var router = keystone.express.Router();
 
+function updateCartItem(id, pieces, req, res, callback){
+	var cart = req.session.cart || (req.session.cart = {});
+	var cartId = Object.keys(cart).find(key => key.startsWith((id || "").trim()));
+
+	if (cartId && typeof(cart[cartId]) != "undefined") {
+		console.log("Updating cart", cartId, 'value', parseInt(pieces));
+		cart[cartId].pieces = parseInt(pieces);
+		callback(cart[cartId]);
+	} else {
+		addToCart(req, res, callback);
+	}
+}
+
 function addToCart(req, res, callback) {
-	var id = req.params.id;
-	var opt = req.params.opt;
+	var productId = req.params.id.split('|')[0];
+	var quantity = req.params.opt || req.params.id.split('|')[1];
 	var pieces = parseInt(req.params.pieces || 1);
 
-	var cartId = id + (opt ? "|" + opt: "");
+	var cartId = productId + (quantity ? "|" + quantity : "");
 	var cart = req.session.cart || (req.session.cart = {});
-	if (cart[cartId]) {
 
+	if (cart[cartId]) {
 		cart[cartId].pieces += pieces;
 		cart[cartId].modifiedDate = new Date();
 
 		//popularity goes up 10x
 		Product.findOnePublished({_id: cart[cartId].product._id }, (err, product) => {
-			if(err)
-				return console.err(err);
+			if (err || !product)
+				return console.log("Product not found", err);
+			
 			product.addPopularity(10);
 			cart[cartId].name = product.name;
 		});
 
 		console.log('"Incremented cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price, cart[cartId].pieces);
 		if (typeof callback == "function")
-			callback(cart[cartId], 'added');
+			return callback(cart[cartId], 'added');
 		else
-			res.send({state: true, msg: "incrementing", new: false, item: cart[cartId]});
+			return res.send({state: true, msg: "incrementing", new: false, item: cart[cartId]});
 
 	} else {
-		Product.findOnePublished({_id: id})
+		Product.findOnePublished({_id: productId})
 			.exec(function (err, product) {
-				if (err || !product)
-					return res.send({state: false, msg: "Product not found", err: err});
-
-				var option = product.options.find(o => o.quantity === (opt || product.quantity));
+				if (err || !product){
+					if (typeof callback == "function")
+						return callback(null, "Product not found");
+					else
+						return res.send({state: false, msg: "Product not found", err: err});
+				}
+				var option = product.options.find(o => o.quantity === (quantity || product.quantity));
 				var price = option.offerPrice && option.price > option.offerPrice? option.offerPrice: option.price;
 
 				cart[cartId] = new CartItem.model({
-					product: product,
 					price: price,
+					product: product,
 					quantity: option.quantity,
 					pieces: pieces
 				});
 
 				//popularity goes up 10x
 				product.addPopularity(10);
-
 				console.log('Added cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price);
 
 				if (typeof callback == "function")
@@ -77,20 +93,34 @@ router.get('/add/:id/:opt/:pieces', function (req, res) {
 });
 
 router.get('/update/:id/:pieces', function (req, res) {
-	var pieces = req.params.pieces || "1";
-	var cart = req.session.cart || (req.session.cart);
-	var id = Object.keys(cart).find(key => key.startsWith((req.params.id || "").trim()));
+	var id = req.params.id || "1";
+	var pieces = parseInt(req.params.pieces || 1);
 
-	if (typeof(cart[id]) != "undefined") {
-		console.log("Updating cart", id, 'value', parseInt(pieces));
-		cart[id].pieces = parseInt(pieces);
-		res.send({state: true, msg: 'success', item: cart[id]});
+	updateCartItem(id, pieces, req, res, function(cartItem, msg){
+		return res.send({state: true, msg: msg, item: cartItem});
+	});
+});
+
+router.post('/update', function (req, res){
+	var ids = (typeof(req.body.item_id) == "string") ? [typeof req.body.item_id] : typeof req.body.item_id;
+	var pieces = (typeof(req.body.item_pieces) == "string") ? [typeof req.body.item_pieces] : typeof req.body.item_pieces;
+	
+	if (ids.length) {
+		var updates = [];
+		
+		var trackUpdates = function(cartItem, msg) {
+			updates.push({msg: msg, cartItem: cartItem});
+			if (updates.length >= ids.length) {
+				return res.send({ state: true, msg: msg, update: updates });
+			}
+		};
+
+		for (var i = 0; i < ids.length; i++) 
+			updateCartItem(ids[i], pieces[i], req, res, trackUpdates);
+		
 	} else {
-		addToCart(req, res, function (cartItem, msg) {
-			return res.send({state: true, msg: msg, item: cartItem});
-		});
+		return res.send({ state: false, msg: 'Invalid post data' });
 	}
-
 });
 
 router.get('/remove/:id', function (req, res) {
