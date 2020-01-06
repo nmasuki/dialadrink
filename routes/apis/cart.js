@@ -1,18 +1,24 @@
 var keystone = require('keystone');
 var CartItem = keystone.list("CartItem");
 var Product = keystone.list("Product");
+var ObjectID = require('mongodb').ObjectID;
 
 var router = keystone.express.Router();
 
-function updateCartItem(id, pieces, req, res, callback){
+function updateCartItem(id, pieces, opt, req, res, callback){
 	var cart = req.session.cart || (req.session.cart = {});
 	var cartId = Object.keys(cart).find(key => key.startsWith((id || "").trim()));
+	if(!cartId)
+		cartId = (id + (opt ? "|" + opt : ""));
 
 	if (cartId && typeof(cart[cartId]) != "undefined") {
 		console.log("Updating cart", cartId, 'value', parseInt(pieces));
 		cart[cartId].pieces = parseInt(pieces);
 		callback(cart[cartId]);
 	} else {
+		req.params.id = id;
+		req.params.opt = opt;
+		req.params.pieces = pieces;
 		addToCart(req, res, callback);
 	}
 }
@@ -49,7 +55,7 @@ function addToCart(req, res, callback) {
 			.exec(function (err, product) {
 				if (err || !product){
 					if (typeof callback == "function")
-						return callback(null, "Product not found");
+						return callback(null, "Product not found _id:'" + productId + "'");
 					else
 						return res.send({state: false, msg: "Product not found", err: err});
 				}
@@ -96,14 +102,15 @@ router.get('/update/:id/:pieces', function (req, res) {
 	var id = req.params.id || "1";
 	var pieces = parseInt(req.params.pieces || 1);
 
-	updateCartItem(id, pieces, req, res, function(cartItem, msg){
+	updateCartItem(id, pieces, req.params.opt, req, res, function (cartItem, msg) {
 		return res.send({state: true, msg: msg, item: cartItem});
 	});
 });
 
 router.post('/update', function (req, res){
-	var ids = (typeof(req.body.item_id) == "string") ? [typeof req.body.item_id] : typeof req.body.item_id;
-	var pieces = (typeof(req.body.item_pieces) == "string") ? [typeof req.body.item_pieces] : typeof req.body.item_pieces;
+	var ids = (typeof(req.body.item_id) == "string") ? [req.body.item_id] : req.body.item_id;
+	var pieces = (typeof (req.body.item_pieces) == "string") ? [req.body.item_pieces] : req.body.item_pieces;
+	var opts = (typeof (req.body.item_opt) == "string") ? [req.body.item_opt] : req.body.item_opt;
 	
 	if (ids.length) {
 		var updates = [];
@@ -116,7 +123,7 @@ router.post('/update', function (req, res){
 		};
 
 		for (var i = 0; i < ids.length; i++) 
-			updateCartItem(ids[i], pieces[i], req, res, trackUpdates);
+			updateCartItem(ids[i], pieces[i], opts[i], req, res, trackUpdates);
 		
 	} else {
 		return res.send({ state: false, msg: 'Invalid post data' });

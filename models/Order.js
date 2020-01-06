@@ -415,86 +415,93 @@ Order.schema.methods.sendOrderNotification = function (next) {
     if (!that.orderNumber)
         that.orderNumber = Order.getNextOrderId();
 
-    return Order.model.findOne({ _id: that._id })
-        .deepPopulate('cart.product.priceOptions.option')
-        .populate('client')
-        .exec((err, order) => {
-            if (err)
-                return Promise.reject(err);
+    var sendOrderNotification = function (order) {
+        if (!order)
+            return Promise.reject(`Order [${order._id}}] not found!`);
 
-            if (!order)
-                return Promise.reject(`Order [${order._id}}] not found!`);
+        if (!order.cart.length) {
+            if (that.cart.length)
+                order.cart = that.cart;
+            else
+                return Promise.reject("Error while getting cart Items!!");
+        }
 
-            if (!order.cart.length) {
-                if (that.cart.length)
-                    order.cart = that.cart;
-                else
-                    return Promise.reject("Error while getting cart Items!!");
+        var promise = Promise.resolve();
+
+        //Send SMS Notification to vender
+        if (!order.notificationSent) {
+            order.notificationSent = true;
+            var items = order.cart.filter(c => !!c);
+            var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`.trim();
+            var msg = `${order.payment.method} order received from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
+            var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
+            var location = order.deliveryLocation;
+
+            /*/if (location && location.url){
+                msg += " " + location.url;
+                promise.then(() => sms.sendSMS(vendorNumber, msg));
             }
+            else /** */
+            if (location) {
+                var mapUrl = location.url || `http://maps.google.com/maps?daddr=${location.lat},${location.lng}`;
 
-            var promise = Promise.resolve();
+                var p = new Promise((resolve, reject) => {
+                    pesapalHelper.shoternUrl(mapUrl, function (err, shortUrl) {
+                        location.url2 = mapUrl;
+                        if (!err) {
+                            location.shortUrl = shortUrl;
+                            msg += " " + shortUrl;
+                            order.deliveryLocation = location;
+                            resolve(shortUrl);
+                        } else
+                            reject(err);
 
-            //Send SMS Notification to vender
-            if(!order.notificationSent){
-                order.notificationSent = true;
-                var items = order.cart.filter(c => !!c);
-                var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`.trim();
-                var msg = `${order.payment.method} order received from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
-                var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
-                var location = order.deliveryLocation;
-
-                /*/if (location && location.url){
-                    msg += " " + location.url;
-                    promise.then(() => sms.sendSMS(vendorNumber, msg));
-                }
-                else /** */
-                if(location){
-                    var mapUrl = location.url || `http://maps.google.com/maps?daddr=${location.lat},${location.lng}`;
-                    
-                    var p = new Promise((resolve, reject) => {
-                        pesapalHelper.shoternUrl(mapUrl, function (err, shortUrl) {
-                            location.url2 = mapUrl;
-                            if (!err){
-                                location.shortUrl = shortUrl;
-                                msg += " " + shortUrl;
-                                order.deliveryLocation = location;
-                                resolve(shortUrl);
-                            }else
-                                reject(err);
-
-                            return sms.sendSMS(vendorNumber, msg);
-                        });
+                        return sms.sendSMS(vendorNumber, msg);
                     });
-
-                    promise.then(() => p);
-                }else{
-                    promise.then(() => sms.sendSMS(vendorNumber, msg));
-                }
-            }
-
-            //Send SMS 
-            if (order.delivery.phoneNumber && !order.smsNotificationSent) {
-                message = `DIALADRINK: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
-
-                if (order.payment.method == "PesaPal")
-                    message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
-                else
-                    message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}`;
-
-                if (order.client && order.client._id) {
-                    promise.then(() => order.client.sendSMSNotification(message).then(() => order.smsNotificationSent = true));
-                }
-            }
-
-            //Send Email
-            var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
-            return promise.then(() => order.save()).then(() => {
-                return order.client.sendEmailNotification(subject, 'order', {
-                    appUrl: keystone.get("url"),
-                    order: order.toObject()
                 });
+
+                promise.then(() => p);
+            } else {
+                promise.then(() => sms.sendSMS(vendorNumber, msg));
+            }
+        }
+
+        //Send SMS 
+        if (order.delivery.phoneNumber && !order.smsNotificationSent) {
+            message = `DIALADRINK: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
+
+            if (order.payment.method == "PesaPal")
+                message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
+            else
+                message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}`;
+
+            if (order.client && order.client._id) {
+                promise.then(() => order.client.sendSMSNotification(message).then(() => order.smsNotificationSent = true));
+            }
+        }
+
+        //Send Email
+        var subject = `Your order #${that.delivery.platform[0]}${that.orderNumber} - ${keystone.get("name")}`;
+        return promise.then(() => order.save()).then(() => {
+            return order.client.sendEmailNotification(subject, 'order', {
+                appUrl: keystone.get("url"),
+                order: order.toObject()
             });
         });
+    };
+
+    if(!that.cart.any(c => !c.product.name))
+        return Promise.resolve(sendOrderNotification(that));
+    else
+        return Order.model.findOne({ _id: that._id })
+            .deepPopulate('cart.product.priceOptions.option')
+            .populate('client')
+            .exec((err, order) => {
+                if (err)
+                    return Promise.reject(err);
+                    
+                return sendOrderNotification(order);            
+            });
 };
 
 Order.schema.methods.toAppObject = function () {
@@ -589,13 +596,13 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         promo.discount || 0
     );
 
+    var cartItems = cart.map(item => {
+        delete item._id;
+        return new CartItem.model(item);
+    });
+
     var order = new Order.model({
-        cart: cart.map(item => {
-            delete item._id;
-            var cartItem = new CartItem.model(item);
-            cartItem.save();
-            return cartItem;
-        }),
+        cart: cartItems,
         paymentMethod: deliveryDetails.paymentMethod == "Cash" ? "Cash on Delivery" : deliveryDetails.paymentMethod,
         payment: {
             method: deliveryDetails.paymentMethod,
@@ -616,31 +623,35 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         order.charges.chargesAmount.push(deliveryDetails[k]);
     });
 
-    return order.save((err) => {
-        if (err)
-            return console.warn("Error while saving Order! " + err);
+    return Promise.all(cartItems.map(c => c.save())).then(function () {
+        return order.save((err) => {
+            if (err)
+                return console.warn("Error while saving Order! " + err);
+            order.cart = cartItems;
+            if (order.payment.method == "PesaPal") {
+                var paymentUrl = [keystone.get('url'), 'payment', order.orderNumber].filter(p => p).map(p => p.toString().trim('/')).join('/');
+                pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
+                    order.payment.url = paymentUrl;
+                    if (!err)
+                        order.payment.shortUrl = shortUrl;
 
-        if (order.payment.method == "PesaPal") {
-            var paymentUrl = [keystone.get('url'), 'payment', order.orderNumber].filter(p => p).map(p => p.toString().trim('/')).join('/');
-            pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
-                order.payment.url = paymentUrl;
-                if (!err)
-                    order.payment.shortUrl = shortUrl;
-
-                order.save(() => {
-                    order.placeOrder();
-                    if (typeof callback == "function")
-                        callback(err, order);
+                    order.save(() => {
+                        order.placeOrder();
+                        if (typeof callback == "function")
+                            callback(err, order);
+                    });
                 });
-            });
-        } else {
-            order.placeOrder();
-            if (typeof callback == "function")
-                callback(null, order);
-        }
+            } else {
+                order.placeOrder();
+                if (typeof callback == "function")
+                    callback(null, order);
+            }
 
-        return order;
+            return order;
+        });
     });
+
+    
 };
 
 //Some random number from which to start order order Ids

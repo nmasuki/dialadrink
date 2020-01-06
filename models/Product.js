@@ -311,6 +311,7 @@ Product.schema.methods.findRelated = function (callback) {
                     });
 
                     var relatedProdIds = Object.keys(productCounts).concat(product.relatedProducts.map(p => (p._id || p).toString()));
+                    
                     //Get products that where ordered together
                     return Product.findPublished({ _id: { $in: relatedProdIds }})
                         .exec((err, related) => {
@@ -370,6 +371,7 @@ Product.schema.methods.toAppObject = function () {
     };
 
     var obj = Object.assign({}, this.toObject(), {
+        id: d.id,
         url: [keystone.get('url'), d.href].map(p=>p.trim('/')).join('/'),
         
         imageFullSize: d.image.secure_url,
