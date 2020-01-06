@@ -211,10 +211,10 @@ Product.schema.virtual('offerPrice').get(function () {
 
 Product.schema.virtual('percentOffer').get(function () {
     var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    if (cheapestOption && cheapestOption.offerPrice && cheapestOption.price > cheapestOption.offerPrice) {
+    if (cheapestOption && !!cheapestOption.offerPrice && cheapestOption.price > cheapestOption.offerPrice) {
         var discount = cheapestOption.price - cheapestOption.offerPrice;
         var percent = Math.round(100 * discount / cheapestOption.price);
-        return percent;
+        return percent || null;
     }
 
     return null;
@@ -226,9 +226,8 @@ Product.schema.virtual('priceValidUntil').get(function () {
     var firstStr = today.toISOString().substr(0, 8) + "01";
     var expiryStr = new Date(firstStr).addMonths(1).addSeconds(-1).toISOString();
 
-    if (expiryStr.contains("011")) {
-        console.log(expiryStr);
-        expiryStr = expiryStr.replace(/^011/, "201");
+    if (expiryStr.startsWith("01")) {
+        expiryStr = expiryStr.replace(/^01/, "201");
     }
 
     return expiryStr;
