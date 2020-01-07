@@ -446,6 +446,10 @@ Order.schema.methods.sendOrderNotification = function (next) {
                 var mapUrl = location.url || `http://maps.google.com/maps?daddr=${location.lat},${location.lng}`;
 
                 var p = new Promise((resolve, reject) => {
+                    if (mapUrl.length <= 30){
+                        resolve(mapUrl);
+                        return sms.sendSMS(vendorNumber, msg + " " + mapUrl);
+                    }
                     pesapalHelper.shoternUrl(mapUrl, function (err, shortUrl) {
                         location.url2 = mapUrl;
                         if (!err) {
