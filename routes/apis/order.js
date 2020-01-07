@@ -135,29 +135,27 @@ router.get("/:orderNo", function (req, res) {
 
 
 function getCartItems(req){
-    var items = [];
+    var items = Object.values(req.session.cart || {});
     if(typeof req.body.item_id == "string")
     {
-        items.push({
+        items[0] = Object.assign({
             cartId: `${req.body.item_id}|${req.body.item_opt}`,
             product: req.body.item_id,
             price: parseFloat(req.body.item_price),
             quantity: req.body.item_opt,
             pieces: parseInt(req.body.item_pieces)
-        });
+        }, items[0] || {});
     } else if (req.body.item_id) {
-        for(var i =0; i < req.body.item_id.length; i++){
-            items.push({
+        for(var i = 0; i < req.body.item_id.length; i++){
+            items[i] = Object.assign({
                 cartId: `${req.body.item_id[i]}|${req.body.item_opt[i]}`,
                 product: req.body.item_id[i],
                 price: parseFloat(req.body.item_price[i]),
                 quantity: req.body.item_opt[i],
                 pieces: parseInt(req.body.item_pieces[i])
-            });
+            }, items[i] || {});
         }
-    }  else {
-        items = Object.values(req.session.cart);
-    }     
+    }  
 
     return items;
 }
