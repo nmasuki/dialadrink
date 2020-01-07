@@ -22,13 +22,13 @@ router.get("/", function(req, res){
     ];
 
     Order.model.find({'delivery.phoneNumber':{ $in:phoneNos }})
-        .deepPopulate('cart.product.priceOptions.option,cart.product.category,cart.product.subcategory,cart.product.company')
+        .deepPopulate('cart.product.priceOptions.option')
         .exec((err, orders) => {
             if (err){
                 json.message = "Error getting user Orders! " + err;
             } else {
                 json.response = "success";
-                json.data = orders.filter(o => o.cart.filter(c=>c.product).length > 0).orderByDescending(o => o.orderDate)
+                json.data = orders.filter(o => o.cart.filter(c => c.product).length > 0).orderByDescending(o => o.orderDate)
                     .map(o => {
                         var obj = o.toAppObject();
 
