@@ -431,7 +431,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
         //Send SMS Notification to vender
         if (!order.notificationSent) {
             order.notificationSent = true;
-            var items = order.cart.filter(c => !!c);
+            var items = order.cart.filter(c => !!c && c.product);
             var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`.trim();
             var msg = `${order.payment.method} order received from: ${order.delivery.firstName}(${order.delivery.phoneNumber}). Amount: ${order.payment.amount}, ${itemsMsg}.`;
             var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
