@@ -19,7 +19,7 @@ router.get("/", function(req, res){
     var phoneNos = [
         client.phoneNumber.cleanPhoneNumber(), 
         client.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
-    ];
+    ].distinct();
 
     Order.model.find({'delivery.phoneNumber':{ $in:phoneNos }})
         .deepPopulate('cart.product.priceOptions.option')
