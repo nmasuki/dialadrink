@@ -450,6 +450,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                         resolve(mapUrl);
                         return sms.sendSMS(vendorNumber, msg + " " + mapUrl);
                     }
+                    
                     pesapalHelper.shoternUrl(mapUrl, function (err, shortUrl) {
                         location.url2 = mapUrl;
                         if (!err) {
@@ -496,7 +497,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
     if(!that.cart.any(c => !c.product.name))
         return Promise.resolve(sendOrderNotification(that));
-    else
+    else{
         return Order.model.findOne({ _id: that._id })
             .deepPopulate('cart.product.priceOptions.option')
             .populate('client')
@@ -506,6 +507,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                     
                 return sendOrderNotification(order);            
             });
+    }
 };
 
 Order.schema.methods.toAppObject = function () {

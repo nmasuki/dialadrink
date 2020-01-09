@@ -454,11 +454,13 @@ Product.schema.pre('save', function (next) {
     if (!this.tags || !this.tags.length)
         this.tags = defaultTags.call(this);
 
-    var longTags = this.tags.filter(t => t && t.length > 20 && t.contains(" "));
+    var longTagLength = 50;
+    var longTags = this.tags.filter(t => t && t.length > longTagLength && t.contains(" "));
 
     if (longTags.length){
-        this.tags = this.tags.filter(t => t && t.length <= 20 || !t.contains(" "));
-        var sentence = longTags.join(", ").replace(/(&nbsp;?)/g, " ")
+        this.tags = this.tags.filter(t => t && t.length <= longTagLength || !t.contains(" "));
+        var sentence = longTags.distinct()
+            .join(", ").replace(/(&nbsp;?)/g, " ")
             .replace(/\W/g, function (x) { return (x.trim() + " "); })
             .truncate(500);
 
@@ -520,8 +522,8 @@ Product.schema.set('toObject', {
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
             'subCategory', 'brand', 'ratings', 'popularityRatio', 'options', 'cheapestOption',
-            'averageRatings', 'ratingCount', 'tags',
             'quantity', 'currency', 'price', 'offerPrice',
+            'averageRatings', 'ratingCount', 'tags',
             'priceValidUntil', 'percentOffer'
         ];
 
