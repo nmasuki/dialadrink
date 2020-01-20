@@ -37,8 +37,7 @@ router.get("/", function (req, res) {
     });
 });
 
-router.get("/categories", function (req, res) {   
-
+router.get("/categories", function (req, res) {
     var cloudinaryOptions = {
         transformation: [
             //{ effect: "cartoonify" },

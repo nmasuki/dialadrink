@@ -199,7 +199,7 @@ router.post("/forgot", function(req, res){
             }
             
             var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
-            sms.sendSMS(client.phoneNumber, msg + "\r\n" + process.env.APP_ID || "");
+            //sms.sendSMS(client.phoneNumber, msg + "\r\n" + process.env.APP_ID || "");
             
             //TODO send SMS/Email.
             json.response = "success";

@@ -55,7 +55,6 @@ ProductPriceOption.schema.pre('save', function (next) {
                 thisOption.currency = ppo.currency;
                 thisOption.price = ppo.price;
                 thisOption.offerPrice = ppo.offerPrice;
-
                 thisOption.optionText = ppo.optionText;
 
                 product.save();

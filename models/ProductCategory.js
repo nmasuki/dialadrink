@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
+var Product = keystone.list("Product");
 
 /**
  * ProductCategory Model
@@ -17,14 +18,19 @@ ProductCategory.add({
     pageTitle: {type: String},
     description: {type: Types.Html, wysiwyg: true, height: 150},
     modifiedDate: {type: Date, default: Date.now},
+    priorityTags: {type: Types.TextArray}
 });
 
 ProductCategory.relationship({ref: 'Product', refPath: 'category'});
 ProductCategory.relationship({ref: 'ProductSubCategory', refPath: 'category'});
 
+
+
 ProductCategory.schema.pre('save', function(next){
-    this.modifiedDate = new Date();
-    this.updateMenu(next);
+    var that = this;
+
+    that.modifiedDate = new Date();
+    that.updateMenu(next);
 });
 
 ProductCategory.schema.methods.updateMenu = function(next){

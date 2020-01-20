@@ -737,7 +737,7 @@ Product.search = function (query, next, deepSearch) {
     });
 };
 
-Product.getUIFilters = function (products) {
+Product.getUIFilters = function (products, limit) {
     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
     var subCategoryGroups = Object.values(products.filter(p => p.subCategory).groupBy(p => p.subCategory._id));
     var tagsGroups = Object.values(products.filter(p => p.tags.length)
@@ -811,7 +811,7 @@ Product.getUIFilters = function (products) {
         }
     });
 
-    return strUIfilters.slice(0, i);
+    return strUIfilters.slice(0, limit || i);
 };
 
 var topHitsPerWeek = 100;
