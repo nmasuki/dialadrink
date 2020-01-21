@@ -2,6 +2,7 @@ var MoveSms = require("../../helpers/movesms");
 var keystone = require('keystone');
 var Client = keystone.list("Client");
 var webpush = require("web-push");
+var najax = require('najax');
 
 var sms = new MoveSms();
 
@@ -103,10 +104,34 @@ router.get("/check/:mobile", function (req, res){
             var json = {
                 response: "success",
                 message: "",
+                isValidNumber: !!client,
                 isRegistered: !!(client && client.isAppRegistered)
             };
 
-            res.send(json);
+            if (client)
+                res.send(json);
+            else {                
+                najax.get({
+                    url: `http://apilayer.net/api/validate`,
+                    contentType: "application/json; charset=utf-8",
+                    data: {
+                        access_key: '1845a28d63e1b10f9e73aa474d33d8fb',
+                        country_code: '',
+                        number: mobile,
+                        format: 1,
+                    },
+                    success: function (res) {
+                        json.isValidNumber = res.valid;
+                        req.session.numberLookUp = res;
+                        res.send(json);
+                    },
+                    error: function (xhr, status, err) {
+                        json.isValidNumber = true;
+                        res.send(json);
+                    }
+                });
+            }
+	
         });
 });
 
@@ -199,7 +224,7 @@ router.post("/forgot", function(req, res){
             }
             
             var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
-            //sms.sendSMS(client.phoneNumber, msg + "\r\n" + process.env.APP_ID || "");
+            sms.sendSMS(client.phoneNumber, msg + "\r\n" + process.env.APP_ID || "");
             
             //TODO send SMS/Email.
             json.response = "success";

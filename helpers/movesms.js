@@ -1,4 +1,5 @@
 var najax = require('najax');
+var fs = require('fs');
 
 module.exports = function MoveSMS(sender) {
     sender = sender || 'SMARTLINK';
@@ -25,6 +26,42 @@ module.exports = function MoveSMS(sender) {
         });
     };
 
+    var lookUpLogFile = "./lookups.json";
+    var lookUps = fs.existsSysnc(lookUpLogFile)? JSON.parse(fs.readFileSync() || "{}"): {};
+
+    self.validateNumber = function(number){
+        return new Promise((resolve, reject) => {
+            najax.get({
+                url: `http://apilayer.net/api/validate`,
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    access_key: '1845a28d63e1b10f9e73aa474d33d8fb',
+                    country_code: '',
+                    number: number,
+                    format: 1,
+                },
+                success: function (res) {
+                    if (!res.valid)
+                        console.log("Invalid number", number);
+
+                    lookUps[number] = res;
+
+                    try{
+                        fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
+                    }catch(e){
+                        console.log(e);
+                    }
+
+                    resolve(res.valid);
+                },
+                error: function (xhr, status, err) {
+                    console.warn.apply(this, arguments);
+                    resolve(false);
+                }
+            });
+        });        
+    };
+
     self.sendSMS = function compose(to, message, next) {
         var url = apiUrl.format('compose') + `&sender=${sender}`;
 
@@ -36,34 +73,41 @@ module.exports = function MoveSMS(sender) {
 
             if (process.env.NODE_ENV != "production") {
                 console.log("Ignoring SMS notification for non-prod environment!");
-                return Promise.resolve(100);
+                return Promise.resolve(1);
             }
 
-            return new Promise((resolve, reject) => {
-                najax.post({
-                    url: url,
-                    data: {
-                        to: (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber()).join(','),
-                        message: message,
-                        msgtype: 5,
-                        dlr: 0
-                    },
-                    success: function (response) {
-                        console.log("SMS sent!", response);
-                        var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
-                        resolve(balance);
-                        if (typeof next == "function")
-                            next(null, balance);
-                    },
-                    error: function (xhr, status, error) {
-                        console.warn("Error sending SMS!", error);
+            var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
+            return Promise.all(numbers.map(n => self.validateNumber(n))).then(values => {
 
-                        reject(error);
-                        if (typeof next == "function")
-                            next(error);
-                    }
+                var invalid = numbers.filter((n, i) => !values[i]);
+                if(invalid.length)
+                    console.log("Some invalid numbers found '" + invalid.join() + "' not sending sms to them");
+
+                return new Promise((resolve, reject) => {
+                    najax.post({
+                        url: url,
+                        data: {
+                            to: numbers.filter((n, i) => values[i]).join(','),
+                            message: message,
+                            msgtype: 5,
+                            dlr: 0
+                        },
+                        success: function (response) {
+                            resolve(balance - 2);
+                            if (typeof next == "function")
+                                next(null, balance);
+                        },
+                        error: function (xhr, status, error) {
+                            console.warn("Error sending SMS!", error);
+                            reject(error);
+                            if (typeof next == "function")
+                                next(error);
+                        }
+                    });
                 });
-            });
+            })
+
+            
         }).catch(function (xhr, status, error) {
             return console.warn("Can't send SMS!", error);
         });
