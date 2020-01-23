@@ -27,13 +27,16 @@ module.exports = function MoveSMS(sender) {
     };
 
     var lookUpLogFile = "./lookups.json";
-    var lookUps = fs.existsSysnc(lookUpLogFile)? JSON.parse(fs.readFileSync() || "{}"): {};
 
-    self.validateNumber = function(number){
+    self.validateNumber = function (number) {
+        var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync() || "{}") : {};
         return new Promise((resolve, reject) => {
+            if (lookUps[number])
+                return resolve(lookUps[number].valid);
+            
             najax.get({
                 url: `http://apilayer.net/api/validate`,
-                contentType: "application/json; charset=utf-8",
+                dataType: "application/json; charset=utf-8",
                 data: {
                     access_key: '1845a28d63e1b10f9e73aa474d33d8fb',
                     country_code: '',
@@ -41,14 +44,16 @@ module.exports = function MoveSMS(sender) {
                     format: 1,
                 },
                 success: function (res) {
+                    if(typeof res == "string")
+                        res = JSON.parse(res);
+
                     if (!res.valid)
                         console.log("Invalid number", number);
 
                     lookUps[number] = res;
-
-                    try{
+                    try {
                         fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
-                    }catch(e){
+                    } catch (e) {
                         console.log(e);
                     }
 
@@ -59,7 +64,7 @@ module.exports = function MoveSMS(sender) {
                     resolve(false);
                 }
             });
-        });        
+        });
     };
 
     self.sendSMS = function compose(to, message, next) {
@@ -71,17 +76,21 @@ module.exports = function MoveSMS(sender) {
             if (balance < 0)
                 return console.warn("MoveSMS balance is low. Please topup.");
 
-            if (process.env.NODE_ENV != "production") {
-                console.log("Ignoring SMS notification for non-prod environment!");
-                return Promise.resolve(1);
-            }
-
             var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
             return Promise.all(numbers.map(n => self.validateNumber(n))).then(values => {
-
                 var invalid = numbers.filter((n, i) => !values[i]);
-                if(invalid.length)
+                if (numbers.length == invalid.length) {
+                    console.log("Ignoring SMS notification for non-prod environment!");
+                    return Promise.resolve(1);
+                }
+                if (invalid.length) {
                     console.log("Some invalid numbers found '" + invalid.join() + "' not sending sms to them");
+                }
+
+                if (process.env.NODE_ENV != "production") {
+                    console.log("Ignoring SMS notification for non-prod environment!");
+                    return Promise.resolve(1);
+                }
 
                 return new Promise((resolve, reject) => {
                     najax.post({
@@ -107,7 +116,7 @@ module.exports = function MoveSMS(sender) {
                 });
             })
 
-            
+
         }).catch(function (xhr, status, error) {
             return console.warn("Can't send SMS!", error);
         });
