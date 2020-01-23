@@ -29,7 +29,7 @@ module.exports = function MoveSMS(sender) {
     var lookUpLogFile = "./lookups.json";
 
     self.validateNumber = function (number) {
-        var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync() || "{}") : {};
+        var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
         return new Promise((resolve, reject) => {
             if (lookUps[number])
                 return resolve(lookUps[number].valid);
@@ -79,10 +79,12 @@ module.exports = function MoveSMS(sender) {
             var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
             return Promise.all(numbers.map(n => self.validateNumber(n))).then(values => {
                 var invalid = numbers.filter((n, i) => !values[i]);
+                
                 if (numbers.length == invalid.length) {
                     console.log("Ignoring SMS notification for non-prod environment!");
                     return Promise.resolve(1);
                 }
+
                 if (invalid.length) {
                     console.log("Some invalid numbers found '" + invalid.join() + "' not sending sms to them");
                 }
@@ -114,9 +116,7 @@ module.exports = function MoveSMS(sender) {
                         }
                     });
                 });
-            })
-
-
+            });
         }).catch(function (xhr, status, error) {
             return console.warn("Can't send SMS!", xhr, status, error);
         });
