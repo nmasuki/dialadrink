@@ -118,7 +118,7 @@ module.exports = function MoveSMS(sender) {
 
 
         }).catch(function (xhr, status, error) {
-            return console.warn("Can't send SMS!", error);
+            return console.warn("Can't send SMS!", xhr, status, error);
         });
 
     };
