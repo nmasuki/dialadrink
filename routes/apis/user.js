@@ -110,28 +110,16 @@ router.get("/check/:mobile", function (req, res){
 
             if (client)
                 res.send(json);
-            else {                
-                najax.get({
-                    url: `http://apilayer.net/api/validate`,
-                    contentType: "application/json; charset=utf-8",
-                    data: {
-                        access_key: '1845a28d63e1b10f9e73aa474d33d8fb',
-                        country_code: '',
-                        number: mobile,
-                        format: 1,
-                    },
-                    success: function (result) {
+            else { 
+                self.validateNumber(mobile).then(function(result){
                         json.isValidNumber = result.valid;
                         req.session.numberLookUp = result;
                         res.send(json);
-                    },
-                    error: function (xhr, status, err) {
-                        json.isValidNumber = true;
-                        res.send(json);
-                    }
+                }).catch(function(){
+                    json.isValidNumber = true;
+                    res.send(json);
                 });
-            }
-	
+            }	
         });
 });
 

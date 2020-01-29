@@ -37,6 +37,7 @@ module.exports = function MoveSMS(sender) {
             najax.get({
                 url: `http://apilayer.net/api/validate`,
                 dataType: "application/json; charset=utf-8",
+                type: 'json',
                 data: {
                     access_key: '1845a28d63e1b10f9e73aa474d33d8fb',
                     country_code: '',
@@ -44,8 +45,12 @@ module.exports = function MoveSMS(sender) {
                     format: 1,
                 },
                 success: function (res) {
-                    if(typeof res == "string")
-                        res = JSON.parse(res);
+                    try{
+                        if(typeof res == "string")
+                            res = JSON.parse(res);
+                    }catch(e){
+                        console.error("Error while validating", number, e);
+                    }
 
                     if (!res.valid)
                         console.log("Invalid number", number);
