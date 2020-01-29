@@ -48,6 +48,7 @@ module.exports = function MoveSMS(sender) {
                     try{
                         if(typeof res == "string")
                             res = JSON.parse(res);
+                        res.created_at = new Date();
                     }catch(e){
                         console.error("Error while validating", number, e);
                     }
