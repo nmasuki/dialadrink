@@ -37,7 +37,6 @@ module.exports = function MoveSMS(sender) {
             najax.get({
                 url: `http://apilayer.net/api/validate`,
                 dataType: "application/json; charset=utf-8",
-                type: 'json',
                 data: {
                     access_key: '1845a28d63e1b10f9e73aa474d33d8fb',
                     country_code: '',
@@ -87,7 +86,7 @@ module.exports = function MoveSMS(sender) {
                 var invalid = numbers.filter((n, i) => !values[i]);
                 
                 if (numbers.length == invalid.length) {
-                    console.log("Ignoring SMS notification for non-prod environment!");
+                    console.log("Ignoring SMS notification for invalid numbers!");
                     return Promise.resolve(1);
                 }
 
