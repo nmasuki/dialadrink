@@ -238,9 +238,7 @@ router.post("/login", function (req, res) {
     if(mobile == "254720805835")
     {
         console.log("Looking up number", mobile);
-        sms.validateNumber(mobile).then(x => {
-            console.log("Lookup done!", arguments);
-        });
+        sms.validateNumber(mobile).then((a,b,c) => { console.log("Lookup done!", a, b, c); });
     }
 
     Client.model.find({ phoneNumber: mobile })
