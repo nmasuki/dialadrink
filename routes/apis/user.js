@@ -111,9 +111,9 @@ router.get("/check/:mobile", function (req, res){
             if (client)
                 res.send(json);
             else { 
-                self.validateNumber(mobile).then(function(valid){
-                        json.isValidNumber = valid;
-                        res.send(json);
+                self.validateNumber(mobile).then(function (response) {
+                    json.isValidNumber = response.valid;
+                    res.send(json);
                 }).catch(function(){
                     json.isValidNumber = true;
                     res.send(json);
@@ -237,7 +237,7 @@ router.post("/login", function (req, res) {
     if(mobile == "254720805835")
     {
         console.log("Looking up number", mobile);
-        sms.validateNumber(mobile).then((a,b,c) => { console.log("Lookup done!", a, b, c); });
+        sms.validateNumber(mobile).then((a,b,c) => { console.log("Lookup done!", a); });
     }
 
     Client.model.find({ phoneNumber: mobile })

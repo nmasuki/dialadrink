@@ -32,7 +32,7 @@ module.exports = function MoveSMS(sender) {
         var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
         return new Promise((resolve, reject) => {
             if (lookUps[number])
-                return resolve(lookUps[number].valid);
+                return resolve(lookUps[number]);
             
             najax.get({
                 url: `http://apilayer.net/api/validate`,
@@ -62,11 +62,11 @@ module.exports = function MoveSMS(sender) {
                         console.log(e);
                     }
 
-                    resolve(res.valid, res);
+                    resolve(res);
                 },
                 error: function (xhr, status, err) {
                     console.warn.apply(this, arguments);
-                    resolve(false);
+                    resolve({valid: false});
                 }
             });
         });
@@ -83,19 +83,19 @@ module.exports = function MoveSMS(sender) {
 
             var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
             return Promise.all(numbers.map(n => self.validateNumber(n))).then(values => {
-                var invalid = numbers.filter((n, i) => !values[i]);
+                var invalid = numbers.filter((n, i) => !values[i].valid);
                 
                 if (numbers.length == invalid.length) {
-                    console.log("Ignoring SMS notification for invalid numbers!");
+                    console.warn("Ignoring SMS notification for invalid numbers!", invalid.join());
                     return Promise.resolve(1);
                 }
 
-                if (invalid.length) {
-                    console.log("Some invalid numbers found '" + invalid.join() + "' not sending sms to them");
-                }
+                if (invalid.length) 
+                    console.warn("Some invalid numbers found '" + invalid.join() + "' not sending sms to them");
+                
 
                 if (process.env.NODE_ENV != "production") {
-                    console.log("Ignoring SMS notification for non-prod environment!");
+                    console.warn("Ignoring SMS notification for non-prod environment!");
                     return Promise.resolve(1);
                 }
 
