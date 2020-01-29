@@ -62,7 +62,7 @@ module.exports = function MoveSMS(sender) {
                         console.log(e);
                     }
 
-                    resolve(res.valid);
+                    resolve(res.valid, res);
                 },
                 error: function (xhr, status, err) {
                     console.warn.apply(this, arguments);
