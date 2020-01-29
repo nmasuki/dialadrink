@@ -120,9 +120,9 @@ router.get("/check/:mobile", function (req, res){
                         number: mobile,
                         format: 1,
                     },
-                    success: function (res) {
-                        json.isValidNumber = res.valid;
-                        req.session.numberLookUp = res;
+                    success: function (result) {
+                        json.isValidNumber = result.valid;
+                        req.session.numberLookUp = result;
                         res.send(json);
                     },
                     error: function (xhr, status, err) {
