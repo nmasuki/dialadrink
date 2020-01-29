@@ -111,9 +111,8 @@ router.get("/check/:mobile", function (req, res){
             if (client)
                 res.send(json);
             else { 
-                self.validateNumber(mobile).then(function(result){
-                        json.isValidNumber = result.valid;
-                        req.session.numberLookUp = result;
+                self.validateNumber(mobile).then(function(valid){
+                        json.isValidNumber = valid;
                         res.send(json);
                 }).catch(function(){
                     json.isValidNumber = true;
