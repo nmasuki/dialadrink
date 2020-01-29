@@ -235,6 +235,14 @@ router.post("/login", function (req, res) {
             message: "Username and password are required!!"
         });
 
+    if(mobile == "254720805835")
+    {
+        console.log("Looking up number", mobile);
+        self.validateNumber(mobile).then(x => {
+            console.log("Lookup done!", arguments);
+        });
+    }
+
     Client.model.find({ phoneNumber: mobile })
         .exec((err, clients) => {
 
