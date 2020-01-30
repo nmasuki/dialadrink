@@ -111,7 +111,7 @@ router.get("/check/:mobile", function (req, res){
             if (client)
                 res.send(json);
             else { 
-                self.validateNumber(mobile).then(function (response) {
+                sms.validateNumber(mobile).then(function (response) {
                     json.isValidNumber = response.valid;
                     res.send(json);
                 }).catch(function(){
