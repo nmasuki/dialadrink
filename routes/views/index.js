@@ -177,9 +177,7 @@ function search(req, res, next) {
 
     if (req.params.query) {
         if (req.params.query.toLowerCase() == "giftpacks") {
-            Product.findPublished({
-                isGiftPack: true
-            }, function (err, products) {
+            Product.findPublished({ isGiftPack: true }, function (err, products) {
                 renderResults(products, "Gift Packs");
             });
         } else {

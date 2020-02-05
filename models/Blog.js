@@ -27,7 +27,7 @@ Blog.add({
     title: {type: String, required: true, initial: true},
     
     state: {type: Types.Select, options: 'draft, published, archived', default: 'draft', index: true},
-    author: {type: Types.Relationship, ref: 'User', index: true},
+    author: {type: Types.Relationship, ref: 'Admin', index: true},
     publishedDate: {type: Types.Datetime, index: true, dependsOn: {state: 'published'}},
     image: {type: Types.CloudinaryImage, folder: "blob"},
     imageAlt:{type: String, default:'Dial a drink Kenya'},

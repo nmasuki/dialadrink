@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var najax = require('najax');
 var cloudinary = require("cloudinary");
-var User = keystone.list('User');
+var Admin = keystone.list('Admin');
 var Blog = keystone.list('Blog');
 var BlogCategory = keystone.list('BlogCategory');
 var baseUrl = keystone.get("url");
@@ -12,7 +12,6 @@ try {
 } catch (e) {
     docParser = require("cheerio");
 }
-
 
 function importBlogCategory(done) {
     var _categories = ["Kenya", "Whisky|Whiskey", "Nairobi", "Delivery", "Shisha"];
@@ -70,7 +69,7 @@ function importBlog(tile, done, categories) {
                 var extentedContent = $("#site-content").html();
                 title = title || $(".main-title").text();
 
-                User.model.findOne({}).exec((err, user) => {
+                Admin.model.findOne({}).exec((err, user) => {
                     if (err)
                         console.log(err);
 

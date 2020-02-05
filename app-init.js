@@ -39,7 +39,7 @@ keystone.init({
 	'compress': true,
 	'auto update': true,
 	'auth': true,
-	'user model': 'User',
+	'user model': 'Admin',
 	'session': true,
 	'session store': 'mongo',
 	'session options': {
@@ -101,7 +101,7 @@ keystone.set('nav', {
 	enquiries: 'enquiries',
 	'content-and-seo': ['menu-items', 'pages'],
 	blog: ["blogs", "blog-categories"],
-	users: ['clients', 'users'],
+	users: ['clients', 'admins'],
 	notifications: ['client-notification-broudcasts', 'client-notifications']
 });
 

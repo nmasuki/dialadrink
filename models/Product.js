@@ -695,15 +695,13 @@ Product.search = function (query, next, deepSearch) {
 
     var allProducts = [];
     //Searching by brand then category then product
-    return Product.findPublished({
-        href: new RegExp("^" + keyStr + "$", "i")
-    }, function (err, products) {
+    return Product.findPublished({ href: new RegExp("^" + keyStr + "$", "i") }, function (err, products) {
         if (deepSearch || err || !products || !products.length) {
             if (products && products.length) allProducts = allProducts.concat(products);
             return Product.findPublished(filters, function (err, products) {
                 if (deepSearch || err || !products || !products.length) {
                     if (products && products.length) allProducts = allProducts.concat(products);
-                    return Product.findByCategory(filters, function (err, products) {
+                    return Product.findByCategory({ key: keyRegex }, function (err, products) {
                         if (deepSearch || err || !products || !products.length) {
                             if (products && products.length) allProducts = allProducts.concat(products);
                             return Product.findBySubCategory(filters, function (err, products) {

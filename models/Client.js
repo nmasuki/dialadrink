@@ -6,8 +6,8 @@ var fs = require('fs');
 var FCM = require('fcm-node');
 var MoveSms = require("../helpers/movesms");
 
-var fcm = new FCM(process.env.FCM_KEY);
-var sms = new MoveSms();
+var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
+var sms = new (require("../helpers/movesms"))();
 
 var Types = keystone.Field.Types;
 
@@ -421,7 +421,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
         console.log(
             "Sending Email notification!",
-            "User", client.email,
+            "Admin", client.email,
             "Admins", emailOptions.cc.map(u => u.email || u).join()
         );
 
@@ -438,7 +438,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
             });
         });
     } else {
-        return keystone.list("User").model.find({
+        return keystone.list("Admin").model.find({
                 receivesOrders: true
             })
             .exec((err, users) => {
@@ -462,7 +462,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
                 console.log(
                     "Sending Email notification!",
-                    "User", client.email,
+                    "Admin", client.email,
                     "Admins", emailOptions.cc.map(u => u.email || u).join()
                 );
 
