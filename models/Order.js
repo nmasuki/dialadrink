@@ -445,6 +445,9 @@ Order.schema.methods.sendOrderNotification = function (next) {
             if (location) {
                 var mapUrl = location.url || `http://maps.google.com/maps?daddr=${location.lat},${location.lng}`;
 
+                if (!location.url && (location.lat && location.lng))
+                    location.url = mapUrl;
+                
                 var p = new Promise((resolve, reject) => {
                     if (mapUrl.length <= 30){
                         resolve(mapUrl);
@@ -536,8 +539,8 @@ Order.schema.set('toObject', {
             "chargesAmt", "subtotal", "total",
             "state", "orderDate", "modifiedDate",
             "client", "orderAmount",
-            "paymentMethod", "payment",
-            //"promo","delivery"
+            "paymentMethod", "payment", "deliveryLocation",
+            "promo", "delivery"
         ];
 
         virtuals.forEach(v => ret[v] = order[v]);
