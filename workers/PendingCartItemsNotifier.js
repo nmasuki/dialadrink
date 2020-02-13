@@ -24,7 +24,7 @@ function getWork(next) {
     db.collection('app_sessions')
         .find(filter)
         .sort({ expires: -1 })
-        .limit(1000)
+        //.limit(1000)
         .toArray((err, sessions) => {
             if (sessions && sessions.length) {
                 console.log(`Found ${sessions.length} sessions with pending cart items..`);
