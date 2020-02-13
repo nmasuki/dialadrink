@@ -54,13 +54,13 @@ function getWork(next) {
                     self.worker.save();
                 }
 
-                var startDate = new Date().addDays(-30);
+                var startDate = new Date().addDays(-120);
                 var endDate = new Date().addDays(-5);
 
                 sessions = sessions.filter(s => {
                     var cartItems = Object.values(s.cart);
                     return cartItems.some(c => {
-                        var efDate = c.modifiedDate || c.date;
+                        var efDate = new Date(c.modifiedDate || c.date);
                         return efDate > startDate && efDate <= endDate;
                     });
                 });
