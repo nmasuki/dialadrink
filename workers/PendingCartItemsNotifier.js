@@ -24,7 +24,7 @@ function getWork(next) {
     db.collection('app_sessions')
         .find(filter)
         .sort({ expires: -1 })
-        .limit(50)
+        .limit(1000)
         .toArray((err, sessions) => {
             if (sessions && sessions.length) {
                 console.log(`Found ${sessions.length} sessions with pending cart items..`);
@@ -95,7 +95,8 @@ function doWork(err, sessions, next) {
                 clients.forEach(c => {
                     ClientNotification.model.find({
                         type: "push",
-                        status: 'pending'
+                        status: 'pending',
+                        client: c._id
                     }).exec((err, pending) => {
                         if (err)
                             return console.error(err);
