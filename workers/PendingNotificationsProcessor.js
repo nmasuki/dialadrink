@@ -67,6 +67,7 @@ function doWork(err, notifications, next) {
 
                 return Promise.resolve().then(markNotification('reject'));
             }))
+            .catch(console.warn)
             .finally(function () {
                 var grouped = notifications.groupBy(n => n.broudcast && (n.broudcast._id || n.broudcast) || '');
 
