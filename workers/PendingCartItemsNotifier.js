@@ -16,9 +16,10 @@ function getWork(next) {
         }]
     };
 
+    /*
     if(process.env.NODE_ENV == "development"){
         filter.$and.push({session: /(254720805835)/});
-    }
+    }*/
 
     db.collection('app_sessions')
         .find(filter)
