@@ -169,14 +169,10 @@ this["templates"]["email"]["order"]["hbs"]["templates/email/order.hbs"] = Handle
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.firstName : stack1), depth0))
     + " "
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.lastName : stack1), depth0))
-    + "<br>\n                                    "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.address : stack1), depth0))
-    + ", "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.building : stack1), depth0))
-    + "<br>\n                                    "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.houseNumber : stack1), depth0))
-    + "<br>\n                                    \n"
-    + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.phoneNumber : stack1),{"name":"if","hash":{},"fn":container.program(34, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "<br>                                    \n\n"
+    + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.deliveryLocation : depth0)) != null ? stack1.url : stack1),{"name":"if","hash":{},"fn":container.program(34, data, 0, blockParams, depths),"inverse":container.program(36, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + "                                    \n"
+    + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.phoneNumber : stack1),{"name":"if","hash":{},"fn":container.program(38, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n                                    <p style=\"margin:0 0 16px\">\n                                        <a href=\"mailto:"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.email : stack1), depth0))
     + "\" target=\"_blank\">"
@@ -249,9 +245,9 @@ this["templates"]["email"]["order"]["hbs"]["templates/email/order.hbs"] = Handle
     + alias3(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + ":\n                                </th>\n                                <td class=\"order-td\"\n                                    style=\"text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px\">\n                                    <span class=\"order-amount order-amount\">\n                                        <span class=\"order-currencySymbol\">"
     + alias3(container.lambda((depths[1] != null ? depths[1].currency : depths[1]), depth0))
-    + "</span>\n                                        ("
+    + "</span>\n                                        "
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.amount : depth0),{"name":"formatNumber","hash":{},"data":data}))
-    + ")                                        \n                                    </span>\n                                </td>\n                            </tr>\n";
+    + "                                        \n                                    </span>\n                                </td>\n                            </tr>\n";
 },"17":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
@@ -298,6 +294,28 @@ this["templates"]["email"]["order"]["hbs"]["templates/email/order.hbs"] = Handle
     + container.escapeExpression(((helper = (helper = helpers.orderNumber || (depth0 != null ? depth0.orderNumber : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"orderNumber","hash":{},"data":data}) : helper)))
     + "\">here</a>\n                        </p>\n";
 },"34":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "                                        <a href=\""
+    + ((stack1 = alias1(((stack1 = (depth0 != null ? depth0.deliveryLocation : depth0)) != null ? stack1.url : stack1), depth0)) != null ? stack1 : "")
+    + "\">\n                                            "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.address : stack1), depth0))
+    + ", "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.building : stack1), depth0))
+    + ", "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.houseNumber : stack1), depth0))
+    + "\n                                        </a><br>\n";
+},"36":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "                                        "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.address : stack1), depth0))
+    + ", "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.building : stack1), depth0))
+    + ", "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.houseNumber : stack1), depth0))
+    + "<br>\n";
+},"38":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.lambda, alias2=container.escapeExpression;
 
   return "                                    <a href=\"tel:"
