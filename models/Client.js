@@ -303,13 +303,13 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
                 return webpush.sendNotification(subscription, JSON.stringify(payload))
                     .then(res => {
-                        console.log(`Notification sent to ${client.name}`, subscription);
+                        console.log(`Notification sent to ${client.name}`, subscription.endpoint);
                         client.lastNotificationDate = new Date();
                         client.save();
 
                         return client;
                     })
-                    .catch(err => console.error("Error sending web-push!", err, subscription));
+                    .catch(err => console.error("Error sending web-push!", err, subscription.endpoint));
             });
 
             //Send FCM Push
@@ -328,8 +328,8 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
                 return new Promise((resolve, reject) => fcm.send(payload, function (err, response) {
                     if (err) {
-                        console.error("Error sendin FCM!", token);
-                        reject(err);
+                        console.error("Error sendin FCM!", err);
+                        reject("");
                     } else {
                         console.log("FCM successfully sent with response: ", response);
                         client.lastNotificationDate = new Date();
