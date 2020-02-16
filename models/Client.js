@@ -153,8 +153,8 @@ Client.schema.virtual("isAppRegistered").get(function () {
 
 Client.schema.virtual("name")
     .get(function () {
-        var name = (this.firstName || '') + ' ' + (this.lastName || '');
-        return name.trim();
+        var name = ((this.firstName || '').trim() + ' ' + (this.lastName || '').trim());
+        return name.trim().replace("  ", " ");
     });
 
 Client.schema.virtual("name")
@@ -286,7 +286,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
         if (data && data.sessionId)
             sessions = sessions.filter(s => s._id == data.sessionId);
 
-        var webpushTokens = sessions.map(s => s.webpush).filter(t => !!t);
+        var webpushTokens = sessions.map(s => s.webpush).filter(t => !!t && t.endpoint);
         var fcmTokens = sessions.map(s => s.fcm).filter(t => !!t);
 
         if (webpushTokens.length || fcmTokens.length) {
@@ -303,15 +303,17 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
                 return webpush.sendNotification(subscription, JSON.stringify(payload))
                     .then(res => {
-                        console.log(`Notification sent to ${client.name}`);
+                        console.log(`Notification sent to ${client.name}`, subscription);
                         client.lastNotificationDate = new Date();
                         client.save();
+
+                        return client;
                     })
-                    .catch(err => console.error("Error sending web-push!", err));
+                    .catch(err => console.error("Error sending web-push!", err, subscription));
             });
 
             //Send FCM Push
-            promises.concat(fcmTokens.map(token => {
+            promises = promises.concat(fcmTokens.map(token => {
                 var payload = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
                     to: token,
                     //collapse_key: 'your_collapse_key',
@@ -326,7 +328,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
                 return new Promise((resolve, reject) => fcm.send(payload, function (err, response) {
                     if (err) {
-                        console.error("Error sendin FCM!", err);
+                        console.error("Error sendin FCM!", token);
                         reject(err);
                     } else {
                         console.log("FCM successfully sent with response: ", response);
@@ -335,15 +337,15 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
                         resolve(client);
                     }
-                }));
+                })).catch(console.error);
             }));
 
             console.log(`Sessions: ${sessions.length}, WebTokens:${webpushTokens.length}, FCMTokens:${fcmTokens.length}`);
 
-            return Promise.all(promises);
+            return Promise.any(promises);
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
-            return Promise.reject("User has no push token associeted!");
+            return Promise.reject(`User ${client.name} has no push token associeted!`).catch(console.warn);
         }
     });
 };

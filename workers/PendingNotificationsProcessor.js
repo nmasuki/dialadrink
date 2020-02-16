@@ -57,13 +57,18 @@ function doWork(err, notifications, next) {
 
                 if (n.type == "sms")
                     return n.client.sendSMSNotification(n.message.body, n)
-                        .then(markNotification('sent')).catch(markNotification('reject'));
+                        .then(markNotification('sent'))
+                        .catch(markNotification('reject'));
+                        
                 if (n.type == "email")
                     return n.client.sendEmailNotification(n.message.title, n.message.body, n)
-                        .then(markNotification('sent')).catch(markNotification('reject'));
+                        .then(markNotification('sent'))
+                        .catch(markNotification('reject'));
+
                 if (n.type == "push")
                     return n.client.sendNotification(n.message.title, n.message.body, n.message.icon, n)
-                        .then(markNotification('sent')).catch(markNotification('reject'));
+                        .then(markNotification('sent'))
+                        .catch(markNotification('reject'));
 
                 return Promise.resolve().then(markNotification('reject'));
             }))

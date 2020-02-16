@@ -21,6 +21,7 @@ Location.add({
 	show: { type: Boolean },
 	//page: { type: Types.Relationship, ref: 'Page' },
 	description: { type: Types.Html, wysiwyg: true, height: 250 },
+	deliveryCharges: {type: Types.Number, default:300 },
 	location: {
 		lat: {type: Types.Number },
 		lng: {type: Types.Number },

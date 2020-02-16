@@ -666,3 +666,22 @@ if (!Promise.prototype.finally)
             err => Promise.resolve(onFinally()).then(() => console.warn(err))
         );
     };
+if (!Promise.any)
+    Promise.any = function (promises) {
+        return new Promise(function (resolve, reject) {
+            var count = promises.length,
+                resolved = false;
+            promises.forEach(function (p) {
+                Promise.resolve(p).then(function (value) {
+                    resolved = true;
+                    count--;
+                    resolve(value);
+                }, function () {
+                    count--;
+                    if (count === 0 && !resolved) {
+                        reject(new Error("No promises resolved successfully."));
+                    }
+                });
+            });
+        });
+    };

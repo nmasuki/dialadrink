@@ -77,16 +77,15 @@ function getWork(next) {
 }
 
 function doWork(err, sessions, next) {
+    if(err || ! sessions)
+        return console.error("Error while creating cart item notification!", err);
+
     var title = `Your shopping cart at '${keystone.get("name")}'`;
     var body = "Hi {firstName}. You have some items waiting in your cart.";
 
     sessions.forEach(s => {
         keystone.list("Client").model.find({
-            sessions: {
-                $elemMatch: {
-                    $eq: s._id
-                }
-            }
+            sessions: { $elemMatch: { $eq: s._id } }
         }).exec((err, clients) => {
             if (err)
                 return console.error(err);
@@ -102,16 +101,20 @@ function doWork(err, sessions, next) {
                             return console.error(err);
 
                         if(pending && pending.length)
-                            return;
+                            return console.log(`Skipping notification to '${c.name}'. User has ${pending.length} pending notifications.`);
 
                         var date = new Date().toISOString();
                         var scheduleDate = new Date(date.substr(0, 10));
                         var scheduleTime = date.substr(11).split(":");
 
-                        if (scheduleTime[0] > 21 - 3) {
+                        if (scheduleTime[0] > 22 - 3) {
                             scheduleTime[0] = 18 - 3;
                             scheduleDate = scheduleDate.addDays(1);
+                        } else if (scheduleTime[0] <= 11 - 3){
+                            scheduleTime[0] = 18 - 3;
+                            scheduleTime[1] = 45;
                         }
+
 
                         var n = new ClientNotification.model({
                             client: c,
@@ -129,7 +132,8 @@ function doWork(err, sessions, next) {
                         });
 
                         n.save();
-                    });                    
+                        console.log(`Cart item notification to '${c.name}' scheduled for ${n.scheduleDate.toISOString()}`);
+                    });
                 });
 
             if (typeof next == "function")
