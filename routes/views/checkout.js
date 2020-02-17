@@ -5,14 +5,46 @@ var pesapalHelper = require('../../helpers/pesapal');
 var request = require('request'); //.defaults({'proxy':'http://127.0.0.1:8888'});
 var najax = require('najax');
 
+function getMergedCart(req, res, callback) {
+	var client = res.locals.appUser;
+	if (!client)
+		return callback(new Error("We could not resolve the logged in user!"));
+
+	var carts = [{}];
+	client.getSessions(function (err, sessions) {
+		const db = keystone.mongoose.connection;
+
+		sessions.forEach(s => {
+			if (Object.keys(s.cart || {}).length) {
+				carts.push(s.cart);
+				if (s._id != req.sessionID) {
+					delete s.cart;
+					db.collection('app_sessions')
+						.update({
+							_id: s._id
+						}, {
+							$set: {
+								session: JSON.stringify(s)
+							}
+						});
+				}
+			}
+		});
+
+		var cart = Object.assign.apply(this, carts);
+		req.session.cart = cart;
+
+		if (typeof callback == "function")
+			callback(null, cart);
+	});
+}
+
 router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
 	var locals = res.locals;
 
 	locals.cart = req.session.cart || {};
-	locals.page = Object.assign(locals.page, {
-		h1: "Your Order Details"
-	});
+	locals.page = Object.assign(locals.page, { h1: "Your Order Details" });
 
 	if (req.session.userData && req.session.userData.saveInfo)
 		locals.userData = req.session.userData;
@@ -27,7 +59,11 @@ router.get('/', function (req, res) {
 
 	locals.enableMPesa = process.env.MPESA_ENABLED;
 	locals.enablePaypal = process.env.PESAPAL_ENABLED;
-	return view.render('checkout');
+
+	if(req.query.mergCart)
+		getMergedCart(req, res, () => view.render('checkout'));
+	else
+		return view.render('checkout');
 });
 
 router.post("/", function (req, res, next) {

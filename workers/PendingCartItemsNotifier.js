@@ -116,7 +116,6 @@ function doWork(err, sessions, next) {
                             scheduleTime[1] = 45;
                         }
 
-
                         var n = new ClientNotification.model({
                             client: c,
                             scheduleDate: new Date(scheduleDate.toISOString().substr(0, 10) + "T" + scheduleTime.join(":")),
@@ -127,7 +126,10 @@ function doWork(err, sessions, next) {
                                 body: body.format(c),
                                 data: {
                                     sessionId: s._id,
-                                    buttons: ["Continue Shopping"]
+                                    buttons: [
+                                        {action: '/checkout?mergeCart=true', title: "Checkout"},                                        
+                                        {action: '/', title: "Continue Shopping"}
+                                    ]
                                 }
                             }
                         });

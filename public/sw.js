@@ -12,9 +12,22 @@ self.addEventListener("push", function(e) {
 
     self.registration.showNotification(data.title, {
         body: data.body || 'Notified by dial a drink',
-        icon: 'https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png'
+        icon: data.icon || 'https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png',
+        buttons: data.buttons || [
+            {action: '/', title: 'Continue Shopping'}
+        ]
     });
 });
+
+self.addEventListener('notificationclick', function (event) {
+    console.log(event.notification.data);
+    event.notification.close();
+
+    if (event.action.startsWith("/") || event.action.startsWith("http")) 
+        clients.openWindow(event.action);
+    else
+        clients.openWindow("/");
+}, false);
 
 workbox.precaching.precacheAndRoute([{
         url: "/",

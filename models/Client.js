@@ -297,6 +297,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                 var payload = {
                     title: title.format(client),
                     body: body.format(client).replace(/<(?:.|\n)*?>/gm, ''),
+                    buttons: data && data.buttons,
                     icon: icon,
                     data: data
                 };
