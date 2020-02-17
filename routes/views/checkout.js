@@ -43,7 +43,6 @@ router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
 	var locals = res.locals;
 
-	locals.cart = req.session.cart || {};
 	locals.page = Object.assign(locals.page, { h1: "Your Order Details" });
 
 	if (req.session.userData && req.session.userData.saveInfo)
@@ -60,7 +59,10 @@ router.get('/', function (req, res) {
 	locals.enableMPesa = process.env.MPESA_ENABLED;
 	locals.enablePaypal = process.env.PESAPAL_ENABLED;
 
-	getMergedCart(req, res, () => view.render('checkout'));
+	getMergedCart(req, res, cart =>{
+		locals.cart = cart || req.session.cart || {};
+		view.render('checkout');
+	});
 });
 
 router.post("/", function (req, res, next) {
