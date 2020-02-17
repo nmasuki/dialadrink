@@ -1,17 +1,22 @@
 var najax = require('najax');
 var fs = require('fs');
+var lockFile = require('lockfile');
+
 var lookUpLogFile = "./lookups.json";
 var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
 var updateLookUp = (function (number, res) {
-    setTimeout(function () {
-        try {
-            lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
-            lookUps[number] = res;
-            fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
-        } catch (e) {
-            console.log(e);
-        }
-    }, 1);
+    lockFile.lock(lookUpLogFile + ".lock", function (err) {
+        if (err)
+            return console.error("Could not aquire lock.", lookUpLogFile + ".lock", err);
+        
+            try {
+                lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
+                lookUps[number] = res;
+                fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
+            } catch (e) {
+                console.error(e);
+            }
+    });
 }).debounce(1000);
 
 module.exports = function MoveSMS(sender) {
@@ -66,7 +71,7 @@ module.exports = function MoveSMS(sender) {
                         console.log("Invalid number", number);
 
                     updateLookUp(number, res);  
-                                      
+
                     resolve(res);
                 },
                 error: function (xhr, status, err) {
