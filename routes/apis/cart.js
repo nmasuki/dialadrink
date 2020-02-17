@@ -7,7 +7,7 @@ var router = keystone.express.Router();
 function getMergedCart(req, res, callback){
 	var client = res.locals.appUser;
 	if (!client) 
-		return callback(new Error("We could not resolve the logged in user.."));
+		return callback(new Error("We could not resolve the logged in user!"));
 
 	var carts = [{}];
 	client.getSessions(function(err, sessions){
