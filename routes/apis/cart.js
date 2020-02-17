@@ -1,26 +1,59 @@
 var keystone = require('keystone');
 var CartItem = keystone.list("CartItem");
 var Product = keystone.list("Product");
-var ObjectID = require('mongodb').ObjectID;
 
 var router = keystone.express.Router();
 
-function updateCartItem(id, pieces, opt, req, res, callback){
-	var cart = req.session.cart || (req.session.cart = {});
-	var cartId = Object.keys(cart).find(key => key.startsWith((id || "").trim()));
-	if(!cartId)
-		cartId = (id + (opt ? "|" + opt : ""));
+function getMergedCart(req, res, callback){
+	var client = res.locals.appUser;
+	if (!client) 
+		return callback(new Error("We could not resolve the logged in user.."));
 
-	if (cartId && typeof(cart[cartId]) != "undefined") {
-		console.log("Updating cart", cartId, 'value', parseInt(pieces));
-		cart[cartId].pieces = parseInt(pieces);
-		callback(cart[cartId]);
-	} else {
-		req.params.id = id;
-		req.params.opt = opt;
-		req.params.pieces = pieces;
-		addToCart(req, res, callback);
-	}
+	var carts = [{}];
+	client.getSessions(function(err, sessions){
+		const db = keystone.mongoose.connection;
+		
+		sessions.forEach(s => { 
+			if (Object.keys(s.cart || {}).length){
+				carts.push(s.cart);
+				if (s._id != req.sessionID) {
+					delete s.cart;
+					db.collection('app_sessions')
+						.update({_id: s._id}, { $set: {session: JSON.stringify(s) }});
+				}
+			}
+		});
+
+		var cart = Object.assign.apply(this, carts);
+		req.session.cart = cart;
+
+		if(typeof callback == "function")
+			callback(null, cart);
+	});
+}
+
+function updateCartItem(id, pieces, opt, req, res, callback){
+	getMergedCart(req, res, function (err, cart) {
+		if(err || !cart){
+			console.error(err);
+			cart = req.session.cart || (req.session.cart = {});
+		}
+		
+		var cartId = Object.keys(cart).find(key => key.startsWith((id || "").trim()));
+		if (!cartId)
+			cartId = (id + (opt ? "|" + opt : ""));
+
+		if (cartId && typeof (cart[cartId]) != "undefined") {
+			console.log("Updating cart", cartId, 'value', parseInt(pieces));
+			cart[cartId].pieces = parseInt(pieces);
+			callback(cart[cartId]);
+		} else {
+			req.params.id = id;
+			req.params.opt = opt;
+			req.params.pieces = pieces;
+			addToCart(req, res, callback);
+		}
+	});
 }
 
 function addToCart(req, res, callback) {
@@ -29,61 +62,71 @@ function addToCart(req, res, callback) {
 	var pieces = parseInt(req.params.pieces || 1);
 
 	var cartId = productId + (quantity ? "|" + quantity : "");
-	var cart = req.session.cart || (req.session.cart = {});
+	getMergedCart(req, res, function (err, cart) {
+		if (err || !cart) {
+			console.error(err);
+			cart = req.session.cart || (req.session.cart = {});
+		}
 
-	if (cart[cartId]) {
-		cart[cartId].pieces += pieces;
-		cart[cartId].modifiedDate = new Date();
+		if (cart[cartId]) {
+			cart[cartId].pieces += pieces;
+			cart[cartId].modifiedDate = new Date();
 
-		//popularity goes up 10x
-		Product.findOnePublished({_id: cart[cartId].product._id }, (err, product) => {
-			if (err || !product)
-				return console.log("Product not found", err);
-			
-			product.addPopularity(10);
-			cart[cartId].name = product.name;
-		});
-
-		console.log('"Incremented cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price, cart[cartId].pieces);
-		if (typeof callback == "function")
-			return callback(cart[cartId], 'added');
-		else
-			return res.send({state: true, msg: "incrementing", new: false, item: cart[cartId]});
-
-	} else {
-		Product.findOnePublished({_id: productId})
-			.exec(function (err, product) {
-				if (err || !product){
-					if (typeof callback == "function")
-						return callback(null, "Product not found _id:'" + productId + "'");
-					else
-						return res.send({state: false, msg: "Product not found", err: err});
-				}
-				var option = product.options.find(o => o.quantity === (quantity || product.quantity));
-				var price = option.offerPrice && option.price > option.offerPrice? option.offerPrice: option.price;
-
-				cart[cartId] = new CartItem.model({
-					price: price,
-					product: product,
-					quantity: option.quantity,
-					pieces: pieces
-				});
-
-				//popularity goes up 10x
+			//popularity goes up 10x
+			Product.findOnePublished({_id: cart[cartId].product._id }, (err, product) => {
+				if (err || !product)
+					return console.log("Product not found", err);
+				
 				product.addPopularity(10);
-				console.log('Added cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price);
-
-				if (typeof callback == "function")
-					callback(cart[cartId], 'added');
-				else
-					res.send({state: true, msg: "incrementing", new: false, item: cart[cartId]});
+				cart[cartId].name = product.name;
 			});
-	}
+
+			console.log('"Incremented cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price, cart[cartId].pieces);
+			if (typeof callback == "function")
+				return callback(cart[cartId], 'added');
+			else
+				return res.send({state: true, msg: "incrementing", new: false, item: cart[cartId]});
+
+		} else {
+			Product.findOnePublished({_id: productId})
+				.exec(function (err, product) {
+					if (err || !product){
+						if (typeof callback == "function")
+							return callback(null, "Product not found _id:'" + productId + "'");
+						else
+							return res.send({state: false, msg: "Product not found", err: err});
+					}
+					var option = product.options.find(o => o.quantity === (quantity || product.quantity));
+					var price = option.offerPrice && option.price > option.offerPrice? option.offerPrice: option.price;
+
+					cart[cartId] = new CartItem.model({
+						price: price,
+						product: product,
+						quantity: option.quantity,
+						pieces: pieces
+					});
+
+					//popularity goes up 10x
+					product.addPopularity(10);
+					console.log('Added cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price);
+
+					if (typeof callback == "function")
+						callback(cart[cartId], 'added');
+					else
+						res.send({state: true, msg: "incrementing", new: false, item: cart[cartId]});
+				});
+		}
+	});
 }
 
 router.get('/get', function (req, res) {
-	var cart = req.session.cart || (req.session.cart = {});
-	res.send({state: true, cart: cart, promo: req.session.promo});
+	getMergedCart(req, res, function (err, cart) {
+		if (err || !cart) {
+			console.error(err);
+			cart = req.session.cart || (req.session.cart = {});
+		}
+		res.send({state: true, cart: cart, promo: req.session.promo});
+	});
 });
 
 router.get('/add/:id/:opt', function (req, res) {
