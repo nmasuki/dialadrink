@@ -301,22 +301,32 @@ router.get('/webpush', function(req, res, next){
     res.send(req.session.webpush || {});
 });
 
-router.post("/fcm", function (req, res) {
-    req.session.fcm = req.body.regId;
-    
+router.post("/fcm", function (req, res) {    
     var json = {
         response: "success",
         message: 'Token updated successfuly!'
     };
 
+    var client = res.locals.appUser;
+    console.log(`${client && client.name || 'New user'} FCM registration!`);
+
+    if (req.session.fcm == req.body.regId){
+        json.message = "Same FCM token! No update required";
+        console.log(json.message);
+        return res.status(304).send(json);
+    }
+
+    req.session.fcm = req.body.regId;    
     return req.session.save(function (err) {
         if (err){
             json.response = "error";
             json.message = "Error while updating! " + err;
         }
-        else
-            return res.status(201).send(json);
-        
+        else {
+            res.status(201);
+        }
+
+        console.log(json.message);
         return res.send(json);  
     });
 });
