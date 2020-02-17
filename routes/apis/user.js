@@ -277,23 +277,23 @@ router.post("/login", function (req, res) {
 
 });
 
-router.post("/webpush", function (req, res) {
-    req.session.webpush = req.body;
-    
+router.post("/webpush", function (req, res) {    
     var json = {
         response: "success",
         message: 'Token updated successfuly!'
     };
 
+    req.session.webpush = req.body;
     return req.session.save(function (err) {
-        if (err){
+        if (err) {
             json.response = "error";
-            json.message = "Error while updating! " + err;
+            json.message = "Error while updating webpush! " + err;
+        } else {
+            res.status(201);
         }
-        else
-            return res.status(201).send(json);
-        
-        return res.send(json);  
+
+        console.log(json.message);
+        return res.send(json);
     });
 });
 
@@ -320,7 +320,7 @@ router.post("/fcm", function (req, res) {
     return req.session.save(function (err) {
         if (err){
             json.response = "error";
-            json.message = "Error while updating! " + err;
+            json.message = "Error while updating FCM! " + err;
         }
         else {
             res.status(201);
