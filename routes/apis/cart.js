@@ -119,9 +119,9 @@ function addToCart(req, res, callback) {
 
 router.get('/get', function (req, res) {
 	getMergedCart(req, res, function (err, cart) {
-		if (err || !cart) {
+		if (err || !cart) 
 			cart = req.session.cart || (req.session.cart = {});
-		}
+		
 		res.send({state: true, cart: cart, promo: req.session.promo});
 	});
 });
@@ -151,16 +151,18 @@ router.post('/update', function (req, res){
 	var ids = (typeof(req.body.item_id) == "string") ? [req.body.item_id] : req.body.item_id;
 	var pieces = (typeof (req.body.item_pieces) == "string") ? [req.body.item_pieces] : req.body.item_pieces;
 	var opts = (typeof (req.body.item_opt) == "string") ? [req.body.item_opt] : req.body.item_opt;
-	
+
 	if (ids.length) {
 		var updates = [];
 		
 		var trackUpdates = function(cartItem, msg) {
 			updates.push({msg: msg, cartItem: cartItem});
-			if (updates.length >= ids.length) {
-				return res.send({ state: true, msg: msg, update: updates });
-			}
+			if (updates.length >= ids.length) 
+				return res.send({ state: true, msg: msg, updates: updates });			
 		};
+
+		if(req.query.empty)
+			req.session.cart = {};
 
 		for (var i = 0; i < ids.length; i++) 
 			updateCartItem(ids[i], pieces[i], opts[i], req, res, trackUpdates);
@@ -170,19 +172,25 @@ router.post('/update', function (req, res){
 	}
 });
 
-router.get('/remove/:id', function (req, res) {
-	var id = req.params.id;
-	var cart = req.session.cart || {};
+router.post('/remove/:id', function (req, res) {
+	getMergedCart(req, res, function (err, cart) {
+		if (err || !cart)
+			cart = req.session.cart || (req.session.cart = {});
 
-	delete cart[id];
-	req.session.cart = cart;
+		delete cart[id];
+		req.session.cart = cart;
 
-	res.send({state: true, msg: "Removed"});
+		res.send({state: true, msg: "Removed"});
+	});
 });
 
-router.get('/empty', function (req, res) {
-	delete req.session.cart;
-	req.session.save();
+router.post('/empty', function (req, res) {
+	getMergedCart(req, res, function (err, cart) {
+		delete req.session.cart;
+		req.session.save();
+
+		res.send({state: true, msg: "Cleared"});
+	});
 });
 
 exports = module.exports = router;

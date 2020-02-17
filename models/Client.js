@@ -309,7 +309,10 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
                         return client;
                     })
-                    .catch(err => console.error("Error sending web-push!", err, subscription.endpoint));
+                    .catch(res => {
+                        console.error("Error sending web-push!");
+                        return res;
+                    });
             });
 
             //Send FCM Push
@@ -513,16 +516,19 @@ Client.schema.pre('save', function (next) {
                 if (err)
                     return next(err);
 
+                if (client.orderCount && client.orderCount == orders.length)
+                    next();
+
                 client.orderCount = orders.length;
                 client.orderValue = orders.sum(order => order.total);
                 client.lastOrderDate = orders.max(order => order.orderDate);
                 client.avgOrderValue = orders.avg(order => order.total);
 
-                console.log("Saving client details!", client.name, client.orderCount, client.orderValue);
+                console.log("Saving client details!", client.name, client.orderCount, client.orderValue);                
                 next();
             });
     } else {
-        console.error("This should never be hit!!");
+        console.error("This should never be hit!! Client has no phoneNumber or email.");
         next();
     }
 });

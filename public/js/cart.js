@@ -156,7 +156,7 @@ var cartUtil = function () {
             view.slideUp();
             return $.ajax({
                 url: _url + 'cart/remove/' + cartId,
-                type: 'get',
+                type: 'post',
                 success: function (data) {
                     if (data.state) {
                         delete _cart[cartId];
