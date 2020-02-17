@@ -2,7 +2,7 @@ var najax = require('najax');
 var fs = require('fs');
 var lockFile = require('lockfile');
 
-var lookUpLogFile = "./lookups.json";
+var lookUpLogFile = "../lookups.json";
 var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
 var updateLookUp = (function (number, res) {
     lockFile.lock(lookUpLogFile + ".lock", function (err) {
