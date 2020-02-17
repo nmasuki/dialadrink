@@ -1,5 +1,7 @@
 var najax = require('najax');
 var fs = require('fs');
+var lookUpLogFile = "./lookups.json";
+var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
 
 module.exports = function MoveSMS(sender) {
     sender = sender || 'SMARTLINK';
@@ -25,11 +27,8 @@ module.exports = function MoveSMS(sender) {
             });
         });
     };
-
-    var lookUpLogFile = "./lookups.json";
-
+   
     self.validateNumber = function (number) {
-        var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
         return new Promise((resolve, reject) => {
             if (lookUps[number])
                 return resolve(lookUps[number]);
@@ -91,8 +90,7 @@ module.exports = function MoveSMS(sender) {
                 }
 
                 if (invalid.length) 
-                    console.warn("Some invalid numbers found '" + invalid.join() + "' not sending sms to them");
-                
+                    console.warn("Some invalid numbers found '" + invalid.join() + "' not sending sms to them");                
 
                 if (process.env.NODE_ENV != "production") {
                     console.warn("Ignoring SMS notification for non-prod environment!");
