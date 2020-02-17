@@ -60,10 +60,7 @@ router.get('/', function (req, res) {
 	locals.enableMPesa = process.env.MPESA_ENABLED;
 	locals.enablePaypal = process.env.PESAPAL_ENABLED;
 
-	if(req.query.mergCart)
-		getMergedCart(req, res, () => view.render('checkout'));
-	else
-		return view.render('checkout');
+	getMergedCart(req, res, () => view.render('checkout'));
 });
 
 router.post("/", function (req, res, next) {
