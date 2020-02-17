@@ -2,6 +2,17 @@ var najax = require('najax');
 var fs = require('fs');
 var lookUpLogFile = "./lookups.json";
 var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
+var updateLookUp = (function (number, res) {
+    setTimeout(function () {
+        try {
+            lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
+            lookUps[number] = res;
+            fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
+        } catch (e) {
+            console.log(e);
+        }
+    }, 1);
+}).debounce(1000);
 
 module.exports = function MoveSMS(sender) {
     sender = sender || 'SMARTLINK';
@@ -54,13 +65,8 @@ module.exports = function MoveSMS(sender) {
                     if (!res.valid)
                         console.log("Invalid number", number);
 
-                    lookUps[number] = res;
-                    try {
-                        fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
-                    } catch (e) {
-                        console.log(e);
-                    }
-
+                    updateLookUp(number, res);  
+                                      
                     resolve(res);
                 },
                 error: function (xhr, status, err) {

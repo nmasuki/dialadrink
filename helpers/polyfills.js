@@ -225,6 +225,39 @@ if (!Function.prototype.promiseCall)
         return this.promiseApply.apply(this, context, args);
     };
 
+// Internal function used to implement `_.throttle` and `_.debounce`.
+var limit = function (func, wait, debounce) {
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var throttler = function () {
+            timeout = null;
+            func.apply(context, args);
+        };
+        
+        if (debounce && timeout)
+            clearTimeout(timeout);
+
+        if (debounce || !timeout)
+            timeout = setTimeout(throttler, wait || 1500);
+    };
+};
+
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time.
+if (!Function.prototype.throttle)
+    Function.prototype.throttle = function (wait) {
+        return limit(this, wait, false);
+    };
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds.
+if (!Function.prototype.debounce)
+    Function.prototype.debounce = function (wait) {
+        return limit(this, wait, true);
+    };
+
 if (!Number.prototype.format)
     Number.prototype.format = Number.prototype.formatNumber = function (n, x) {
         var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
