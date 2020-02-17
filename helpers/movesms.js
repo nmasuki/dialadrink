@@ -104,7 +104,7 @@ module.exports = function MoveSMS(sender) {
                 }
 
                 if (invalid.length) 
-                    console.warn(err = "Some invalid numbers found '" + invalid.join() + "' not sending sms to them");
+                    console.warn(err = "Some invalid numbers found '" + invalid.join() + "' not sending sms to them!");
 
                 if (process.env.NODE_ENV != "production") {
                     console.warn(err = "Ignoring SMS notification for non-prod environment!");

@@ -343,9 +343,10 @@ Product.schema.methods.findRelated = function (callback) {
 
 };
 
+var saveDebounce = function(){ return this.save(); }.debounce();
 Product.schema.methods.addPopularity = function (factor) {
     this.popularity = (this.popularity || 0) + (factor || 1);
-    this.save();
+    saveDebounce.apply(this);
 };
 
 Product.schema.methods.toAppObject = function () {
