@@ -9,13 +9,15 @@ var updateLookUp = (function (number, res) {
         if (err)
             return console.error("Could not aquire lock.", lookUpLogFile + ".lock", err);
         
-            try {
-                lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
-                lookUps[number] = res;
-                fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
-            } catch (e) {
-                console.error(e);
-            }
+        try {
+            lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
+            lookUps[number] = res;
+            fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
+        } catch (e) {
+            console.error(e);
+        }
+
+        lockFile.unlock(lookUpLogFile + ".lock");
     });
 }).debounce(1000);
 
@@ -70,8 +72,7 @@ module.exports = function MoveSMS(sender) {
                     if (!res.valid)
                         console.log("Invalid number", number);
 
-                    updateLookUp(number, res);  
-
+                    updateLookUp(number, res);
                     resolve(res);
                 },
                 error: function (xhr, status, err) {
@@ -93,18 +94,22 @@ module.exports = function MoveSMS(sender) {
 
             var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
             return Promise.all(numbers.map(n => self.validateNumber(n))).then(values => {
-                var invalid = numbers.filter((n, i) => !values[i].valid);
+                var invalid = numbers.filter((n, i) => !values[i].valid), err = "";
                 
                 if (numbers.length == invalid.length) {
-                    console.warn("Ignoring SMS notification for invalid numbers!", invalid.join());
+                    console.warn(err = "Ignoring SMS notification for invalid numbers!", invalid.join());
+                    if (typeof next == "function")
+                        next(err, balance);
                     return Promise.resolve(1);
                 }
 
                 if (invalid.length) 
-                    console.warn("Some invalid numbers found '" + invalid.join() + "' not sending sms to them");                
+                    console.warn(err = "Some invalid numbers found '" + invalid.join() + "' not sending sms to them");
 
                 if (process.env.NODE_ENV != "production") {
-                    console.warn("Ignoring SMS notification for non-prod environment!");
+                    console.warn(err = "Ignoring SMS notification for non-prod environment!");
+                    if (typeof next == "function")
+                        next(err, balance);
                     return Promise.resolve(1);
                 }
 

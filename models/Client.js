@@ -423,8 +423,8 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
         console.log(
             "Sending Email notification!",
-            "Admin", client.email,
-            "Admins", emailOptions.cc.map(u => u.email || u).join()
+            "Client", client.email,
+            "Admins", emailOptions.cc.map(u => u.email || u).join(',')
         );
 
         return new Promise((resolve, reject) => {
@@ -464,8 +464,8 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
                 console.log(
                     "Sending Email notification!",
-                    "Admin", client.email,
-                    "Admins", emailOptions.cc.map(u => u.email || u).join()
+                    "Client", client.email,
+                    "Admins", emailOptions.cc.map(u => u.email || u).join(',')
                 );
 
                 return new Promise((resolve, reject) => {
