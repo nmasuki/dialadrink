@@ -35,7 +35,6 @@ function getMergedCart(req, res, callback){
 function updateCartItem(id, pieces, opt, req, res, callback){
 	getMergedCart(req, res, function (err, cart) {
 		if(err || !cart){
-			console.error(err);
 			cart = req.session.cart || (req.session.cart = {});
 		}
 		
@@ -64,7 +63,6 @@ function addToCart(req, res, callback) {
 	var cartId = productId + (quantity ? "|" + quantity : "");
 	getMergedCart(req, res, function (err, cart) {
 		if (err || !cart) {
-			console.error(err);
 			cart = req.session.cart || (req.session.cart = {});
 		}
 
@@ -122,7 +120,6 @@ function addToCart(req, res, callback) {
 router.get('/get', function (req, res) {
 	getMergedCart(req, res, function (err, cart) {
 		if (err || !cart) {
-			console.error(err);
 			cart = req.session.cart || (req.session.cart = {});
 		}
 		res.send({state: true, cart: cart, promo: req.session.promo});
