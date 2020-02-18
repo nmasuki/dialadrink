@@ -111,6 +111,9 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 				n.type = broudcast.type;
 				n.message = broudcast.msg;
 
+				if (broudcast.status != "pending")
+					broudcast.status = "pending";
+					
 				n.save();
 			});
 			return next();
