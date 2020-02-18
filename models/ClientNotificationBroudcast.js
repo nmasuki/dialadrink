@@ -103,7 +103,7 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 		if(err)
 			return next(err);
 
-		if(notifications && notifications.length > 0){
+		if(notifications && notifications.length){
 			notifications.filter(n => n.status == 'pending').forEach(n => {
 
 				n.scheduleDate = broudcast.scheduleDate;
@@ -139,23 +139,18 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 					}else if (broudcast.type == "email"){
 						clients = clients.filter(c => c.email);
 					}else if (broudcast.type == "push"){
-						Promise.all(clients.map(c => {
+						return Promise.all(clients.map(c => {
 							var count = 0;
 							return c.getSessions().then(sessions => {
 								var pushOrFCM = sessions.find(s => s.webpush || s.fcm);
 								if (pushOrFCM && ++count <= broudcast.target.count) {
-									var msg = broudcast.msg;
-
-									msg.title = msg.title.format(c);
-									msg.body = msg.body.format(c);
-
 									var n = new ClientNotification.model({
 										client: c,
 										broudcast: broudcast,
 										scheduleDate: broudcast.scheduleDate,
 										type: broudcast.type,
 										status: 'pending',
-										message: msg
+										message: broudcast.msg
 									});
 
 									n.save();

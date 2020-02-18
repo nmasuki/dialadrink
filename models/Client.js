@@ -365,7 +365,7 @@ Client.schema.methods.sendSMSNotification = function (message) {
 
     return sms.sendSMS([client.phoneNumber], message.replace(/<(?:.|\n)*?>/gm, '').format(client).trim(), function (err, res) {
         if (err)
-            console.error.apply(order, arguments);
+            console.error.apply(client, arguments);
         else {
             client.lastNotificationDate = new Date();
             client.save();

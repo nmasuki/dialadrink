@@ -55,11 +55,16 @@ function doWork(err, notifications, next) {
                     };
                 };
 
+                if (n.message.body)
+                    n.message.body = n.message.body.format(n.client);
+                if (n.message.title)
+                    n.message.title = n.message.title.format(n.client);
+
                 if (n.type == "sms")
                     return n.client.sendSMSNotification(n.message.body, n)
                         .then(markNotification('sent'))
                         .catch(markNotification('reject'));
-                        
+
                 if (n.type == "email")
                     return n.client.sendEmailNotification(n.message.title, n.message.body, n)
                         .then(markNotification('sent'))

@@ -177,7 +177,7 @@ router.post('/remove/:id', function (req, res) {
 		if (err || !cart)
 			cart = req.session.cart || (req.session.cart = {});
 
-		delete cart[id];
+		delete cart[req.params.id];
 		req.session.cart = cart;
 
 		res.send({state: true, msg: "Removed"});
