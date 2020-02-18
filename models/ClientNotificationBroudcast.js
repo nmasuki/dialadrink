@@ -93,7 +93,7 @@ ClientNotificationBroudcast.schema.pre('validate', function (next, obj, error) {
 ClientNotificationBroudcast.schema.pre('save', function (next) {
 	var broudcast = this;
 	
-	if(broudcast.status == "sent" || !broudcast.isActive)
+	if(!broudcast.isActive)
 		return next();
 
 	//Create ClientNotification for pending broudcasts without any
