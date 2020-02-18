@@ -340,10 +340,12 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
             return Promise.any(promises).catch(console.error);
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
+            if (client.lastNotificationDate < new Date().addDays(-5))
+                return client.sendSMSNotification("DIALADRINK: Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience".format(client))
+            
             return Promise.reject(`User ${client.name} has no push token associeted!`).catch(console.warn);
         }
-    });
-};
+    });};
 
 Client.schema.methods.sendSMSNotification = function (message) {
     var client = this;
