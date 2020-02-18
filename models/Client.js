@@ -299,7 +299,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
                 return webpush.sendNotification(subscription, JSON.stringify(payload))
                     .then(res => {
-                        console.log(`Notification sent to ${client.name}`, subscription.endpoint);
+                        console.log(`Notification sent to ${client.name}`, payload.title, payload.body);
                         client.lastNotificationDate = new Date();
                         client.save();
 
@@ -337,7 +337,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
             console.log(`Sessions: ${sessions.length}, WebTokens:${webpushTokens.length}, FCMTokens:${fcmTokens.length}`);
 
-            return Promise.any(promises);
+            return Promise.any(promises).catch(console.error);
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
             return Promise.reject(`User ${client.name} has no push token associeted!`).catch(console.warn);

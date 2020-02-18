@@ -234,7 +234,7 @@ var limit = function (func, wait, debounce) {
             timeout = null;
             func.apply(context, args);
         };
-        
+
         if (debounce && timeout)
             clearTimeout(timeout);
 
