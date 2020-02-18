@@ -314,8 +314,8 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                     //collapse_key: 'your_collapse_key',
 
                     notification: {
-                        title: title.format(client).replace(/<(?:.|\n)*?>/gm, ''),
-                        body: body.format(client)
+                        title: title.format(client),
+                        body: body.format(client).replace(/<(?:.|\n)*?>/gm, '')
                     },
 
                     data: data
