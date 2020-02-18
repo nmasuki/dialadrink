@@ -3,18 +3,13 @@ var cloudinary = require('cloudinary');
 var webpush = require("web-push");
 var fs = require('fs');
 
-var FCM = require('fcm-node');
-var MoveSms = require("../helpers/movesms");
-
 var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
 var sms = new (require("../helpers/movesms"))();
 
 var Types = keystone.Field.Types;
 
 var Client = new keystone.List('Client', {
-    map: {
-        name: 'firstName'
-    },
+    map: { name: 'firstName' },
     defaultSort: '-lastOrderDate',
     autokey: {
         path: 'key',
@@ -280,11 +275,11 @@ Client.schema.methods.getSessions = function (next) {
 Client.schema.methods.sendNotification = function (title, body, icon, data) {
     var client = this;
     return client.getSessions((err, sessions) => {
-        if (err)
-            return console.log("Error getting sessions!");
+        if (err || !sessions)
+            return Promise.reject("Error getting sessions!");
 
         if (data && data.sessionId)
-            sessions = sessions.filter(s => s._id == data.sessionId);
+            sessions = sessions.filter(s => (s.webpush || s.fcm) && s._id == data.sessionId);
 
         var webpushTokens = sessions.map(s => s.webpush).filter(t => !!t && t.endpoint);
         var fcmTokens = sessions.map(s => s.fcm).filter(t => !!t);
@@ -309,10 +304,6 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                         client.save();
 
                         return client;
-                    })
-                    .catch(res => {
-                        console.error("Error sending web-push!");
-                        return res;
                     });
             });
 
@@ -323,8 +314,8 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                     //collapse_key: 'your_collapse_key',
 
                     notification: {
-                        title: title.format(client),
-                        body: body.format(client).replace(/<(?:.|\n)*?>/gm, '')
+                        title: title.format(client).replace(/<(?:.|\n)*?>/gm, ''),
+                        body: body.format(client)
                     },
 
                     data: data
@@ -333,7 +324,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                 return new Promise((resolve, reject) => fcm.send(payload, function (err, response) {
                     if (err) {
                         console.error("Error sendin FCM!", err);
-                        reject("");
+                        reject(err);
                     } else {
                         console.log("FCM successfully sent with response: ", response);
                         client.lastNotificationDate = new Date();
@@ -341,7 +332,7 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
 
                         resolve(client);
                     }
-                })).catch(console.error);
+                }));
             }));
 
             console.log(`Sessions: ${sessions.length}, WebTokens:${webpushTokens.length}, FCMTokens:${fcmTokens.length}`);
