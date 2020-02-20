@@ -703,17 +703,16 @@ if (!Promise.any)
     Promise.any = function (promises) {
         return new Promise(function (resolve, reject) {
             var count = promises.length,
-                resolved = false;
+                resolved = false, 
+                notResolvedError = new Error("No promises resolved successfully.");
             promises.forEach(function (p) {
                 Promise.resolve(p).then(function (value) {
-                    resolved = true;
                     count--;
+                    resolved = true;
                     resolve(value);
                 }, function () {
-                    count--;
-                    if (count === 0 && !resolved) {
-                        reject(new Error("No promises resolved successfully."));
-                    }
+                    if (--count === 0 && !resolved)
+                        reject(notResolvedError);                    
                 });
             });
         });

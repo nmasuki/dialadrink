@@ -19,75 +19,36 @@ var Client = new keystone.List('Client', {
 });
 
 Client.add({
-    phoneNumber: {
-        type: String
-    },
-    email: {
-        type: String
-    },
+    phoneNumber: { type: String },
+    email: { type: String },
 
-    firstName: {
-        type: String
-    },
-    lastName: {
-        type: String
-    },
-    gender: {
-        type: String
-    },
+    firstName: { type: String },
+    lastName: { type: String },
+    gender: { type: String },
 
-    city: {
-        type: String,
-        default: 'Nairobi'
-    },
-    address: {
-        type: String
-    },
-    building: {
-        type: String
-    },
-    houseNumber: {
-        type: String
-    },
-    clientIps: {
-        type: Types.TextArray,
-        noedit: true
-    },
+    city: { type: String, default: 'Nairobi' },
+    address: { type: String },
+    building: { type: String },
+    houseNumber: { type: String },
+    clientIps: { type: Types.TextArray, noedit: true },
 
-    orderCount: {
-        type: Number,
-        noedit: true
-    },
-    orderValue: {
-        type: Number,
-        noedit: true
-    },
+    orderCount: { type: Number, noedit: true },
+    orderValue: { type: Number, noedit: true },
 
     sessions: {
         type: Types.TextArray,
         noedit: true
     },
 
-    image: {
-        type: Types.CloudinaryImage,
-        folder: "clients"
-    },
-    username: {
-        type: String
-    },
-    password: {
-        type: String,
-        noedit: true
-    },
+    image: { type: Types.CloudinaryImage, folder: "clients" },
+    username: { type: String },
+    password: { type: String, noedit: true },
+    isPhoneVerified: {type: Boolean, noedit: true},
 
-    tempPassword: {
-        pwd: {
-            type: String
-        },
-        expiryDate: {
-            type: Types.Datetime,
-            default: Date.now
-        }
+    tempPassword: { 
+        pwd: { type: String }, 
+        used: {type: Boolean, noedit: true},
+		expiryDate: { type: Types.Datetime, default: Date.now }
     },
 
     deliverydays: {
@@ -336,16 +297,16 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
             }));
 
             console.log(`Sessions: ${sessions.length}, WebTokens:${webpushTokens.length}, FCMTokens:${fcmTokens.length}`);
-
             return Promise.any(promises).catch(console.error);
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
             if (client.lastNotificationDate < new Date().addDays(-5))
-                return client.sendSMSNotification("DIALADRINK: Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience".format(client))
+                return client.sendSMSNotification("DIALADRINK:Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience".format(client));
             
             return Promise.reject(`User ${client.name} has no push token associeted!`).catch(console.warn);
         }
-    });};
+    });
+};
 
 Client.schema.methods.sendSMSNotification = function (message) {
     var client = this;
@@ -361,7 +322,7 @@ Client.schema.methods.sendSMSNotification = function (message) {
             console.error.apply(client, arguments);
         else {
             client.lastNotificationDate = new Date();
-            client.save();
+            return client.save();
         }
     });
 };
@@ -452,7 +413,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
                             emailOptions.cc.push(u.toObject());
                     });
                 else {
-                    console.warn("No users have the receivesOrders right!");
+                    console.warn("No admin have the receivesOrders right!");
                     if (keystone.get("env") == "production")
                         emailOptions.cc.push("simonkimari@gmail.com");
                     else
@@ -467,10 +428,10 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
                 return new Promise((resolve, reject) => {
                     email.send(locals, emailOptions, (err, a) => {
-                        console.log("Email notification Sent!", err || "");
                         if (err)
-                            reject(console.warn(err));
+                            return reject(err, console.error("Error sending email", err));
 
+                        console.log("Email notification Sent!", err || "");
                         client.lastNotificationDate = new Date();
                         client.save();
 
@@ -481,30 +442,28 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
     }
 };
 
-Client.schema.pre('save', function (next) {
-    this.modifiedDate = Date.now();
-    this.clientIps = this.clientIps.filter(ip => ip).distinct();
-
-    if (this.phoneNumber)
-        this.phoneNumber = this.phoneNumber.cleanPhoneNumber();
+var updateOrderStats = function(client, next) {
+    if (client.phoneNumber)
+        client.phoneNumber = client.phoneNumber.cleanPhoneNumber();
 
     var findOption = {
         "$or": []
     };
-    if (this.phoneNumber)
+    if (client.phoneNumber)
         findOption.$or.push({
-            "delivery.phoneNumber": new RegExp(this.phoneNumber.substr(3))
+            "delivery.phoneNumber": new RegExp(client.phoneNumber.substr(3))
         });
 
-    if (this.email)
+    if (client.email)
         findOption.$or.push({
-            "delivery.email": new RegExp(this.email.escapeRegExp(), "i")
+            "delivery.email": new RegExp(client.email.escapeRegExp(), "i")
         });
 
     if (findOption.$or.length) {
-        var client = this;
         keystone.list("Order").model.find(findOption)
-            .sort({ orderDate: -1 })
+            .sort({
+                orderDate: -1
+            })
             .deepPopulate('cart.product.priceOptions.option')
             .exec((err, orders) => {
                 if (err)
@@ -518,13 +477,19 @@ Client.schema.pre('save', function (next) {
                 client.lastOrderDate = orders.max(order => order.orderDate);
                 client.avgOrderValue = orders.avg(order => order.total);
 
-                console.log("Saving client details!", client.name, client.orderCount, client.orderValue);                
+                console.log("Saving client details!", client.name, client.orderCount, client.orderValue);
                 next();
             });
     } else {
         console.error("This should never be hit!! Client has no phoneNumber or email.");
         next();
     }
+}.debounce();
+
+Client.schema.pre('save', function (next) {
+    this.modifiedDate = Date.now();
+    this.clientIps = this.clientIps.filter(ip => ip).distinct();
+    updateOrderStats(this, next);
 });
 
 Client.register();
