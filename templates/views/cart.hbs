@@ -23,7 +23,6 @@
 							<a class="cart-product-link" href="/{{product.href}}">
 								{{product.name}}&nbsp;{{quantity}}
 							</a>
-							<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>
 						</h6>
 						<!--<small class="text-muted cart-description">{{truncate description 50}}</small>-->
 						<small class="text-muted">
@@ -36,6 +35,9 @@
 						</div>
 					</div>
 					<div class="col-md-4 product-qty" style="padding-top: 10px;">
+						<div>
+							<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>
+						</div>
 						<span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty cart-pieces-add"
 							  style="width: 42px; height: 40px;color: black !important;">
 						  <span class="glyphicon glyphicon-plus" aria-hidden="true" style="padding: 8px 0px;"></span>
