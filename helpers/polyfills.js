@@ -91,7 +91,7 @@ if (!Function.prototype.stackTrace)
         var callstack = [];
         var isCallstackPopulated = false;
         try {
-            i.dont.exist += 0; //doesn't exist- that's the point
+            a.dont.exist += 0; //doesn't exist- that's the point
         } catch (e) {
             if (e.stack) { //Firefox
                 var lines = e.stack.split('\n');

@@ -117,6 +117,29 @@ function addToCart(req, res, callback) {
 	});
 }
 
+router.get('/', function (req, res) {
+	getMergedCart(req, res, function (err, cart) {
+		if (err || !cart)
+			cart = req.session.cart || (req.session.cart = {});
+
+		res.send({
+			response: "success",
+			data: Object.values(cart).map(c => {
+				c = Object.assign({}, c);
+
+				if (!c.productId && c.product){
+					c.productId = c.product.id || c.product._id;
+					delete c.product;
+					delete c.image;
+				}
+
+				return c;
+			}),
+			promo: req.session.promo
+		});
+	});
+});
+
 router.get('/get', function (req, res) {
 	getMergedCart(req, res, function (err, cart) {
 		if (err || !cart) 
@@ -152,7 +175,7 @@ router.post('/update', function (req, res){
 	var pieces = (typeof (req.body.item_pieces) == "string") ? [req.body.item_pieces] : req.body.item_pieces;
 	var opts = (typeof (req.body.item_opt) == "string") ? [req.body.item_opt] : req.body.item_opt;
 
-	if (ids.length) {
+	if (ids && ids.length) {
 		var updates = [];
 		
 		var trackUpdates = function(cartItem, msg) {
