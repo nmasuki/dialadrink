@@ -498,7 +498,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
         });
     };
 
-    if (that.cart.all(c => c.product && c.product.name))
+    if (!that.cart.any(c => !c.product || !c.product.name))
         return Promise.resolve(sendOrderNotification(that));
     else{
         return Order.model.findOne({ _id: that._id })
