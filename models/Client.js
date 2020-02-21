@@ -161,7 +161,8 @@ Client.schema.methods.toAppObject = function () {
         user_phone_verified: this.isPhoneVerified || '',
         user_reg_date: this.registrationDate || '',
         user_deliverydays: this.deliverydays || '',
-        user_status: this.status || ''
+        user_status: this.status || '',
+        ips: this.clientIps || []
     };
 };
 

@@ -284,17 +284,7 @@ router.post("/webpush", function (req, res) {
     };
 
     req.session.webpush = req.body;
-    return req.session.save(function (err) {
-        if (err) {
-            json.response = "error";
-            json.message = "Error while updating webpush! " + err;
-        } else {
-            res.status(201);
-        }
-
-        console.log(json.message);
-        return res.send(json);
-    });
+    return res.status(201).send(json);
 });
 
 router.get('/webpush', function(req, res, next){
@@ -316,19 +306,8 @@ router.post("/fcm", function (req, res) {
         return res.status(304).send(json);
     }
 
-    req.session.fcm = req.body.regId;    
-    return req.session.save(function (err) {
-        if (err){
-            json.response = "error";
-            json.message = "Error while updating FCM! " + err;
-        }
-        else {
-            res.status(201);
-        }
-
-        console.log(json.message);
-        return res.send(json);  
-    });
+    req.session.fcm = req.body.regId;  
+    return res.status(201).send(json);
 });
 
 router.get('/fcm', function(req, res, next){
