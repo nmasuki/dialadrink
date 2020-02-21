@@ -485,7 +485,7 @@ var updateOrderStats = function(client, next) {
         console.error("This should never be hit!! Client has no phoneNumber or email.");
         next();
     }
-}.debounce();
+}.debounce(2000);
 
 Client.schema.pre('save', function (next) {
     this.modifiedDate = Date.now();
