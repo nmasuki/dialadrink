@@ -324,11 +324,10 @@ Order.schema.methods.updateClient = function (next) {
                     client.clientIps.push(order.clientIp);
                 }
 
-                client.save(function () {
-                    order.client = client;
-                    if (typeof next == "function")
-                        next();
-                });
+                client.save();
+                order.client = client;
+                if (typeof next == "function")
+                    next();
             });
         else if (typeof next == "function")
             next();

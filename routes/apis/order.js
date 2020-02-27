@@ -50,57 +50,51 @@ router.post("/", function (req, res){
 
     if (client) {
         client.copyAppObject(req.body);
-        client.save(function (err) {
-            if (err) {
-                json.data = err;                
-                return res.send(json);
-            }
-                        
-            json.response = "success";
-            var cartItems = getCartItems(req);
-            var promo = req.session.promo || {};
-            var deliveryDetails = Object.assign({ }, client.toObject(), req.body, {
-                platform: req.session.platform,
-                clientIp: res.locals && res.locals.clientIp
-            });	
+        client.save();
 
-            Order.checkOutCartItems(cartItems, promo, deliveryDetails, function(err, order){
-                if (err)
-                    json.response = "error";
+        json.response = "success";
+        var cartItems = getCartItems(req);
+        var promo = req.session.promo || {};
+        var deliveryDetails = Object.assign({}, client.toObject(), req.body, {
+            platform: req.session.platform,
+            clientIp: res.locals && res.locals.clientIp
+        });
 
-                json.data = order.toObject();
-                json.message = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch.";
+        Order.checkOutCartItems(cartItems, promo, deliveryDetails, function (err, order) {
+            if (err)
+                json.response = "error";
 
-                if (!err) {
-                    if (order.payment.method == "PesaPal") {
-                        json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
-                        json.message = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
-                    } else if (order.payment.method == "Mpesa") {
-                        json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
-                        var mpesa = require('../../helpers/mpesa');
-                        
-                        mpesa.onlineCheckout(
-                            order.delivery.phoneNumber,
-                            order.payment.amount, 
-                            order.orderNumber
-                        );
-                    } else if (order.payment.method == "Mpesa2") {
-                        json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
-                        var africasTalking = require('../helpers/AfricasTalking').Instance;
+            json.data = order.toObject();
+            json.message = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch.";
 
-                        africasTalking.processPayment(
-                            order.delivery.phoneNumber, order.orderNumber, 
-                            order.orderNumber, order.payment.amount, 'KES'
-                        );
-                    }
+            if (!err) {
+                if (order.payment.method == "PesaPal") {
+                    json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
+                    json.message = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+                } else if (order.payment.method == "Mpesa") {
+                    json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
+                    var mpesa = require('../../helpers/mpesa');
+
+                    mpesa.onlineCheckout(
+                        order.delivery.phoneNumber,
+                        order.payment.amount,
+                        order.orderNumber
+                    );
+                } else if (order.payment.method == "Mpesa2") {
+                    json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
+                    var africasTalking = require('../helpers/AfricasTalking').Instance;
+
+                    africasTalking.processPayment(
+                        order.delivery.phoneNumber, order.orderNumber,
+                        order.orderNumber, order.payment.amount, 'KES'
+                    );
                 }
+            }
 
-                delete req.session.cart;
-                req.session.save();
-                
-                return res.send(json);
-            });
-        
+            delete req.session.cart;
+            req.session.save();
+
+            return res.send(json);
         });
     }
 });
