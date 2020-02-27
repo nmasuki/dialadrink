@@ -437,11 +437,6 @@ Order.schema.methods.sendOrderNotification = function (next) {
             var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
             var location = order.deliveryLocation;
 
-            /*/if (location && location.url){
-                msg += " " + location.url;
-                promise.then(() => sms.sendSMS(vendorNumber, msg));
-            }
-            else /** */
             if (location) {
                 var mapUrl = location.url || `http://maps.google.com/maps?daddr=${location.lat},${location.lng}`;
 
