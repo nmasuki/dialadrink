@@ -93,8 +93,10 @@ function doWork(err, sessions, next) {
 
             if (clients)
                 clients.forEach(c => {
+                    if (c.lastNotificationDate > (new Date()).addDays(-7))
+                        return;
+
                     ClientNotification.model.find({
-                        type: "push",
                         status: 'pending',
                         client: c._id
                     }).exec((err, pending) => {
