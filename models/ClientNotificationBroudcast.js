@@ -164,8 +164,8 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 						.catch(err => next(err));
 					}
 
-					//So as not to overwhelm the clients with notifications, send at most once every 2 days
-					var notifyDateThreashold = new Date().addDays(-2);
+					//So as not to overwhelm the clients with notifications, send at most once every 5 days
+					var notifyDateThreashold = new Date().addDays(-5);
 					clients = clients.filter(c => c.lastNotificationDate == null || c.lastNotificationDate < notifyDateThreashold);
 					
 					//Pick top matches
