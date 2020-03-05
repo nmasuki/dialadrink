@@ -40,13 +40,19 @@ exports = module.exports = function (app) {
 	app.enable('view cache');
 
 	// Api endpoints
-	for (var i in routes.apis) {
-		var path = "/api/" + (i == "index" ? "" : i);
-		if(routes.apis[i]){
-			console.log("Registering:", path);
-			app.use(path, middleware.requireAPIUser, routes.apis[i]);
+	var apis = Object.keys(routes.apis).map((i) => { 
+		return {
+			path: "/api" + (i == "index" ? "" : "/" + i),
+			api: routes.apis[i]
+		};
+	}).orderBy(a => -a.path.length);
+
+	apis.forEach(a => {
+		if (a.api && a.api.name == "router") {
+			console.log("Registering:", a.path);
+			app.use(a.path, middleware.requireAPIUser, a.api);
 		}
-	}
+	});
 
 	// Views
 	app.use('/brand', middleware.globalCache, routes.views.brand);
