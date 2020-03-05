@@ -88,8 +88,8 @@ function doWork(err, sessions, next) {
         keystone.list("Client").model.find({
             sessions: { $elemMatch: { $eq: s._id } }
         }).exec((err, clients) => {
-            if (err)
-                return console.error(err);
+            if (err || !clients || clients.length == 0)
+                return console.error(err || "Got no client from session:", s._id);
 
             if (clients)
                 clients.forEach(c => {

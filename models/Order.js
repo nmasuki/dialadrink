@@ -309,14 +309,20 @@ Order.schema.methods.updateClient = function (next) {
                 if (err)
                     return console.warn(err);
 
-                var delivery = order.delivery.toObject();
+                var saveClient = false, delivery = order.delivery.toObject();
                 client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
+
                 if (client) {
-                    client.clientIps.push(order.clientIp);
+                    if (client.clientIps.indexOf(order.clientIp) < 0){
+                        saveClient = true;
+                        client.clientIps.push(order.clientIp);
+                    }
                     if (client.createdDate < order.orderDate)
                         for (var i in delivery) {
-                            if (delivery[i] && typeof delivery[i] != "function")
+                            if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
+                                saveClient = true;
                                 client[i] = delivery[i];
+                            }
                         }
                 } else {
                     client = keystone.list("Client").model(delivery);
@@ -324,7 +330,9 @@ Order.schema.methods.updateClient = function (next) {
                     client.clientIps.push(order.clientIp);
                 }
 
-                client.save();
+                if (saveClient)
+                    client.save();
+                    
                 order.client = client;
                 if (typeof next == "function")
                     next();

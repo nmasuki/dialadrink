@@ -17,7 +17,7 @@ function getAll(entityName){
 }
 
 function saveAll(entityName, all){
-    fs.writeFileSync(dataDir + entityName + ".json", JSON.stringify(all, null, 2))
+    fs.writeFileSync(dataDir + entityName + ".json", JSON.stringify(all, null, 2));
 }
 
 router.get("/:entity", function (req, res, next) {
@@ -36,20 +36,62 @@ router.get("/:entity/:id", function (req, res, next) {
     });
 });
 
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 router.post("/:entity", function (req, res, next) {
     var all = getAll(req.params.entity);
     var entity = req.body || {};
-    var id = entity._id || entity.id || entity.Id
-    if(!id)
-        entity.id = id = Math.random().toString().replace("0.", "");
-    
-    all[id] = entity;
-    saveAll(req.params.entity, all);
 
-    res.send({
-        response: "success",
-        data: entity
-    });
+    var updates = [],
+        json = {
+            response: "error",
+            errors: []
+        };
+
+    function setEntiry(entity){
+        var id = entity._id || entity.id || entity.Id || (entity._id = uuidv4());    
+
+        if (all[id] && all[id].rev > entity._rev){
+            var msg = ["Document conflict! ", id, all[id].rev , entity._rev].join("\t");
+            json.errors.push(msg);
+
+            return console.error(msg);
+        }
+
+        entity._rev = (entity._rev ? 1 : entity._rev + 1);
+        all[id] = entity;
+
+        updates.push({
+            _id: id,
+            _rev: entity._rev
+        });
+    }
+
+    if(Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i))
+        Array.from(entity).forEach(setEntiry);
+    else
+        setEntiry(entity);
+
+    saveAll(req.params.entity, all);
+    
+    if (updates.length)
+        json.response =  "success";
+    
+    json.message = json.errors.distinct().join(", ");
+    if (updates.length > 1) {
+        json._ids = updates.map(n => n._id);
+        json._revs = updates.map(n => n._rev);
+    } else if (updates.length) {
+        json._id = updates[0]._id;
+        json._rev = updates[0]._rev;
+    }
+
+    res.send(json);
 });
 router.delete("/:entity/:id", function (req, res, next) {});
 

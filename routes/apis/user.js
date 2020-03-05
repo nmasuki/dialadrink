@@ -67,17 +67,13 @@ router.post("/", function (req, res) {
 
     if (client) {
         client.copyAppObject(req.body);
-        client.save(function (err) {
-            if (err) {
-                json.data = err;
-            } else {
-                json.response = "success";
-                json.message = "Profile updated successfully";
-                json.data = client.toAppObject();
-            }
-            
-            res.send(json);
-        });
+        client.save();
+
+        json.response = "success";
+        json.message = "Profile updated successfully";
+        json.data = client.toAppObject();
+        
+        res.send(json);
     } else {
         console.log("Could not find user. params:", req.body);
         res.send(json);
@@ -164,22 +160,15 @@ router.post("/signup", function (req, res) {
 
                 console.log("Saving client details.", {
                     phone: client.phoneNumber,
-                    pwd: client.password,
                     gender: client.gender
                 });
 
-                client.save(function (err) {
-                    if (err) {
-                        json.message = err;
-                        console.log(err);
-                    } else {
-                        json.response = "success";
-                        json.message = "Added Successfully";
-                        json.data = client.toAppObject();
-                    }
+                client.save();
 
-                    res.send(json);
-                });
+                json.response = "success";
+                json.message = "Added Successfully";
+                json.data = client.toAppObject();
+                res.send(json);
             }
         });
 });
