@@ -6,17 +6,18 @@ var fs = require("fs");
 //var StockTakeItem = keystone.list("StockTakeItem");
 
 var router = keystone.express.Router();
-if (!fs.existsSync("data/")) fs.mkdir("./data/");
+var dataDir = "../data/";
+if (!fs.existsSync(dataDir)) fs.mkdir(dataDir);
 
 function getAll(entityName){
     var all = {};
-    if (fs.existsSync("data/" + entityName + ".json"))
-        all = JSON.parse(fs.readFileSync("data/" + entityName + ".json" || "{}"));
+    if (fs.existsSync(dataDir + entityName + ".json"))
+        all = JSON.parse(fs.readFileSync(dataDir + entityName + ".json" || "{}"));
     return all;
 }
 
 function saveAll(entityName, all){
-    fs.writeFileSync("data/" + entityName + ".json", JSON.stringify(all, null, 2))
+    fs.writeFileSync(dataDir + entityName + ".json", JSON.stringify(all, null, 2))
 }
 
 router.get("/:entity", function (req, res, next) {
