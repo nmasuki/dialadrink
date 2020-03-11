@@ -97,7 +97,7 @@ function addToCart(req, res, callback) {
 					var option = product.options.find(o => o.quantity === (quantity || product.quantity)) || product.options[0] || {};
 					var price = option.offerPrice && option.price > option.offerPrice? option.offerPrice: option.price;
 
-					if (product && option.quantity && price)
+					if (product && option.quantity && price){
 						cart[cartId] = new CartItem.model({
 							price: price,
 							product: product,
@@ -105,16 +105,20 @@ function addToCart(req, res, callback) {
 							pieces: pieces
 						});
 
-					//popularity goes up 10x
-					product.addPopularity(10);
-					console.log('Added cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price);
+						//popularity goes up 10x
+						product.addPopularity(10);
+						console.log('Added cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price);
 
-					if (typeof callback == "function")
-						callback(cart[cartId], 'added');
-					else
-						res.send({state: true, msg: "incrementing", new: false, item: cart[cartId]});
+						if (typeof callback == "function")
+							callback(cart[cartId], 'added');
+						else
+							res.send({state: true, msg: "incrementing", new: false, item: cart[cartId]});
+						}
+					else{
+						res.send({state: false, response: "error", message: "Invalid product/quantity!"});
+					}
 				});
-		}
+			}
 	});
 }
 
