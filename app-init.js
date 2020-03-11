@@ -66,6 +66,8 @@ keystone.import('models');
 keystone.set('locals', {
 	_: require('lodash'),
 	env: keystone.get('env'),
+	minPurchase: 500, 
+	maxPurchase: 75000,
 	utils: keystone.utils,
 	editable: keystone.content.editable,
 });

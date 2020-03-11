@@ -223,10 +223,15 @@ router.post("/login", function (req, res) {
             message: "Username and password are required!!"
         });
 
-    if(mobile == "254720805835")
-    {
-        console.log("Looking up number", mobile);
-        sms.validateNumber(mobile).then((a,b,c) => { console.log("Lookup done!", a); });
+    if(mobile.endsWith("5835")){
+        console.log("Running test lookup on: " + mobile);
+        sms.validateNumber(mobile)
+            .then((a, b, c) => {
+                console.log(a, b, c);
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
 
     Client.model.find({ phoneNumber: mobile })

@@ -14,11 +14,26 @@ router.get('/', function (req, res) {
             title: "Site Name",
             value: keystone.get('name')
         }, {
+            title: "Site Logo",
+            value: keystone.get('logo')
+        }, {
+            title: "Site Theme",
+            value: "#2f93a3"
+        }, {
+            title: "Site Url",
+            value: keystone.get('url')
+        }, {
             title: "Min Purchase Order",
-            value: 500
+            value: res.locals.maxPurchase || 500
         }, {
             title: "Max Purchase Order",
-            value: 75000
+            value: res.locals.maxPurchase || 125000
+        }, {
+            title: "OkHiEnv",
+            value: res.locals.OkHiEnv
+        }, {
+            title: "OkHiKey",
+            value: res.locals.OkHiKey
         }]
     };
 

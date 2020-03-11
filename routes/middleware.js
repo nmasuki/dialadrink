@@ -339,15 +339,13 @@ var setAppUser = function (req, res, client) {
             tosave = true;
         }
 
-        if (client.clientIps.indexOf(res.locals.clientIp) < 0) {
+        if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
             client.clientIps.push(res.locals.clientIp);
             tosave = true;
         }
 
         if (tosave)
             client.save();
-
-        req.session.save();
     }
 
     return client;

@@ -45,17 +45,27 @@ module.exports = function MoveSMS(sender) {
             });
         });
     };
+
+    function pickOneApiKey(){
+        var allKeys = ['159eece6bd4f7fdc23916fd7778efa8c', '0c2315a3ad790d8d3b6b3a53ec8a4c75', '1845a28d63e1b10f9e73aa474d33d8fb'];
+        var firstOfTheMonth = new Date((new Date()).toISOString().substr(0, 8) + "01");
+        
+        var monthLookUps = Object.values(lookUps).filter(l => l.created_at >= firstOfTheMonth);
+        var keyIndex = new Date().getMonth() % 2 == 0 ? Math.floor(monthLookUps.length / 250): monthLookUps.length;
+
+        return allKeys[keyIndex % allKeys.length];
+    }
    
     self.validateNumber = function (number) {
         return new Promise((resolve, reject) => {
             if (lookUps[number])
-                return resolve(lookUps[number]);
+                return resolve(lookUps[number]);            
             
             najax.get({
                 url: `http://apilayer.net/api/validate`,
                 dataType: "application/json; charset=utf-8",
                 data: {
-                    access_key: '159eece6bd4f7fdc23916fd7778efa8c',// '1845a28d63e1b10f9e73aa474d33d8fb',
+                    access_key: pickOneApiKey(),
                     country_code: '',
                     number: number,
                     format: 1,

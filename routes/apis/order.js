@@ -28,12 +28,10 @@ router.get("/", function(req, res){
                 json.message = "Error getting user Orders! " + err;
             } else {
                 json.response = "success";
-                json.data = orders.filter(o => o.cart.filter(c => c.product).length > 0).orderByDescending(o => o.orderDate)
-                    .map(o => {
-                        var obj = o.toAppObject();
-
-                        return obj;
-                    });
+                json.data = orders
+                    .filter(o => o.cart.filter(c => c.product).length > 0)
+                    .orderByDescending(o => o.orderDate)
+                    .map(o => o.toAppObject());
             }
             
             return res.send(json);

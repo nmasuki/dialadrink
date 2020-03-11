@@ -38,7 +38,7 @@ router.get("/:entity/:id", function (req, res, next) {
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        var r = Math.random() * 16 | 0, v = (c == 'x' ? r : (r & 0x3 | 0x8));
         return v.toString(16);
     });
 }
@@ -60,10 +60,15 @@ router.post("/:entity", function (req, res, next) {
             var msg = ["Document conflict! ", id, all[id].rev , entity._rev].join("\t");
             json.errors.push(msg);
 
+            updates.push({
+                _id: null,
+                _rev: entity._rev
+            });
+
             return console.error(msg);
         }
 
-        entity._rev = (entity._rev ? 1 : entity._rev + 1);
+        entity._rev = (entity._rev? 1: entity._rev + 1);
         all[id] = entity;
 
         updates.push({
@@ -73,7 +78,7 @@ router.post("/:entity", function (req, res, next) {
     }
 
     if(Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i))
-        Array.from(entity).forEach(setEntiry);
+        Object.keys(entity).map(k => entity[k]).forEach(setEntiry);
     else
         setEntiry(entity);
 
@@ -93,6 +98,7 @@ router.post("/:entity", function (req, res, next) {
 
     res.send(json);
 });
+
 router.delete("/:entity/:id", function (req, res, next) {});
 
 module.exports = router;
