@@ -94,15 +94,16 @@ function addToCart(req, res, callback) {
 						else
 							return res.send({state: false, msg: "Product not found", err: err});
 					}
-					var option = product.options.find(o => o.quantity === (quantity || product.quantity));
+					var option = product.options.find(o => o.quantity === (quantity || product.quantity)) || product.options[0] || {};
 					var price = option.offerPrice && option.price > option.offerPrice? option.offerPrice: option.price;
 
-					cart[cartId] = new CartItem.model({
-						price: price,
-						product: product,
-						quantity: option.quantity,
-						pieces: pieces
-					});
+					if (product && option.quantity && price)
+						cart[cartId] = new CartItem.model({
+							price: price,
+							product: product,
+							quantity: option.quantity,
+							pieces: pieces
+						});
 
 					//popularity goes up 10x
 					product.addPopularity(10);
