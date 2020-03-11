@@ -130,7 +130,7 @@ router.get("/tiles", function (req, res, next) {
     if (cachedPage) {
         navLinks = Object.assign(navLinks || {}, cachedPage || {});
         json.response = "success";
-        json.data = navLinks.map(d => {
+        json.data = navLinks.orderBy(l=>l.index).map(d => {
             return {
                 id: d.id,
                 slug: d.key,
@@ -169,7 +169,7 @@ router.get("/tiles", function (req, res, next) {
                 if (memCache)
                     memCache.put("__topmenu__", navLinks, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
 
-                json.data = categories.map(d => {
+                json.data = navLinks.map(d => {
                     return {
                         id: d.id,
                         slug: d.key,
@@ -183,6 +183,7 @@ router.get("/tiles", function (req, res, next) {
                 return res.send(json);
             }
         });
+
     ProductCategory.model.find()
         .exec((err, categories) => {
             var json = {

@@ -60,11 +60,11 @@ router.get("/categories", function (req, res) {
             else if (categories && categories.length) {
                 json.response = "success";
                 json.data = categories.orderBy(c => {
-                    var menu = c.menus
-                        .filter(m => m.level == 1 && m.type == "top")
-                        .orderBy(m => m.index)[0];
-
-                    return menu? menu.index: 100;
+                    var menus = c.menus
+                        .filter(m => m.type == "top")
+                        .orderBy(m => m.index);
+                        
+                    return menus.length? menus[0].index: 100;
                 }).map(d => {
                     return {
                         id: d.id,
