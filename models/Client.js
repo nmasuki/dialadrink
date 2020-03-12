@@ -190,7 +190,7 @@ Client.schema.methods.copyAppObject = function (obj) {
     if (obj.user_additional_directions)
         client.additional_directions = (obj.user_directions || "Fri,Sat,Sun").split();
     if (obj.user_image)
-        client.image = obj.user_image;
+        client.imageUrl = obj.user_image;
     if (obj.user_phone_verified)
         client.isPhoneVerified = obj.user_phone_verified;
     if (obj.user_reg_date)
@@ -263,8 +263,6 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                     .then(res => {
                         console.log(`Notification sent to ${client.name}`, payload.title, payload.body);
                         client.lastNotificationDate = new Date();
-                        client.save();
-
                         return client;
                     });
             });
@@ -290,7 +288,6 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                     } else {
                         console.log("FCM successfully sent with response: ", response);
                         client.lastNotificationDate = new Date();
-                        client.save();
 
                         resolve(client);
                     }
@@ -298,7 +295,15 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
             }));
 
             console.log(`Sessions: ${sessions.length}, WebTokens:${webpushTokens.length}, FCMTokens:${fcmTokens.length}`);
-            return Promise.any(promises).catch(console.error);
+            return Promise.any(promises)
+                .then(c => {
+                    if(c && typeof c.save == "function")
+                        c.save();
+                    else if (c && c[0] && typeof c[0].save == "function")
+                        c[0].save();
+                })
+                .catch(console.error);
+                
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
             if (client.lastNotificationDate < new Date().addDays(-5))
@@ -485,12 +490,21 @@ var updateOrderStats = function(client, next) {
         console.error("This should never be hit!! Client has no phoneNumber or email.");
         next();
     }
-}.debounce(100);
+};
 
 Client.schema.pre('save', function (next) {
-    this.modifiedDate = Date.now();
-    this.clientIps = this.clientIps.filter(ip => ip).distinct();
-    updateOrderStats(this, next);
+    var user = this;
+    user.modifiedDate = Date.now();
+    user.clientIps = this.clientIps.filter(ip => ip).distinct();
+
+    if (user.imageUrl) {
+        var opt =  { public_id: "users/" + user.name.cleanId() };
+        cloudinary.v2.uploader.upload(user.imageUrl, opt, (err, res) => {
+            user.image = res;
+            updateOrderStats(user, next);
+        });
+    } else
+        updateOrderStats(user, next);
 });
 
 Client.register();

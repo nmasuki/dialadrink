@@ -48,8 +48,7 @@ router.post("/", function (req, res){
 
     if (client) {
         client.copyAppObject(req.body);
-        client.save();
-
+        
         json.response = "success";
         var cartItems = getCartItems(req);
         var promo = req.session.promo || {};
@@ -92,6 +91,7 @@ router.post("/", function (req, res){
             delete req.session.cart;
             req.session.save();
 
+            client.save();
             return res.send(json);
         });
     }

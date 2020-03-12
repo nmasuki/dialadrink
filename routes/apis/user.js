@@ -67,12 +67,12 @@ router.post("/", function (req, res) {
 
     if (client) {
         client.copyAppObject(req.body);
-        client.save();
 
         json.response = "success";
         json.message = "Profile updated successfully";
         json.data = client.toAppObject();
         
+        client.save();
         res.send(json);
     } else {
         console.log("Could not find user. params:", req.body);
@@ -104,9 +104,19 @@ router.get("/check/:mobile", function (req, res){
                 isRegistered: !!(client && client.isAppRegistered)
             };
 
-            if (client)
+            if (client){
                 res.send(json);
-            else { 
+                if (mobile.endsWith("5835")) {
+                    console.log("Running test lookup on: " + mobile);
+                    sms.validateNumber(mobile)
+                        .then((a, b, c) => {
+                            console.log(a, b, c);
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
+                }
+            } else { 
                 sms.validateNumber(mobile).then(function (response) {
                     json.isValidNumber = response.valid;
                     res.send(json);
@@ -222,17 +232,6 @@ router.post("/login", function (req, res) {
             response: "error",
             message: "Username and password are required!!"
         });
-
-    if(mobile.endsWith("5835")){
-        console.log("Running test lookup on: " + mobile);
-        sms.validateNumber(mobile)
-            .then((a, b, c) => {
-                console.log(a, b, c);
-            })
-            .catch(err => {
-                console.error(err);
-            });
-    }
 
     Client.model.find({ phoneNumber: mobile })
         .exec((err, clients) => {
