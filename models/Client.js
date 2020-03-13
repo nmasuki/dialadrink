@@ -89,7 +89,17 @@ Client.add({
         index: true,
         noedit: true
     },
-
+    deliveryLocation: {
+        streetName: { type: String },
+        lat: { type: Number },
+        lng: { type: Number },
+        placeId: { type: String },
+        propertyName: { type: String },
+        directions: { type: String },
+        id: { type: String },
+        url: { type: String },
+        otherInformation: { type: String }
+    }
 });
 
 Client.relationship({
@@ -145,24 +155,25 @@ Client.schema.methods.toAppObject = function () {
     };
 
     return {
-        userid: this.id || '',
-        user_name: this.name || '',
-        username: this.username || (this.email || '').split('@')[0] || 'Guest',
+        userid: user.id || '',
+        user_name: user.name || '',
+        username: user.username || (user.email || '').split('@')[0] || 'Guest',
         user_unique_code: getUniqueCode(),
-        user_password: this.password || '',
-        user_email: this.email || '',
-        user_mobile: this.phoneNumber || '',
-        user_state: this.city || '',
-        user_city: this.city || '',
-        user_country: this.country || '',
-        user_address: this.address || '',
-        user_directions: this.additional_directions || '',
-        user_image: (this.image && this.image.secure_url && cloudinary.url(this.image.public_id, cloudinaryOptions)) || imagePlaceHolder,
-        user_phone_verified: this.isPhoneVerified || '',
-        user_reg_date: this.registrationDate || '',
-        user_deliverydays: this.deliverydays || '',
-        user_status: this.status || '',
-        ips: this.clientIps || []
+        user_password: user.password || '',
+        user_email: user.email || '',
+        user_mobile: user.phoneNumber || '',
+        user_state: user.city || '',
+        user_city: user.city || '',
+        user_country: user.country || '',
+        user_address: user.address || '',
+        user_directions: user.additional_directions || '',
+        user_image: (user.image && user.image.secure_url && cloudinary.url(user.image.public_id, cloudinaryOptions)) || imagePlaceHolder,
+        user_phone_verified: user.isPhoneVerified || '',
+        user_reg_date: user.registrationDate || '',
+        user_deliverydays: user.deliverydays || '',
+        user_status: user.status || '',
+        ips: user.clientIps || [],
+        deliveryLocation: user.deliveryLocation
     };
 };
 
@@ -199,6 +210,8 @@ Client.schema.methods.copyAppObject = function (obj) {
         client.status = obj.user_status;
     if (obj.user_deliverydays)
         client.deliverydays = obj.user_deliverydays;
+    if (obj.deliveryLocation)
+        client.deliveryLocation = obj.deliveryLocation;
 };
 
 Client.schema.methods.getSessions = function (next) {
@@ -323,7 +336,12 @@ Client.schema.methods.sendSMSNotification = function (message) {
     if (!client.phoneNumber || !client.phoneNumber.trim())
         return Promise.reject("SMS does not allow empty phoneNumber");
 
-    return sms.sendSMS([client.phoneNumber], message.replace(/<(?:.|\n)*?>/gm, '').format(client).trim(), function (err, res) {
+    message = message.replace(/<(?:.|\n)*?>/gm, '').format(client).trim();
+
+    if(message.indexOf("http") < 0)
+        message += " http://bit.ly/2OZfVz1";
+
+    return sms.sendSMS([client.phoneNumber], message, function (err, res) {
         if (err)
             console.error.apply(client, arguments);
         else {
