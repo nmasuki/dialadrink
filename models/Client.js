@@ -89,17 +89,7 @@ Client.add({
         index: true,
         noedit: true
     },
-    deliveryLocation: {
-        streetName: { type: String },
-        lat: { type: Number },
-        lng: { type: Number },
-        placeId: { type: String },
-        propertyName: { type: String },
-        directions: { type: String },
-        id: { type: String },
-        url: { type: String },
-        otherInformation: { type: String }
-    }
+    deliveryLocationMeta: { type: String }
 });
 
 Client.relationship({
@@ -130,6 +120,13 @@ Client.schema.virtual("name")
         this.firstName = (names.slice(0, Math.max(1, names.length - 1)).join(' ') || "").trim();
         this.lastName = (names[names.length - 1] || "").trim();
     });
+
+Client.schema.virtual("deliveryLocation")
+    .get(function(){ return JSON.parse(this.deliveryLocationMeta || "{}"); });
+
+
+Client.schema.virtual("deliveryLocation")
+    .set(function(l){ this.deliveryLocationMeta = JSON.stringify(l || {}); });
 
 Client.schema.methods.toAppObject = function () {
     var user = this;
