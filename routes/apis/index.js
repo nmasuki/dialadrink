@@ -54,7 +54,7 @@ router.post("/:entity", function (req, res, next) {
         };
 
     function setEntiry(entity){
-        var id = entity._id || entity.id || entity.Id || (entity._id = uuidv4());    
+        var id = entity._id || entity.id || entity.Id || (entity._id = req.params.entity.toLowerCase() + "-" + uuidv4());
 
         if (all[id] && all[id].rev > entity._rev){
             var msg = ["Document conflict! ", id, all[id].rev , entity._rev].join("\t");

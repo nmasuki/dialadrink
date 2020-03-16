@@ -16,6 +16,9 @@ router.get("/", function(req, res){
         return res.send(json);
     }
 
+    var filter = {};
+    if (res.locals.app == "")
+
     var phoneNos = [
         client.phoneNumber.cleanPhoneNumber(), 
         client.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
@@ -48,7 +51,7 @@ router.post("/", function (req, res){
 
     if (client) {
         client.copyAppObject(req.body);
-        
+
         json.response = "success";
         var cartItems = getCartItems(req);
         var promo = req.session.promo || {};
