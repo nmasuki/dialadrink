@@ -106,16 +106,6 @@ router.get("/check/:mobile", function (req, res){
 
             if (client){
                 res.send(json);
-                if (mobile.endsWith("5835")) {
-                    console.log("Running test lookup on: " + mobile);
-                    sms.validateNumber(mobile)
-                        .then((a, b, c) => {
-                            console.log(a, b, c);
-                        })
-                        .catch(err => {
-                            console.error(err);
-                        });
-                }
             } else { 
                 sms.validateNumber(mobile).then(function (response) {
                     json.isValidNumber = response.valid;
