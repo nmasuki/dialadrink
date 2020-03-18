@@ -622,12 +622,12 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         },
         promo: promo,
         clientIp: deliveryDetails.clientIp,
-        location: deliveryDetails.location,
+        location: deliveryDetails.location || deliveryDetails.deliveryLocation,
         delivery: deliveryDetails,
     });
 
-    if(deliveryDetails.location)
-        order.deliveryLocation = deliveryDetails.location;
+    if (deliveryDetails.location || deliveryDetails.deliveryLocation)
+        order.deliveryLocation = deliveryDetails.location || deliveryDetails.deliveryLocation;
 
     chargesKeys.forEach(k => {
         order.charges.chargesName.push(k);

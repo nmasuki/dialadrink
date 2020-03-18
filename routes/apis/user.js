@@ -82,6 +82,7 @@ router.post("/", function (req, res) {
 
 router.get("/check/:mobile", function (req, res){
     var mobile = (req.params.mobile || "").cleanPhoneNumber();
+    
     if (!mobile)
         return res.send({
             response: "error",
@@ -105,6 +106,9 @@ router.get("/check/:mobile", function (req, res){
             };
 
             if (client){
+                if (req.query.otp != undefined)
+                    sendOTP(client);
+
                 res.send(json);
             } else { 
                 sms.validateNumber(mobile).then(function (response) {
@@ -173,6 +177,24 @@ router.post("/signup", function (req, res) {
         });
 });
 
+function sendOTP(client){
+    client.tempPassword = client.tempPassword || {
+        used: true,
+        expiry: new Date().addMinutes(5).getTime()
+    };
+
+    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry <= Date.now()) {
+        client.tempPassword.used = false;
+        client.tempPassword.expiry = new Date().addMinutes(5).getTime();
+        client.tempPassword.password = Array(7).join('x').split('').map((x) => String.fromCharCode(65 + Math.round(Math.random() * 25))).join('');
+
+        client.save();
+    }
+
+    var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
+    sms.sendSMS(client.phoneNumber, msg + "\r\n" + (process.env.APP_ID || ""));
+}
+
 router.post("/forgot", function(req, res){
     var phoneNumber = req.body.mobile;
     var json = {
@@ -189,22 +211,9 @@ router.post("/forgot", function(req, res){
             json.message = "Error while reading registered users. " + err;
         }
         else if(client){
-            client.tempPassword = client.tempPassword || {used: true, expiry: new Date().addMinutes(5).getTime() };
-            
-            if(!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()){
-                client.tempPassword.used = false;
-                client.tempPassword.expiry = new Date().addMinutes(5).getTime();
-                client.tempPassword.password = Array(7).join('x').split('').map((x)=>String.fromCharCode(65 + Math.round(Math.random()*25))).join('');
-                
-                client.save();
-            }
-            
-            var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
-            sms.sendSMS(client.phoneNumber, msg + "\r\n" + (process.env.APP_ID || ""));
-            
-            //TODO send SMS/Email.
+            sendOTP(client);            
             json.response = "success";
-            json.data = client.tempPassword.password;
+            json.data = client.tempPassword.expiry;
         }else{
             json.message = "User not found!";
         }

@@ -181,22 +181,26 @@ Client.schema.methods.copyAppObject = function (obj) {
         client.id = obj.userid;
     if (obj.username)
         client.username = client.username;
-    if (obj.user_email)
-        client.email = obj.user_email;
-    if (obj.user_name)
-        client.name = obj.user_name;
-    if (obj.user_mobile)
-        client.phoneNumber = obj.user_mobile;
-    if (obj.user_address)
-        client.address = obj.user_address;
-    if (obj.user_state)
-        client.city = obj.user_state;
+    if (obj.user_email || obj.email)
+        client.email = obj.user_email || obj.email;
+    if (obj.user_name || obj.name)
+        client.name = obj.user_name || obj.name;
+    if (obj.user_mobile || obj.mobile)
+        client.phoneNumber = obj.user_mobile || obj.mobile;
+    if (obj.user_address || obj.address)
+        client.address = obj.user_address || obj.address;
+    
+    if (obj.user_state || obj.city)
+        client.city = obj.user_state || obj.city;
     if (obj.user_city)
         client.city = obj.user_city;
+
     if (obj.user_country)
         client.country = obj.user_country;
-    if (obj.user_additional_directions)
-        client.additional_directions = (obj.user_directions || "Fri,Sat,Sun").split();
+
+    if (obj.user_additional_directions || obj.directions)
+        client.houseNumber = obj.user_additional_directions || obj.directions;
+    
     if (obj.user_image)
         client.imageUrl = obj.user_image;
     if (obj.user_phone_verified)
@@ -206,7 +210,7 @@ Client.schema.methods.copyAppObject = function (obj) {
     if (obj.user_status)
         client.status = obj.user_status;
     if (obj.user_deliverydays)
-        client.deliverydays = obj.user_deliverydays;
+        client.deliverydays = (obj.user_directions || "Fri,Sat,Sun").split();
     if (obj.deliveryLocation)
         client.deliveryLocation = obj.deliveryLocation;
 };
@@ -342,6 +346,7 @@ Client.schema.methods.sendSMSNotification = function (message) {
     return sms.sendSMS([client.phoneNumber], message, function (err, res) {
         if (err)
             console.error.apply(client, arguments);
+            
         else {
             client.lastNotificationDate = new Date();
             return client.save();
@@ -483,12 +488,10 @@ var updateOrderStats = function(client, next) {
 
     if (findOption.$or.length) {
         keystone.list("Order").model.find(findOption)
-            .sort({
-                orderDate: -1
-            })
+            .sort({ orderDate: -1 })
             .deepPopulate('cart.product.priceOptions.option')
             .exec((err, orders) => {
-                if (err)
+                if (err || !orders || orders.length == 0)
                     return next(err);
 
                 if (client.orderCount && client.orderCount == orders.length)
