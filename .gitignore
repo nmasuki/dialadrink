@@ -1,9 +1,8 @@
 node_modules/
+node_modules
 routes/cache
 .idea
-.env*
+.env
+.env-*
 templates.js
 locks/
-/.env
-/.env
-node_modules
