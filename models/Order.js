@@ -264,28 +264,16 @@ Order.schema.virtual("deliveryLocation").get(function () {
 });
 
 Order.schema.virtual("deliveryLocation").set(function (location) {
-    this.delivery.locationMeta = location ? JSON.stringify(location) : this.deliveryLocation;
+    this.delivery.locationMeta = location ? JSON.stringify(location) : null;
 });
 
 Order.schema.virtual("deliveryAddress").get(function () {
     var delivery = this.delivery;
-    var address = "", addressParts = [];
-
-    //delivery.address}}, {{delivery.building}}, {{delivery.houseNumber
-    var parts = ['address', 'building', 'houseNumber'];
-    parts.forEach(i =>  addressParts.push(this.delivery[i]));
-
-    address = addressParts.join(",").split(",").map(a => a.trim().toProperCase()).distinct().join(", ");
-    if(address) return address;
+    var address = "";
 
     for (var i in delivery) {
-        if (delivery.hasOwnProperty(i) && i != 'userId' && delivery[i] && typeof delivery[i] != "function"){
-            var p = delivery[i].toString().toProperCase();
-            if(addressParts.indexOf(p) < 0){
-                addressParts.push(p);
-                address += "{0}:{1}<br>\r\n".format(i.toProperCase(), p);
-            }
-        }
+        if (i != 'userId' && delivery[i] && typeof delivery[i] != "function")
+            address += "{0}:{1}<br>\r\n".format(i.toProperCase(), delivery[i].toString().toProperCase());
     }
 
     return address;
@@ -325,13 +313,13 @@ Order.schema.methods.updateClient = function (next) {
                 client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
 
                 if (client) {
-                    if (order.clientIp && client.clientIps.indexOf(order.clientIp) < 0) {
+                    if (client.clientIps.indexOf(order.clientIp) < 0){
                         saveClient = true;
                         client.clientIps.push(order.clientIp);
                     }
                     if (client.createdDate < order.orderDate)
                         for (var i in delivery) {
-                            if (client.hasOwnProperty(i) && delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
+                            if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
                                 saveClient = true;
                                 client[i] = delivery[i];
                             }
@@ -361,8 +349,9 @@ Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!");
     var order = this;
     order.sendOrderNotification().then((data) => {
-        //Update order state
         console.log("Updating order state='placed'!", data.orderNumber);
+
+        //Update order state
         order.state = 'placed';
         order.save((err) => {
             if (err)
@@ -487,17 +476,18 @@ Order.schema.methods.sendOrderNotification = function (next) {
             }
         }
 
-        //Send SMS
+        //Send SMS 
         if (order.delivery.phoneNumber && !order.smsNotificationSent) {
             message = `DIALADRINK: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
 
             if (order.payment.method == "PesaPal")
-                message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}.`;
+                message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
             else
-                message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}.`;
+                message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}`;
 
-            if (order.client && order.client._id) 
+            if (order.client && order.client._id) {
                 promise.then(() => order.client.sendSMSNotification(message).then(() => order.smsNotificationSent = true));
+            }
         }
 
         //Send Email
@@ -551,8 +541,7 @@ Order.schema.set('toObject', {
             "chargesAmt", "subtotal", "total",
             "state", "orderDate", "modifiedDate",
             "client", "orderAmount",
-            "paymentMethod", "payment", 
-            "deliveryLocation", "deliveryAddress",
+            "paymentMethod", "payment", "deliveryLocation",
             "promo", "delivery"
         ];
 
@@ -633,12 +622,12 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         },
         promo: promo,
         clientIp: deliveryDetails.clientIp,
-        location: deliveryDetails.location || deliveryDetails.deliveryLocation,
+        location: deliveryDetails.location,
         delivery: deliveryDetails,
     });
 
-    if (deliveryDetails.location || deliveryDetails.deliveryLocation)
-        order.deliveryLocation = deliveryDetails.location || deliveryDetails.deliveryLocation;
+    if(deliveryDetails.location)
+        order.deliveryLocation = deliveryDetails.location;
 
     chargesKeys.forEach(k => {
         order.charges.chargesName.push(k);

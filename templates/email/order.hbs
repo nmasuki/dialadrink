@@ -171,10 +171,10 @@
 
                                     {{#if deliveryLocation.url}}
                                         <a href="{{{deliveryLocation.url}}}">
-                                            {{{deliveryAddress}}}
+                                            {{delivery.address}}, {{delivery.building}}, {{delivery.houseNumber}}
                                         </a><br>
                                     {{else}}
-                                        {{{deliveryAddress}}}<br>
+                                        {{delivery.address}}, {{delivery.building}}, {{delivery.houseNumber}}<br>
                                     {{/if}}
                                     
                                     {{#if delivery.phoneNumber}}

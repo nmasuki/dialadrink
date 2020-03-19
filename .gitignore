@@ -5,3 +5,5 @@ routes/cache
 templates.js
 locks/
 /.env
+/.env
+node_modules

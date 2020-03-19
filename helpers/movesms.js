@@ -107,8 +107,6 @@ module.exports = function MoveSMS(sender) {
                 err = "Ignoring SMS notification for non-prod environment!";
                 if (typeof next == "function")
                     next(err);
-                
-                console.log("SMS >>> '" + message + "'");
                 return Promise.reject(err);
             }
 
