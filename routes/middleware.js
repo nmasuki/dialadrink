@@ -432,6 +432,10 @@ var setAppUserFromSession = function (req, res, callback) {
         });
 };
 
+var getCustomHeaders = function(req){
+
+}
+
 var getAuthInfo = function (req) {
     var header = req.headers.authorization || '', // get the header
         scheme = (header.split(/\s+/)[0] || '').toUpperCase(), // the scheme
@@ -442,6 +446,7 @@ var getAuthInfo = function (req) {
         username = parts[0],
         password = parts[1],
         authTime = parts[2];
+        
 
     return {
         scheme,
