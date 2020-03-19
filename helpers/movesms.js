@@ -58,14 +58,15 @@ module.exports = function MoveSMS(sender) {
    
     self.validateNumber = function (number) {
         return new Promise((resolve, reject) => {
-            if (lookUps[number])
+            if (lookUps[number] && !lookUps[number].error)
                 return resolve(lookUps[number]);            
             
+            var lookUpKey = pickOneApiKey();
             najax.get({
                 url: `http://apilayer.net/api/validate`,
                 dataType: "application/json; charset=utf-8",
                 data: {
-                    access_key: pickOneApiKey(),
+                    access_key: lookUpKey,
                     country_code: '',
                     number: number,
                     format: 1,
@@ -75,18 +76,18 @@ module.exports = function MoveSMS(sender) {
                         if(typeof res == "string")
                             res = JSON.parse(res);
                         res.created_at = new Date();
+                        res.key = lookUpKey;
                     }catch(e){
                         console.error("Error while validating", number, e);
                     }
 
+                    updateLookUp(number, res);
                     if(res.error){
                         console.error("Error while validating", res.error.info);
                         resolve({ valid: true });
                     } else {
                         if (!res.valid)
                             console.log("Invalid number", number);
-
-                        updateLookUp(number, res);
                         resolve(res);
                     }
                 },
