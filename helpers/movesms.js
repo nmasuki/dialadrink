@@ -47,11 +47,11 @@ module.exports = function MoveSMS(sender) {
     };
 
     function pickOneApiKey(){
-        var allKeys = ['159eece6bd4f7fdc23916fd7778efa8c', '0c2315a3ad790d8d3b6b3a53ec8a4c75', '1845a28d63e1b10f9e73aa474d33d8fb'];
+        var allKeys = ['159eece6bd4f7fdc23916fd7778efa8c', '0c2315a3ad790d8d3b6b3a53ec8a4c75', '1845a28d63e1b10f9e73aa474d33d8fb', ];
         var firstOfTheMonth = (new Date()).toISOString().substr(0, 8) + "01";
         
         var monthLookUps = Object.values(lookUps).filter(l => l.created_at >= firstOfTheMonth);
-        var keyIndex = new Date().getMonth() % 2 == 0 ? Math.floor(monthLookUps.length / 250): monthLookUps.length;
+        var keyIndex = new Date().getMonth() % 2 == 0 ? Math.floor(monthLookUps.length / 90): monthLookUps.length;
 
         return allKeys[keyIndex % allKeys.length];
     }
@@ -79,15 +79,20 @@ module.exports = function MoveSMS(sender) {
                         console.error("Error while validating", number, e);
                     }
 
-                    if (!res.valid)
-                        console.log("Invalid number", number);
+                    if(res.error){
+                        console.error("Error while validating", res.error.info);
+                        resolve({ valid: true });
+                    } else {
+                        if (!res.valid)
+                            console.log("Invalid number", number);
 
-                    updateLookUp(number, res);
-                    resolve(res);
+                        updateLookUp(number, res);
+                        resolve(res);
+                    }
                 },
                 error: function (xhr, status, err) {
                     console.warn.apply(this, arguments);
-                    resolve({valid: false});
+                    resolve({valid: true});
                 }
             });
         });

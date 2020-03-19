@@ -223,6 +223,7 @@ router.post("/login", function (req, res) {
             message: "Username and password are required!!"
         });
 
+    console.log("Login attempt", mobile, password);
     Client.model.find({ phoneNumber: mobile })
         .exec((err, clients) => {
 
