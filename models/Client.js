@@ -345,8 +345,7 @@ Client.schema.methods.sendSMSNotification = function (message) {
 
     return sms.sendSMS([client.phoneNumber], message, function (err, res) {
         if (err)
-            console.error.apply(client, arguments);
-            
+            console.error.apply(client, arguments);            
         else {
             client.lastNotificationDate = new Date();
             return client.save();
@@ -449,8 +448,8 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
                 console.log(
                     "Sending Email notification!",
-                    "Client", client.email,
-                    "Admins", emailOptions.cc.map(u => u.email || u).join(',')
+                    "Client:" + client.email,
+                    "Admins:" + emailOptions.cc.map(u => u.email || u).join(',')
                 );
 
                 return new Promise((resolve, reject) => {

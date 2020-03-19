@@ -313,13 +313,13 @@ Order.schema.methods.updateClient = function (next) {
                 client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
 
                 if (client) {
-                    if (client.clientIps.indexOf(order.clientIp) < 0){
+                    if (order.clientIp && client.clientIps.indexOf(order.clientIp) < 0) {
                         saveClient = true;
                         client.clientIps.push(order.clientIp);
                     }
                     if (client.createdDate < order.orderDate)
                         for (var i in delivery) {
-                            if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
+                            if (client.hasOwnProperty(i) && delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
                                 saveClient = true;
                                 client[i] = delivery[i];
                             }
@@ -349,9 +349,8 @@ Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!");
     var order = this;
     order.sendOrderNotification().then((data) => {
-        console.log("Updating order state='placed'!", data.orderNumber);
-
         //Update order state
+        console.log("Updating order state='placed'!", data.orderNumber);
         order.state = 'placed';
         order.save((err) => {
             if (err)
@@ -476,18 +475,17 @@ Order.schema.methods.sendOrderNotification = function (next) {
             }
         }
 
-        //Send SMS 
+        //Send SMS
         if (order.delivery.phoneNumber && !order.smsNotificationSent) {
             message = `DIALADRINK: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
 
             if (order.payment.method == "PesaPal")
-                message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
+                message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}.`;
             else
-                message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}`;
+                message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}.`;
 
-            if (order.client && order.client._id) {
+            if (order.client && order.client._id) 
                 promise.then(() => order.client.sendSMSNotification(message).then(() => order.smsNotificationSent = true));
-            }
         }
 
         //Send Email
