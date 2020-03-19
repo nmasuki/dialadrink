@@ -344,12 +344,9 @@ Client.schema.methods.sendSMSNotification = function (message) {
         message += " http://bit.ly/2TCl4MI";
 
     return sms.sendSMS([client.phoneNumber], message, function (err, res) {
-        if (err)
-            console.error.apply(client, arguments);            
-        else {
-            client.lastNotificationDate = new Date();
-            return client.save();
-        }
+        if (err) return;            
+        client.lastNotificationDate = new Date();
+        return client.save();
     });
 };
 

@@ -264,16 +264,28 @@ Order.schema.virtual("deliveryLocation").get(function () {
 });
 
 Order.schema.virtual("deliveryLocation").set(function (location) {
-    this.delivery.locationMeta = location ? JSON.stringify(location) : null;
+    this.delivery.locationMeta = location ? JSON.stringify(location) : this.deliveryLocation;
 });
 
 Order.schema.virtual("deliveryAddress").get(function () {
     var delivery = this.delivery;
-    var address = "";
+    var address = "", addressParts = [];
+
+    //delivery.address}}, {{delivery.building}}, {{delivery.houseNumber
+    var parts = ['address', 'building', 'houseNumber'];
+    parts.forEach(i =>  addressParts.push(this.delivery[i]));
+
+    address = addressParts.join(",").split(",").map(a => a.trim().toProperCase()).distinct().join(", ");
+    if(address) return address;
 
     for (var i in delivery) {
-        if (i != 'userId' && delivery[i] && typeof delivery[i] != "function")
-            address += "{0}:{1}<br>\r\n".format(i.toProperCase(), delivery[i].toString().toProperCase());
+        if (delivery.hasOwnProperty(i) && i != 'userId' && delivery[i] && typeof delivery[i] != "function"){
+            var p = delivery[i].toString().toProperCase();
+            if(addressParts.indexOf(p) < 0){
+                addressParts.push(p);
+                address += "{0}:{1}<br>\r\n".format(i.toProperCase(), p);
+            }
+        }
     }
 
     return address;
@@ -539,7 +551,8 @@ Order.schema.set('toObject', {
             "chargesAmt", "subtotal", "total",
             "state", "orderDate", "modifiedDate",
             "client", "orderAmount",
-            "paymentMethod", "payment", "deliveryLocation",
+            "paymentMethod", "payment", 
+            "deliveryLocation", "deliveryAddress",
             "promo", "delivery"
         ];
 
