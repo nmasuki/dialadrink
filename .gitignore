@@ -6,3 +6,4 @@ routes/cache
 .env-*
 templates.js
 locks/
+/node_modules*
