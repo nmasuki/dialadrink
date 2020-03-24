@@ -14,11 +14,7 @@ exports.create = {
 		return {
 			'name': name,
 			'city': 'Nairobi',
-			'show': true,
-			//'location': {
-			//	lat: -1.28333,
-			//	lng: 36.81667
-			//}
+			'show': true
 		};
 	}),
 };

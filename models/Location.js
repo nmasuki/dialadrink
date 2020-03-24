@@ -19,12 +19,23 @@ Location.add({
 	href: { type: String, initial: true },
 	city: { type: String },
 	show: { type: Boolean },
-	//page: { type: Types.Relationship, ref: 'Page' },
 	description: { type: Types.Html, wysiwyg: true, height: 250 },
 	deliveryCharges: {type: Types.Number, default:300 },
+	modifiedDate: { type: Date, default: Date.now, noedit: true },
 	location: {
-		lat: {type: Types.Number },
-		lng: {type: Types.Number },
+		lat: { type: Types.Number, noedit: true},
+		lng: { type: Types.Number, noedit: true },
+	},
+	location_type: { type: String, noedit: true },
+	viewport: {
+		northeast:{
+			lat: {type: Types.Number, noedit: true },
+			lng: {type: Types.Number, noedit: true },
+		},		
+		southwest: {
+			lat: {type: Types.Number, noedit: true },
+			lng: {type: Types.Number, noedit: true },
+		}
 	}
 });
 
@@ -32,17 +43,21 @@ Location.schema.pre('save', function (next) {
 	var $this = this;
 	this.href = this.href || this.name.cleanId().trim();
 	/**/
-	if (!this.location || !this.location.lat || !this.location.lng) {
+	if (!this.modifiedDate || !this.modifiedDate < new Date().addDays(-10)) {
 		var url = `https://maps.googleapis.com/maps/api/geocode/json` +
-			`?address=${this.name} ${this.city}` +
+			`?address=${this.name} ${this.city || 'Nairobi, Kenya'}` +
 			`&key=${process.env.GOOGLE_API_KEY1}`;
+
 		najax.get({
 			url: url,
 			success: function (json) {
 				if(json){
 					location = JSON.parse(json);
 					if (location.results && location.results[0] && location.results[0].geometry){
-						$this.location = location.results[0].geometry.location;
+						var geometry = location.results[0].geometry;
+						for(var i in geometry)
+							if(geometry.hasOwnProperty(i))
+								$this[i] = geometry[i];
 					}
 				}
 				next();
@@ -55,5 +70,5 @@ Location.schema.pre('save', function (next) {
 		next();
 });
 
-Location.defaultColumns = 'name, city, show|10%';
+Location.defaultColumns = 'name, city, show|10%, description.lat, description.lng';
 Location.register();

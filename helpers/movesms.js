@@ -51,7 +51,7 @@ module.exports = function MoveSMS(sender) {
         var firstOfTheMonth = (new Date()).toISOString().substr(0, 8) + "01";
         
         var monthLookUps = Object.values(lookUps).filter(l => l.created_at >= firstOfTheMonth);
-        var keyIndex = new Date().getMonth() % 2 == 0 ? Math.floor(monthLookUps.length / 90): monthLookUps.length;
+        var keyIndex = new Date().getMonth() % 2 == 0 ? Math.ceil(monthLookUps.length / 90) : monthLookUps.length;
 
         return allKeys[keyIndex % allKeys.length];
     }
@@ -62,6 +62,7 @@ module.exports = function MoveSMS(sender) {
                 return resolve(lookUps[number]);            
             
             var lookUpKey = pickOneApiKey();
+            console.log("Number lookup: ", number, lookUpKey);
             najax.get({
                 url: `http://apilayer.net/api/validate`,
                 dataType: "application/json; charset=utf-8",
