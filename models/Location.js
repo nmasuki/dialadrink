@@ -43,7 +43,7 @@ Location.schema.pre('save', function (next) {
 	var $this = this;
 	this.href = this.href || this.name.cleanId().trim();
 	/**/
-	if (!this.modifiedDate || !this.modifiedDate < new Date().addDays(-10)) {
+	if (!this.modifiedDate || this.modifiedDate < new Date().addDays(-10)) {
 		var url = `https://maps.googleapis.com/maps/api/geocode/json` +
 			`?address=${this.name} ${this.city || 'Nairobi, Kenya'}` +
 			`&key=${process.env.GOOGLE_API_KEY1}`;
@@ -70,5 +70,5 @@ Location.schema.pre('save', function (next) {
 		next();
 });
 
-Location.defaultColumns = 'name, city, show|10%, description.lat, description.lng';
+Location.defaultColumns = 'name, city, deliveryCharges, description.lat, description.lng, show|10%';
 Location.register();

@@ -13,6 +13,24 @@ var privateVapidKey = process.env.VAPID_KEY;
 
 webpush.setVapidDetails(`mailto:${process.env.DEVELOPER_EMAIL}`, publicVapidKey, privateVapidKey);
 
+var sendOTP = function (client, otpToken) {
+    client.tempPassword = client.tempPassword || {
+        used: true,
+        expiry: new Date().addMinutes(5).getTime()
+    };
+
+    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {
+        client.tempPassword.used = false;
+        client.tempPassword.expiry = new Date().addMinutes(5).getTime();
+        client.tempPassword.password = Array(7).join('x').split('').map((x) => String.fromCharCode(65 + Math.round(Math.random() * 25))).join('');
+
+        client.save();
+    }
+
+    var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
+    sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
+};
+
 router.get("/", function (req, res) {
     var client = res.locals.appUser;
     if (client)
@@ -184,7 +202,7 @@ router.post("/signup", function (req, res) {
         });
 });
 
-router.post("/forgot", function(req, res){
+router.post("/forgot", function (req, res) {
     var phoneNumber = req.body.mobile;
     var json = {
         response: "error",
@@ -192,27 +210,14 @@ router.post("/forgot", function(req, res){
     };
 
     console.log("Getting user: " + phoneNumber.cleanPhoneNumber());
-    Client.model.findOne({ 
-        phoneNumber: phoneNumber.cleanPhoneNumber()
-    })
+    Client.model.findOne({ phoneNumber: phoneNumber.cleanPhoneNumber() })
     .exec((err, client) => {
         if (err){
             json.message = "Error while reading registered users. " + err;
         }
         else if(client){
-            client.tempPassword = client.tempPassword || {used: true, expiry: new Date().addMinutes(5).getTime() };
-            
-            if(!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()){
-                client.tempPassword.used = false;
-                client.tempPassword.expiry = new Date().addMinutes(5).getTime();
-                client.tempPassword.password = Array(7).join('x').split('').map((x)=>String.fromCharCode(65 + Math.round(Math.random()*25))).join('');
-                
-                client.save();
-            }
-            
-            var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
-            sms.sendSMS(client.phoneNumber, msg + "\r\n" + (process.env.APP_ID || ""));
-            
+            sendOTP(client, req.query.otpToken);
+
             //TODO send SMS/Email.
             json.response = "success";
             json.data = client.tempPassword.password;
