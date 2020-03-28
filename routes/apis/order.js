@@ -49,6 +49,12 @@ router.post("/", function (req, res){
         data: {}
     };
 
+    var time = new Date().toISOString().split('T')[1].split(':')[0];
+    if (time >= 17 - 3 || time <= 5 - 3) {
+        json.message = "Due to the national curfew in Kenya. We will not be taking any orders past 5PM. Please stay at home to eradicate COVID-19!";
+        return res.send(json);
+    }
+
     if (client) {
         client.copyAppObject(req.body);
 
