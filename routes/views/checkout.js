@@ -83,14 +83,15 @@ router.post("/", function (req, res, next) {
 			if (err)
 				json.response = "error";
 
-			if (order.client.sessions.indexOf(req.sessionID) < 0) {
-				order.client.sessions.push(req.sessionID);
-				order.client.save();
-			}
 
 			json.msg = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
 
 			if (!err) {
+				if (order.client.sessions.indexOf(req.sessionID) < 0) {
+					order.client.sessions.push(req.sessionID);
+					order.client.save();
+				}
+
 				if (order.payment.method == "PesaPal") {
 					json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
 					json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
@@ -114,6 +115,7 @@ router.post("/", function (req, res, next) {
 				}
 
 				order.cart = cartItems;
+				
 				//OKHi intergration
 				if (process.env.OKHI_KEY && req.body.user && req.body.location)
 					okHiIntegration(req, res, order, cartItems);
