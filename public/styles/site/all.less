@@ -95,6 +95,10 @@ select {
   margin-top: 15px;
 }
 
+#customer_orders table {
+  margin-bottom: 30px;
+}
+
 #customer-addresses .add-new-address {
   display: block;
 }
@@ -12732,6 +12736,21 @@ body .table-cart {
 
 body .table-cart .btn,body .table-cart .product-detail-content #product-information .add-to-wishlist button,body .product-detail-content #product-information .add-to-wishlist .table-cart button,body .table-cart .address_table .add-new-address,body .address_table .table-cart .add-new-address,body .table-cart .group-form-address .add-new-address,body .group-form-address .table-cart .add-new-address {
   margin-bottom: 20px;
+}
+
+body #customer_orders {
+  padding-right: 0;
+}
+
+body #customer_orders table thead th {
+  text-align: left;
+}
+
+@media (max-width: 767px) {
+  body #customer_orders {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 }
 
 @media (max-width: 767px) {
