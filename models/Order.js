@@ -268,15 +268,9 @@ Order.schema.virtual("deliveryLocation").set(function (location) {
 });
 
 Order.schema.virtual("deliveryAddress").get(function () {
-    var delivery = this.delivery;
-    var address = "";
-
-    for (var i in delivery) {
-        if (i != 'userId' && delivery[i] && typeof delivery[i] != "function")
-            address += "{0}:{1}<br>\r\n".format(i.toProperCase(), delivery[i].toString().toProperCase());
-    }
-
-    return address;
+    var order = this;
+    var address = ['address', 'building', 'houseNumber'].map(i => order.delivery[i]);
+    return address.distinct().join(', ');
 });
 
 var clients = [];
