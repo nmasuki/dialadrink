@@ -269,8 +269,7 @@ Order.schema.virtual("deliveryLocation").set(function (location) {
 
 Order.schema.virtual("deliveryAddress").get(function () {
     var order = this;
-    var address = ['address', 'building', 'houseNumber'].map(i => order.delivery[i]);
-    return address.distinct().join(', ');
+    return ['address', 'building', 'houseNumber'].map(i => order.delivery[i]).distinct().join(', ');
 });
 
 var clients = [];
