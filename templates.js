@@ -143,7 +143,7 @@ this["templates"]["email"]["order"]["hbs"]["templates/email/order.hbs"] = Handle
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.firstName : stack1), depth0))
     + " "
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.lastName : stack1), depth0))
-    + "</p>\n                    <p style=\"margin:0 0 16px;\">\n                        Your order has been received and will be dispatched shortly. The order is as follows:\n                    </p>\n\n                    <h2 style=\"color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left\">\n                        Order #"
+    + "</p>\n                    <p style=\"margin:0 0 16px;\">\n                        Your order has been received and will be dispatched shortly. The order is as follows:\n                    </p>\n\n                    <pstyle=\"margin:0 0 16px;font-size: 0.7em; color: orange\">\n                        Note: Due to the national curfew in Kenya. We will not be taking any orders past 5PM. Please stay at home to eradicate COVID-19!\n                    </p>\n\n                    <h2 style=\"color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left\">\n                        Order #"
     + alias2(((helper = (helper = helpers.orderNumber || (depth0 != null ? depth0.orderNumber : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"orderNumber","hash":{},"data":data}) : helper)))
     + " "
     + alias2((helpers.formatDate || (depth0 && depth0.formatDate) || alias4).call(alias3,(depth0 != null ? depth0.orderDate : depth0),"MMM Do, YYYY",{"name":"formatDate","hash":{},"data":data}))
@@ -165,15 +165,15 @@ this["templates"]["email"]["order"]["hbs"]["templates/email/order.hbs"] = Handle
     + ((stack1 = helpers["if"].call(alias3,(depth0 != null ? depth0.paymentMethod : depth0),{"name":"if","hash":{},"fn":container.program(28, data, 0, blockParams, depths),"inverse":container.program(30, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\n"
     + ((stack1 = (helpers.ifne || (depth0 && depth0.ifne) || alias4).call(alias3,((stack1 = (depth0 != null ? depth0.payment : depth0)) != null ? stack1.method : stack1),"PesaPal",{"name":"ifne","hash":{},"fn":container.program(32, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                    </p>\n\n                    <table id=\"order-addresses\"\n                           style=\"width:100%;vertical-align:top;margin-bottom:40px;padding:0\" cellspacing=\"0\"\n                           cellpadding=\"0\" border=\"0\">\n                        <tbody>\n                        <tr>\n                            <td style=\"text-align:left;border:0;padding:0\" width=\"50%\" valign=\"top\">\n                                <h2 style=\"color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left\">\n                                    Billing Address\n                                </h2>\n\n                                <address class=\"order-address\"\n                                    style=\"padding:12px 12px 0;color:#737373;border:1px solid #e4e4e4\">\n                                    "
+    + "                    </p>\n\n                    <table id=\"order-addresses\"\n                           style=\"width:100%;vertical-align:top;margin-bottom:40px;padding:0\" cellspacing=\"0\"\n                           cellpadding=\"0\" border=\"0\">\n                        <tbody>\n                        <tr>\n                            <td style=\"text-align:left;border:0;padding:0\" width=\"50%\" valign=\"top\">\n                                <h2 style=\"color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left\">\n                                    Delivery Address\n                                </h2>\n\n                                <address class=\"order-address\"\n                                    style=\"padding:12px 12px 0;color:#737373;border:1px solid #e4e4e4\">\n                                    "
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.firstName : stack1), depth0))
     + " "
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.lastName : stack1), depth0))
     + "<br>                                    \n\n"
     + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.deliveryLocation : depth0)) != null ? stack1.url : stack1),{"name":"if","hash":{},"fn":container.program(34, data, 0, blockParams, depths),"inverse":container.program(36, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
-    + "                                    \n"
+    + "                                    \n                                    "
     + ((stack1 = helpers["if"].call(alias3,((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.phoneNumber : stack1),{"name":"if","hash":{},"fn":container.program(38, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n                                    <p style=\"margin:0 0 16px\">\n                                        <a href=\"mailto:"
+    + "\n\n                                    <p style=\"margin:0 0 16px\">\n                                        <a href=\"mailto:"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.email : stack1), depth0))
     + "\" target=\"_blank\">"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.email : stack1), depth0))
@@ -294,35 +294,27 @@ this["templates"]["email"]["order"]["hbs"]["templates/email/order.hbs"] = Handle
     + container.escapeExpression(((helper = (helper = helpers.orderNumber || (depth0 != null ? depth0.orderNumber : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"orderNumber","hash":{},"data":data}) : helper)))
     + "\">here</a>\n                        </p>\n";
 },"34":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+    var stack1, helper;
 
   return "                                        <a href=\""
-    + ((stack1 = alias1(((stack1 = (depth0 != null ? depth0.deliveryLocation : depth0)) != null ? stack1.url : stack1), depth0)) != null ? stack1 : "")
-    + "\">\n                                            "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.address : stack1), depth0))
-    + ", "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.building : stack1), depth0))
-    + ", "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.houseNumber : stack1), depth0))
-    + "\n                                        </a><br>\n";
+    + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.deliveryLocation : depth0)) != null ? stack1.url : stack1), depth0)) != null ? stack1 : "")
+    + "\">"
+    + ((stack1 = ((helper = (helper = helpers.deliveryAddress || (depth0 != null ? depth0.deliveryAddress : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"deliveryAddress","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "</a><br>\n";
 },"36":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+    var stack1, helper;
 
   return "                                        "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.address : stack1), depth0))
-    + ", "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.building : stack1), depth0))
-    + ", "
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.houseNumber : stack1), depth0))
-    + "<br>\n";
+    + ((stack1 = ((helper = (helper = helpers.deliveryAddress || (depth0 != null ? depth0.deliveryAddress : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"deliveryAddress","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "\n";
 },"38":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.lambda, alias2=container.escapeExpression;
 
-  return "                                    <a href=\"tel:"
+  return "<a href=\"tel:"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.phoneNumber : stack1), depth0))
     + "\">"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.delivery : depth0)) != null ? stack1.phoneNumber : stack1), depth0))
-    + "</a>\n";
+    + "</a>";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1;
 
