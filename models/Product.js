@@ -396,6 +396,7 @@ Product.schema.methods.toAppObject = function () {
         ratingCount: d.ratingCount,
         inStock: !!d.inStock,
         hitsPerWeek: d.hitsPerWeek,
+        remainingStock: 10,
         
         //Use cheapest option for price
         price: d.price,

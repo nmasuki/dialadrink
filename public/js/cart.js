@@ -327,7 +327,6 @@ $(function () {
         var qty = $(this).data('qty');
 
         if (id) {
-            console.log('The id is this after changes', id);
             var view = $(this).parents("#product-section").find(".pieces");
             var pieces = parseInt(view.val()) || 1;
 
