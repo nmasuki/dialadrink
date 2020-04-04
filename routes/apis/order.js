@@ -61,41 +61,39 @@ router.post("/", function (req, res){
         });
 
         Order.checkOutCartItems(cartItems, promo, deliveryDetails, function (err, order) {
-            if (err)
-                json.response = "error";
-
-            json.data = order.toObject();
             json.message = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch.";
+            
+            if (err){
+                json.response = "error";
+                return res.send(json);
+            }
+            
+            json.data = order.toObject();
+            if (order.payment.method == "PesaPal") {
+                json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
+                json.message = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+            } else if (order.payment.method == "Mpesa") {
+                json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
+                var mpesa = require('../../helpers/mpesa');
 
-            if (!err) {
-                if (order.payment.method == "PesaPal") {
-                    json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
-                    json.message = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
-                } else if (order.payment.method == "Mpesa") {
-                    json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
-                    var mpesa = require('../../helpers/mpesa');
+                mpesa.onlineCheckout(
+                    order.delivery.phoneNumber,
+                    order.payment.amount,
+                    order.orderNumber
+                );
+            } else if (order.payment.method == "Mpesa2") {
+                json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
+                var africasTalking = require('../helpers/AfricasTalking').Instance;
 
-                    mpesa.onlineCheckout(
-                        order.delivery.phoneNumber,
-                        order.payment.amount,
-                        order.orderNumber
-                    );
-                } else if (order.payment.method == "Mpesa2") {
-                    json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
-                    var africasTalking = require('../helpers/AfricasTalking').Instance;
-
-                    africasTalking.processPayment(
-                        order.delivery.phoneNumber, order.orderNumber,
-                        order.orderNumber, order.payment.amount, 'KES'
-                    );
-                }
-
-                delete req.session.cart;
-                req.session.save();
-                client.save();
+                africasTalking.processPayment(
+                    order.delivery.phoneNumber, order.orderNumber,
+                    order.orderNumber, order.payment.amount, 'KES'
+                );
             }
 
-            return res.send(json);
+            delete req.session.cart;
+            req.session.save();
+            client.save();
         });
     }
 });
