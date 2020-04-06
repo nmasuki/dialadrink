@@ -409,10 +409,10 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
         return new Promise((resolve, reject) => {
             email.send(locals, emailOptions, (err, a) => {
-                console.log("Email notification Sent!", err || "");
                 if (err)
-                    reject(console.warn(err));
+                    return reject(console.warn(err));
 
+                console.log("Email notification Sent!");
                 client.lastNotificationDate = new Date();
                 resolve(a);
             });
@@ -451,7 +451,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
                         if (err)
                             return reject(err, console.error("Error sending email", err));
 
-                        console.log("Email notification Sent!", err || "");
+                        console.log("Email notification Sent!");
                         client.lastNotificationDate = new Date();
                         resolve(a);
                     });
