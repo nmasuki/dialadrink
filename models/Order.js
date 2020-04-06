@@ -534,8 +534,7 @@ Order.schema.set('toObject', {
             "chargesAmt", "subtotal", "total",
             "state", "orderDate", "modifiedDate",
             "client", "orderAmount",
-            "paymentMethod", "payment", "deliveryLocation",
-            "deliveryAddress",
+            "paymentMethod", "payment", "deliveryLocation", "deliveryAddress",
             "promo", "delivery"
         ];
 
