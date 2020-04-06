@@ -10,6 +10,10 @@
                         Your order has been received and will be dispatched shortly. The order is as follows:
                     </p>
 
+                    <p style="margin:0 0 16px;font-size: 0.7em; color: orange">
+                        Note: Due to the national curfew in Kenya. We will not be taking any orders past 5PM. Please stay at home to eradicate COVID-19!
+                    </p>
+
                     <h2 style="color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
                         Order #{{orderNumber}} {{formatDate orderDate 'MMM Do, YYYY'}}
                     </h2>
@@ -53,7 +57,7 @@
                                         </td>
                                         <td class="order-td" align="right" style="text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
 										<span class="order-amount amount">
-											<span class="order-currencySymbol">{{currency}}</span>
+											<span class="order-currencySymbol">{{../currency}}</span>
                                             {{#if percentOffer}}
                                                 <span>
                                                     <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
@@ -92,6 +96,25 @@
                                     </span>
                                 </td>
                             </tr>
+
+                            {{#each chargesArr}}
+                            {{#if amount}}
+                            <tr>
+                                <th class="order-td" scope="row" colspan="2"
+                                    style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    {{name}}:
+                                </th>
+                                <td class="order-td"
+                                    style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    <span class="order-amount order-amount">
+                                        <span class="order-currencySymbol">{{../currency}}</span>
+                                        {{formatNumber amount}}                                        
+                                    </span>
+                                </td>
+                            </tr>
+                            {{/if}}
+                            {{/each}}
+
                             {{#if promo.code}}
                                 <tr style="color: lightgreen">
                                     <td class="order-td" scope="row" colspan="2"
@@ -131,7 +154,7 @@
                         <b>Payment Method:</b> {{#if paymentMethod}}{{paymentMethod}}{{else}}Cash on delivery{{/if}}
                         {{#ifne payment.method 'PesaPal'}}
                         <p style="cursor: pointer;" onclick="goPay.click()">
-                            Note: You can still pay via MPESA/Visa/Master Card <a name="goPay" href="{{{appUrl}}}/payment/{{orderNumber}}">here</a>
+                            Note: You can still pay via MPESA/Visa/Master Card <a name="goPay" href="{{{../appUrl}}}/payment/{{orderNumber}}">here</a>
                         </p>
                         {{/ifne}}
                     </p>
@@ -143,18 +166,20 @@
                         <tr>
                             <td style="text-align:left;border:0;padding:0" width="50%" valign="top">
                                 <h2 style="color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
-                                    Billing Address
+                                    Delivery Address
                                 </h2>
 
                                 <address class="order-address"
                                     style="padding:12px 12px 0;color:#737373;border:1px solid #e4e4e4">
-                                    {{delivery.firstName}} {{delivery.lastName}}<br>
-                                    {{delivery.address}}, {{delivery.building}}<br>
-                                    {{delivery.houseNumber}}<br>
-                                    
-                                    {{#if delivery.phoneNumber}}
-                                    <a href="tel:{{delivery.phoneNumber}}">{{delivery.phoneNumber}}</a>
+                                    {{delivery.firstName}} {{delivery.lastName}}<br>                                    
+
+                                    {{#if deliveryLocation.url}}
+                                        <a href="{{{deliveryLocation.url}}}">{{{deliveryAddress}}}</a><br>
+                                    {{else}}
+                                        {{{deliveryAddress}}}
                                     {{/if}}
+                                    
+                                    {{#if delivery.phoneNumber}}<a href="tel:{{delivery.phoneNumber}}">{{delivery.phoneNumber}}</a>{{/if}}
 
                                     <p style="margin:0 0 16px">
                                         <a href="mailto:{{delivery.email}}" target="_blank">{{delivery.email}}</a>

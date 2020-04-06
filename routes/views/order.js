@@ -20,7 +20,7 @@ router.get("/:orderNo", function (req, res) {
                 locals.order.currency = order.cart.first().currency;
                 
             if (locals.page){
-                view.render('..\\email\\order');
+                view.render('order');
             } else
                 res.status(404).render('errors\\404');
         });
