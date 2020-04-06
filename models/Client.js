@@ -351,7 +351,7 @@ Client.schema.methods.sendSMSNotification = function (message) {
 
 Client.schema.methods.sendEmailNotification = function (subject, body, locals = null, copyAdmins = true) {
     if (!body)
-        throw "'templete' is required!";
+        throw "'template/body' is required!";
     if (!subject)
         throw "'subject' is required!";
 
