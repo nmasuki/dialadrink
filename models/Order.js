@@ -269,7 +269,7 @@ Order.schema.virtual("deliveryLocation").set(function (location) {
 
 Order.schema.virtual("deliveryAddress").get(function () {
     var order = this;
-    return ['address', 'building', 'houseNumber'].map(i => (order.delivery[i] || '').trim()).distinctBy(x => x.cleanId()).join(', ');
+    return ['address', 'building', 'houseNumber'].map(i => (order.delivery[i] || '').trim()).join(',').split(',').distinctBy(x => x.cleanId()).join(', ');
 });
 
 var clients = [];
