@@ -414,8 +414,6 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
                     reject(console.warn(err));
 
                 client.lastNotificationDate = new Date();
-                client.save();
-
                 resolve(a);
             });
         });
@@ -455,8 +453,6 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
                         console.log("Email notification Sent!", err || "");
                         client.lastNotificationDate = new Date();
-                        client.save();
-
                         resolve(a);
                     });
                 });
