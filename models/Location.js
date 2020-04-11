@@ -22,6 +22,7 @@ Location.add({
 	description: { type: Types.Html, wysiwyg: true, height: 250 },
 	deliveryCharges: {type: Types.Number, default:300 },
 	modifiedDate: { type: Date, default: Date.now, noedit: true },
+	
 	location: {
 		lat: { type: Types.Number, noedit: true},
 		lng: { type: Types.Number, noedit: true },

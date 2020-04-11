@@ -414,13 +414,12 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
                 console.log("Email notification Sent!");
                 client.lastNotificationDate = new Date();
+                
                 resolve(a);
             });
         });
     } else {
-        return keystone.list("Admin").model.find({
-                receivesOrders: true
-            })
+        return keystone.list("Admin").model.find({ receivesOrders: true })
             .exec((err, users) => {
                 if (err)
                     return reject(console.log(err));
