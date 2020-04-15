@@ -61,6 +61,21 @@
 					<a href="/">Continue shopping.</a>
 				</li>
 			{{/each}}
+			<li class="transaction-charges list-group-item d-flex justify-content-between lh-condensed row" style="display: none;">
+				<div class="text-info">
+					<h6 class="my-0">Transaction Charges</h6>
+				</div>
+				<span class="text-info cart-currency">KES</span> 
+				<span class="text-info cart-amount">100.00</span>
+			</li>
+
+			<li class="delivery-charges list-group-item d-flex justify-content-between lh-condensed row" style="display: none;">
+				<div class="text-info">
+					<h6 class="my-0">Delivery Charges</h6>
+				</div>
+				<span class="text-info cart-currency">KES</span> 
+				<span class="text-info cart-amount">50.00</span>
+			</li>
 
 			<li style="display: none;"
 				class="promo-code-wrapper list-group-item d-flex justify-content-between lh-condensed row">
@@ -70,6 +85,7 @@
 				</div>
 				<span class="cart-currency">KES</span> (<span class="text-success promo-code-amount">{{promocode.amount}}</span>)
 			</li>
+
 		</ul>
 	</div>
 	{{#if cartItems.length}}

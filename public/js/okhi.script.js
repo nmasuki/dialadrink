@@ -1,13 +1,16 @@
 
     
-window.addressData = window.addressData || null;
 $(document).ready(function(){    
+    window.addressData = window.addressData || null;
 
     var loadLocationCard = function(user){
         $('#lets-okhi').hide();
 
         var handleOnSuccess = function (data){
             window.addressData = data;
+
+            if (window.addressData)
+                app.cartUtil.loadCharges(window.addressData.location);
 
             $("[name=address]").val(data.location.title);
             $("[name=building]").val(data.location.streetName);

@@ -2,9 +2,91 @@
  * Created by nmasuki on 7/7/2018.
  */
 var cartUtil = function () {
-    var _cart = {},
-        _promo = null;
-    var _url = "/api/";
+    var self = this;
+    var _cart = {}, _promo = null, _url = "/api/";
+
+    function distance(l, l2, unit) {
+        if ((l.lat == l2.lat) && (l.lng == l2.lng)) {
+            return 0;
+        } else {
+            var radllat = Math.PI * l.lat / 180;
+            var radl2lat = Math.PI * l2.lat / 180;
+            var theta = l.lng - l2.lng;
+            var radtheta = Math.PI * theta / 180;
+
+            var dist = Math.sin(radllat) * Math.sin(radl2lat) + Math.cos(radllat) * Math.cos(radl2lat) * Math.cos(radtheta);
+            if (dist > 1)  dist = 1;
+            
+            dist = Math.acos(dist);
+            dist = dist * 180 / Math.PI;
+            dist = dist * 60 * 1.1515;
+
+            if (unit == "K") 
+                dist = dist * 1.609344;
+            
+            if (unit == "N") 
+                dist = dist * 0.8684;
+            
+            return dist;
+        }
+    }
+
+    function distanceFromNai(l) {
+        var nai = {lat:-1.2829442, lng:36.8227554};
+        return distance(l, nai, 'K');
+    }
+
+    function loadRegionData(location){
+        if (!location && window.addressData)
+            location = window.addressData.location;
+
+        if (!self.locations || !self.locations.length)
+            return $.get(_url + "locations").then(function(res) {
+                if(res.response == "success"){
+                    self.locations = res.data;
+                    return loadRegionData(location);
+                }
+            });
+
+        var inBounds = function(location, bounds) {
+            var eastBound = location.lng < bounds.northeast.lng;
+            var westBound = location.lng > bounds.southwest.lng;
+            var inLong;
+
+            if (bounds.northeast.lng < bounds.southwest.lng) {
+                inLong = eastBound || westBound;
+            } else {
+                inLong = eastBound && westBound;
+            }
+
+            var inLat = location.lat > bounds.southwest.lat && location.lat < bounds.northeast.lat;
+            return inLat && inLong;
+        };
+
+        var matches = self.locations
+            .filter(function (l) { return l.viewport; })
+            .filter(function (l) { return inBounds(location, l.viewport); })
+            .orderBy(function(l) { return -distanceFromNai(l.location); });
+
+        var y = self.locations.map(function(x){
+            return {
+                d: distanceFromNai(x.location),
+                c: x.deliveryCharges,
+                p: x.deliveryCharges / distanceFromNai(x.location)
+            };
+        });
+
+        console.log(y);
+
+        var deliveryDistance = distanceFromNai(location);
+        window.regionData = Object.assign({
+            freeDeliveryThreashold: Math.min(deliveryDistance * 100, 500),
+            deliveryCharges: deliveryDistance * 100
+        }, matches.last() || {});
+
+        console.log(deliveryDistance, window.regionData);
+        return $.Deferred().resolve(window.regionData.deliveryCharges);
+    }
 
     function getProductFromView(cartId) {
         var id = cartId.split('|').first();
@@ -58,7 +140,7 @@ var cartUtil = function () {
         return cartItem;
     }
 
-    var self = Object.assign(this, {
+    self = Object.assign(self, {
 
         view: function (selector) {
             var view = $('#cart-content-main, #cart-content-mini');
@@ -69,12 +151,14 @@ var cartUtil = function () {
         },
 
         init: function () {
+            loadRegionData();
+
             return $.get(_url + "cart/get").then(function (data) {
                 _cart = data.cart;
                 _promo = data.promo;
 
                 for (var i in _cart)
-                    _cart[i] = fillIn(_cart[i])
+                    _cart[i] = fillIn(_cart[i]);
 
                 self.updateView();
             });
@@ -82,6 +166,38 @@ var cartUtil = function () {
 
         getCart: function () {
             return _cart;
+        },
+
+        loadCharges: loadRegionData,
+
+        getCharges: function(){
+            var charges = {};
+
+            //Delivery charges
+            if (window.regionData && window.regionData.freeDeliveryThreashold) {
+                if (self.totalCost() < window.regionData.freeDeliveryThreashold)
+                    charges.deliveryCharges = window.regionData.deliveryCharges;                
+            }
+
+            //Transaction Charges
+            var paymentMode = $("[name=paymentMethod]:checked").val();
+            if (paymentMode) {
+                
+                var mapping = {
+                    "Swipe on Delivery": "2.5%",
+                    "PesaPal": "3%"
+                };
+
+                if (mapping[paymentMode]){
+                    var v = mapping[paymentMode].replace('%', '/100');
+                    if(/[^\d\.]/.test(v))
+                        v = eval(v) * self.totalCost();
+
+                    charges.transactionCharges = v;
+                }
+            }
+
+            return charges;
         },
 
         getCartItem: function (cartItemId) {
@@ -197,7 +313,15 @@ var cartUtil = function () {
 
         totalAmount: function () {
             var amount = self.totalCost();
-            return amount - self.discount(amount);
+            var totalCharges = 0;
+
+            var charges = self.getCharges() || {};
+            for(var i in charges){
+                if(charges.hasOwnProperty(i))
+                    totalCharges += charges[i];
+            }
+
+            return amount + totalCharges - self.discount(amount);
         },
 
         discount: function (amount, promo) {
@@ -233,9 +357,30 @@ var cartUtil = function () {
                 promoView.hide();
             }
 
+            var charges = app.cartUtil.getCharges();
+            var tchargesView = $(".transaction-charges");
+            var dchargesView = $(".delivery-charges");
+            if (charges.transactionCharges) {
+                tchargesView.find(".cart-amount").text(charges.transactionCharges.formatNumber(2));
+                tchargesView.slideDown();
+            } else {
+                tchargesView.slideUp();
+            }
+
+            if (charges.deliveryCharges) {
+                dchargesView.find(".cart-amount").text(charges.deliveryCharges.formatNumber(2));
+                dchargesView.slideDown();
+            } else {
+                dchargesView.slideUp();
+            }
+
             //Update variable
             _cart = cart;
             _promo = promo;
+            var charges = self.getCharges();
+
+            console.log(charges);
+
             self.updateTotals();
         },
 
@@ -307,8 +452,8 @@ var cartUtil = function () {
             if (self.totalAmount() !== self.totalCost())
                 totalHtml = "<span style='font-size: 0.8em; text-decoration: line-through; color: orangered'>{0}</span>"
                 .format(self.totalCost().formatNumber(2)) + totalHtml;
-
-            $(".cart-total").html(totalHtml);
+            
+            $(".cart-total, .cart-total-2").html(totalHtml);
         }
     });
 
@@ -321,6 +466,11 @@ window.app = window.app || {
 };
 
 $(function () {
+    $(document).on('change', '[name=paymentMethod]', function(e){
+        e.preventDefault();
+        app.cartUtil.updateView();
+    });
+
     $(document).on('click', '.add-to-cart', function (e) {
         e.preventDefault();
         var id = $(this).data('product');

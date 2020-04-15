@@ -79,14 +79,30 @@
                         </li>
                     {{/each}}
 
+                    <li class="transaction-charges list-group-item d-flex justify-content-between lh-condensed row" style="display: none;">
+                        <div class="text-info">
+                            <h6 class="my-0">Transaction Charges</h6>
+                        </div>
+                        <span class="cart-currency">KES</span> 
+                        <span class="text-info cart-amount">100.00</span>
+                    </li>
+
+                    <li class="delivery-charges list-group-item d-flex justify-content-between lh-condensed row" style="display: none;">
+                        <div class="text-info">
+                            <h6 class="my-0">Delivery Charges</h6>
+                        </div>
+                        <span class="cart-currency">KES</span> 
+                        <span class="text-info cart-amount">50.00</span>
+                    </li>
+                    
                     <li {{#unless promocode}}style="display: none;"{{/unless}}
                         class="promo-code-wrapper list-group-item d-flex justify-content-between bg-light">
                         <div class="text-success">
                             <h6 class="my-0">Promo code</h6>
                             <small class="promo-code">{{promocode.code}}</small>
                         </div>
-                        <span class="cart-currency">KES</span>(<span
-                            class="text-success promo-code-amount">{{formatNumber promocode.amount}}</span>)
+                        <span class="cart-currency">KES</span>
+                        (<span class="text-success promo-code-amount">{{formatNumber promocode.amount}}</span>)
                     </li>
 
                     <li class="list-group-item d-flex justify-content-between">
@@ -234,21 +250,21 @@
                         </div>  
 
                         <div class="custom-control custom-radio">
-                            <input id="swipeOnDelivery" name="paymentMethod" type="radio" class="custom-control-input" value="Swipe on delivery">
-                            <label class="custom-control-label" for="swipeOnDelivery">Swipe on Delivery</label>
+                            <input id="swipeOnDelivery" name="paymentMethod" type="radio" class="custom-control-input" value="Swipe on Delivery">
+                            <label class="custom-control-label" for="swipeOnDelivery">Swipe on Delivery (+2.5% processing fee)</label>
                         </div>
 
                         {{#if enablePaypal}}
                             <div class="custom-control custom-radio">
                                 <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
-                                <label class="custom-control-label" for="debit">Pay online</label>
+                                <label class="custom-control-label" for="debit">Pay online (+3% processing fee)</label>
                             </div>
                         {{/if}}
                         
                         {{#if enableMPesa}}
                             <div class="custom-control custom-radio">
                                 <input id="mpesa" name="paymentMethod" type="radio" class="custom-control-input" value="MPesa">
-                                <label class="custom-control-label" for="mpesa">M-Pesa</label>
+                                <label class="custom-control-label" for="mpesa">M-PESA (2% processing fee)</label>
                             </div>
                         {{/if}}
                     </div>
@@ -323,7 +339,8 @@
             name: '{{{appTitle}}}',
             color: '#2f93a3'
         }
-    }
+    };
+    
     {{#if userData.user}}
     window.addressData = {
         user: {{{json  userData.user}}},
@@ -338,6 +355,9 @@
     $(document).ready(function () {   
         window.minifiedMenu = true;
         if (addaffix) addaffix();
+
+        if(window.addressData)
+            app.cartUtil.loadCharges(window.addressData.location);
 
 {{#if orderUrl}}
         var iframe = $("<iframe style='min-height: 670px' src='{{orderUrl}}'/>");        
@@ -375,7 +395,7 @@
                 that.attr("disabled", true);
                 $('body,html').animate({scrollTop: 0}, 800, 'swing');
 
-                var data = Object.assign({saveInfo: $("#saveInfo").is(":checked")}, window.addressData || {});
+                var data = Object.assign({ saveInfo: $("#saveInfo").is(":checked") }, app.cartUtil.getCharges(), window.addressData || {});
                 array.forEach(function (a) { data[a.name] = a.value; });
 
                 var modal = app.showLoading("<span id='msgSpan'>Processing your order! Please wait..</span>", 60000);

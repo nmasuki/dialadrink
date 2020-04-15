@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var Location = keystone.list("Location");
+var router = keystone.express.Router();
 
 router.get("/", function (req, res) {
     var since = new Date(req.query.since || '2015-01-01');
@@ -30,3 +31,5 @@ router.get("/", function (req, res) {
         res.send(json);
     });
 });
+
+module.exports = router;
