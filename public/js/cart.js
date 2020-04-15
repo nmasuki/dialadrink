@@ -374,12 +374,11 @@ var cartUtil = function () {
                 dchargesView.slideUp();
             }
 
+            console.log(charges);
+            
             //Update variable
             _cart = cart;
             _promo = promo;
-            var charges = self.getCharges();
-
-            console.log(charges);
 
             self.updateTotals();
         },
