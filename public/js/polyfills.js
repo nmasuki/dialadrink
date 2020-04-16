@@ -7,7 +7,7 @@ if (!Object.values)
 		return Object.keys(obj).map(function (k) {
 			return obj[k]
 		});
-	}
+	};
 
 if (!Object.equals)
 	Object.equals = function (x, y) {
@@ -43,7 +43,7 @@ if (!Object.equals)
 			// allows x[ p ] to be set to undefined
 		}
 		return true;
-	}
+	};
 
 if (!Object.isEmpty)
 	Object.isEmpty = function (obj) {
@@ -136,7 +136,7 @@ if (!Function.prototype.stackTrace)
 			}
 		}
 		return callstack;
-	}
+	};
 
 //
 if (!Function.prototype.retryApply)
@@ -174,7 +174,7 @@ if (!Function.prototype.retryApply)
 				}
 			}, retryTime);
 		}).catch(console.log);
-	}
+	};
 
 //
 if (!Function.prototype.retryCall)
@@ -184,7 +184,7 @@ if (!Function.prototype.retryCall)
 			args.push(arguments[i]);
 
 		return this.retryApply(context, checkReady, maxRetries, retryTime, args);
-	}
+	};
 
 //
 if (!Function.prototype.promiseApply)
@@ -197,7 +197,6 @@ if (!Function.prototype.promiseApply)
 
 		return new Promise(function (fulfill, reject) {
 			var timeInterval = setInterval(function () {
-
 				try {
 					var d = fn.apply(context, args);
 					clearInterval(timeInterval);
@@ -210,11 +209,11 @@ if (!Function.prototype.promiseApply)
 
 				if (++retry > maxRetries) {
 					clearInterval(timeInterval);
-					reject("Max retries reached!")
+					reject("Max retries reached!");
 				}
 			}, retryTime);
 		}).catch(console.debug);
-	}
+	};
 
 //
 if (!Function.prototype.promiseCall)
@@ -224,7 +223,7 @@ if (!Function.prototype.promiseCall)
 			args.push(arguments[i]);
 
 		return this.promiseApply.apply(this, context, args);
-	}
+	};
 
 if (!Number.prototype.format)
 	Number.prototype.format = Number.prototype.formatNumber = function (n, x) {
@@ -251,7 +250,7 @@ if (!String.prototype.format)
 			}
 		}
 		return formated;
-	}
+	};
 
 if (!String.prototype.splitArgs)
 	String.prototype.splitArgs = function () {
@@ -270,7 +269,7 @@ if (!String.prototype.splitArgs)
 			}
 		} while (match != null);
 		return myArray;
-	}
+	};
 
 //https://www.sitepoint.com/trimming-strings-in-javascript/
 //if (!String.prototype.trimLeft)
@@ -312,14 +311,13 @@ if (!String.prototype.camelCaseToSentence)
 		return this.trim().replace(/^[a-z]|[A-Z]/g, function (v, i) {
 			return i === 0 ? v.toUpperCase() : " " + v.toLowerCase();
 		});
-		;
-	}
+	};
 
 if (!String.prototype.toSentenceCase)
 	String.prototype.toSentenceCase = function () {
 		var sentence = this.trim();
 		return sentence.substr(0, 1).toUpperCase() + sentence.substr(1).toLowerCase();
-	}
+	};
 
 if (!String.prototype.toProperCase)
 	String.prototype.toProperCase = function (lowerCaseTheRest) {
@@ -332,64 +330,62 @@ if (!String.prototype.toProperCase)
 if (!String.prototype.cleanId)
 	String.prototype.cleanId = function () {
 		return this.toLowerCase().replace(/\W+/g, " ").trim().replace(/\W+/g, "-");
-	}
+	};
 
 if (!String.prototype.escapeRegExp)
 	String.prototype.escapeRegExp = function escapeRegExp() {
 		return (this || "").replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-	}
+	};
 
-String.prototype.truncate = function (length, ending) {
-	length = length || 100;
-	ending = ending || '...';
+if (String.prototype.truncate)
+	String.prototype.truncate = function (length, ending) {
+		length = length || 100;
+		ending = ending || '...';
 
-	if (this.length > length) {
-		return (this || "").substring(0, length - ending.length).trim() + ending;
-	} else {
-		return this;
-	}
-};
+		if (this.length > length) {
+			return (this || "").substring(0, length - ending.length).trim() + ending;
+		} else {
+			return this;
+		}
+	};
 
 if (!Array.prototype.nth)
 	Array.prototype.nth = function (filter, index) {
 		index = (index || 1) - 1;
 		filter = filter || function (f) {
-			return true
+			return true;
 		};
 		return this.filter(filter)[index];
-	}
+	};
 
 if (!Array.prototype.first)
 	Array.prototype.first = function (filter) {
 		filter = filter || function (f) {
-			return true
+			return true;
 		};
 		var filtered = this.filter(filter);
 		return filtered ? filtered[0] : null;
-	}
+	};
 
 if (!Array.prototype.clone)
 	Array.prototype.clone = function () {
 		return this.slice(0);
 	};
 
-
 if (!Array.prototype.first)
 	Array.prototype.first = function (filter) {
 		filter = filter || (function(f){ return true;});
-		var arr = this.filter(filter)
+		var arr = this.filter(filter);
 		return arr[0];
 	};
 
 if (!Array.prototype.last)
 	Array.prototype.last = function (filter) {
 		filter = filter || (function(f){ return true;});
-		var arr = this.filter(filter)
+		var arr = this.filter(filter);
 		return arr[arr.length - 1];
 	};
 
-
-//
 if (!Array.prototype.any)
 	Array.prototype.contains = Array.prototype.any = function (search) {
 		if (typeof search == "function")

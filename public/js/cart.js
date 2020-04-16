@@ -89,7 +89,7 @@ var cartUtil = function () {
         window.regionData = Object.assign({
             freeDeliveryThreashold: Math.min(deliveryDistance * 100 || 500, 500),
             deliveryCharges: Math.max(deliveryDistance * 100, 200)
-        }, matches.last() || {});
+        }, matches.last(function(l){ return l.key == "drinks-delivery-kenya"; }) || {});
 
         if(matches.length)
             self.updateView();
