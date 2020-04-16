@@ -42,10 +42,11 @@ var cartUtil = function () {
             return $.get(_url + "locations").then(function(res) {
                 if(res.response == "success"){
                     self.locations = res.data;
+                    locationNai = self.locations.find(function(l){ return l.name == "CBD"; }) || location;
                     return loadRegionData(location);
                 }
             });
-            
+
         location = window.addressData && window.addressData.location || locationNai;
 
         var inBounds = function(location, bounds) {
