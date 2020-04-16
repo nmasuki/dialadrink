@@ -584,7 +584,7 @@ Order.register();
 Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
 
     var time = new Date().toISOString().split('T')[1].split(':')[0];
-    if (time >= 17 - 3 || time <= 5 - 3) {
+    if (time >= 18 - 3 || time <= 5 - 3) {
         err = "Due to the national curfew in Kenya. We will not be taking any orders past 5PM. Please stay at home to eradicate COVID-19!";
         return callback(err);
     }
