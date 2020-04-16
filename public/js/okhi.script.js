@@ -9,14 +9,18 @@ $(document).ready(function(){
         var handleOnSuccess = function (data){
             window.addressData = data;
 
-            if (window.addressData)
+            if (window.addressData){
                 app.cartUtil.loadCharges(window.addressData.location);
+                app.cartUtil.updateView();
+            }
 
             if(data && data.user && data.location){
                 $('#lets-okhi').hide(); 
 
-                $("#firstName").val(data.user.firstName);
-                $("#lastName").val(data.user.lastName);
+                if (data.user.firstName)
+                    $("#firstName").val(data.user.firstName);
+                if (data.user.lastName)
+                    $("#lastName").val(data.user.lastName);
 
                 $("[name=address]").val(data.location.title);
                 $("[name=building]").val(data.location.streetName);

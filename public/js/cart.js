@@ -79,6 +79,7 @@ var cartUtil = function () {
         var matches = self.locations
             .filter(function (l) { return l.viewport; })
             .filter(function (l) { return inBounds(location, l.viewport); })
+            .filter(function (l) { return l.href != "drinks-delivery-kenya"; })
             .orderByDescending(function(l) { return 0.01 * distanceFromNai(l.location) + area(l.viewport); });
 
         var y = self.locations.map(function(x){
@@ -93,9 +94,10 @@ var cartUtil = function () {
 
         var deliveryDistance = distanceFromNai(location);
         window.regionData = Object.assign({
-            freeDeliveryThreashold: Math.min(deliveryDistance * 100 || 500, 500),
+            deliveryDistance: deliveryDistance,
+            freeDeliveryThreashold: matches.length ? Math.min(deliveryDistance * 100 || 500, 500): deliveryDistance * 100,
             deliveryCharges: Math.max(deliveryDistance * 100, 200)
-        }, matches.last(function(l){ return l.href != "drinks-delivery-kenya"; }) || {});
+        }, matches.last() || {});
 
         if(matches.length)
             self.updateView();
@@ -386,8 +388,8 @@ var cartUtil = function () {
             if (charges.deliveryCharges) {
                 var x = "Delivery charges";
                 if (window.regionData.name) 
-                    x = " (" + window.regionData.name + ")";
-                    
+                    x += " (" + window.regionData.name + ")";
+
                 dchargesView.find("h6").text(x);
                 dchargesView.find(".cart-amount").text(charges.deliveryCharges.formatNumber(2));
                 dchargesView.slideDown();
