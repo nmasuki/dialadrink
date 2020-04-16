@@ -82,17 +82,7 @@ var cartUtil = function () {
             .filter(function (l) { return l.href != "drinks-delivery-kenya"; })
             .orderByDescending(function(l) { return 0.01 * distanceFromNai(l.location) + area(l.viewport); });
 
-        var y = self.locations.map(function(x){
-            return {
-                d: distanceFromNai(x.location),
-                c: x.deliveryCharges,
-                p: x.deliveryCharges / distanceFromNai(x.location)
-            };
-        });
-
-        console.log(y);
-
-        var deliveryDistance = distanceFromNai(location);
+        var deliveryDistance = Math.round(10 * distanceFromNai(location))/10;
         window.regionData = Object.assign({
             deliveryDistance: deliveryDistance,
             freeDeliveryThreashold: matches.length ? Math.min(deliveryDistance * 100 || 500, 500): deliveryDistance * 100,
@@ -389,6 +379,8 @@ var cartUtil = function () {
                 var x = "Delivery charges";
                 if (window.regionData.name) 
                     x += " (" + window.regionData.name + ")";
+                else if (window.regionData.deliveryDistance)
+                    x += " (" + window.regionData.deliveryDistance + "KM)";
 
                 dchargesView.find("h6").text(x);
                 dchargesView.find(".cart-amount").text(charges.deliveryCharges.formatNumber(2));
