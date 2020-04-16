@@ -33,7 +33,9 @@ var cartUtil = function () {
     }
 
     function area(bounds){
-        return Math.abs(bounds.northeast.lng - bounds.southwest.lng) * Math.abs(bounds.northeast.lat - bounds.southwest.lat);
+        return (Math.PI / 180) * Math.pow(6.3781E6, 2) *
+            Math.abs(Math.sin(bounds.northeast.lat) - Math.sin(bounds.southwest.lat)) *
+            Math.abs(bounds.northeast.lng - bounds.southwest.lng);
     }
 
     function distanceFromNai(l) {
@@ -382,6 +384,11 @@ var cartUtil = function () {
             }
 
             if (charges.deliveryCharges) {
+                var x = "Delivery charges";
+                if (window.regionData.name) 
+                    x = " (" + window.regionData.name + ")";
+                    
+                dchargesView.find("h6").text(x);
                 dchargesView.find(".cart-amount").text(charges.deliveryCharges.formatNumber(2));
                 dchargesView.slideDown();
             } else {
