@@ -12,13 +12,16 @@ $(document).ready(function(){
             if (window.addressData)
                 app.cartUtil.loadCharges(window.addressData.location);
 
-            $("[name=address]").val(data.location.title);
-            $("[name=building]").val(data.location.streetName);
-            $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
-           
-            if(data && data.user && data.location)
-                $('#lets-okhi').hide();            
-            else{
+            if(data && data.user && data.location){
+                $('#lets-okhi').hide(); 
+
+                $("#firstName").val(data.user.firstName);
+                $("#lastName").val(data.user.lastName);
+
+                $("[name=address]").val(data.location.title);
+                $("[name=building]").val(data.location.streetName);
+                $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
+            }else{
                 $('#lets-okhi').show();
                 $("#lets-okhi-card").hide();          
             }
@@ -39,11 +42,11 @@ $(document).ready(function(){
             phone: $("#phoneNumber").val(), // required
         };
 
-        if(user.firstName && user.lastName && user.phone && user.phone.length >= 10){
+        if(user.phone && user.phone.length >= 10){
             window.addressData = null;
             
             if (window.locationCard){
-                window.locationCard .user = user;
+                window.locationCard.user = user;
             } else {
                 var element = document.getElementById("lets-okhi-card");
 

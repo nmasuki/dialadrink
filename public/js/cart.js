@@ -43,12 +43,15 @@ var cartUtil = function () {
                 if(res.response == "success"){
                     self.locations = res.data;
                     var cbd = self.locations.find(function(l){ return l.name == "CBD"; });
-                    if(cbd) locationNai = cbd.location;
+                    if(cbd){
+                        if (!window.addressData) window.addressData = cbd;
+                        locationNai = cbd.location;
+                    }
                     return loadRegionData(location);
                 }
             });
 
-        location = window.addressData && window.addressData.location || locationNai;
+        location = window.addressData && window.addressData.location;
 
         var inBounds = function(location, bounds) {
             var eastBound = location.lng < bounds.northeast.lng;
