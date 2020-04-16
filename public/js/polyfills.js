@@ -337,7 +337,7 @@ if (!String.prototype.escapeRegExp)
 		return (this || "").replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 	};
 
-if (String.prototype.truncate)
+if (!String.prototype.truncate)
 	String.prototype.truncate = function (length, ending) {
 		length = length || 100;
 		ending = ending || '...';
