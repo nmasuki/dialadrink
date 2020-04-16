@@ -4,6 +4,7 @@
 var cartUtil = function () {
     var self = this;
     var _cart = {}, _promo = null, _url = "/api/";
+    var locationNai = {lat:-1.2829442, lng:36.8227554};
 
     function distance(l, l2, unit) {
         if ((l.lat == l2.lat) && (l.lng == l2.lng)) {
@@ -32,13 +33,10 @@ var cartUtil = function () {
     }
 
     function distanceFromNai(l) {
-        var nai = {lat:-1.2829442, lng:36.8227554};
-        return distance(l, nai, 'K');
+        return distance(l, locationNai, 'K');
     }
 
     function loadRegionData(location){
-        if (!location && window.addressData)
-            location = window.addressData.location;
 
         if (!self.locations || !self.locations.length)
             return $.get(_url + "locations").then(function(res) {
@@ -47,6 +45,8 @@ var cartUtil = function () {
                     return loadRegionData(location);
                 }
             });
+            
+        location = window.addressData && window.addressData.location || locationNai;
 
         var inBounds = function(location, bounds) {
             var eastBound = location.lng < bounds.northeast.lng;
@@ -375,7 +375,7 @@ var cartUtil = function () {
             }
 
             console.log(charges);
-            
+
             //Update variable
             _cart = cart;
             _promo = promo;
