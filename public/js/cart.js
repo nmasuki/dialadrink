@@ -88,8 +88,11 @@ var cartUtil = function () {
         var deliveryDistance = distanceFromNai(location);
         window.regionData = Object.assign({
             freeDeliveryThreashold: Math.min(deliveryDistance * 100, 500),
-            deliveryCharges: deliveryDistance * 100
+            deliveryCharges: Math.min(deliveryDistance * 100, 200)
         }, matches.last() || {});
+
+        if(matches.length)
+            self.updateView();
 
         console.log(deliveryDistance, window.regionData);
         return $.Deferred().resolve(window.regionData.deliveryCharges);
