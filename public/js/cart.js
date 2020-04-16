@@ -44,14 +44,16 @@ var cartUtil = function () {
                     self.locations = res.data;
                     var cbd = self.locations.find(function(l){ return l.name == "CBD"; });
                     if(cbd){
-                        if (!window.addressData) window.addressData = cbd;
+                        if (!window.addressData) 
+                            window.addressData = Object.assign({freeDeliveryThreashold: 500}, cbd);
                         locationNai = cbd.location;
                     }
                     return loadRegionData(location);
                 }
             });
 
-        location = window.addressData && window.addressData.location;
+        if (!location)
+            location = window.addressData && window.addressData.location;
 
         var inBounds = function(location, bounds) {
             var eastBound = location.lng < bounds.northeast.lng;

@@ -41,6 +41,9 @@ $(document).ready(function(){
             lastName: $("#lastName").val(), // optional
             phone: $("#phoneNumber").val(), // required
         };
+                
+        if (!user.firstName) delete user.firstName;
+        if (!user.lastName) delete user.lastName;
 
         if(user.phone && user.phone.length >= 10){
             window.addressData = null;
