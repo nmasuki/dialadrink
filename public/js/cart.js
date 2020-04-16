@@ -42,7 +42,8 @@ var cartUtil = function () {
             return $.get(_url + "locations").then(function(res) {
                 if(res.response == "success"){
                     self.locations = res.data;
-                    locationNai = self.locations.find(function(l){ return l.name == "CBD"; }) || location;
+                    var cbd = self.locations.find(function(l){ return l.name == "CBD"; });
+                    if(cbd) locationNai = cbd.location;
                     return loadRegionData(location);
                 }
             });
