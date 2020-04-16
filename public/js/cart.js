@@ -87,8 +87,8 @@ var cartUtil = function () {
 
         var deliveryDistance = distanceFromNai(location);
         window.regionData = Object.assign({
-            freeDeliveryThreashold: Math.min(deliveryDistance * 100, 500),
-            deliveryCharges: Math.min(deliveryDistance * 100, 200)
+            freeDeliveryThreashold: Math.min(deliveryDistance * 100 || 500, 500),
+            deliveryCharges: Math.max(deliveryDistance * 100, 200)
         }, matches.last() || {});
 
         if(matches.length)
@@ -367,7 +367,7 @@ var cartUtil = function () {
                 promoView.hide();
             }
 
-            var charges = app.cartUtil.getCharges();
+            var charges = self.getCharges();
             var tchargesView = $(".transaction-charges");
             var dchargesView = $(".delivery-charges");
             if (charges.transactionCharges) {
@@ -458,9 +458,9 @@ var cartUtil = function () {
 
             var totalHtml = self.totalAmount().formatNumber(2);
 
-            if (self.totalAmount() !== self.totalCost())
-                totalHtml = "<span style='font-size: 0.8em; text-decoration: line-through; color: orangered'>{0}</span>"
-                .format(self.totalCost().formatNumber(2)) + totalHtml;
+            if (self.totalAmount() < self.totalCost())
+                totalHtml = "<span style='font-size: 0.8em; text-decoration: line-through; color: orangered'>{0}</span>&nbsp;"
+                    .format(self.totalCost().formatNumber(2)) + totalHtml;
             
             $(".cart-total, .cart-total-2").html(totalHtml);
         }
