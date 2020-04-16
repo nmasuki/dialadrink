@@ -32,6 +32,10 @@ var cartUtil = function () {
         }
     }
 
+    function area(bounds){
+        return Math.abs(bounds.northeast.lng - bounds.southwest.lng) * Math.abs(bounds.northeast.lat - bounds.southwest.lat);
+    }
+
     function distanceFromNai(l) {
         return distance(l, locationNai, 'K');
     }
@@ -73,7 +77,7 @@ var cartUtil = function () {
         var matches = self.locations
             .filter(function (l) { return l.viewport; })
             .filter(function (l) { return inBounds(location, l.viewport); })
-            .orderBy(function(l) { return -distanceFromNai(l.location); });
+            .orderByDescending(function(l) { return 0.01 * distanceFromNai(l.location) + area(l.viewport); });
 
         var y = self.locations.map(function(x){
             return {
@@ -89,7 +93,7 @@ var cartUtil = function () {
         window.regionData = Object.assign({
             freeDeliveryThreashold: Math.min(deliveryDistance * 100 || 500, 500),
             deliveryCharges: Math.max(deliveryDistance * 100, 200)
-        }, matches.last(function(l){ return l.key == "drinks-delivery-kenya"; }) || {});
+        }, matches.last(function(l){ return l.href != "drinks-delivery-kenya"; }) || {});
 
         if(matches.length)
             self.updateView();
