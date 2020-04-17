@@ -344,7 +344,6 @@ Client.schema.methods.sendSMSNotification = function (message) {
             console.error.apply(client, arguments);
         else {
             client.lastNotificationDate = new Date();
-            return client.save();
         }
     });
 };

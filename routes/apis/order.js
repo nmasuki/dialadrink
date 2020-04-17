@@ -94,6 +94,7 @@ router.post("/", function (req, res){
 
             delete req.session.cart;
             req.session.save();
+            
             client.save();
         });
     }

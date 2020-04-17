@@ -19,12 +19,11 @@ var sendOTP = function (client, otpToken, alphaNumberic) {
         expiry: new Date().addMinutes(5).getTime()
     };
 
-    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {
-        
+    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {        
         var clower = 49, cupper = 9, length = 4;
         if (alphaNumberic){
-            clower = 65; 
-            cupper = 25; 
+            clower = 65;
+            cupper = 25;
             length = 7;
         }
             

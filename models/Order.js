@@ -310,6 +310,7 @@ Order.schema.methods.updateClient = function (next) {
                         saveClient = true;
                         client.clientIps.push(order.clientIp);
                     }
+                    
                     if (client.createdDate < order.orderDate)
                         for (var i in delivery) {
                             if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
@@ -423,7 +424,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
             if (that.cart.length)
                 order.cart = that.cart;
             else
-                return Promise.reject("Error while getting cart Items!!");
+                return Promise.reject(`Error while getting cart Items on order ${order.orderNumber || order._id}!!`);
         }
 
         var promise = Promise.resolve();

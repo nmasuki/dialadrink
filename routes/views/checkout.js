@@ -87,11 +87,6 @@ router.post("/", function (req, res, next) {
 			json.msg = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
 
 			if (!err) {
-				if (order.client.sessions.indexOf(req.sessionID) < 0) {
-					order.client.sessions.push(req.sessionID);
-					order.client.save();
-				}
-
 				if (order.payment.method == "PesaPal") {
 					json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
 					json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
