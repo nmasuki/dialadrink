@@ -13,16 +13,24 @@ var privateVapidKey = process.env.VAPID_KEY;
 
 webpush.setVapidDetails(`mailto:${process.env.DEVELOPER_EMAIL}`, publicVapidKey, privateVapidKey);
 
-var sendOTP = function (client, otpToken) {
+var sendOTP = function (client, otpToken, alphaNumberic) {
     client.tempPassword = client.tempPassword || {
         used: true,
         expiry: new Date().addMinutes(5).getTime()
     };
 
     if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {
+        
+        var clower = 49, cupper = 9, length = 4;
+        if (alphaNumberic){
+            clower = 65; 
+            cupper = 25; 
+            length = 7;
+        }
+            
+        client.tempPassword.password = Array(length).join('x').split('').map((x) => String.fromCharCode(clower + Math.round(Math.random() * cupper))).join('');
         client.tempPassword.used = false;
         client.tempPassword.expiry = new Date().addMinutes(5).getTime();
-        client.tempPassword.password = Array(7).join('x').split('').map((x) => String.fromCharCode(65 + Math.round(Math.random() * 25))).join('');
 
         client.save();
     }
