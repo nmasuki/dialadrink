@@ -19,18 +19,18 @@ var sendOTP = function (client, otpToken, alphaNumberic) {
         expiry: new Date().addMinutes(5).getTime()
     };
 
-    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {        
-        var clower = 49, cupper = 9, length = 4;
-        if (alphaNumberic){
-            clower = 65;
-            cupper = 25;
-            length = 7;
-        }
-            
-        client.tempPassword.password = Array(length).join('x').split('').map((x) => String.fromCharCode(clower + Math.round(Math.random() * cupper))).join('');
+    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {    
+        var charset = Array(10).join('x').split('').map((x, i) => String.fromCharCode(49 + i));        
+        if (alphaNumberic)
+            charset = charset.concat(Array(26).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
+                    
+        client.tempPassword.password = Array(alphaNumberic ? 7 : 4)
+            .join('x').split('')
+            .map((x) => charset[Math.round(Math.random() * (charset.length - 1))])
+            .join('');
+
         client.tempPassword.used = false;
         client.tempPassword.expiry = new Date().addMinutes(5).getTime();
-
         client.save();
     }
 
