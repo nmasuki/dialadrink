@@ -13,31 +13,6 @@ var privateVapidKey = process.env.VAPID_KEY;
 
 webpush.setVapidDetails(`mailto:${process.env.DEVELOPER_EMAIL}`, publicVapidKey, privateVapidKey);
 
-var sendOTP = function (client, otpToken, alphaNumberic) {
-    client.tempPassword = client.tempPassword || {
-        used: true,
-        expiry: new Date().addMinutes(5).getTime()
-    };
-
-    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {    
-        var charset = Array(10).join('x').split('').map((x, i) => String.fromCharCode(49 + i));        
-        if (alphaNumberic)
-            charset = charset.concat(Array(26).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
-                    
-        client.tempPassword.password = Array(alphaNumberic ? 7 : 4)
-            .join('x').split('')
-            .map((x) => charset[Math.round(Math.random() * (charset.length - 1))])
-            .join('');
-
-        client.tempPassword.used = false;
-        client.tempPassword.expiry = new Date().addMinutes(5).getTime();
-        client.save();
-    }
-
-    var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
-    sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
-};
-
 router.get("/", function (req, res) {
     var client = res.locals.appUser;
     if (client)
@@ -214,7 +189,7 @@ router.post(["/forgot", "/otp"], function(req, res){
             json.message = "Error while reading registered users. " + err;
         }
         else if(client){
-            sendOTP(client, req.body.otpToken);
+            client.sendOTP(req.body.otpToken);
 
             if (req.body.otpToken != undefined) {
                 json.data = client.toAppObject();

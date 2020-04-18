@@ -459,6 +459,35 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
     }
 };
 
+Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
+    var client = this;
+    client.tempPassword = client.tempPassword || {
+        used: true,
+        resend: 0,
+        expiry: new Date().addMinutes(5).getTime()
+    };
+
+    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {
+        var charset = Array(10).join('x').split('').map((x, i) => String.fromCharCode(49 + i));
+        if (alphaNumberic)
+            charset = charset.concat(Array(26).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
+
+        client.tempPassword.password = Array(alphaNumberic ? 7 : 4)
+            .join('x').split('')
+            .map((x) => charset[Math.round(Math.random() * (charset.length - 1))])
+            .join('');
+
+        client.tempPassword.used = false;
+        client.tempPassword.expiry = new Date().addMinutes(5).getTime();
+    } else {
+        client.tempPassword.resend += 1;
+    }
+
+    client.save();
+    var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
+    return sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
+};
+
 var updateOrderStats = function(client, next) {
     if (client.phoneNumber)
         client.phoneNumber = client.phoneNumber.cleanPhoneNumber();
