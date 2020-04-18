@@ -468,11 +468,11 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
     };
 
     if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {
-        var charset = Array(10).join('x').split('').map((x, i) => String.fromCharCode(49 + i));
+        var charset = Array(11).join('x').split('').map((x, i) => String.fromCharCode(49 + i));
         if (alphaNumberic)
-            charset = charset.concat(Array(26).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
+            charset = charset.concat(Array(27).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
 
-        client.tempPassword.password = Array(alphaNumberic ? 7 : 4)
+        client.tempPassword.password = Array(alphaNumberic ? 7 : 5)
             .join('x').split('')
             .map((x) => charset[Math.round(Math.random() * (charset.length - 1))])
             .join('');

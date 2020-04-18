@@ -51,7 +51,7 @@ module.exports = function MoveSMS(sender) {
         var firstOfTheMonth = (new Date()).toISOString().substr(0, 8) + "01";
         
         var monthLookUps = Object.values(lookUps).filter(l => l.created_at >= firstOfTheMonth);
-        var keyIndex = new Date().getMonth() % 2 == 0 ? Math.ceil(monthLookUps.length / 90) : monthLookUps.length;
+        var keyIndex = new Date().getMonth() % 2 == 0 ? Math.ceil(monthLookUps.length / 10) : monthLookUps.length;
 
         return allKeys[keyIndex % allKeys.length];
     }
@@ -141,7 +141,7 @@ module.exports = function MoveSMS(sender) {
                             dlr: 0
                         },
                         success: function (response) {
-                            resolve(balance - 2);
+                            resolve(balance -= 1);
                             if (typeof next == "function")
                                 next(null, balance);
                         },
