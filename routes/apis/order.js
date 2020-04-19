@@ -68,7 +68,7 @@ router.post("/", function (req, res){
                 return res.send(json);
             }
             
-            json.data = order.toObject();
+            json.data = order.toAppObject();
             if (order.payment.method == "PesaPal") {
                 json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
                 json.message = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
@@ -95,7 +95,7 @@ router.post("/", function (req, res){
             delete req.session.cart;
             req.session.save();
             
-            client.save();
+            return res.send(json);
         });
     }
 });

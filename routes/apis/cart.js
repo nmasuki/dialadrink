@@ -107,7 +107,7 @@ function addToCart(req, res, callback) {
 
 						//popularity goes up 10x
 						product.addPopularity(10);
-						console.log('Added cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price);
+						console.log('Added cart item', cartId, cart[cartId].product.name, cart[cartId].quantity, cart[cartId].price, pieces);
 
 						if (typeof callback == "function")
 							callback(cart[cartId], 'added');

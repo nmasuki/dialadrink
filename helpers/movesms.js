@@ -113,8 +113,10 @@ module.exports = function MoveSMS(sender) {
             if (process.env.NODE_ENV != "production") {
                 err = "Ignoring SMS notification for non-prod environment!";
                 if (typeof next == "function")
-                    next(err);
-                return Promise.reject(err);
+                    next();
+
+                console.warn(err + "\r\n------SMS------\r\n" + to + ":\r\n" + message + "\r\n------");
+                return Promise.resolve(balance);
             }
 
             var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
@@ -129,7 +131,7 @@ module.exports = function MoveSMS(sender) {
                 }
 
                 if (invalid.length) 
-                    console.warn(err = "Some invalid numbers found '" + invalid.join() + "' not sending sms to them!");
+                    console.warn(err = "Some invalid numbers found! Not sending sms to these: '" + invalid.join() + "' !");
 
                 return new Promise((resolve, reject) => {
                     najax.post({

@@ -341,11 +341,8 @@ Client.schema.methods.sendSMSNotification = function (message) {
         message += " http://bit.ly/2TCl4MI";
 
     return sms.sendSMS([client.phoneNumber], message, function (err, res) {
-        if (err)
-            console.error.apply(client, arguments);
-        else {
-            client.lastNotificationDate = new Date();
-        }
+        if (!err)
+            client.lastNotificationDate = new Date();        
     });
 };
 
@@ -532,7 +529,12 @@ var updateOrderStats = function(client, next) {
 
 Client.schema.pre('save', function (next) {
     var user = this;
-    user.modifiedDate = Date.now();
+    if (user.modifiedDate.addSeconds(10) > new Date()){
+        console.log("Client saved less than 10 sec ago. Skipping save!");
+        return false;
+    }
+
+    user.modifiedDate = new Date();
     user.clientIps = this.clientIps.filter(ip => ip).distinct();
     user.metaDataJSON = JSON.stringify(this._metaDataJSON || {});
 

@@ -63,7 +63,7 @@ function loadWorkers(next) {
   });
 }
 
-if (process.env.ENABLE_BACKGROUNDWORKER >= 0) {
+if (process.env.ENABLE_BACKGROUNDWORKER > 0) {
   console.log("Loading workers for background processes..");
   // Load workers
   loadWorkers(function makePass(err, workers) {

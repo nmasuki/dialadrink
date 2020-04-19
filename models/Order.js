@@ -275,6 +275,11 @@ Order.schema.virtual("deliveryAddress").get(function () {
 var clients = [];
 Order.schema.methods.updateClient = function (next) {
     var order = this;
+    if (order.client && order.client.modifiedDate.addSeconds(60) > new Date()){
+        if (typeof next == "function")
+            return next();
+    }
+
     if (order.delivery) {
         var findOption = {
             "$or": []
@@ -310,8 +315,8 @@ Order.schema.methods.updateClient = function (next) {
                         saveClient = true;
                         client.clientIps.push(order.clientIp);
                     }
-                    
-                    if (client.createdDate < order.orderDate)
+
+                    if (client.modifiedDate < order.orderDate)
                         for (var i in delivery) {
                             if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
                                 saveClient = true;
@@ -324,9 +329,11 @@ Order.schema.methods.updateClient = function (next) {
                     client.clientIps.push(order.clientIp);
                 }
 
-                if (saveClient)
+                if (saveClient){
+                    console.log((new Date().getTime() - client.modifiedDate.getTime()) + ": Client saved from order!");
                     client.save();
-                    
+                }    
+
                 order.client = client;
                 if (typeof next == "function")
                     next();
@@ -342,7 +349,7 @@ Order.schema.methods.updateClient = function (next) {
 Order.schema.methods.placeOrder = function (next) {
     console.log("Placing order!");
     var order = this;
-    order.sendOrderNotification().then((data) => {
+    return order.sendOrderNotification().then((data) => {
         console.log("Updating order state='placed'!", data.orderNumber);
 
         //Update order state
@@ -365,6 +372,9 @@ Order.schema.methods.placeOrder = function (next) {
                     product.addPopularity(100);
             });
         });
+    }).catch(err => {
+        if (typeof next == "function")
+            next(err, data);
     });
 };
 
@@ -394,7 +404,6 @@ Order.schema.methods.sendPaymentNotification = function (next) {
             if (!order.payment.smsNotificationSent)
                 order.client.sendSMSNotification(message).then(() => {
                     order.payment.smsNotificationSent = true;
-                    order.save();
                 });
         }
 
@@ -583,11 +592,11 @@ Order.defaultColumns = 'orderNumber, orderDate|15%, client|15%, delivery.platfor
 Order.register();
 
 Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
-
     var time = new Date().toISOString().split('T')[1].split(':')[0];
     if (time >= 18 - 3 || time <= 5 - 3) {
-        err = "Due to the national curfew in Kenya. We will not be taking any orders past 5PM. Please stay at home to eradicate COVID-19!";
-        return callback(err);
+        err = "Due to the national curfew in Kenya. We will not be taking any orders past 5PM. \r\nPlease stay at home to eradicate COVID-19!";
+        if(process.env.NODE_ENV == "production")
+            return callback(err);
     }
 
     deliveryDetails = deliveryDetails || {};
@@ -627,9 +636,8 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         delivery: deliveryDetails,
     });
 
-    if(deliveryDetails.location)
-        order.deliveryLocation = deliveryDetails.location;
-
+    order.deliveryLocation = deliveryDetails.location || deliveryDetails.deliveryLocation;
+    
     chargesKeys.forEach(k => {
         order.charges.chargesName.push(k);
         order.charges.chargesAmount.push(deliveryDetails[k]);
@@ -639,6 +647,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         return order.save((err) => {
             if (err)
                 return console.warn("Error while saving Order! " + err);
+
             order.cart = cartItems;
             if (order.payment.method == "PesaPal") {
                 var paymentUrl = [keystone.get('url'), 'payment', order.orderNumber].filter(p => p).map(p => p.toString().trim('/')).join('/');
