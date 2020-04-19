@@ -58,7 +58,7 @@ module.exports = function MoveSMS(sender) {
    
     self.validateNumber = function (number) {
         return new Promise((resolve, reject) => {
-            if (lookUps[number] && !lookUps[number].error)
+            if (lookUps[number] && !lookUps[number].error && lookUps[number])
                 return resolve(lookUps[number]);            
             
             var lookUpKey = pickOneApiKey();
