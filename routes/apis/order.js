@@ -17,14 +17,30 @@ router.get("/", function(req, res){
     }
 
     var filter = {};
-    if (res.locals.app == "")
+    if (res.locals.app == "com.dialadrinkkenya.rider"){
+        filter['rider.phoneNumber'] = {
+            $in: [
+                client.phoneNumber.cleanPhoneNumber(),
+                client.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
+            ].distinct()
+        };
+    } else if(res.locals.app == "com.dialadrinkkenya.office") {
+        filter.$or = [
+            {'rider': null},
+            {'rider.confirmed': null},
+            {'rider.confirmed': false}
+        ];
+    } else {     
+        filter['delivery.phoneNumber'] =  {
+            $in: [
+                client.phoneNumber.cleanPhoneNumber(), 
+                client.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
+            ].distinct()
+        };
+    }
+        
 
-    var phoneNos = [
-        client.phoneNumber.cleanPhoneNumber(), 
-        client.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
-    ].distinct();
-
-    Order.model.find({'delivery.phoneNumber':{ $in:phoneNos }})
+    Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, orders) => {
             if (err){
