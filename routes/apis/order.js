@@ -57,6 +57,37 @@ router.get("/", function(req, res){
         });
 });
 
+router.get("/:orderNo", function (req, res) {
+    var json = {
+        response: "error",
+        message: "Error while getting order #" + req.params.orderNo,
+        data: {}
+    };
+    var filter = {$or:[]};
+
+    if (/^\d+$/.test(req.params.orderNo))
+        filter.$or.push({ orderNumber: req.params.orderNo });
+    else
+        filter.$or.push({ _id: req.params.orderNo });
+
+    Order.model.findOne(filter)
+        .deepPopulate('cart.product.priceOptions.option')
+        .exec((err, order) => {
+            
+            if (err){
+                json.message += "! " + err;
+            } else if(!order){
+                json.message += "! No matching order Number";
+            }else{
+                delete json.message;
+                json.response = "success";
+                json.data = order.toObject();
+            }
+
+            return res.send(json);
+        });
+});
+
 router.post("/", function (req, res){
     var client = res.locals.appUser;
     var json = { 
@@ -116,31 +147,42 @@ router.post("/", function (req, res){
     }
 });
 
-router.get("/:orderNo", function (req, res) {
+router.post("/cancel/:orderNo", function(req, res){
+    var orderNumber = req.params.orderNo || req.query.orderid
     var json = {
         response: "error",
-        message: "Error while getting order #" + req.params.orderNo,
+        message: "Error while getting order #" + orderNumber,
         data: {}
     };
-    var filter = {$or:[]};
+    var filter = {
+        $or: []
+    };
 
-    if (/^\d+$/.test(req.params.orderNo))
-        filter.$or.push({ orderNumber: req.params.orderNo });
+    if (/^\d+$/.test(orderNumber))
+        filter.$or.push({
+            orderNumber: orderNumber
+        });
     else
-        filter.$or.push({ _id: req.params.orderNo });
+        filter.$or.push({
+            _id: orderNumber
+        });
 
     Order.model.findOne(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .exec((err, order) => {
+
+            if (err)
+                json.message += "! " + err;            
             
-            if (err){
-                json.message += "! " + err;
-            } else if(!order){
+            if (!order) {
                 json.message += "! No matching order Number";
-            }else{
+            } else {
                 delete json.message;
                 json.response = "success";
-                json.data = order.toObject();
+                order.state = 'cancelled';
+                order.save();
+
+                json.data = order.toAppObject();
             }
 
             return res.send(json);
@@ -173,4 +215,5 @@ function getCartItems(req){
 
     return items;
 }
+
 module.exports = router;
