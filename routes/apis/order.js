@@ -148,7 +148,7 @@ router.post("/", function (req, res){
 });
 
 router.post("/cancel/:orderNo", function(req, res){
-    var orderNumber = req.params.orderNo || req.query.orderid
+    var orderNumber = req.params.orderNo || req.query.orderid;
     var json = {
         response: "error",
         message: "Error while getting order #" + orderNumber,

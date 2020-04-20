@@ -275,15 +275,13 @@ Order.schema.virtual("deliveryAddress").get(function () {
 var clients = [];
 Order.schema.methods.updateClient = function (next) {
     var order = this;
-    if (order.client && order.client.modifiedDate.addSeconds(60) > new Date()){
+    if (order.client && order.client.modifiedDate && order.client.modifiedDate.addSeconds(60) > new Date()) {
         if (typeof next == "function")
             return next();
     }
 
     if (order.delivery) {
-        var findOption = {
-            "$or": []
-        };
+        var findOption = { "$or": [] };
         var phoneNumber = (this.delivery.phoneNumber || "").trim();
 
         if (phoneNumber) {
