@@ -1,7 +1,11 @@
 var fs = require('fs');
-var dataDir = "../../data/";
+var dataDir = "../data/";
 
-if (!fs.existsSync(dataDir)) fs.mkdir(dataDir);
+try{
+    if (!fs.existsSync(dataDir)) fs.mkdir(dataDir);
+} catch(e){
+    console.error(e);
+}
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
