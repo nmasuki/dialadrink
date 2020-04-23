@@ -1,7 +1,8 @@
 var fs = require('fs');
-var dataDir = "../data/";
+var dataDir = require('path')("../data/");;
 
 try{
+    console.log("LocalStorage dir:" + dataDir);
     if (!fs.existsSync(dataDir)) fs.mkdir(dataDir);
 } catch(e){
     console.error(e);
@@ -63,7 +64,7 @@ module.exports = function LocalStorage(entityName) {
                 return console.error(msg);
             }
 
-            entity._rev = (entity._rev ? 1 : entity._rev + 1);
+            entity._rev = (entity._rev ? 1 + entity._rev.split('-')[0]: 1) + "-" + uuidv4();
             all[id] = entity;
 
             updates.push({
