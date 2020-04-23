@@ -17,8 +17,13 @@ function uuidv4() {
 
 function getAll(entityName) {
     var all = {};
-    if (fs.existsSync(dataDir + entityName + ".json"))
-        all = JSON.parse(fs.readFileSync(dataDir + entityName + ".json" || "{}"));
+    
+    try {
+        if (fs.existsSync(dataDir + entityName + ".json"))
+            all = JSON.parse(fs.readFileSync(dataDir + entityName + ".json" || "{}"));
+    } catch (e) {
+        console.error(e);
+    }
 
     return all;
 }
