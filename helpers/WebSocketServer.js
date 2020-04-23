@@ -1,5 +1,5 @@
 var WebSocket = require('ws');
-var fs = require('fs')
+var fs = require('fs');
 
 function getWSSConfigs() {
     var wssConfigs = require('../../data/wsconfig');
@@ -105,7 +105,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     });
 }
 
-var wss = new WebSocket.Server(CONFIG);
+var wss = global.wss || (global.wss = new WebSocket.Server(CONFIG));
 
 // Broadcast to all.
 wss.broadcast = function broadcast(payload) {
@@ -122,12 +122,10 @@ wss.broadcast = function broadcast(payload) {
     });
 };
 
-wss.on('connection', function connection(ws, req) {
-    
+wss.on('connection', function connection(ws, req) {    
     ws.clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0] ||
         req.connection.remoteAddress ||
-        req.socket.remoteAddress ||
-        req.connection.socket.remoteAddress;
+        req.socket.remoteAddress;
 
     console.log("Client connected! ", ws.clientIp);
     ws.on('pong', function heartbeat() {
