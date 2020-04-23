@@ -1,3 +1,5 @@
+var BaseSMS = require('./MySMS');
+
 var credentials = {
     username: process.env.AFRICASTALKING_USER || "dialadrink",
     apiKey: process.env.AFRICASTALKING_APIKEY || '8e42f0b0477b3c1312997e33fd698f2d8e27fc609b9f323cb5237fb8d46f50ff'
@@ -7,7 +9,7 @@ function AfricaTalkingSMS(sender) {
     var AfricasTalking = require("africastalking")(credentials);
 
     sender = sender || process.env.AFRICASTALKING_SENDEID || 'DIALADRINK';
-    var self = this;
+    var self = BaseSMS.call(this);
 
     self.balance = function balance() {
         return AfricasTalking.APPLICATION.fetchAccount().then(response=> {
@@ -76,14 +78,7 @@ function AfricaTalkingSMS(sender) {
             username: credentials.username,
             transactionId: transactionId
         });
-    }
+    };
 }
 
-try {
-    module.exports = {
-        AfricaTalking: AfricaTalkingSMS,
-        Instance: new AfricaTalkingSMS()
-    };
-} catch (e) {
-    console.log("Error while setting up AfricaTalking", e);
-}
+module.exports = AfricaTalkingSMS;

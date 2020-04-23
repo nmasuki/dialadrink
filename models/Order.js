@@ -1,5 +1,5 @@
-var MoveSms = require("../helpers/movesms");
-var pesapalHelper = require('../helpers/pesapal');
+var MoveSms = require("../helpers/sms/MoveSMS");
+var pesapalHelper = require('../helpers/PesaPal');
 var keystone = require('keystone');
 var CartItem = keystone.list("CartItem");
 
@@ -293,9 +293,7 @@ Order.schema.methods.updateClient = function (next) {
         } else {
             var email = (this.delivery.email || "").trim();
             if (email) {
-                findOption.$or.push({
-                    "email": new RegExp(email.escapeRegExp(), "i")
-                });
+                findOption.$or.push({ "email": new RegExp(email.escapeRegExp(), "i") });
             }
         }
 

@@ -1,4 +1,4 @@
-var MoveSms = require("../../helpers/movesms");
+var MoveSms = require("../../helpers/sms/MoveSMS");
 var keystone = require('keystone');
 var Client = keystone.list("Client");
 var webpush = require("web-push");

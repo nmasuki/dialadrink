@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var Order = keystone.list("Order");
 var Payment = keystone.list("Payment");
-var AfricasTalking = require('../../helpers/AfricasTalking').Instance;
+var AfricasTalking = require('../../helpers/sms/AfricasTalkingSMS');
 
 var PesaPalStatusMap = {
 	"COMPLETED": "Paid",

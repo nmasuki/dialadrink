@@ -1,5 +1,5 @@
 var keystone = require('keystone');
-var pesapalHelper = require('../../helpers/pesapal');
+var pesapalHelper = require('../../helpers/PesaPal');
 
 var router = keystone.express.Router();
 

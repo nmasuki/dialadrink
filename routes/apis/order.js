@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var Order = keystone.list("Order");
 
-var pesapalHelper = require('../../helpers/pesapal');
+var pesapalHelper = require('../../helpers/PesaPal');
 var router = keystone.express.Router();
 
 router.get("/", function(req, res){

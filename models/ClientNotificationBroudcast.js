@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
 var ClientNotification = keystone.list('ClientNotification');
-var MoveSms = require("../helpers/movesms");
+var MoveSms = require("../helpers/sms/MoveSMS");
 var sms = new MoveSms();
 
 /***************************************************

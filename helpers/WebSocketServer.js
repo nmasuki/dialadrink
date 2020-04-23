@@ -1,0 +1,158 @@
+var WebSocket = require('ws');
+var fs = require('fs')
+
+function getWSSConfigs() {
+    var wssConfigs = require('../../data/wsconfig');
+    var config = {};
+
+    if (wssConfigs.perMessageDeflate)
+        config.perMessageDeflate = wssConfigs.perMessageDeflate;
+
+    var certFiles = {
+        privateKey: wssConfigs.WebSocketServer.privateKey || 'ssl-cert/privkey.pem',
+        certificate: wssConfigs.WebSocketServer.certificate || 'ssl-cert/fullchain.pem'
+    };
+
+    if (!fs.existsSync(certFiles.privateKey) || !fs.existsSync(certFiles.certificate)) {
+        console.warn("Missing file '%s', '%s'", certFiles.privateKey, certFiles.certificate);
+        config.port = wssConfigs.WebSocketServer.port;
+        return config;
+    }
+
+    console.info('Loading certificate files [%s, %s]', certFiles.privateKey, certFiles.certificate);
+    // read ssl certificate
+    var privateKey = fs.readFileSync(certFiles.privateKey, 'utf8');
+    var certificate = fs.readFileSync(certFiles.certificate, 'utf8');
+
+    var credentials = {
+        key: privateKey,
+        cert: certificate
+    };
+
+    //pass in your credentials to create an https server
+    config.server = require('https').createServer(credentials);
+    config.server.listen(wssConfigs.WebSocketServer.port || 8080);
+
+    if (wssConfigs.perMessageDeflate)
+        config.perMessageDeflate = wssConfigs.perMessageDeflate;
+
+    return config;
+}
+
+var CONFIG = Object.assign({
+    RetryCount: 5,
+    RetryWait: 10000
+}, getWSSConfigs());
+
+function processIncoming(message) {
+    try {
+        var obj = JSON.parse(message);
+        switch (obj.cmd || obj.info) {
+            case 'number':
+                ws.phone = obj.phone;
+                break;
+            case 'sendMessage':
+                break;
+        }
+    } catch (e) {
+        console.error("Message Error!", message, e);
+    }
+}
+
+function sendWSMessage(dest, msg, msgid, attempts) {
+    attempts = attempts || 0;
+    msgid = msgid || Array(10).join('x').split('x')
+            .map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
+    var clients = Array.from(self.server.clients).filter(c => client.readyState === WebSocket.OPEN);
+
+    if (attempts > CONFIG.RetryCount) {
+        console.warn(`Delivery failed after ${attempts} attempts`);
+        return Promise.reject(`Delivery failed after ${attempts} attempts`);
+    }
+
+    var client = clients[attempts++ % clients.length];
+    var retrySendWSMessage = function (err) {
+        console.warn((err || "Unknown Error!") + ". Retrying in %d seconds. Attempt %d of %d", attempts * CONFIG.RetryWait / 1000, attempts, CONFIG.RetryCount);
+        return new Promise((fulfill, reject) => {
+            setTimeout(() => sendWSMessage(dest, msg, msgid, attempts).then(fulfill).catch(reject), CONFIG.RetryWait * attempts);
+        });
+    };
+
+    if (!clients.length)
+        return retrySendWSMessage("No client found!");
+
+    var payload = {
+        cmd: 'message',
+        data: {
+            msgid: msgid,
+            text: msg,
+            dest: dest,
+            inbound: false,
+            sending: true,
+            created_at: new Date().toISOString(),
+            attempts: attempts
+        }
+    };
+
+    console.info("Sending message to: %s '%s'", dest, msg);
+    return new Promise((fulfill, reject) => {
+        client.send(JSON.stringify(payload), function (err) {
+            if (err)
+                return retrySendWSMessage(err).then(fulfill).catch(reject);
+
+            fulfill(payload.data);
+        });
+    });
+}
+
+var wss = new WebSocket.Server(CONFIG);
+
+// Broadcast to all.
+wss.broadcast = function broadcast(payload) {
+    wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN)
+            return new Promise((fulfill, reject) => {
+                client.send(JSON.stringify(payload), function (err) {
+                    if (err)
+                        reject(err);
+                    else
+                        fulfill(payload.data);
+                });
+            });
+    });
+};
+
+wss.on('connection', function connection(ws, req) {
+    
+    ws.clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress;
+
+    console.log("Client connected! ", ws.clientIp);
+    ws.on('pong', function heartbeat() {
+        this.isAlive = true;
+    });
+
+    ws.on('message', function incoming(message) {
+        console.info("WSS message received: '%s'", message);
+        processIncoming(message);
+    });
+});
+
+var interval = setInterval(function ping() {
+    wss.clients.forEach(function each(ws) {
+        if (ws.isAlive === false)
+            return ws.terminate();
+
+        ws.isAlive = false;
+        ws.ping(function noop() {
+
+        });
+    });
+}, 30000);
+
+module.exports = {
+    server: wss,
+    sendSMS: sendWSMessage
+};

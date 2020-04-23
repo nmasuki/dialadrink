@@ -9,11 +9,11 @@ require('./helpers/polyfills');
 global.Handlebars = require('handlebars');
 var handlebars = require('express-handlebars').create({
 	handlebars: global.Handlebars,
+	defaultLayout: 'dialadrink',
 	partialsDir: 'templates/views/partials',
 	layoutsDir: 'templates/views/layouts',
 	helpers: new require('./templates/views/helpers')(),
 	precompiled: require('./templates'),
-	defaultLayout: 'dialadrink',
 	extname: '.hbs',
 	cache: true,
 });
@@ -22,7 +22,6 @@ var handlebars = require('express-handlebars').create({
 // Initialise Keystone with your project's configuration.
 // See http://keystonejs.com/guide/config for available options
 // and documentation.
-
 keystone.init({
 	'port': process.env.HTTP_PORT || 4000,
 	'name': process.env.SITE_NAME || 'Dial A Drink Kenya',
@@ -111,7 +110,7 @@ keystone.set('nav', {
 keystone.set('trust proxy', true);
 
 //Log warning into email
-if (!console._warn)
+if (!console._warn){
 	(function () {
 		var email;
 		console._log = console.log;
@@ -175,5 +174,6 @@ if (!console._warn)
 			console._warn.apply(this, args);
 		};
 	});
+}
 
 module.exports = keystone;

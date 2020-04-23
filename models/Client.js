@@ -4,7 +4,7 @@ var webpush = require("web-push");
 var fs = require('fs');
 
 var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
-var sms = new (require("../helpers/movesms"))();
+var sms = new (require("../helpers/sms/MoveSMS"))();
 
 var Types = keystone.Field.Types;
 
