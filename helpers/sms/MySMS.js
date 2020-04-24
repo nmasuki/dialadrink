@@ -1,4 +1,5 @@
 var wss = new require('../WebSocketServer');
+var najax = require('najax');
 var fs = require('fs');
 var lockFile = require('lockfile');
 

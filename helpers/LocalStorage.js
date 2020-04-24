@@ -1,5 +1,5 @@
 var fs = require('fs');
-var dataDir = require('path')("../data/");;
+var dataDir = require('path').resolve("../data/");
 
 try{
     console.log("LocalStorage dir:" + dataDir);
