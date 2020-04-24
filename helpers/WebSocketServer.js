@@ -44,15 +44,27 @@ var CONFIG = Object.assign({
     RetryWait: 10000
 }, getWSSConfigs());
 
+function isJSONString(text){
+    if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function processIncoming(message) {
     try {
-        var obj = JSON.parse(message);
-        switch (obj.cmd || obj.info) {
-            case 'number':
-                ws.phone = obj.phone;
-                break;
-            case 'sendMessage':
-                break;
+        if (isJSONString(message)) {
+            var obj = JSON.parse(message);
+            switch (obj.cmd || obj.info) {
+                case 'number':
+                    ws.phone = obj.phone;
+                    break;
+                case 'sendMessage':
+                    break;
+            }
+        }else{
+            console.log("Recieved message: " + text);
         }
     } catch (e) {
         console.error("Message Error!", message, e);
@@ -134,7 +146,7 @@ wss.on('connection', function connection(ws, req) {
 
     ws.on('message', function incoming(message) {
         console.info("WSS message received: '%s'", message);
-        processIncoming(message);
+        processIncoming(message, this);
     });
 });
 
