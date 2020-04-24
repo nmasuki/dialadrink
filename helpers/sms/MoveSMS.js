@@ -5,7 +5,8 @@ var apiUrl = `https://sms.movesms.co.ke/api/{0}?username=${process.env.MOVESMS_U
 module.exports = function MoveSMS(sender) {
     sender = sender || 'SMARTLINK';
     
-    var self = BaseSMS.call(this);    
+    var self = BaseSMS.call(this);
+    var _sendSMS = self.sendSMS;
 
     self.balance = function balance(next) {
         return new Promise((resolve, reject) => {
@@ -39,11 +40,8 @@ module.exports = function MoveSMS(sender) {
 
             if (process.env.NODE_ENV != "production") {
                 err = "Ignoring SMS notification for non-prod environment!";
-                if (typeof next == "function")
-                    next();
-
-                console.warn(err + "\r\n------SMS------\r\n" + to + ":\r\n" + message + "\r\n------");
-                return Promise.resolve(balance);
+                console.warn(err + "\r\n------SMS------\r\n" + to + ":\r\n" + message + "\r\n------");                
+                return _sendSMS.call(this, to, message);
             }
 
             var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());

@@ -1,32 +1,12 @@
 var wss = new require('../WebSocketServer');
+var ls = new require('../LocalStorage')("lookups");
 var najax = require('najax');
-var fs = require('fs');
-var lockFile = require('lockfile');
-
-var lookUpLogFile = "../../lookups.json";
-var lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
-var updateLookUp = (function (number, res) {
-    lockFile.lock(lookUpLogFile + ".lock", function (err) {
-        if (err)
-            return console.error("Could not aquire lock.", lookUpLogFile + ".lock", err);
-
-        try {
-            lookUps = fs.existsSync(lookUpLogFile) ? JSON.parse(fs.readFileSync(lookUpLogFile) || "{}") : {};
-            lookUps[number] = res;
-            fs.writeFile(lookUpLogFile, JSON.stringify(lookUps));
-        } catch (e) {
-            console.error(e);
-        }
-
-        lockFile.unlock(lookUpLogFile + ".lock");
-    });
-}).debounce(1000);
 
 function pickOneApiKey() {
     var allKeys = ['159eece6bd4f7fdc23916fd7778efa8c', '0c2315a3ad790d8d3b6b3a53ec8a4c75', '1845a28d63e1b10f9e73aa474d33d8fb', ];
     var firstOfTheMonth = (new Date()).toISOString().substr(0, 8) + "01";
 
-    var monthLookUps = Object.values(lookUps).filter(l => l.created_at >= firstOfTheMonth);
+    var monthLookUps = ls.getAll().filter(l => l.created_at >= firstOfTheMonth);
     var keyIndex = new Date().getMonth() % 2 == 0 ? Math.ceil(monthLookUps.length / 10) : monthLookUps.length;
 
     return allKeys[keyIndex % allKeys.length];
@@ -65,8 +45,10 @@ function BaseSMS() {
 
     self.validateNumber = function (number) {
         return new Promise((resolve, reject) => {
-            if (lookUps[number] && !lookUps[number].error && lookUps[number].created_at && lookUps[number].created_at.addDays(120) > new Date())
-                return resolve(lookUps[number]);
+            var numberLookup = ls.get(number);
+
+            if (numberLookup && !numberLookup.error && numberLookup.created_at && numberLookup.created_at.addDays(120) > new Date())
+                return resolve(numberLookup);
 
             var lookUpKey = pickOneApiKey();
             console.log("Number lookup: ", number, lookUpKey);
