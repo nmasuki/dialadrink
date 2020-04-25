@@ -96,7 +96,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     var retrySendWSMessage = function (err) {
         console.warn((err || "Unknown Error!") + ". Retrying in %d seconds. Attempt %d of %d", attempts * CONFIG.RetryWait / 1000, attempts, CONFIG.RetryCount);
         return new Promise((fulfill, reject) => {
-            setTimeout(() => sendWSMessage(dest, msg, msgid, attempts).then(fulfill).catch(reject), CONFIG.RetryWait * attempts);
+            setTimeout(() => sendWSMessage(dest, msg, msgid, ++attempts).then(fulfill).catch(reject), CONFIG.RetryWait * (attempts + 1));
         });
     };
 
