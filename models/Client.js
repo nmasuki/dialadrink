@@ -482,6 +482,7 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
 
     client.save();
     var msg = `<#>Your temporary password is ${client.tempPassword.password}`;
+    
     return sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
 

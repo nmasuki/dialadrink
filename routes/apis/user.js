@@ -80,6 +80,14 @@ router.post("/", function (req, res) {
     }
 });
 
+router.get("/testsms/:mobile", function (req, res) {
+    var mobile = (req.params.mobile || "").cleanPhoneNumber();
+    var msg = (req.query.msg || "").cleanPhoneNumber();
+    var mySMS = new(require('../../helpers/sms/MySMS'))();
+    
+    mySMS.sendSMS(mobile, msg);
+});
+
 router.get("/check/:mobile", function (req, res){
     var mobile = (req.params.mobile || "").cleanPhoneNumber();
     if (!mobile)
@@ -104,7 +112,7 @@ router.get("/check/:mobile", function (req, res){
                 isRegistered: !!(client && client.isAppRegistered)
             };
 
-            if (client){
+            if (client){                
                 res.send(json);
             } else { 
                 sms.validateNumber(mobile).then(function (response) {
@@ -181,32 +189,30 @@ router.post(["/forgot", "/otp"], function(req, res){
     };
 
     console.log("Getting user: " + phoneNumber.cleanPhoneNumber());
-    Client.model.findOne({ 
-        phoneNumber: phoneNumber.cleanPhoneNumber()
-    })
-    .exec((err, client) => {
-        if (err){
-            json.message = "Error while reading registered users. " + err;
-        }
-        else if(client){
-            client.sendOTP(req.body.otpToken);
-
-            if (req.body.otpToken != undefined) {
-                json.data = client.toAppObject();
-                res.locals.appUser = client;
-
-                if (client.sessions.indexOf(req.sessionID) < 0)
-                    client.sessions.push(req.sessionID);
+    Client.model.findOne({ phoneNumber: phoneNumber.cleanPhoneNumber() })
+        .exec((err, client) => {
+            if (err){
+                json.message = "Error while reading registered users. " + err;
             }
+            else if(client){
+                client.sendOTP(req.body.otpToken);
 
-            //TODO send SMS/Email.
-            json.response = "success";
-        }else{
-            json.message = "User not found!";
-        }
-        
-        return res.send(json);
-    });
+                if (req.body.otpToken != undefined) {
+                    json.data = client.toAppObject();
+                    res.locals.appUser = client;
+
+                    if (client.sessions.indexOf(req.sessionID) < 0)
+                        client.sessions.push(req.sessionID);
+                }
+
+                //TODO send SMS/Email.
+                json.response = "success";
+            }else{
+                json.message = "User not found!";
+            }
+            
+            return res.send(json);
+        });
 });
 
 router.post("/login", function (req, res) {
