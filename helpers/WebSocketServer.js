@@ -16,12 +16,12 @@ function getWSSConfigs() {
     };
 
     if (!fs.existsSync(certFiles.privateKey) || !fs.existsSync(certFiles.certificate)) {
-        console.warn("Missing file '%s', '%s'", certFiles.privateKey, certFiles.certificate);
+        console.warn("WSS:", "Missing file '%s', '%s'", certFiles.privateKey, certFiles.certificate);
         config.port = wssConfigs.WebSocketServer.port;
         return config;
     }
 
-    console.info('Loading certificate files [%s, %s]', certFiles.privateKey, certFiles.certificate);
+    console.info("WSS:", 'Loading certificate files [%s, %s]', certFiles.privateKey, certFiles.certificate);
     // read ssl certificate
     var privateKey = fs.readFileSync(certFiles.privateKey, 'utf8');
     var certificate = fs.readFileSync(certFiles.certificate, 'utf8');
@@ -60,10 +60,10 @@ function processIncoming(message) {
             var obj = JSON.parse(message);
             switch (obj.cmd || obj.info) {
                 case 'number':
-                    ws.phone = obj.phone;
+                    this.phone = obj.phone;
                     break;
                 case 'message_status':
-                    console.log("Message Status:" + obj.status, obj.msgid);
+                    console.log("WSS:", "Message Status:" + obj.status, obj.msgid);
                     var data = ls.get(obj.msgid);
                     
                     if(data){
@@ -75,10 +75,10 @@ function processIncoming(message) {
                     break;
             }
         }else{
-            console.log("Recieved message: " + text);
+            console.log("WSS:", "Recieved message: " + text);
         }
     } catch (e) {
-        console.error("Message Error!", message, e);
+        console.error("WSS:", "Message Error!", message, e);
     }
 }
 
@@ -154,13 +154,13 @@ wss.on('connection', function connection(ws, req) {
         req.connection.remoteAddress ||
         req.socket.remoteAddress;
 
-    console.log("Client connected! ", ws.clientIp);
+    console.log("WSS:", "Client connected! ", ws.clientIp);
     ws.on('pong', function heartbeat() {
         this.isAlive = true;
     });
 
     ws.on('message', function incoming(message) {
-        console.info("WSS message received: '%s'", message);
+        console.info("WSS:", "Message received: '%s'", message);
         if (typeof wss.processIncoming == "function")
             wss.processIncoming.call(this, message);
         processIncoming.call(this, message);
