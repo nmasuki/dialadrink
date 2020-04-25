@@ -46,7 +46,7 @@ function saveAll(entityName, all) {
                 resolve();
             });
         });
-    });
+    }).catch(console.error);
 }
 
 module.exports = function LocalStorage(entityName) {
