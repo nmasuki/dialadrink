@@ -16,7 +16,7 @@ function getWSSConfigs() {
     };
 
     if (!fs.existsSync(certFiles.privateKey) || !fs.existsSync(certFiles.certificate)) {
-        console.warn("WSS:", "Missing file '%s', '%s'", certFiles.privateKey, certFiles.certificate);
+        console.warn("WSS:", "Missing files:", certFiles.privateKey, certFiles.certificate);
         config.port = wssConfigs.WebSocketServer.port;
         return config;
     }
@@ -47,7 +47,7 @@ var CONFIG = Object.assign({
 }, getWSSConfigs());
 
 function isJSONString(text){
-    if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+    if (typeof text == "string" && /^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
         return true;
     } else {
         return false;
@@ -121,7 +121,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 
     ls.save(payload);
 
-    console.info("Sending message to: %s '%s'", dest, msg);
+    console.info("Sending message to:", dest, msg);
     return new Promise((fulfill, reject) => {
         client.send(JSON.stringify(payload), function (err) {
             if (err)
@@ -160,7 +160,7 @@ wss.on('connection', function connection(ws, req) {
     });
 
     ws.on('message', function incoming(message) {
-        console.info("WSS:", "Message received: '%s'", message);
+        console.info("WSS:", "Message received:", message);
         if (typeof wss.processIncoming == "function")
             wss.processIncoming.call(this, message);
         processIncoming.call(this, message);
