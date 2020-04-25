@@ -152,7 +152,7 @@ wss.broadcast = function broadcast(payload) {
 wss.on('connection', function connection(ws, req) {    
     ws.clientIp = ((req.headers['x-forwarded-for'] || '').split(',')[0] ||
         req.connection.remoteAddress ||
-        req.socket.remoteAddress || '').trim(':');
+        req.socket.remoteAddress || '').trim(':f');
 
     console.log("WSS:", "Client connected! ", ws.clientIp);
     ws.on('pong', function heartbeat() {
