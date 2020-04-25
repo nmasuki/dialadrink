@@ -86,7 +86,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     attempts = attempts || 0;
     msgid = msgid || Array(10).join('x').split('x')
             .map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
-    var clients = Array.from(self.server.clients).filter(c => client.readyState === WebSocket.OPEN);
+    var clients = Array.from(wss.clients).filter(c => client.readyState === WebSocket.OPEN);
 
     if (attempts > CONFIG.RetryCount) {
         console.warn(`Delivery failed after ${attempts} attempts`);
