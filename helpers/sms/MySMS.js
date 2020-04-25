@@ -37,6 +37,8 @@ function BaseSMS() {
             return wss.sendSMS(validNos, message).then(a => {
                 if (typeof next == "function")
                     next(null, a);
+                    
+                return a;
             }).catch(err => {
                 if (typeof next == "function")
                     next(err);

@@ -74,6 +74,7 @@ module.exports = function MoveSMS(sender) {
                             if (typeof next == "function")
                                 next(null, balance);
                         },
+                        
                         error: function (xhr, status, error) {
                             reject(error);
                             if (typeof next == "function")
