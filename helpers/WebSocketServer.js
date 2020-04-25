@@ -89,12 +89,12 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     var clients = Array.from(wss.clients).filter(c => c.readyState === WebSocket.OPEN);
 
     if (attempts > CONFIG.RetryCount) {
-        console.warn(`Delivery failed after ${attempts} attempts`);
+        console.warn("WSS:", `Delivery failed after ${attempts} attempts`);
         return Promise.reject(`Delivery failed after ${attempts} attempts`);
     }
 
     var retrySendWSMessage = function (err) {
-        console.warn((err || "Unknown Error!") + ". Retrying in %d seconds. Attempt %d of %d", attempts * CONFIG.RetryWait / 1000, attempts, CONFIG.RetryCount);
+        console.warn("WSS:", (err || "Unknown Error!") + ". Retrying in %d seconds. Attempt %d of %d", attempts * CONFIG.RetryWait / 1000, attempts, CONFIG.RetryCount);
         return new Promise((fulfill, reject) => {
             setTimeout(() => sendWSMessage(dest, msg, msgid, ++attempts).then(fulfill).catch(reject), CONFIG.RetryWait * (attempts + 1));
         });
