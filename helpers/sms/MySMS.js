@@ -1,7 +1,8 @@
 var najax = require('najax');
-var wss = new require('../WebSocketServer');
+var wss = require('../WebSocketServer');
 var LocalStorage = require('../LocalStorage');
 var ls = new LocalStorage("lookups");
+
 function pickOneApiKey() {
     var allKeys = ['159eece6bd4f7fdc23916fd7778efa8c', '0c2315a3ad790d8d3b6b3a53ec8a4c75', '1845a28d63e1b10f9e73aa474d33d8fb', ];
     var firstOfTheMonth = (new Date()).toISOString().substr(0, 8) + "01";

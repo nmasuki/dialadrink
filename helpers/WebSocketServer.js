@@ -1,4 +1,6 @@
 var WebSocket = require('ws');
+var LocalStorage = require('../helpers/LocalStorage');
+var ls = new LocalStorage('ws-messages');
 var fs = require('fs');
 
 function getWSSConfigs() {
@@ -62,6 +64,14 @@ function processIncoming(message) {
                     break;
                 case 'message_status':
                     console.log("Message Status:" + obj.status, obj.msgid);
+                    var data = ls.get(obj.msgid);
+                    
+                    if(data){
+                        data.statusLog = data.statusLog || [];
+                        data.status = obj.status;
+                        ls.save(data);
+                    }
+
                     break;
             }
         }else{
@@ -95,7 +105,9 @@ function sendWSMessage(dest, msg, msgid, attempts) {
         return retrySendWSMessage("No client found!");
 
     var payload = {
+        id: msgid,
         cmd: 'message',
+        status: "INITIALIZED",
         data: {
             msgid: msgid,
             text: msg,
@@ -106,6 +118,8 @@ function sendWSMessage(dest, msg, msgid, attempts) {
             attempts: attempts
         }
     };
+
+    ls.save(payload);
 
     console.info("Sending message to: %s '%s'", dest, msg);
     return new Promise((fulfill, reject) => {
@@ -147,7 +161,9 @@ wss.on('connection', function connection(ws, req) {
 
     ws.on('message', function incoming(message) {
         console.info("WSS message received: '%s'", message);
-        processIncoming(message, this);
+        if (typeof wss.processIncoming == "function")
+            wss.processIncoming.call(this, message);
+        processIncoming.call(this, message);
     });
 });
 
