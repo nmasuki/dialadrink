@@ -38,6 +38,8 @@ function saveAll(entityName, all) {
                 return reject("Could not aquire lock.", dataDir + entityName + ".lock", err);
             
             fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
+                lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));
+
                 if(err)
                     return reject(err);
 
