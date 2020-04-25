@@ -60,7 +60,8 @@ function processIncoming(message) {
                 case 'number':
                     ws.phone = obj.phone;
                     break;
-                case 'sendMessage':
+                case 'message_status':
+                    console.log("Message Status:" + obj.status, obj.msgid);
                     break;
             }
         }else{
