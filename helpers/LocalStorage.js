@@ -1,6 +1,7 @@
 var fs = require('fs');
+var path = require('path');
 var lockFile = require('lockfile');
-var dataDir = require('path').resolve("../data/");
+var dataDir = path.resolve("../data/");
 
 try{
     console.log("LocalStorage dir:", dataDir);
@@ -21,8 +22,8 @@ function getAll(entityName) {
     var all = {};
     
     try {
-        if (fs.existsSync(dataDir + entityName + ".json"))
-            all = JSON.parse(fs.readFileSync(dataDir + entityName + ".json" || "{}"));
+        if (fs.existsSync(path.resolve(dataDir, entityName + ".json")))
+            all = JSON.parse(fs.readFileSync(path.resolve(dataDir, entityName + ".json")) || "{}");
     } catch (e) {
         console.error(e);
     }
@@ -32,11 +33,11 @@ function getAll(entityName) {
 
 function saveAll(entityName, all) {
     return new Promise((resolve, reject) => {
-        lockFile.lock(dataDir + entityName + ".lock", function (err) {
+        lockFile.lock(path.resolve(dataDir, entityName + ".lock"), function (err) {
             if (err)
                 return reject("Could not aquire lock.", dataDir + entityName + ".lock", err);
             
-            fs.write(dataDir + entityName + ".json", JSON.stringify(all, null, 2), function(err){
+            fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
                 if(err)
                     return reject(err);
 

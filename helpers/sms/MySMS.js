@@ -66,13 +66,15 @@ function BaseSMS() {
                     try {
                         if (typeof res == "string")
                             res = JSON.parse(res);
+
+                        res.id = number;
                         res.created_at = new Date();
                         res.key = lookUpKey;
                     } catch (e) {
                         console.error("Error while validating", number, e);
                     }
-
-                    updateLookUp(number, res);
+                    
+                    ls.save(res);
                     if (res.error) {
                         console.error("Error while validating", res.error.info);
                         resolve({ valid: true });
