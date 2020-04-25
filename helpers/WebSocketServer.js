@@ -174,7 +174,7 @@ var interval = setInterval(function ping() {
 
         ws.isAlive = false;
         ws.ping(function noop() {
-            console.log("ping!");
+            console.log("WSS:", "ping!");
         });
     });
 }, 30000);

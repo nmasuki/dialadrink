@@ -48,7 +48,7 @@ function BaseSMS() {
         return new Promise((resolve, reject) => {
             var numberLookup = ls.get(number);
 
-            if (numberLookup && !numberLookup.error && numberLookup.created_at && numberLookup.created_at.addDays(120) > new Date())
+            if (numberLookup && !numberLookup.error && numberLookup.created_at && new Date(numberLookup.created_at).addDays(120) > new Date())
                 return resolve(numberLookup);
 
             var lookUpKey = pickOneApiKey();
