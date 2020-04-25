@@ -93,7 +93,6 @@ function sendWSMessage(dest, msg, msgid, attempts) {
         return Promise.reject(`Delivery failed after ${attempts} attempts`);
     }
 
-    var client = clients[attempts++ % clients.length];
     var retrySendWSMessage = function (err) {
         console.warn((err || "Unknown Error!") + ". Retrying in %d seconds. Attempt %d of %d", attempts * CONFIG.RetryWait / 1000, attempts, CONFIG.RetryCount);
         return new Promise((fulfill, reject) => {
@@ -104,6 +103,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     if (!clients.length)
         return retrySendWSMessage("No client found!");
 
+    var client = clients[attempts++ % clients.length];
     var payload = {
         id: msgid,
         cmd: 'message',
@@ -150,9 +150,9 @@ wss.broadcast = function broadcast(payload) {
 };
 
 wss.on('connection', function connection(ws, req) {    
-    ws.clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0] ||
+    ws.clientIp = ((req.headers['x-forwarded-for'] || '').split(',')[0] ||
         req.connection.remoteAddress ||
-        req.socket.remoteAddress;
+        req.socket.remoteAddress || '').trim(':');
 
     console.log("WSS:", "Client connected! ", ws.clientIp);
     ws.on('pong', function heartbeat() {
@@ -175,7 +175,7 @@ var interval = setInterval(function ping() {
 
         ws.isAlive = false;
         ws.ping(function noop() {
-            console.log("WSS:", "ping!");
+            console.log("WSS:", "ping!", ws.clientIp);
         });
     });
 }, 30000);
