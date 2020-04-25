@@ -157,6 +157,7 @@ wss.on('connection', function connection(ws, req) {
     console.log("WSS:", "Client connected! ", ws.clientIp);
     ws.on('pong', function heartbeat() {
         this.isAlive = true;
+        console.log("WSS:", "pong!", this.clientIp);
     });
 
     ws.on('message', function incoming(message) {
