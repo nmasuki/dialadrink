@@ -75,7 +75,7 @@ function processIncoming(message) {
                     break;
             }
         }else{
-            console.log("WSS:", "Recieved message: " + text);
+            console.log("WSS:", "Recieved message: " + message);
         }
     } catch (e) {
         console.error("WSS:", "Message Error!", message, e);
