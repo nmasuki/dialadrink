@@ -84,8 +84,13 @@ router.get("/testsms/:mobile", function (req, res) {
     var mobile = (req.params.mobile || "").cleanPhoneNumber();
     var msg = (req.query.msg || "").cleanPhoneNumber();
     var mySMS = new(require('../../helpers/sms/MySMS'))();
-    
-    mySMS.sendSMS(mobile, msg);
+
+    mySMS.sendSMS(mobile, msg).then(data => {
+        res.send({
+            response: "success",
+            data: data
+        })
+    });
 });
 
 router.get("/check/:mobile", function (req, res){
