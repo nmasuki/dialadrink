@@ -10,6 +10,15 @@
 	}
 </style>
 
+{{#if userData.user}}
+	<script type="text/javascript">
+		window.addressData = {
+			user: {{{json  userData.user}}},
+			location: {{{json userData.location}}}
+		}
+	</script>
+{{/if}}
+
 <div id="cart-content-main" class="container">
 	<div class="col-md-7">
 		<ul class="list-group mb-3" id="cart-view">
@@ -116,4 +125,7 @@
 				</div>
 			</div>
 		</div>
-	{{/if}}</div>
+	{{/if}}	
+</div>
+
+

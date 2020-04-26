@@ -61,7 +61,7 @@ exports.initLocals = function (req, res, next) {
     //App Title
     res.locals.appTitle = keystone.get("name");
 
-    //App Title
+    //App Url
     res.locals.appUrl = keystone.get("url");
 
     //Push Notification VAPID public key
@@ -76,6 +76,10 @@ exports.initLocals = function (req, res, next) {
 
     //Cart items
     res.locals.cartItems = Object.values(req.session.cart || {}).orderBy(c => c.product.name);
+
+    //Some user data
+    if (req.session.userData && req.session.userData.saveInfo)
+        res.locals.userData = req.session.userData;
 
     //Promo code applied
     res.locals.promocode = req.session.promo;

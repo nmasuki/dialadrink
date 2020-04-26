@@ -45,9 +45,6 @@ router.get('/', function (req, res) {
 
 	locals.page = Object.assign(locals.page, { h1: "Your Order Details" });
 
-	if (req.session.userData && req.session.userData.saveInfo)
-		locals.userData = req.session.userData;
-
 	locals.breadcrumbs.push({
 		href: "/cart",
 		label: "My Cart"
