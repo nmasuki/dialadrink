@@ -25,8 +25,9 @@ function getAll(entityName) {
         if (fs.existsSync(path.resolve(dataDir, entityName + ".json"))){
             var jsonStr = (fs.readFileSync(path.resolve(dataDir, entityName + ".json")) || "{}").toString();
             all = JSON.parse(jsonStr);
-        }
-            
+            if (all.data && all.response)
+                all = all.data;
+        }            
     } catch (e) {
         console.error(e);
     }
