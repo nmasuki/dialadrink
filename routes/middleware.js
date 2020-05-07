@@ -106,8 +106,10 @@ exports.initLocals = function (req, res, next) {
         var ls = require('../helpers/LocalStorage').getInstance("closeofday");
         var latest = ls.getAll().orderBy(c => c.createdDate).last();
         
-        if (res.headers.lastCloseOfDay)
-            res.headers.lastCloseOfDay = latest.createdDate;
+        if (latest && latest.createdDate)
+            res.locals.lastCloseOfDay = latest.createdDate;
+        else
+            res.locals.lastCloseOfDay = new Date().toISOString().substr(0, 10);
 
         return next();
     } else if (req.xhr) {
