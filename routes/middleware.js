@@ -64,11 +64,16 @@ exports.initLocals = function (req, res, next) {
     //App Url
     res.locals.appUrl = keystone.get("url");
 
+    //App
+    res.locals.app = req.headers.packagename;
+
     //Push Notification VAPID public key
     res.locals.vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
 
-    //OKHi setup
+    //OKHi Env
     res.locals.OkHiEnv = process.env.OKHI_ENV;
+    
+    //OKHi Key
     res.locals.OkHiKey = res.locals.OkHiEnv == "prod" ? process.env.OKHI_KEY : process.env.OKHI_DEV_KEY;
 
     //CSRF
@@ -87,17 +92,23 @@ exports.initLocals = function (req, res, next) {
     //Check mobile device
     res.locals.isMobile = mobile(req);
 
-    //
+    //Image placeholder
     res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
 
     //Client IP
     var possibleIps = [req.ip, (req.headers['x-forwarded-for'] || '').split(',').pop(), req.connection.remoteAddress, req.socket.remoteAddress];
     res.locals.clientIp = possibleIps.find(ip => ip && ip != '127.0.0.1' && ip != '::1');
 
+    //Authorization
     var { username, password } = getAuthInfo(req);
     //Other locals only applied to views and not ajax calls
     if (username || password) {
-        //console.log(`API call from IP:${res.locals.clientIp || ""}, User:${username}`);
+        var ls = require('../helpers/LocalStorage').getInstance("closeofday");
+        var latest = ls.getAll().orderBy(c => c.createdDate).last();
+        
+        if (res.headers.lastCloseOfDay)
+            res.headers.lastCloseOfDay = latest.createdDate;
+
         return next();
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);

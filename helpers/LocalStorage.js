@@ -53,17 +53,18 @@ function saveAll(entityName, all) {
     }).catch(console.error);
 }
 
-module.exports = function LocalStorage(entityName) {
+function LocalStorage(entityName) {
     var self = this;
 
-    self.saveAll = function(all){
+    self.saveAll = function (all) {
         return self.save(all);
     };
 
     self.save = function (entity) {
         var all = getAll(entityName),
-            updates = [], errors = [];
-        
+            updates = [],
+            errors = [];
+
         function setEntiry(entity) {
             var id = entity._id || entity.id || entity.Id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
 
@@ -77,7 +78,7 @@ module.exports = function LocalStorage(entityName) {
                 return console.error(msg);
             }
 
-            entity._rev = (entity._rev ? 1 + entity._rev.split('-')[0]: 1) + "-" + uuidv4();
+            entity._rev = (entity._rev ? 1 + entity._rev.split('-')[0] : 1) + "-" + uuidv4();
             all[id] = entity;
 
             updates.push({
@@ -91,25 +92,32 @@ module.exports = function LocalStorage(entityName) {
         else
             setEntiry(entity);
 
-        saveAll(entityName, all);        
+        saveAll(entityName, all);
         return new Promise((resolve, reject) => {
-            if(updates.length)
-                return resolve({updates, errors});
-            if(errors.length)
+            if (updates.length)
+                return resolve({
+                    updates,
+                    errors
+                });
+            if (errors.length)
                 return reject(errors);
         });
     };
 
-    self.getAll = function(){
+    self.getAll = function () {
         return Object.values(getAll(entityName));
     };
 
-    self.get = function(id){
-        if(id == undefined)
+    self.get = function (id) {
+        if (id == undefined)
             return self.getAll();
         var all = getAll(entityName);
 
         return all[id];
     };
 };
+
+LocalStorage.getInstance = function(e){ return new LocalStorage(e); }
+
+module.exports = LocalStorage;
 

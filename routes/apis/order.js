@@ -17,6 +17,7 @@ router.get("/", function(req, res){
     }
 
     var filter = {};
+
     if (res.locals.app == "com.dialadrinkkenya.rider"){
         filter['rider.phoneNumber'] = {
             $in: [
@@ -30,6 +31,13 @@ router.get("/", function(req, res){
             {'rider.confirmed': null},
             {'rider.confirmed': false}
         ];
+        
+        if (res.headers.lastCloseOfDay)
+            filter.$and = [{
+               orderDate: {
+                   $gt: new Date(res.headers.lastCloseOfDay)
+               }
+            }];
     } else {     
         filter['delivery.phoneNumber'] =  {
             $in: [
