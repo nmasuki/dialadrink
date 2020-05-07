@@ -516,6 +516,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
 Order.schema.methods.toAppObject = function () {
     var obj = Object.assign(this.toObject(), {
+        orderAmount: this.orderAmount || this.total,
         clientName: this.client? this.client.name: "",
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });

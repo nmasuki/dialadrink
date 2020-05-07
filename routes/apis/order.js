@@ -42,6 +42,7 @@ router.get("/", function(req, res){
 
     Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
+        .populate('client')
         .exec((err, orders) => {
             if (err){
                 json.message = "Error getting user Orders! " + err;
