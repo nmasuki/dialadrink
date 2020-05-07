@@ -62,11 +62,15 @@ CartItem.schema.virtual("priceOption").get(function () {
         return priceOption;
 
     var item = this;
-    priceOption = item.product.options.find(o => o.quantity === item.quantity) || item.product.cheapestOption;    
-    if(priceOption){
-        this.price = priceOption.price;
-        this.offerPrice = priceOption.offerPrice;
-        this.save();
+
+    if (item.product){
+        priceOption = item.product.options.find(o => o.quantity === item.quantity) || item.product.cheapestOption;    
+    
+        if(priceOption){
+            this.price = priceOption.price;
+            this.offerPrice = priceOption.offerPrice;
+            this.save();
+        }
     }
 
     return priceOption;

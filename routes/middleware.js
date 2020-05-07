@@ -106,9 +106,12 @@ exports.initLocals = function (req, res, next) {
         var ls = require('../helpers/LocalStorage').getInstance("closeofday");
         var latest = ls.getAll().orderBy(c => c.createdDate).last();
         
-        if (res.headers.lastCloseOfDay)
-            res.headers.lastCloseOfDay = latest.createdDate;
-
+        var backdate = process.env.NODE_ENV == "production"? 2: 100;        
+        if (latest && latest.createdDate)
+            res.locals.lastCloseOfDay = new Date(latest.createdDate).addDays(-backdate).toISOString().substr(0, 10);
+        else 
+            res.locals.lastCloseOfDay = new Date().addDays(-backdate).toISOString().substr(0, 10);
+        
         return next();
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);

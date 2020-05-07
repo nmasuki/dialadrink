@@ -31,11 +31,11 @@ router.get("/", function(req, res){
             {'rider.confirmed': null},
             {'rider.confirmed': false}
         ];
-        
-        if (res.headers.lastCloseOfDay)
+
+        if (res.locals.lastCloseOfDay)
             filter.$and = [{
                orderDate: {
-                   $gt: new Date(res.headers.lastCloseOfDay)
+                   $gt: new Date(res.locals.lastCloseOfDay)
                }
             }];
     } else {     
