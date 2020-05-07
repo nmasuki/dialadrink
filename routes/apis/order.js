@@ -81,7 +81,7 @@ router.get("/:orderNo", function (req, res) {
             }else{
                 delete json.message;
                 json.response = "success";
-                json.data = order.toObject();
+                json.data = order.toAppObject();
             }
 
             return res.send(json);
