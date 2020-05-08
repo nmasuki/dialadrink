@@ -47,11 +47,14 @@ router.get("/", function(req, res){
         };
     }
 
-    console.log("Looking up orders..")       
+    console.log("Looking up orders..");  
+    var PAGESIZE = 200;
 
     Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .populate('client')
+        .sort({ modifiedDate: -1 })
+        .limit(PAGESIZE)
         .exec((err, orders) => {
             if (err){
                 json.message = "Error getting user Orders! " + err;
@@ -63,6 +66,9 @@ router.get("/", function(req, res){
                     .filter(o => o.cart.filter(c => c.product).length > 0)
                     .orderByDescending(o => o.orderDate)
                     .map(o => o.toAppObject());
+
+                if (orders.length == PAGESIZE)
+                    json.bookmark = orders.last().modifiedDate.toISOString();
             }
             
             return res.send(json);

@@ -9,10 +9,11 @@ router.get('/', function(req, res, next){
 
     if (req.query.bookmark)
         filter.modifiedDate = {$gt: req.query.bookmark};
+    var PAGESIZE = 200;
 
     Client.model.find({})
         .sort({modifiedDate: -1})
-        .limit(100)
+        .limit(PAGESIZE)
         .exec((err, clients) => {
             if (err)
                 return res.send({
@@ -26,7 +27,7 @@ router.get('/', function(req, res, next){
                 data: clients.map(c => c.toAppObject())
             };
 
-            if(clients.length == 100)
+            if (clients.length == PAGESIZE)
                 json.bookmark = clients.last().modifiedDate.toISOString();
 
             console.log("First:" + clients.first().modifiedDate.toISOString(), "Last:" + clients.last().modifiedDate.toISOString())
