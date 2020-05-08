@@ -521,8 +521,8 @@ Order.schema.methods.toAppObject = function () {
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
 
-    if (!obj.clientName)
-        this.updateClient();
+    if (!obj.client)
+        obj.client = this.delivery;
     
     return obj;
 };
