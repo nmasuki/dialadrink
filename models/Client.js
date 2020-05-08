@@ -506,6 +506,7 @@ var updateOrderStats = function(client, next) {
         keystone.list("Order").model.find(findOption)
             .sort({ orderDate: -1 })
             .deepPopulate('cart.product.priceOptions.option')
+            .populate('client')
             .exec((err, orders) => {
                 if (err)
                     return next(err);

@@ -33,6 +33,7 @@ router.post("/paymentvalidation", function (req, res) {
 			orderNumber: payment.metadata.orderNumber
 		})
 		.deepPopulate('cart.product.priceOptions.option')
+		.populate('client')
 		.exec((err, order) => {
 			if (!order) {
 				console.log("Error while reading Order id:", payment.metadata.orderNumber);
@@ -129,6 +130,7 @@ router.get("/:orderNo", function (req, res) {
 			orderNumber: req.params.orderNo
 		})
 		.deepPopulate('cart.product.priceOptions.option')
+		.populate('client')
 		.exec((err, order) => {
 			if (!order)
 				return res.status(404).render('errors/404');

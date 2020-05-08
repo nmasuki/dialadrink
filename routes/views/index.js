@@ -211,6 +211,7 @@ router.get("/payment/:orderNo", function (req, res) {
             orderNumber: req.params.orderNo
         })
         .deepPopulate('cart.product.priceOptions.option')
+        .populate('client')
         .exec((err, order) => {
             if (!order)
                 return res.status(404).render('errors/404');

@@ -81,6 +81,7 @@ router.get("/:orderNo", function (req, res) {
 
     Order.model.findOne(filter)
         .deepPopulate('cart.product.priceOptions.option')
+        .populate('client')
         .exec((err, order) => {
             
             if (err){
@@ -178,6 +179,7 @@ router.post("/cancel/:orderNo", function(req, res){
 
     Order.model.findOne(filter)
         .deepPopulate('cart.product.priceOptions.option')
+        .populate('client')
         .exec((err, order) => {
 
             if (err)
