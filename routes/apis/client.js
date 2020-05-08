@@ -41,8 +41,9 @@ router.get('/', function(req, res, next){
                     "First:   " + clients.first().createdDate.toISOString(), "\n",
                     "Last:    " + clients.last().createdDate.toISOString()
                 );
+                
                 if (json.bookmark == req.query.bookmark)
-                    delete json.bookmark;
+                    json.bookmark = new Date().addMilliseconds(-1).toISOString();
             }
             res.send(json);
         });
