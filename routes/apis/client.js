@@ -27,9 +27,9 @@ router.get('/', function(req, res, next){
             };
 
             if(clients.length == 100)
-                json.bookmark = clients.last().modifiedDate;
+                json.bookmark = clients.last().modifiedDate.toISOString();
 
-            console.log("First:" + clients.first().modifiedDate, "Last:" + clients.last().modifiedDate)
+            console.log("First:" + clients.first().modifiedDate.toISOString(), "Last:" + clients.last().modifiedDate.toISOString())
             res.send(json);
         });
 

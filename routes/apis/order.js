@@ -46,7 +46,8 @@ router.get("/", function(req, res){
             ].distinct()
         };
     }
-        
+
+    console.log("Looking up orders..")       
 
     Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
@@ -55,6 +56,8 @@ router.get("/", function(req, res){
             if (err){
                 json.message = "Error getting user Orders! " + err;
             } else {
+                console.log("Found " + orders.length);
+
                 json.response = "success";
                 json.data = orders
                     .filter(o => o.cart.filter(c => c.product).length > 0)
