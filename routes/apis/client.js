@@ -5,7 +5,14 @@ var Client = keystone.list("Client");
 var router = keystone.express.Router();
 
 router.get('/', function(req, res, next){
+    var filter = {};
+
+    if (req.query.bookmark)
+        filter.modifiedDate = {$gt: req.query.bookmark};
+
     Client.model.find({})
+        .sort({modifiedDate: -1})
+        .limit(100)
         .exec((err, clients) => {
             if (err)
                 return res.send({
@@ -19,6 +26,10 @@ router.get('/', function(req, res, next){
                 data: clients.map(c => c.toAppObject())
             };
 
+            if(clients.length == 100)
+                json.bookmark = clients.last().modifiedDate;
+
+            console.log("First:" + clients.first().modifiedDate, "Last:" + clients.last().modifiedDate)
             res.send(json);
         });
 
