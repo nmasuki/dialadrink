@@ -520,6 +520,9 @@ Order.schema.methods.toAppObject = function () {
         clientName: this.client? this.client.name: "",
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
+
+    if (!obj.clientName)
+        this.updateClient();
     
     return obj;
 };
