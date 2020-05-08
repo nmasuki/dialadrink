@@ -320,6 +320,7 @@ Order.schema.methods.updateClient = function (next) {
                             }
                         }
                 } else {
+                    saveClient = true;
                     client = keystone.list("Client").model(delivery);
                     client.createdDate = order.orderDate;
                     client.clientIps.push(order.clientIp);
@@ -522,7 +523,7 @@ Order.schema.methods.toAppObject = function () {
     });
 
     if (!obj.client)
-        obj.client = this.delivery;
+        obj.client = new Client.model(this.delivery).toAppObject();
     
     return obj;
 };
