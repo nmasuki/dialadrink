@@ -11,11 +11,11 @@ router.get('/', function(req, res, next){
     var PAGESIZE = 700;
     if (req.query.bookmark){
         console.log("BM:" + req.query.bookmark);
-        filter.createdDate = { $lt: req.query.bookmark };
+        filter.createdDate = { $gt: req.query.bookmark };
     }
 
     Client.model.find({})
-        .sort({createdDate: -1})
+        .sort({createdDate: 1})
         .limit(PAGESIZE)
         .exec((err, clients) => {
             if (err){
@@ -41,9 +41,9 @@ router.get('/', function(req, res, next){
                     "First:   " + clients.first().createdDate.toISOString(), "\n",
                     "Last:    " + clients.last().createdDate.toISOString()
                 );
-                
+
                 if (json.bookmark == req.query.bookmark)
-                    json.bookmark = new Date().addMilliseconds(-1).toISOString();
+                    json.bookmark = new Date().addMilliseconds(1).toISOString();
             }
             res.send(json);
         });

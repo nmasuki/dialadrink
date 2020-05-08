@@ -52,13 +52,13 @@ router.get("/", function(req, res){
 
     if (req.query.bookmark){
         console.log("BM:" + req.query.bookmark);
-        filter.orderDate = { $lt: req.query.bookmark };
+        filter.orderDate = { $gt: req.query.bookmark };
     }
 
     Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .populate('client')
-        .sort({ orderDate: -1 })
+        .sort({ orderDate: 1 })
         .limit(PAGESIZE)
         .exec((err, orders) => {
             if (err){
@@ -81,7 +81,7 @@ router.get("/", function(req, res){
                     );
 
                     if (json.bookmark == req.query.bookmark)
-                        delete json.bookmark;
+                        json.bookmark = new Date().addMilliseconds(1).toISOString();
                 }
             }
             
