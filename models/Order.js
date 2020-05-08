@@ -551,7 +551,12 @@ Order.schema.set('toObject', {
             "promo", "delivery"
         ];
 
-        virtuals.forEach(v => ret[v] = order[v]);
+        virtuals.forEach(v => {
+            if (order[v] && typeof order[v].toAppObject == "function")
+                ret[v] = order[v].toAppObject();
+            else
+                ret[v] = order[v];
+         } );
 
         if (order.promo)
             ret.promo = order.promo.toObject();
