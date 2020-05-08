@@ -5,21 +5,28 @@ var Client = keystone.list("Client");
 var router = keystone.express.Router();
 
 router.get('/', function(req, res, next){
+    console.log("Getting clients for app..");
     var filter = {};
 
-    if (req.query.bookmark)
-        filter.modifiedDate = {$gt: req.query.bookmark};
-    var PAGESIZE = 200;
+    var PAGESIZE = 700;
+    if (req.query.bookmark){
+        console.log("BM:" + req.query.bookmark);
+        filter.createdDate = { $lt: req.query.bookmark };
+    }
 
     Client.model.find({})
-        .sort({modifiedDate: -1})
+        .sort({createdDate: -1})
         .limit(PAGESIZE)
         .exec((err, clients) => {
-            if (err)
+            if (err){
+                console.log("Error!", err);
                 return res.send({
                     response: "error",
                     message: "Error while reading clients list. " + err
                 });
+            }
+
+            console.log("Found " + clients.length + " clients.");
 
             var json = {
                 response: "success",
@@ -27,10 +34,16 @@ router.get('/', function(req, res, next){
                 data: clients.map(c => c.toAppObject())
             };
 
-            if (clients.length == PAGESIZE)
-                json.bookmark = clients.last().modifiedDate.toISOString();
-
-            console.log("First:" + clients.first().modifiedDate.toISOString(), "Last:" + clients.last().modifiedDate.toISOString())
+            if (clients.length == PAGESIZE){
+                json.bookmark = clients.last().createdDate.toISOString();
+                console.log(
+                    "Bookmark:" + json.bookmark, "\n",
+                    "First:   " + clients.first().createdDate.toISOString(), "\n",
+                    "Last:    " + clients.last().createdDate.toISOString()
+                );
+                if (json.bookmark == req.query.bookmark)
+                    delete json.bookmark;
+            }
             res.send(json);
         });
 
