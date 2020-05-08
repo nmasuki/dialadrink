@@ -166,7 +166,7 @@ Client.schema.methods.toAppObject = function () {
         }]
     };
 
-    return {
+    return Object.assign({
         userid: user.id || '',
         user_name: user.name || '',
         username: user.username || (user.email || '').split('@')[0] || 'Guest',
@@ -186,7 +186,7 @@ Client.schema.methods.toAppObject = function () {
         user_status: user.status || '',
         ips: user.clientIps || [],
         deliveryLocation: user.deliveryLocation
-    };
+    }, user.toObject());
 };
 
 Client.schema.methods.copyAppObject = function (obj) {
