@@ -313,7 +313,7 @@ Order.schema.methods.updateClient = function (next) {
                     }
 
                     if (client.modifiedDate < order.orderDate)
-                        for (var i in delivery) {
+                        for (var i in client) {
                             if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
                                 saveClient = true;
                                 client[i] = delivery[i];
