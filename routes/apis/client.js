@@ -35,15 +35,15 @@ router.get('/', function(req, res, next){
             };
 
             if (clients.length == PAGESIZE){
-                json.bookmark = clients.last().createdDate.toISOString();
+                json.bookmark = clients.first().createdDate.toISOString();
+                if (json.bookmark == req.query.bookmark)
+                    json.bookmark = new Date().addMilliseconds(1).toISOString();               
+                    
                 console.log(
                     "Bookmark:" + json.bookmark, "\n",
                     "First:   " + clients.first().createdDate.toISOString(), "\n",
                     "Last:    " + clients.last().createdDate.toISOString()
                 );
-
-                if (json.bookmark == req.query.bookmark)
-                    json.bookmark = new Date().addMilliseconds(1).toISOString();
             }
             res.send(json);
         });

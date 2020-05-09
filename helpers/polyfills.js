@@ -595,13 +595,13 @@ if (!Array.prototype.orderByDescending)
 if (!Array.prototype.max)
     Array.prototype.max = function (clause) {
         var ordered = this.orderByDescending(clause);
-        return ordered.map(clause).first();
+        return clause(ordered.first());
     };
 
-if (!Array.prototype.max)
-    Array.prototype.max = function (clause) {
+if (!Array.prototype.min)
+    Array.prototype.min = function (clause) {
         var ordered = this.orderBy(clause);
-        return ordered.map(clause).first();
+        return clause(ordered.first());
     };
 
 if (!Array.prototype.flatten)
