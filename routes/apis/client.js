@@ -8,7 +8,7 @@ router.get('/', function(req, res, next){
     console.log("Getting clients for app..");
     var filter = {};
 
-    var PAGESIZE = 700;
+    var PAGESIZE = 1500;
     if (req.query.bookmark){
         console.log("Loading Bookmark:" + req.query.bookmark);
         filter.createdDate = { $gt: req.query.bookmark };

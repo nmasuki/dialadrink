@@ -48,7 +48,7 @@ router.get("/", function(req, res){
     }
 
     console.log("Looking up orders..");  
-    var PAGESIZE = 700;
+    var PAGESIZE = 1500;
 
     if (req.query.bookmark){
         console.log("BM:" + req.query.bookmark);
