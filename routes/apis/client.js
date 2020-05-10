@@ -10,11 +10,11 @@ router.get('/', function(req, res, next){
 
     var PAGESIZE = 700;
     if (req.query.bookmark){
-        console.log("BM:" + req.query.bookmark);
+        console.log("Loading Bookmark:" + req.query.bookmark);
         filter.createdDate = { $gt: req.query.bookmark };
     }
 
-    Client.model.find({})
+    Client.model.find(filter)
         .sort({createdDate: 1})
         .limit(PAGESIZE)
         .exec((err, clients) => {
@@ -27,7 +27,6 @@ router.get('/', function(req, res, next){
             }
 
             console.log("Found " + clients.length + " clients.");
-
             var json = {
                 response: "success",
                 message: "",
@@ -35,9 +34,9 @@ router.get('/', function(req, res, next){
             };
 
             if (clients.length == PAGESIZE){
-                json.bookmark = clients.first().createdDate.toISOString();
-                if (json.bookmark == req.query.bookmark)
-                    json.bookmark = new Date().addMilliseconds(1).toISOString();               
+                json.bookmark = clients.last().createdDate.toISOString();
+                if (json.bookmark <= req.query.bookmark)
+                    delete json.bookmark;
                     
                 console.log(
                     "Bookmark:" + json.bookmark, "\n",
@@ -45,6 +44,7 @@ router.get('/', function(req, res, next){
                     "Last:    " + clients.last().createdDate.toISOString()
                 );
             }
+
             res.send(json);
         });
 
