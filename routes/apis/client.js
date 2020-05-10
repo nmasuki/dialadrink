@@ -14,7 +14,7 @@ router.get('/', function(req, res, next){
         filter.$and.push({createdDate: { $gt: req.query.bookmark }});
     }
 
-    if (req.query.query){
+    if (req.query.query && req.query.query.trim()) {
         var fields = ["firstName", "lastName", "phoneNumber", "houseNumber", "username"];
         var regex = new RegExp(req.query.query.trim().escapeRegExp(), "i");
         filter.$or = [];
