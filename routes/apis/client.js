@@ -6,12 +6,12 @@ var router = keystone.express.Router();
 
 router.get('/', function(req, res, next){
     console.log("Getting clients for app..");
-    var filter = {$and:[]};
+    var filter = {};
 
     var PAGESIZE = 1500;
     if (req.query.bookmark){
         console.log("Loading Bookmark:" + req.query.bookmark);
-        filter.$and.push({createdDate: { $gt: req.query.bookmark }});
+        filter.$and = [{createdDate: { $gt: req.query.bookmark }}];
     }
 
     if (req.query.query && req.query.query.trim()) {

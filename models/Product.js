@@ -361,6 +361,7 @@ Product.schema.methods.toAppObject = function () {
             }
         ]
     };
+    
     var cloudinarySmallImageOptions = {
         transformation: [{ background: "white" },
             {
