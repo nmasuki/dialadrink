@@ -6,12 +6,23 @@ var router = keystone.express.Router();
 
 router.get('/', function(req, res, next){
     console.log("Getting clients for app..");
-    var filter = {};
+    var filter = {$and:[]};
 
     var PAGESIZE = 1500;
     if (req.query.bookmark){
         console.log("Loading Bookmark:" + req.query.bookmark);
-        filter.createdDate = { $gt: req.query.bookmark };
+        filter.$and.push({createdDate: { $gt: req.query.bookmark }});
+    }
+
+    if (req.query.query){
+        var fields = ["firstName", "lastName", "phoneNumber", "houseNumber", "username"];
+        var regex = new RegExp(req.query.query.trim().escapeRegExp(), "i");
+        filter.$or = [];
+        fields.forEach(f => {
+            x = {};
+            x[f] = regex;
+            filter.$or.push(x);
+        });
     }
 
     Client.model.find(filter)
