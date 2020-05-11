@@ -5,8 +5,8 @@ var router = keystone.express.Router();
 
 router.get("/:entity", function (req, res, next) {
     var ls = new LocalStorage(req.params.entity);
-    var page = req.query.page || 1;
-    var pageSize = req.query.pageSize || 1500;
+    var page = parseInt(req.query.page || 1);
+    var pageSize = parseInt(req.query.pageSize || 1500);
     var skip = (page - 1) * pageSize;
     
     var all = ls.getAll(), 
