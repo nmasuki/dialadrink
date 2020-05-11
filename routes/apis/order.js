@@ -32,7 +32,7 @@ router.get("/", function(req, res){
             {'rider.confirmed': false}
         ];
 
-        if (false && res.locals.lastCloseOfDay)
+        if (res.locals.lastCloseOfDay)
             filter.$and = [{
                orderDate: {
                    $gt: new Date(res.locals.lastCloseOfDay)
