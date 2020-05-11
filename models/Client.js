@@ -111,7 +111,7 @@ Client.schema.virtual("isAppRegistered").get(function () {
 Client.schema.virtual("name")
     .get(function () {
         var name = ((this.firstName || '').trim() + ' ' + (this.lastName || '').trim());
-        return name.trim().replace("  ", " ");
+        return name.trim().replace("/( ){2,}", " ");
     });
 
 Client.schema.virtual("name")
@@ -169,27 +169,20 @@ Client.schema.virtual("httpAuth")
         return Buffer.from(str).toString('hex');
     });
 
-Client.schema.set('toObject', {
-    transform: function (doc, ret, options) {
-        delete ret.sessions;
-        delete ret._id;
+Client.schema.methods.toAppObject = function (appVersion) {
+    var user = this;
 
-        var user = this;
-        var allowed = ["name", "httpAuth", "imageUrl", "deliveryLocation"];
+    if (appVersion){
+        var ret = Object.assign({ 
+            userid: user.id,
+            username: user.username || (user.email || '').split('@')[0]
+        }, user.toObject());
+
+        var allowed = ["name", "httpAuth", "imageUrl", "deliveryLocation", "isAppRegistered"];
         allowed.forEach(a => ret[a] = user[a]);
 
         return ret;
     }
-});
-
-Client.schema.methods.toAppObject = function (appVersion) {
-    var user = this;
-
-    if (appVersion)
-        return Object.assign({ 
-            userid: user.id,
-            username: user.username || (user.email || '').split('@')[0]
-        }, user.toObject());
 
     return {
         userid: user.id || '',

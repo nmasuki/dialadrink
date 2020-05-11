@@ -27,6 +27,11 @@ function getAll(entityName) {
             all = JSON.parse(jsonStr.replace(/\/\*.*\*\//g, ""));
             if (all.data && all.response)
                 all = all.data;
+
+            if (Array.isArray(all)) {
+                all.forEach(a => a._id = uuidv4());
+                saveAll(entityName, all);
+            }
         }            
     } catch (e) {
         console.error(e);
@@ -105,7 +110,8 @@ function LocalStorage(entityName) {
     };
 
     self.getAll = function () {
-        return Object.values(getAll(entityName));
+        var all = getAll(entityName);
+        return Object.values(all);
     };
 
     self.get = function (id) {

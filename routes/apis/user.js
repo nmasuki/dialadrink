@@ -49,7 +49,7 @@ router.get("/", function (req, res) {
             if (client) {
                 json.response = "success";
                 json.message = "Pulled details using mobile number.";
-                json.data = clien.toAppObject();
+                json.data = client.toAppObject(res.locals.appVersion);
             } else {
                 json.message = "No matching user record found!";
             }

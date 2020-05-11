@@ -9,9 +9,13 @@ router.get("/:entity", function (req, res, next) {
     var pageSize = req.query.pageSize || 1500;
     var skip = (page - 1) * pageSize;
     
+    var all = ls.getAll(), 
+        pageList = all.slice(skip, skip + pageSize);
+
+    console.log("Paging: page:", page, "pageSize:", pageSize, "itemCount:", pageList.length)
     res.send({
         response: "success",
-        data: ls.getAll().slice(skip, skip + pageSize)
+        data: pageList
     });
 });
 
