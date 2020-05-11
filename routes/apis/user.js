@@ -15,22 +15,38 @@ webpush.setVapidDetails(`mailto:${process.env.DEVELOPER_EMAIL}`, publicVapidKey,
 
 router.get("/", function (req, res) {
     var client = res.locals.appUser;
-    if (client)
-        return res.send({
-            response: "success",
-            message: "User pulled from session!",
-            data: client.toAppObject(res.locals.appVersion)
-        });
+    var filter = {};
 
-    var mobile = (req.query.mobile || "").cleanPhoneNumber();
+    if (res.locals.app == "com.dialadrinkkenya.rider") {
+        
+    } else if (res.locals.app == "com.dialadrinkkenya.office") {
+        
+    } else {
+        if (client)
+            return res.send({
+                response: "success",
+                message: "User pulled from session!",
+                data: client.toAppObject(res.locals.appVersion)
+            });
+        else if (req.query.mobile) {
+            filter.phoneNumber = (req.query.mobile || "").cleanPhoneNumber()
+        }else{
+            return res.send({
+                response: "error",
+                message: "Username and password are required!!"
+            });
+        }
+    }
 
-    if (!mobile)
-        return res.send({
-            response: "error",
-            message: "Username and password are required!!"
-        });
-
-    Client.model.find({ phoneNumber: mobile })
+    var page = parseInt(req.query.page || 1);
+    var pageSize = parseInt(req.query.pageSize || 1500);
+    var skip = page * pageSize;
+    console.log("Looking up client..", "filter:", "page:", page, "pageSize:", pageSize, "skip:", skip);
+    
+    Client.model.find(filter)
+        .sort({ registrationDate: -1 })
+        .skip(skip)
+        .limit(pageSize)
         .exec((err, clients) => {
             if (err)
                 return res.send({
