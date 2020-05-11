@@ -49,7 +49,7 @@ router.get("/", function(req, res){
 
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 1500);
-    var skip = (page - 1) * pageSize;
+    var skip = page * pageSize;
     console.log("Looking up orders..", "page:", page, "pageSize:", pageSize, "skip:", skip);
         
     Order.model.find(filter)

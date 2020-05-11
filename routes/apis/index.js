@@ -7,12 +7,12 @@ router.get("/:entity", function (req, res, next) {
     var ls = new LocalStorage(req.params.entity);
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 1500);
-    var skip = (page - 1) * pageSize;
+    var start = (page - 1) * pageSize;
     
     var all = ls.getAll(), 
-        pageList = all.slice(skip, skip + pageSize);
+        pageList = all.slice(start, start + pageSize);
 
-    console.log("Paging: page:", page, "pageSize:", pageSize, "itemCount:", pageList.length)
+    console.log("Paging: page:", page, "pageSize:", pageSize, "itemCount:", pageList.length);
     res.send({
         response: "success",
         data: pageList
