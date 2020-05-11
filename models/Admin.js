@@ -85,7 +85,6 @@ Admin.schema.virtual("lastName")
 
 
 Admin.schema.set('toObject', {
-    virtuals: true,
     transform: function (doc, ret, options) {
         return ret;
     }

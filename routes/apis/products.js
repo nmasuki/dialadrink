@@ -6,13 +6,19 @@ var ProductCategory = keystone.list("ProductCategory");
 var router = keystone.express.Router();
 
 router.get("/", function (req, res) {
-    var since = new Date(req.query.since || '2015-01-01');
-    var filter = {modifiedDate: { $gt: since }};
+    var filter = {};
 
     if(req.query.id)
         filter._id = typeof req.query.id == "string"? req.query.id: {"$in": req.query.id.map(id => id)};
     
-    Product.findPublished(filter, function (err, products) {
+    var page = parseInt(req.query.page || 1);
+    var pageSize = parseInt(req.query.pageSize || 1500);
+    var start = (page - 1) * pageSize;
+    var skip = page * pageSize;
+    
+    var query = req.query.query || "";
+    console.log("Looking up products.. " + query , "page:", page, "pageSize:", pageSize, "skip:", skip);
+    Product.search(query, function (err, products) {
         var json = {
             response: "error",
             message: ""
@@ -22,15 +28,17 @@ router.get("/", function (req, res) {
             json.message = "Error fetching drinks! " + err;
         else {
             json.response = "success";
-            json.data = products.orderBy(p => p.hitsPerWeek)
+            json.data = products.orderBy(p => p.publishedDate)
+                .slice(start, start + pageSize)
                 .selectMany(d => {
                     return d.options.map(o => {
                         var obj = Object.assign(d.toAppObject(), o);
                         obj.price = obj.price || 0;
                         obj.offerPrice = obj.offerPrice || 0;
                         return obj;
-                    });                    
+                    });
                 });
+            console.log("Found " + json.data.length);
         }
 
         res.send(json);

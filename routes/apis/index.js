@@ -8,9 +8,12 @@ router.get("/:entity", function (req, res, next) {
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 1500);
     var start = (page - 1) * pageSize;
+    var query = req.query.query || "";
+    var regex = new RegExp("(" + query.escapeRegExp() + ")", "ig");
     
     var all = ls.getAll(), 
-        pageList = all.slice(start, start + pageSize);
+        filteredList = all.filter(a => !query || regex.test(JSON.stringify(a))),
+        pageList = filteredList.slice(start, start + pageSize);
 
     console.log("Paging: page:", page, "pageSize:", pageSize, "itemCount:", pageList.length);
     res.send({

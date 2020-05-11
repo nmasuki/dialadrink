@@ -32,7 +32,7 @@ router.get("/", function(req, res){
             {'rider.confirmed': false}
         ];
 
-        if (res.locals.lastCloseOfDay)
+        if (false && res.locals.lastCloseOfDay)
             filter.$and = [{
                orderDate: {
                    $gt: new Date(res.locals.lastCloseOfDay)
@@ -50,12 +50,12 @@ router.get("/", function(req, res){
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 1500);
     var skip = page * pageSize;
-    console.log("Looking up orders..", "page:", page, "pageSize:", pageSize, "skip:", skip);
+    console.log("Looking up orders..","filter:", "page:", page, "pageSize:", pageSize, "skip:", skip);
         
     Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .populate('client')
-        .sort({ orderDate: 1 })
+        .sort({ orderDate: -1 })
         .skip(skip)
         .limit(pageSize)
         .exec((err, orders) => {

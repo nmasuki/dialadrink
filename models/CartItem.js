@@ -110,7 +110,7 @@ CartItem.schema.methods.toAppObject = function () {
 };
 
 CartItem.schema.set('toObject', {
-    virtuals: true,
+    virtual: true,
     transform: function (doc, ret, options) {
         var whitelist = ['cartId', 'date', 'pieces', 'state', 'product', 'image', 'quantity', 'price', 'offerPrice', 'currency', 'total'];
         whitelist.forEach(i => ret[i] = doc[i]);
