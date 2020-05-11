@@ -66,6 +66,9 @@ exports.initLocals = function (req, res, next) {
 
     //App
     res.locals.app = req.headers.packagename;
+    
+    //AppVersion
+    res.locals.appVersion = req.headers.appversion;
 
     //Push Notification VAPID public key
     res.locals.vapidPublicKey = process.env.VAPID_PUBLIC_KEY;

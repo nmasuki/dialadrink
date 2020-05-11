@@ -5,9 +5,13 @@ var router = keystone.express.Router();
 
 router.get("/:entity", function (req, res, next) {
     var ls = new LocalStorage(req.params.entity);
+    var page = req.query.page || 1;
+    var pageSize = req.query.pageSize || 1500;
+    var skip = (page - 1) * pageSize;
+    
     res.send({
         response: "success",
-        data: ls.getAll()
+        data: ls.getAll().slice(skip, skip + pageSize)
     });
 });
 

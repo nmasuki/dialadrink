@@ -19,7 +19,7 @@ router.get("/", function (req, res) {
         return res.send({
             response: "success",
             message: "User pulled from session!",
-            data: client.toAppObject()
+            data: client.toAppObject(res.locals.appVersion)
         });
 
     var mobile = (req.query.mobile || "").cleanPhoneNumber();
@@ -70,7 +70,7 @@ router.post("/", function (req, res) {
 
         json.response = "success";
         json.message = "Profile updated successfully";
-        json.data = client.toAppObject();
+        json.data = client.toAppObject(res.locals.appVersion);
         
         client.save();
         res.send(json);
@@ -178,7 +178,7 @@ router.post("/signup", function (req, res) {
 
                 json.response = "success";
                 json.message = "Added Successfully";
-                json.data = client.toAppObject();
+                json.data = client.toAppObject(res.locals.appVersion);
                 res.send(json);
             }
         });
@@ -201,7 +201,7 @@ router.post(["/forgot", "/otp"], function(req, res){
                 client.sendOTP(req.body.otpToken);
 
                 if (req.body.otpToken != undefined) {
-                    json.data = client.toAppObject();
+                    json.data = client.toAppObject(res.locals.appVersion);
                     res.locals.appUser = client;
 
                     if (client.sessions.indexOf(req.sessionID) < 0)
@@ -247,7 +247,7 @@ router.post("/login", function (req, res) {
             if (client) {
                 json.response = "success";
                 json.message = "Login successfully";
-                json.data = client.toAppObject();
+                json.data = client.toAppObject(res.locals.appVersion);
                 res.locals.appUser = client;
 
                 if(client.sessions.indexOf(req.sessionID) < 0)

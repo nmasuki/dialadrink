@@ -131,9 +131,7 @@ Client.schema.virtual("metaData")
 
 
 Client.schema.virtual("metaData")
-    .set(function (value) {
-        this._metaDataJSON = value || {};
-    });
+    .set(function (value) { this._metaDataJSON = value || {}; });
 
 
 Client.schema.virtual("deliveryLocation")
@@ -141,36 +139,63 @@ Client.schema.virtual("deliveryLocation")
 
 
 Client.schema.virtual("deliveryLocation")
-    .set(function(l){ this.deliveryLocationMeta = JSON.stringify(l || {}); });
+    .set(function (l) {
+        this.deliveryLocationMeta = JSON.stringify(l || {});
+    });
 
-Client.schema.methods.toAppObject = function () {
-    var user = this;
+Client.schema.virtual("imageUrl")
+    .get(function () {
+        var user = this;
+        var imagePlaceHolder = this.gender && this.gender[0].toUpperCase() == "M" ?
+            "https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg" :
+            "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg";
 
-    function getUniqueCode() {
-        //var sep = ["-----", new Date().getTime(), "-----"].join('');
+        var cloudinaryOptions = {
+            transformation: [{
+                width: 200,
+                height: 200,
+                gravity: "face",
+                radius: "max",
+                crop: "thumb"
+            }]
+        };
+        return (user.image && user.image.secure_url && cloudinary.url(user.image.public_id, cloudinaryOptions)) || imagePlaceHolder;
+    });
+
+Client.schema.virtual("httpAuth")
+    .get(function () {
+                var user = this;
         var str = [user.phoneNumber, user.password, new Date().getTime()].join(':')
         return Buffer.from(str).toString('hex');
+    });
+
+Client.schema.set('toObject', {
+    transform: function (doc, ret, options) {
+        delete ret.sessions;
+        delete ret._id;
+
+        var user = this;
+        var allowed = ["name", "httpAuth", "imageUrl", "deliveryLocation"];
+        allowed.forEach(a => ret[a] = user[a]);
+
+        return ret;
     }
+});
 
-    var imagePlaceHolder = this.gender && this.gender[0].toUpperCase() == "M" ?
-        "https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg" :
-        "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg";
+Client.schema.methods.toAppObject = function (appVersion) {
+    var user = this;
 
-    var cloudinaryOptions = {
-        transformation: [{
-            width: 200,
-            height: 200,
-            gravity: "face",
-            radius: "max",
-            crop: "thumb"
-        }]
-    };
+    if (appVersion)
+        return Object.assign({ 
+            userid: user.id,
+            username: user.username || (user.email || '').split('@')[0]
+        }, user.toObject());
 
-    return Object.assign({
+    return {
         userid: user.id || '',
         user_name: user.name || '',
-        username: user.username || (user.email || '').split('@')[0] || 'Guest',
-        user_unique_code: getUniqueCode(),
+        username: user.username || (user.email || '').split('@')[0],
+        user_unique_code: user.httpAuth,
         user_password: user.password || '',
         user_email: user.email || '',
         user_mobile: user.phoneNumber || '',
@@ -179,14 +204,14 @@ Client.schema.methods.toAppObject = function () {
         user_country: user.country || '',
         user_address: user.address || '',
         user_directions: user.additional_directions || '',
-        user_image: (user.image && user.image.secure_url && cloudinary.url(user.image.public_id, cloudinaryOptions)) || imagePlaceHolder,
+        user_image: user.imageUrl,
         user_phone_verified: user.isPhoneVerified || '',
         user_reg_date: user.registrationDate || '',
         user_deliverydays: user.deliverydays || '',
         user_status: user.status || '',
         ips: user.clientIps || [],
         deliveryLocation: user.deliveryLocation
-    }, user.toObject());
+    };
 };
 
 Client.schema.methods.copyAppObject = function (obj) {
@@ -210,6 +235,12 @@ Client.schema.methods.copyAppObject = function (obj) {
         if (obj.hasOwnProperty(j))
             client[mapping[j]] = obj[j];
     }
+
+    for (var j in obj) {
+        if (obj.hasOwnProperty(j))
+            client[j] = obj[j];
+    }
+
 };
 
 Client.schema.methods.getSessions = function (next) {

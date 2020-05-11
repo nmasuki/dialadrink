@@ -8,11 +8,10 @@ router.get('/', function(req, res, next){
     console.log("Getting clients for app..");
     var filter = {};
 
-    var PAGESIZE = 1500;
-    if (req.query.bookmark){
-        console.log("Loading Bookmark:" + req.query.bookmark);
-        filter.$and = [{createdDate: { $gt: req.query.bookmark }}];
-    }
+    var page = req.query.page || 1;
+    var pageSize = req.query.pageSize || 1500;
+    var skip = (page - 1) * pageSize;
+    console.log("Looking up clients..", "page:", page, "pageSize:", pageSize, "skip:", skip);
 
     if (req.query.query && req.query.query.trim()) {
         var fields = ["firstName", "lastName", "phoneNumber", "houseNumber", "username"];
@@ -27,7 +26,8 @@ router.get('/', function(req, res, next){
 
     Client.model.find(filter)
         .sort({createdDate: 1})
-        .limit(PAGESIZE)
+        .skip(skip)
+        .limit(pageSize)
         .exec((err, clients) => {
             if (err){
                 console.log("Error!", err);
@@ -41,20 +41,8 @@ router.get('/', function(req, res, next){
             var json = {
                 response: "success",
                 message: "",
-                data: clients.map(c => c.toAppObject())
+                data: clients.map(c => c.toAppObject(res.locals.appVersion))
             };
-
-            if (clients.length == PAGESIZE){
-                json.bookmark = clients.last().createdDate.toISOString();
-                if (json.bookmark <= req.query.bookmark)
-                    delete json.bookmark;
-                    
-                console.log(
-                    "Bookmark:" + json.bookmark, "\n",
-                    "First:   " + clients.first().createdDate.toISOString(), "\n",
-                    "Last:    " + clients.last().createdDate.toISOString()
-                );
-            }
 
             res.send(json);
         });
@@ -88,7 +76,7 @@ router.get('/:id', function(req, res, next){
             var json = {
                 response: "success",
                 message: "",
-                data: client.toAppObject()
+                data: client.toAppObject(res.locals.appVersion)
             };
 
             res.send(json);

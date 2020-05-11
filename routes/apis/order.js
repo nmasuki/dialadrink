@@ -47,19 +47,17 @@ router.get("/", function(req, res){
         };
     }
 
-    console.log("Looking up orders..");  
-    var PAGESIZE = 1500;
-
-    if (req.query.bookmark){
-        console.log("BM:" + req.query.bookmark);
-        filter.orderDate = { $gt: req.query.bookmark };
-    }
-
+    var page = req.query.page || 1;
+    var pageSize = req.query.pageSize || 1500;
+    var skip = (page - 1) * pageSize;
+    console.log("Looking up orders..", "page:", page, "pageSize:", pageSize, "skip:", skip);
+        
     Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .populate('client')
         .sort({ orderDate: 1 })
-        .limit(PAGESIZE)
+        .skip(skip)
+        .limit(pageSize)
         .exec((err, orders) => {
             if (err){
                 json.message = "Error getting user Orders! " + err;
@@ -71,18 +69,6 @@ router.get("/", function(req, res){
                     .filter(o => o.cart.filter(c => c.product).length > 0)
                     .orderByDescending(o => o.orderDate)
                     .map(o => o.toAppObject());
-
-                if (orders.length == PAGESIZE){
-                    json.bookmark = orders.last().orderDate.toISOString();
-                    console.log(
-                        "\nNew BM:" + json.bookmark,
-                        "\nFirst:   " + orders.first().orderDate.toISOString(),
-                        "\nLast:    " + orders.last().orderDate.toISOString()
-                    );
-
-                    if (json.bookmark == req.query.bookmark)
-                        json.bookmark = new Date().addMilliseconds(1).toISOString();
-                }
             }
             
             return res.send(json);
