@@ -19,7 +19,7 @@ router.get("/:entity", function (req, res, next) {
     res.send({
         response: "success",
         data: pageList.map(ret => {
-            if (!global.appUser || global.appUser.id != a.id) {
+            if (!global.appUser || global.appUser.id != ret.id) {
                 delete ret.httpAuth;
                 delete ret.username;
                 delete ret.password;
