@@ -18,7 +18,7 @@ router.get("/:entity", function (req, res, next) {
     console.log("Paging: page:", page, "pageSize:", pageSize, "itemCount:", pageList.length);
     res.send({
         response: "success",
-        data: pageList.map(a => {
+        data: pageList.map(ret => {
             if (!global.appUser || global.appUser.id != a.id) {
                 delete ret.httpAuth;
                 delete ret.username;
@@ -26,6 +26,7 @@ router.get("/:entity", function (req, res, next) {
                 delete ret.user_unique_code;
                 delete ret.user_password;
             }
+            return ret;
         })
     });
 });
