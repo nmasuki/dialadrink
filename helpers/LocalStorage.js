@@ -27,6 +27,18 @@ function getAll(entityName) {
             all = JSON.parse(jsonStr.replace(/\/\*.*\*\//g, ""));
             if (all.data && all.response)
                 all = all.data;
+            
+            for(var i in all){
+                if(all.hasOwnProperty(i))
+                    for(var j in all[i])
+                        if (all[i].hasOwnProperty(j) && j.toString().toLowerCase().indexOf("date") > 0){
+                            try {
+                                all[i][j] = new Date(all[i][j]).toISOString();
+                            }catch(e){
+                                delete all[i][j];
+                            }
+                        }
+            }
         }            
     } catch (e) {
         console.error(e);
