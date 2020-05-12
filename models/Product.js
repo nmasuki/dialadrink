@@ -353,6 +353,7 @@ Product.schema.methods.toAppObject = function () {
     var d = this;
 
     var cloudinaryOptions = {
+        secure: true,
         transformation: [{ background: "white" },
             {
                 width: 250,
@@ -363,6 +364,7 @@ Product.schema.methods.toAppObject = function () {
     };
     
     var cloudinarySmallImageOptions = {
+        secure: true,
         transformation: [{ background: "white" },
             {
                 width: 24,

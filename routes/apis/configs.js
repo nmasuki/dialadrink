@@ -67,6 +67,7 @@ router.get("/banners", function (req, res) {
                             title: p.title,
                             meta: p.meta,
                             image: cloudinary.url(b.public_id, {
+                                secure: true,
                                 height: 450,
                                 crop: "fit",
                             }),
@@ -117,6 +118,7 @@ router.get("/tiles", function (req, res, next) {
     };
 
     var cloudinaryOptions = {
+        secure: true,
         transformation: [{
             width: 250,
             height: 250,

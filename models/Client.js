@@ -151,6 +151,7 @@ Client.schema.virtual("imageUrl")
             "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg";
 
         var cloudinaryOptions = {
+                secure: true,
             transformation: [{
                 width: 200,
                 height: 200,
