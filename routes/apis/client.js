@@ -23,6 +23,27 @@ router.get('/', function(req, res, next){
             filter.$or.push(x);
         });
     }
+    
+    if (res.locals.app == "com.dialadrinkkenya.rider") {
+        
+    } else if (res.locals.app == "com.dialadrinkkenya.office") {
+        
+    } else if (res.locals.appUser) {
+        filter.$and = filter.$and || [];
+        filter.$and.push({
+            phoneNumber: {
+                $in: [
+                    res.locals.appUser.phoneNumber.cleanPhoneNumber(),
+                    res.locals.appUser.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
+                ].distinct()
+            }
+        });
+    } else {
+         return res.send({
+             response: "error",
+             message: "Not Authorized"
+         });
+    }
 
     Client.model.find(filter)
         .sort({createdDate: 1})
