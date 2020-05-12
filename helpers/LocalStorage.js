@@ -116,7 +116,7 @@ function LocalStorage(entityName) {
 
         return all[id];
     };
-};
+}
 
 LocalStorage.getInstance = function(e){ return new LocalStorage(e); }
 
