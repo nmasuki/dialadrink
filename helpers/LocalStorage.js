@@ -27,11 +27,6 @@ function getAll(entityName) {
             all = JSON.parse(jsonStr.replace(/\/\*.*\*\//g, ""));
             if (all.data && all.response)
                 all = all.data;
-
-            if (Array.isArray(all)) {
-                all.filter(a => !a._id).forEach(a => !a._id && a._id = entityName + uuidv4());
-                saveAll(entityName, all);
-            }
         }            
     } catch (e) {
         console.error(e);
