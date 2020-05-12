@@ -352,7 +352,7 @@ exports.requireAPIUser = function (req, res, next) {
 
 var setAppUser = function (req, res, client) {
     if (client) {
-        res.locals.appUser = client;
+        res.locals.appUser = global.appUser = client;
 
         var tosave = false;
         if (client.sessions.indexOf(req.sessionID) < 0) {

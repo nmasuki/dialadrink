@@ -159,21 +159,23 @@ Client.schema.virtual("imageUrl")
                 crop: "thumb"
             }]
         };
+
         return (user.image && user.image.secure_url && cloudinary.url(user.image.public_id, cloudinaryOptions)) || imagePlaceHolder;
     });
 
 Client.schema.virtual("httpAuth")
     .get(function () {
-                var user = this;
-        var str = [user.phoneNumber, user.password, new Date().getTime()].join(':')
+        var user = this;
+        var str = [user.phoneNumber, user.password, new Date().getTime()].join(':');
         return Buffer.from(str).toString('hex');
     });
 
 Client.schema.methods.toAppObject = function (appVersion) {
     var user = this;
+    var ret;
 
     if (appVersion){
-        var ret = Object.assign({ 
+        ret = Object.assign({ 
             userid: user.id,
             username: user.username || (user.email || '').split('@')[0]
         }, user.toObject());
@@ -182,29 +184,38 @@ Client.schema.methods.toAppObject = function (appVersion) {
         allowed.forEach(a => ret[a] = user[a]);
 
         return ret;
+    }else{
+        ret = {
+            userid: user.id || '',
+            user_name: user.name || '',
+            username: user.username || (user.email || '').split('@')[0],
+            user_unique_code: user.httpAuth,
+            user_password: user.password || '',
+            user_email: user.email || '',
+            user_mobile: user.phoneNumber || '',
+            user_state: user.city || '',
+            user_city: user.city || '',
+            user_country: user.country || '',
+            user_address: user.address || '',
+            user_directions: user.additional_directions || '',
+            user_image: user.imageUrl,
+            user_phone_verified: user.isPhoneVerified || '',
+            user_reg_date: user.registrationDate || '',
+            user_deliverydays: user.deliverydays || '',
+            user_status: user.status || '',
+            ips: user.clientIps || [],
+            deliveryLocation: user.deliveryLocation
+        };
     }
 
-    return {
-        userid: user.id || '',
-        user_name: user.name || '',
-        username: user.username || (user.email || '').split('@')[0],
-        user_unique_code: user.httpAuth,
-        user_password: user.password || '',
-        user_email: user.email || '',
-        user_mobile: user.phoneNumber || '',
-        user_state: user.city || '',
-        user_city: user.city || '',
-        user_country: user.country || '',
-        user_address: user.address || '',
-        user_directions: user.additional_directions || '',
-        user_image: user.imageUrl,
-        user_phone_verified: user.isPhoneVerified || '',
-        user_reg_date: user.registrationDate || '',
-        user_deliverydays: user.deliverydays || '',
-        user_status: user.status || '',
-        ips: user.clientIps || [],
-        deliveryLocation: user.deliveryLocation
-    };
+    if (!global.appUser && global.appUser._id == user.id) {
+        delete ret.httpAuth;
+        delete ret.password;
+        delete ret.user_unique_code;
+        delete ret.user_password;
+    }
+
+    return ret;
 };
 
 Client.schema.methods.copyAppObject = function (obj) {
