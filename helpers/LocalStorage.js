@@ -79,7 +79,12 @@ function LocalStorage(entityName) {
             }
 
             entity._rev = (entity._rev ? 1 + entity._rev.split('-')[0] : 1) + "-" + uuidv4();
-            all[id] = entity;
+            all[id] = all[id] || {};
+
+            for (var i in entity){
+                if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false))
+                    all[id][i] = entity[i];
+            }
 
             updates.push({
                 _id: id,

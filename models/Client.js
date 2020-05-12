@@ -208,7 +208,7 @@ Client.schema.methods.toAppObject = function (appVersion) {
         };
     }
 
-    if (!global.appUser && global.appUser._id == user.id) {
+    if (!global.appUser || global.appUser.id != user.id) {
         delete ret.httpAuth;
         delete ret.password;
         delete ret.user_unique_code;
