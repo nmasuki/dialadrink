@@ -50,8 +50,10 @@ router.get("/", function(req, res){
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 1500);
     var skip = page * pageSize;
+    
     console.log("Looking up orders..","filter:", "page:", page, "pageSize:", pageSize, "skip:", skip);
-        
+    console.log(filter);
+
     Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
         .populate('client')
