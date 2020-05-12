@@ -29,7 +29,7 @@ function getAll(entityName) {
                 all = all.data;
 
             if (Array.isArray(all)) {
-                all.forEach(a => a._id = uuidv4());
+                all.filter(a => !a._id).forEach(a => !a._id && a._id = entityName + uuidv4());
                 saveAll(entityName, all);
             }
         }            
