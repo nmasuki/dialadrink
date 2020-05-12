@@ -300,42 +300,46 @@ Order.schema.methods.updateClient = function (next) {
 
         if (findOption.$or.length)
             keystone.list("Client").model.findOne(findOption)
-            .exec((err, client) => {
-                if (err)
-                    return console.warn(err);
+                .exec((err, client) => {
+                    if (err)
+                        return console.warn(err);
 
-                var saveClient = false, delivery = order.delivery.toObject();
-                client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
+                    var saveClient = false, delivery = order.delivery.toObject();
+                    client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
 
-                if (client) {
-                    if (client.clientIps.indexOf(order.clientIp) < 0){
+                    if (client) {
+                        if (client.clientIps.indexOf(order.clientIp) < 0){
+                            saveClient = true;
+                            client.clientIps.push(order.clientIp);
+                        }
+
+                        if (client.modifiedDate < order.orderDate)
+                            for (var i in client) {
+                                if(client.hasOwnProperty(i)){
+                                    if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
+                                        order.client.modifiedDate = new Date();
+                                        saveClient = true;
+                                        client[i] = delivery[i];
+                                    }
+                                }                            
+                            }
+                            
+                    } else {
                         saveClient = true;
+                        client = keystone.list("Client").model(delivery);
+                        client.createdDate = order.orderDate;
                         client.clientIps.push(order.clientIp);
                     }
 
-                    if (client.modifiedDate < order.orderDate)
-                        for (var i in client) {
-                            if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
-                                saveClient = true;
-                                client[i] = delivery[i];
-                            }
-                        }
-                } else {
-                    saveClient = true;
-                    client = keystone.list("Client").model(delivery);
-                    client.createdDate = order.orderDate;
-                    client.clientIps.push(order.clientIp);
-                }
+                    if (saveClient){
+                        console.log((new Date().getTime() - client.modifiedDate.getTime()) + ": Client saved from order!");
+                        client.save();
+                    }    
 
-                if (saveClient){
-                    console.log((new Date().getTime() - client.modifiedDate.getTime()) + ": Client saved from order!");
-                    client.save();
-                }    
-
-                order.client = client;
-                if (typeof next == "function")
-                    next();
-            });
+                    order.client = client;
+                    if (typeof next == "function")
+                        next();
+                });
         else if (typeof next == "function")
             next();
     } else {
