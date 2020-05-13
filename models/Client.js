@@ -179,8 +179,10 @@ Client.schema.methods.toAppObject = function (appVersion) {
 
     if (!this.gender){
         var guessedGender = user.guessGender(user.name);
-        if (guessedGender)
+        if (guessedGender){
             this.gender = guessedGender.gender;
+            this.save();
+        }
     }
 
     if (appVersion){
