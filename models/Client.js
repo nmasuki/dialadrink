@@ -2,6 +2,7 @@ var keystone = require('keystone');
 var cloudinary = require('cloudinary');
 var webpush = require("web-push");
 var fs = require('fs');
+var path = require('path');
 
 var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
 var sms = new (require("../helpers/sms/MoveSMS"))();
@@ -176,9 +177,11 @@ Client.schema.methods.toAppObject = function (appVersion) {
     var user = this;
     var ret = null;
 
-    var guessedGender = user.guessGender();
-    if (guessedGender)
-        this.gender = guessedGender.gender;
+    if (this.gender){
+        var guessedGender = user.guessGender(user.name);
+        if (guessedGender)
+            this.gender = guessedGender.gender;
+    }
 
     if (appVersion){
         ret = Object.assign({ 
@@ -524,11 +527,15 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
     return sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
 
-Client.schema.methods.guessGender = function(firstName){
+Client.schema.methods.guessGender = function(name){
     var filename = path.resolve("../","data", "name_gender.csv");
-    if (fs.existsSync(filename)) {
-        var csvStr = (fs.readFileSync(filename) || "{}").toString();
-        var all = csvStr.split('\n').filter(l => l).map(l => {
+    
+    var guessGenderCSV;
+    if (!guessGenderCSV && fs.existsSync(filename))
+        guessGenderCSV = (fs.readFileSync(filename) || "{}").toString();
+
+    if (guessGenderCSV){
+        var all = guessGenderCSV.split('\n').filter(l => l).map(l => {
             var parts = l.split(',');
             return {
                 id: (parts[0] || "").cleanId(),
@@ -538,10 +545,11 @@ Client.schema.methods.guessGender = function(firstName){
             };
         }).orderBy(x => -x.probability);
         
-        var id = firstName.cleanId();
-        return all.find(x => x.id == id);
+        var ids = name.split(' ').map(n => n.cleanId());
+        return all.find(x => ids.indexOf(x.id) >= 0);
     }
-    return null;
+
+    return null;    
 };
 
 Client.schema.pre('save', function (next) {
