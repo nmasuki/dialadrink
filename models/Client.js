@@ -554,7 +554,13 @@ Client.schema.methods.guessGender = function(name){
                 name: name,
                 male: matches.filter(x => x.gender == "M").avg(x => x.probability) || 0,
                 female: matches.filter(x => x.gender == "F").avg(x => x.probability) || 0,
-                getGender: () => ret.male > ret.female? "MALE": "FEMALE"
+                getGender: () => {
+                    var diff = Math.abs(ret.male - ret.female);
+                    if (diff > 0.2)
+                        return ret.male > ret.female? "MALE": "FEMALE";
+                    else
+                        console.log(name, 100 * ret.male, "% male", 100 * ret.female, "% female");
+                }
             };
             return ret;
         }
