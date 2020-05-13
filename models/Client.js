@@ -146,6 +146,7 @@ Client.schema.virtual("deliveryLocation")
 Client.schema.virtual("imageUrl")
     .get(function () {
         var user = this;
+        
         var imagePlaceHolder = this.gender && this.gender[0].toUpperCase() == "M" ?
             "https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg" :
             "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg";
@@ -173,7 +174,11 @@ Client.schema.virtual("httpAuth")
 
 Client.schema.methods.toAppObject = function (appVersion) {
     var user = this;
-    var ret;
+    var ret = null;
+
+    var guessedGender = user.guessGender();
+    if (guessedGender)
+        this.gender = guessedGender.gender;
 
     if (appVersion){
         ret = Object.assign({ 
@@ -183,8 +188,6 @@ Client.schema.methods.toAppObject = function (appVersion) {
 
         var allowed = ["name", "httpAuth", "imageUrl", "deliveryLocation", "isAppRegistered"];
         allowed.forEach(a => ret[a] = user[a]);
-
-        return ret;
     }else{
         ret = {
             userid: user.id || '',
@@ -521,6 +524,47 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
     return sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
 
+Client.schema.methods.guessGender = function(firstName){
+    var filename = path.resolve("../","data", "name_gender.csv");
+    if (fs.existsSync(filename)) {
+        var csvStr = (fs.readFileSync(filename) || "{}").toString();
+        var all = csvStr.split('\n').filter(l => l).map(l => {
+            var parts = l.split(',');
+            return {
+                id: (parts[0] || "").cleanId(),
+                name: (parts[0]),
+                gender: parts[1],
+                probability: parseFloat(parts[2])
+            };
+        }).orderBy(x => -x.probability);
+        
+        var id = firstName.cleanId();
+        return all.find(x => x.id == id);
+    }
+    return null;
+};
+
+Client.schema.pre('save', function (next) {
+    var user = this;
+    if (user.modifiedDate.addSeconds(10) > new Date()){
+        console.log("Client saved less than 10 sec ago. Skipping save!");
+        return false;
+    }
+
+    user.modifiedDate = new Date();
+    user.clientIps = this.clientIps.filter(ip => ip).distinct();
+    user.metaDataJSON = JSON.stringify(this._metaDataJSON || {});
+
+    if (user.imageUrl) {
+        var opt =  { public_id: "users/" + user.name.cleanId() };
+        cloudinary.v2.uploader.upload(user.imageUrl, opt, (err, res) => {
+            user.image = res;
+            updateOrderStats(user, next);
+        });
+    } else
+        updateOrderStats(user, next);
+});
+
 var updateOrderStats = function(client, next) {
     if (client.phoneNumber)
         client.phoneNumber = client.phoneNumber.cleanPhoneNumber();
@@ -563,26 +607,5 @@ var updateOrderStats = function(client, next) {
         next();
     }
 };
-
-Client.schema.pre('save', function (next) {
-    var user = this;
-    if (user.modifiedDate.addSeconds(10) > new Date()){
-        console.log("Client saved less than 10 sec ago. Skipping save!");
-        return false;
-    }
-
-    user.modifiedDate = new Date();
-    user.clientIps = this.clientIps.filter(ip => ip).distinct();
-    user.metaDataJSON = JSON.stringify(this._metaDataJSON || {});
-
-    if (user.imageUrl) {
-        var opt =  { public_id: "users/" + user.name.cleanId() };
-        cloudinary.v2.uploader.upload(user.imageUrl, opt, (err, res) => {
-            user.image = res;
-            updateOrderStats(user, next);
-        });
-    } else
-        updateOrderStats(user, next);
-});
 
 Client.register();
