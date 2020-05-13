@@ -180,7 +180,7 @@ Client.schema.methods.toAppObject = function (appVersion) {
     if (!this.gender){
         var guessedGender = user.guessGender(user.name);
         if (guessedGender){
-            this.gender = guessedGender.gender;
+            this.gender = guessedGender.getGender();
             this.save();
         }
     }
@@ -529,10 +529,10 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
     return sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
 
+var guessGenderCSV;
 Client.schema.methods.guessGender = function(name){
     var filename = path.resolve("../","data", "name_gender.csv");
     
-    var guessGenderCSV;
     if (!guessGenderCSV && fs.existsSync(filename))
         guessGenderCSV = (fs.readFileSync(filename) || "{}").toString();
 
@@ -548,7 +548,17 @@ Client.schema.methods.guessGender = function(name){
         }).orderBy(x => -x.probability);
         
         var ids = name.split(' ').map(n => n.cleanId());
-        return all.find(x => ids.indexOf(x.id) >= 0);
+        var matches = all.filter(x => ids.indexOf(x.id) >= 0);
+        if(matches.length){
+            var ret = {
+                name: name,
+                male: matches.filter(x => x.gender == "M").avg(x => x.probability) || 0,
+                female: matches.filter(x => x.gender == "F").avg(x => x.probability) || 0,
+                getGender: () => ret.male > ret.female? "MALE": "FEMALE"
+            };
+            return ret;
+        }
+            
     }
 
     return null;    
