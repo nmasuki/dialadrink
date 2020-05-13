@@ -177,7 +177,7 @@ Client.schema.methods.toAppObject = function (appVersion) {
     var user = this;
     var ret = null;
 
-    if (this.gender){
+    if (!this.gender){
         var guessedGender = user.guessGender(user.name);
         if (guessedGender)
             this.gender = guessedGender.gender;
