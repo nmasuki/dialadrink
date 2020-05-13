@@ -177,14 +177,6 @@ Client.schema.methods.toAppObject = function (appVersion) {
     var user = this;
     var ret = null;
 
-    if (!this.gender){
-        var guessedGender = user.guessGender(user.name);
-        if (guessedGender){
-            this.gender = guessedGender.getGender();
-            this.save();
-        }
-    }
-
     if (appVersion){
         ret = Object.assign({ 
             userid: user.id,
@@ -529,45 +521,50 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
     return sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
 
-var guessGenderCSV;
+var genderList = null;
 Client.schema.methods.guessGender = function(name){
-    var filename = path.resolve("../","data", "name_gender.csv");
-    
-    if (!guessGenderCSV && fs.existsSync(filename))
-        guessGenderCSV = (fs.readFileSync(filename) || "{}").toString();
+       var filename = path.resolve("../", "data", "name_gender.csv");
 
-    if (guessGenderCSV){
-        var all = guessGenderCSV.split('\n').filter(l => l).map(l => {
-            var parts = l.split(',');
-            return {
-                id: (parts[0] || "").cleanId(),
-                name: (parts[0]),
-                gender: parts[1],
-                probability: parseFloat(parts[2])
-            };
-        }).orderBy(x => -x.probability);
-        
-        var ids = name.split(' ').map(n => n.cleanId());
-        var matches = all.filter(x => ids.indexOf(x.id) >= 0);
-        if(matches.length){
-            var ret = {
-                name: name,
-                male: matches.filter(x => x.gender == "M").avg(x => x.probability) || 0,
-                female: matches.filter(x => x.gender == "F").avg(x => x.probability) || 0,
-                getGender: () => {
-                    var diff = Math.abs(ret.male - ret.female);
+       if (!genderList && fs.existsSync(filename)) {
+           var guessGenderCSV = (fs.readFileSync(filename) || "{}").toString();
+           if (guessGenderCSV) {
+               genderList = guessGenderCSV.split('\n').filter(l => l).map(l => {
+                   var parts = l.split(',');
+                   return {
+                       id: (parts[0] || "").cleanId(),
+                       name: (parts[0]),
+                       gender: parts[1],
+                       probability: parseFloat(parts[2])
+                   };
+               }).orderBy(x => -x.probability);
+           }
+       }
+
+       var ids = name.split(' ').map(n => n.cleanId());
+       var matches = genderList.filter(x => ids.indexOf(x.id) >= 0);
+
+       if (matches.length) {
+           var sum = matches.sum(x => x.probability);
+           var ret = {
+               name: name,
+               male: (matches.filter(x => x.gender == "M").sum(x => x.probability) || 0) / sum,
+               female: (matches.filter(x => x.gender == "F").sum(x => x.probability) || 0) / sum,
+               getGender: () => {
+                   var diff = Math.abs(ret.male - ret.female);
+                   
                     if (diff > 0.2)
-                        return ret.male > ret.female? "MALE": "FEMALE";
+                       return ret.male > ret.female ? "MALE" : "FEMALE";
                     else
-                        console.log(name, 100 * ret.male, "% male", 100 * ret.female, "% female");
-                }
-            };
-            return ret;
-        }
-            
-    }
+                        console.log(name,
+                            Math.round(100 * ret.male) + "% male,",
+                            Math.round(100 * ret.female) + "% female");
+               }
+           };
+           return ret;
+       }
 
-    return null;    
+       return null;
+
 };
 
 Client.schema.pre('save', function (next) {
@@ -617,6 +614,7 @@ var updateOrderStats = function(client, next) {
                 if (err)
                     return next(err);
 
+                orders = orders.filter(x => x);
                 if (client.orderCount && client.orderCount == orders.length)
                     next();
 
