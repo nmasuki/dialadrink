@@ -13,8 +13,7 @@ router.get("/", function (req, res) {
     
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 1500);
-    var start = (page - 1) * pageSize;
-    var skip = page * pageSize;
+    var skip = (page - 1) * pageSize;
     
     var query = req.query.query || "";
     console.log("Looking up products.. " + query , "page:", page, "pageSize:", pageSize, "skip:", skip);
