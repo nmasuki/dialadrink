@@ -15,7 +15,7 @@ router.get("/:entity", function (req, res, next) {
         filteredList = all.filter(a => !query || regex.test(JSON.stringify(a))),
         pageList = filteredList.slice(start, start + pageSize);
 
-    console.log("Paging: page:", page, "pageSize:", pageSize, "itemCount:", pageList.length);
+    console.log(req.params.entity  + " page:", page, "pageSize:", pageSize, "itemCount:", pageList.length);
     res.send({
         response: "success",
         data: pageList.map(ret => {

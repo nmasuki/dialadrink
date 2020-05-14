@@ -148,12 +148,12 @@ Client.schema.virtual("imageUrl")
     .get(function () {
         var user = this;
         
-        var imagePlaceHolder = this.gender && this.gender[0].toUpperCase() == "M" ?
-            "https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg" :
-            "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg";
+        var imagePlaceHolder = this.gender && this.gender[0].toUpperCase() == "F"?
+            "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg":
+            "https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg";
 
         var cloudinaryOptions = {
-                secure: true,
+            secure: true,
             transformation: [{
                 width: 200,
                 height: 200,
