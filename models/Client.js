@@ -175,7 +175,7 @@ Client.schema.virtual("httpAuth")
 
 Client.schema.methods.toAppObject = function (appVersion) {
     var user = this;
-    var ret = null;
+    var ret = null; 
 
     if (appVersion || global.appVersion) {
         ret = Object.assign({ 
