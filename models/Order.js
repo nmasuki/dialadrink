@@ -311,7 +311,7 @@ Order.schema.methods.updateClient = function (next) {
                             client.clientIps.push(order.clientIp);
                         }
 
-                        if (client.modifiedDate < order.orderDate)
+                        if (client.modifiedDate < order.orderDate){
                             for (var i in client) {
                                 if(client.hasOwnProperty(i)){
                                     if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
@@ -319,8 +319,8 @@ Order.schema.methods.updateClient = function (next) {
                                         client[i] = delivery[i];
                                     }
                                 }                            
-                            }
-                            
+                            }                            
+                        }
                     } else {
                         client = keystone.list("Client").model(delivery);
                         client.createdDate = order.orderDate;

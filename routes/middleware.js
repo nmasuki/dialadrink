@@ -68,7 +68,7 @@ exports.initLocals = function (req, res, next) {
     res.locals.app = req.headers.packagename;
     
     //AppVersion
-    res.locals.appVersion = req.headers.appversion;
+    res.locals.appVersion = global.appVersion = req.headers.appversion;
 
     //Push Notification VAPID public key
     res.locals.vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
@@ -353,6 +353,7 @@ exports.requireAPIUser = function (req, res, next) {
 var setAppUser = function (req, res, client) {
     if (client) {
         res.locals.appUser = global.appUser = client;
+
 
         var tosave = false;
         if (client.sessions.indexOf(req.sessionID) < 0) {

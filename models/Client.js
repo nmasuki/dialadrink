@@ -177,7 +177,7 @@ Client.schema.methods.toAppObject = function (appVersion) {
     var user = this;
     var ret = null;
 
-    if (appVersion){
+    if (appVersion || global.appVersion) {
         ret = Object.assign({ 
             userid: user.id,
             username: user.username || (user.email || '').split('@')[0]
