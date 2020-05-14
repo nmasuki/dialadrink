@@ -3,7 +3,7 @@ var Order = keystone.list('Order');
 
 exports = module.exports = function (done) {
     console.log("Extracting clients from orders");
-    Order.model.find({})
+    Order.model.find({orderDate:{ $gt: new Date('2020-01-01') }})
         .sort({orderDate: -1})
         .exec(function (err, orders) {
             var index = -1;

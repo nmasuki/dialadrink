@@ -304,12 +304,10 @@ Order.schema.methods.updateClient = function (next) {
                     if (err)
                         return console.warn(err);
 
-                    var saveClient = false, delivery = order.delivery.toObject();
                     client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
 
                     if (client) {
                         if (client.clientIps.indexOf(order.clientIp) < 0){
-                            saveClient = true;
                             client.clientIps.push(order.clientIp);
                         }
 
@@ -324,16 +322,11 @@ Order.schema.methods.updateClient = function (next) {
                             }
                             
                     } else {
-                        saveClient = true;
                         client = keystone.list("Client").model(delivery);
                         client.createdDate = order.orderDate;
                         client.clientIps.push(order.clientIp);
-                    }
-
-                    if (saveClient){
-                        console.log((new Date().getTime() - client.modifiedDate.getTime()) + ": Client saved from order!");
                         client.save();
-                    }    
+                    }
 
                     order.client = client;
                     if (typeof next == "function")
