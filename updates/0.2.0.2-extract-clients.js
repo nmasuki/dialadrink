@@ -2,6 +2,7 @@ var keystone = require('keystone');
 var Order = keystone.list('Order');
 
 exports = module.exports = function (done) {
+    console.log("Extracting clients from orders");
     Order.model.find({})
         .sort({orderDate: -1})
         .exec(function (err, orders) {
@@ -13,6 +14,7 @@ exports = module.exports = function (done) {
                 if(order)
                     order.updateClient(updateClient);                
             })();
+
             done();
         });
 };
