@@ -5,10 +5,8 @@ var Order = keystone.list("Order");
 
 var router = keystone.express.Router();
 
-router.get('/:id', function (req, res, next) {
-    var filter = {
-        $or: [{ _id: req.params.id }]
-    };
+function getClientById(req, res, id, next){
+    var filter = { _id: id };
 
     Client.model.findOne(filter)
         .exec((err, client) => {
@@ -17,8 +15,8 @@ router.get('/:id', function (req, res, next) {
                     response: "error",
                     message: "Error while reading client. " + err
                 });
-            else if(!client){
-                Order.model.findOne({client: req.params.id})
+            else if (!client) {
+                Order.model.findOne({ client:  id })
                     .exec((err, order) => {
                         if (err || !order || !order.delivery || !order.phoneNumber)
                             return res.send({
@@ -38,32 +36,34 @@ router.get('/:id', function (req, res, next) {
 
                         Client.model.findOne(filter)
                             .exec((err, client) => {
-                                    if (err)
-                                        return res.send({
-                                            response: "error",
-                                            message: "Error while reading client. " + err
-                                        });
-                                    
-                                    if(!client){
-                                        client = new Client.model(order.delivery);
-                                        client.save();
-                                    }
-                                    
-                                    res.send({
-                                        response: "success",
-                                        message: "",
-                                        data: client.toAppObject(res.locals.appVersion)
+                                if (err)
+                                    return res.send({
+                                        response: "error",
+                                        message: "Error while reading client. " + err
                                     });
-                                });
+
+                                if (!client) {
+                                    client = new Client.model(order.delivery);
+                                    client.save();
+                                }
+
+                                next(client);
+                            });
                     });
-            }else{
-                res.send({
-                    response: "success",
-                    message: "",
-                    data: client.toAppObject(res.locals.appVersion)
-                });
+            } else {
+                next(client);
             }
         });
+}
+
+router.get('/:id', function (req, res, next) {
+    getClientById(req, res, req.params.id, client => {
+        res.send({
+            response: "success",
+            message: "",
+            data: client.toAppObject()
+        });
+    });
 });
 
 router.get('/', function(req, res, next){
@@ -124,7 +124,7 @@ router.get('/', function(req, res, next){
             var json = {
                 response: "success",
                 message: "",
-                data: clients.map(c => c.toAppObject(res.locals.appVersion))
+                data: clients.map(c => c.toAppObject())
             };
 
             res.send(json);
@@ -133,6 +133,30 @@ router.get('/', function(req, res, next){
 });
 
 router.post("/", function (req, res) {
+    getClientById(req, res, req.body._id, client => {
+        var message = "";
+        if(!client){
+            client = new Client.model(req.body);
+            message = "Created new client!";
+        }else{
+            message = "Updating client record!";
+        }
+
+        client.save(err => {
+            if(err)
+                return res.send({
+                    response: "error",
+                    message: "Error while saving client details. " + err
+                });
+            
+            res.send({
+                response: "success",
+                message: message,
+                data: client.toAppObject()
+            });
+        });
+
+    });
     return res.send({
         response: "error",
         message: "Method not implimented!"

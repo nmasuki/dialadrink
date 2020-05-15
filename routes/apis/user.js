@@ -26,7 +26,7 @@ router.get("/", function (req, res) {
             return res.send({
                 response: "success",
                 message: "User pulled from session!",
-                data: client.toAppObject(res.locals.appVersion)
+                data: client.toAppObject()
             });
         else if (req.query.mobile) {
             filter.phoneNumber = (req.query.mobile || "").cleanPhoneNumber()
@@ -65,7 +65,7 @@ router.get("/", function (req, res) {
             if (client) {
                 json.response = "success";
                 json.message = "Pulled details using mobile number.";
-                json.data = client.toAppObject(res.locals.appVersion);
+                json.data = client.toAppObject();
             } else {
                 json.message = "No matching user record found!";
             }
@@ -86,7 +86,7 @@ router.post("/", function (req, res) {
 
         json.response = "success";
         json.message = "Profile updated successfully";
-        json.data = client.toAppObject(res.locals.appVersion);
+        json.data = client.toAppObject();
         
         client.save();
         res.send(json);
@@ -194,7 +194,7 @@ router.post("/signup", function (req, res) {
 
                 json.response = "success";
                 json.message = "Added Successfully";
-                json.data = client.toAppObject(res.locals.appVersion);
+                json.data = client.toAppObject();
                 res.send(json);
             }
         });
@@ -217,7 +217,7 @@ router.post(["/forgot", "/otp"], function(req, res){
                 client.sendOTP(req.body.otpToken);
 
                 if (req.body.otpToken != undefined) {
-                    json.data = client.toAppObject(res.locals.appVersion);
+                    json.data = client.toAppObject();
                     res.locals.appUser = client;
 
                     if (client.sessions.indexOf(req.sessionID) < 0)
@@ -263,7 +263,7 @@ router.post("/login", function (req, res) {
             if (client) {
                 json.response = "success";
                 json.message = "Login successfully";
-                json.data = client.toAppObject(res.locals.appVersion);
+                json.data = client.toAppObject();
                 res.locals.appUser = client;
 
                 if(client.sessions.indexOf(req.sessionID) < 0)
