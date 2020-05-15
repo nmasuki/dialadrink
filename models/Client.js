@@ -211,10 +211,13 @@ Client.schema.methods.toAppObject = function (appVersion) {
     }
 
     if (!global.appUser || global.appUser.id != user.id) {
-        delete ret.httpAuth;
-        delete ret.password;
-        delete ret.user_unique_code;
-        delete ret.user_password;
+        var toDel = [
+            "image", "tempPassword", 
+            "httpAuth", "password", 
+            "user_unique_code", "user_password", 
+            "metaDataJSON", "key"
+        ];
+        toDel.forEach(x => delete ret[x]);
     }
 
     return ret;
