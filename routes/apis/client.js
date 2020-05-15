@@ -1,11 +1,10 @@
-var MoveSms = require("../../helpers/sms/MoveSMS");
 var keystone = require('keystone');
 var Client = keystone.list("Client");
 var Order = keystone.list("Order");
 
 var router = keystone.express.Router();
 
-function getClientById(req, res, next){
+function getClientByReq(req, res, next){
     var filter = { $or:[]};
 
     req.body = req.body || {};
@@ -70,16 +69,6 @@ function getClientById(req, res, next){
             }
         });
 }
-
-router.get('/:id', function (req, res, next) {
-    getClientById(req, res, client => {
-        res.send({
-            response: "success",
-            message: "",
-            data: client.toAppObject()
-        });
-    });
-});
 
 router.get('/', function(req, res, next){
     console.log("Getting clients for app..");
@@ -147,8 +136,18 @@ router.get('/', function(req, res, next){
 
 });
 
+router.get('/:id', function (req, res, next) {
+    getClientByReq(req, res, client => {
+        res.send({
+            response: "success",
+            message: "",
+            data: client.toAppObject()
+        });
+    });
+});
+
 router.post("/", function (req, res) {
-    getClientById(req, res, client => {
+    getClientByReq(req, res, client => {
         var message = "";
         if(!client){
             client = new Client.model(req.body);
