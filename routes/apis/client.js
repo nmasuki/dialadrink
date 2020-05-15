@@ -58,12 +58,11 @@ function getClientByReq(req, res, next){
 
                                 if (!client) {
                                     client = new Client.model(order.delivery);
-                                    client.save();
-                                }
-
-                                next(client);
+                                    client.save(err => next(client));
+                                }else
+                                    next(client);
                             });
-                    });
+                        });
             } else {
                 next(client);
             }
@@ -154,13 +153,12 @@ router.post("/", function (req, res) {
             message = "Created new client!";
         }else{
             message = "Updating client record!";
-            if (req.body._rev && req.body._rev < client._v){
+            if (req.body._rev && req.body._rev < client._v)
                return res.send({
                    response: "error",
                    message: `Document Conflict! Rev: ${client._v} Your's: ${req.body._rev}`,
                    data: client.toAppObject()
-               });
-            }
+               });            
         }
 
         client.save(err => {
@@ -177,10 +175,6 @@ router.post("/", function (req, res) {
             });
         });
 
-    });
-    return res.send({
-        response: "error",
-        message: "Method not implimented!"
     });
 });
 
