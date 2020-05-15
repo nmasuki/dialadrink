@@ -513,15 +513,40 @@ Order.schema.methods.sendOrderNotification = function (next) {
 };
 
 Order.schema.methods.toAppObject = function () {
+    var order = this;
     var obj = Object.assign(this.toObject(), {
         orderAmount: this.orderAmount || this.total,
         clientName: this.client? this.client.name: "",
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
 
-    if (!obj.client)
-        obj.client = new Client.model(this.delivery).toAppObject();
-    
+    if (!obj.client){
+        var clientId = this.client && (this.client._id || this.client);
+        var client = new Client.model(this.delivery);        
+        obj.client = client.toAppObject();
+
+        var filter = { $or: [] };
+        if(client.phoneNumber)
+            filter.$or.push({phoneNumber: client.phoneNumber.cleanPhoneNumber()});
+        if(client.email)
+            filter.$or.push({email: client.email});
+
+        if(filter.$or.length){
+            Client.model.findOne(filter)
+                .exec((err, _client) => {
+                    if(err)
+                        return console.log("Error reading client!", err);
+                    if(_client)
+                        order.client = _client;
+                    else{
+                        client.save();
+                        order.client = client;
+                    }
+
+                    order.save();
+                });
+        }
+    }
     return obj;
 };
 

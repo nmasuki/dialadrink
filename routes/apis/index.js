@@ -33,10 +33,20 @@ router.get("/:entity", function (req, res, next) {
 
 router.get("/:entity/:id", function (req, res, next) {
     var ls = new LocalStorage(req.params.entity);
-    res.send({
-        response: "success",
-        data: ls.get(req.params.id)
-    });
+    var data = ls.get(req.params.id);
+    
+    if(data){
+        res.send({
+            response: "success",
+            data: data
+        });
+    }else{
+        res.send({
+            response: "error",
+            message: "No data found for id:" + req.params.id,
+            data: data
+        });
+    }
 });
 
 router.post("/:entity", function (req, res, next) {
