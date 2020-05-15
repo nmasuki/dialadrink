@@ -702,9 +702,7 @@ if (!Promise.prototype.finally)
 if (!Promise.any)
     Promise.any = function (promises) {
         return new Promise(function (resolve, reject) {
-            var count = promises.length,
-                resolved = false, 
-                notResolvedError = new Error("No promises resolved successfully.");
+            var count = promises.length, resolved = false;
             promises.forEach(function (p) {
                 Promise.resolve(p).then(function (value) {
                     count--;
@@ -712,7 +710,7 @@ if (!Promise.any)
                     resolve(value);
                 }, function () {
                     if (--count === 0 && !resolved)
-                        reject(notResolvedError);                    
+                        reject("No promises resolved successfully.");
                 });
             });
         });
