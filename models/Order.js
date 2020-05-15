@@ -512,6 +512,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
     }
 };
 
+var clients = [];
 Order.schema.methods.toAppObject = function () {
     var order = this;
     var obj = Object.assign(this.toObject(), {
@@ -520,14 +521,24 @@ Order.schema.methods.toAppObject = function () {
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
 
+    var phoneNumber = this.delivery.phoneNumber.cleanPhoneNumber();
+    var email = this.email;
+
     if (!obj.client){
-        var clientId = this.client && (this.client._id || this.client);
-        var client = new Client.model(this.delivery);        
+        var client = clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
+        if(client){
+            order.client = client._id;
+            obj.client = client.toAppObject();
+            order.save();
+            return obj;
+        }
+
+        client = new Client.model(this.delivery);
+        clients.push(client);
+
+        order.client = client._id;
         obj.client = client.toAppObject();
-
-        if (clientId)
-            client._id = clientId;
-
+        
         var filter = { $or: [] };
         if(client.phoneNumber)
             filter.$or.push({phoneNumber: client.phoneNumber.cleanPhoneNumber()});
@@ -539,6 +550,7 @@ Order.schema.methods.toAppObject = function () {
                 .exec((err, _client) => {
                     if(err)
                         return console.log("Error reading client!", err);
+                    
                     if(_client)
                         order.client = _client;
                     else{
