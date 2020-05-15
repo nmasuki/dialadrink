@@ -525,6 +525,9 @@ Order.schema.methods.toAppObject = function () {
         var client = new Client.model(this.delivery);        
         obj.client = client.toAppObject();
 
+        if (clientId)
+            client._id = clientId;
+
         var filter = { $or: [] };
         if(client.phoneNumber)
             filter.$or.push({phoneNumber: client.phoneNumber.cleanPhoneNumber()});
