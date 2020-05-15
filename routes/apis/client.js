@@ -5,8 +5,23 @@ var Order = keystone.list("Order");
 
 var router = keystone.express.Router();
 
-function getClientById(req, res, id, next){
-    var filter = { _id: id };
+function getClientById(req, res, next){
+    var filter = { $or:[]};
+
+    req.body = req.body || {};
+    req.params = req.params || {};
+    req.query = req.query || {};
+    var id = req.body._id || req.params.id || req.query.id;
+
+    if(id)
+        filter.$or.push({ _id: id });
+    
+    if(req.body.phoneNumber || req.query.mobile){
+        var phoneNumber = req.body.phoneNumber || req.params.mobile || req.query.mobile;
+        filter.$or.push({ phoneNumber: phoneNumber.cleanPhoneNumber() });
+        filter.$or.push({ phoneNumber: phoneNumber.cleanPhoneNumber().replace(/\+?254/, "0") });
+        filter.$or.push({ phoneNumber: phoneNumber });
+    }
 
     Client.model.findOne(filter)
         .exec((err, client) => {
@@ -57,7 +72,7 @@ function getClientById(req, res, id, next){
 }
 
 router.get('/:id', function (req, res, next) {
-    getClientById(req, res, req.params.id, client => {
+    getClientById(req, res, client => {
         res.send({
             response: "success",
             message: "",
@@ -133,13 +148,20 @@ router.get('/', function(req, res, next){
 });
 
 router.post("/", function (req, res) {
-    getClientById(req, res, req.body._id, client => {
+    getClientById(req, res, client => {
         var message = "";
         if(!client){
             client = new Client.model(req.body);
             message = "Created new client!";
         }else{
             message = "Updating client record!";
+            if (req.body._rev && req.body._rev < client._v){
+               return res.send({
+                   response: "error",
+                   message: `Document Conflict! Rev: ${client._v} Your's: ${req.body._rev}`,
+                   data: client.toAppObject()
+               });
+            }
         }
 
         client.save(err => {
