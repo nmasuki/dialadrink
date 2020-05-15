@@ -1,6 +1,7 @@
 var MoveSms = require("../../helpers/sms/MoveSMS");
 var keystone = require('keystone');
 var Client = keystone.list("Client");
+var Order = keystone.list("Order");
 
 var router = keystone.express.Router();
 
@@ -16,14 +17,52 @@ router.get('/:id', function (req, res, next) {
                     response: "error",
                     message: "Error while reading clients list. " + err
                 });
+            else if(!client){
+                Order.model.findOne({client: req.params.id})
+                    .exec((err, order) => {
+                        if (err || !order || !order.delivery || !order.phoneNumber)
+                            return res.send({
+                                response: "error",
+                                message: "Error while reading clients list. " + (err || "")
+                            });
 
-            var json = {
-                response: "success",
-                message: "",
-                data: client.toAppObject(res.locals.appVersion)
-            };
+                        filter = {
+                            $or: [{
+                                phoneNumber: order.phoneNumber
+                            }, {
+                                phoneNumber: order.phoneNumber.cleanPhoneNumber()
+                            }, {
+                                phoneNumber: order.phoneNumber.cleanPhoneNumber().replace(/^254/, "0")
+                            }].distinct()
+                        };
 
-            res.send(json);
+                        Client.model.findOne(filter)
+                            .exec((err, client) => {
+                                    if (err)
+                                        return res.send({
+                                            response: "error",
+                                            message: "Error while reading clients list. " + err
+                                        });
+                                    
+                                    if(!client){
+                                        client = new Client.model(order.delivery);
+                                        client.save();
+                                    }
+                                    
+                                    res.send({
+                                        response: "success",
+                                        message: "",
+                                        data: client.toAppObject(res.locals.appVersion)
+                                    });
+                                });
+                    });
+            }else{
+                res.send({
+                    response: "success",
+                    message: "",
+                    data: client.toAppObject(res.locals.appVersion)
+                });
+            }
         });
 });
 
