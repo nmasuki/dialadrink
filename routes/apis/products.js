@@ -16,7 +16,7 @@ router.get("/", function (req, res) {
     var start = (page - 1) * pageSize;
     
     var query = req.query.query || "";
-    console.log("Looking up products.. " + query , "page:", page, "pageSize:", pageSize, "skip:", skip);
+    console.log("Looking up products.. " + query, "page:", page, "pageSize:", pageSize, "skip:", start);
     Product.search(query, function (err, products) {
         var json = {
             response: "error",

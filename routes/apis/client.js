@@ -4,6 +4,29 @@ var Client = keystone.list("Client");
 
 var router = keystone.express.Router();
 
+router.get('/:id', function (req, res, next) {
+    var filter = {
+        $or: [{ _id: req.params.id }]
+    };
+
+    Client.model.findOne(filter)
+        .exec((err, client) => {
+            if (err)
+                return res.send({
+                    response: "error",
+                    message: "Error while reading clients list. " + err
+                });
+
+            var json = {
+                response: "success",
+                message: "",
+                data: client.toAppObject(res.locals.appVersion)
+            };
+
+            res.send(json);
+        });
+});
+
 router.get('/', function(req, res, next){
     console.log("Getting clients for app..");
     var filter = {};
@@ -76,33 +99,5 @@ router.post("/", function (req, res) {
         message: "Method not implimented!"
     });
 });
-
-router.get('/:id', function(req, res, next){
-    var filter = {
-        $or: [{
-            _id: req.params.id
-        }]
-    };
-
-    Client.model.find({
-            filter
-        })
-        .exec((err, client) => {
-            if (err)
-                return res.send({
-                    response: "error",
-                    message: "Error while reading clients list. " + err
-                });
-
-            var json = {
-                response: "success",
-                message: "",
-                data: client.toAppObject(res.locals.appVersion)
-            };
-
-            res.send(json);
-        });
-});
-
 
 module.exports = router;
