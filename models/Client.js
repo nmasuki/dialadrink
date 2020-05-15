@@ -182,7 +182,7 @@ Client.schema.methods.toAppObject = function (appVersion) {
             userid: user.id,
             username: user.username || (user.email || '').split('@')[0]
         }, user.toObject());
-        ret._rev = user._v;
+        ret.__v = user.__v;
 
         var allowed = ["name", "httpAuth", "imageUrl", "deliveryLocation", "isAppRegistered"];
         allowed.forEach(a => ret[a] = user[a]);

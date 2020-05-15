@@ -80,8 +80,8 @@ function LocalStorage(entityName) {
         function setEntiry(entity) {
             var id = entity._id || entity.id || entity.Id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
 
-            if (all[id] && all[id].rev > entity._rev) {
-                var msg = ["Document conflict! ", id, all[id].rev, entity._rev].join("\t");
+            if (all[id] && all[id].rev > entity.__v) {
+                var msg = ["Document conflict! ", id, all[id].rev, entity.__v].join("\t");
                 errors.push({
                     _id: id,
                     error: msg
@@ -90,7 +90,7 @@ function LocalStorage(entityName) {
                 return console.error(msg);
             }
 
-            entity._rev = (entity._rev ? 1 + entity._rev.split('-')[0] : 1) + "-" + uuidv4();
+            entity.__v = (entity.__v ? 1 + entity.__v.split('-')[0] : 1) + "-" + uuidv4();
             all[id] = all[id] || {};
 
             for (var i in entity){
@@ -100,7 +100,7 @@ function LocalStorage(entityName) {
 
             updates.push({
                 _id: id,
-                _rev: entity._rev
+                __v: entity.__v
             });
         }
 

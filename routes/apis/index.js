@@ -34,7 +34,7 @@ router.get("/:entity", function (req, res, next) {
 router.get("/:entity/:id", function (req, res, next) {
     var ls = new LocalStorage(req.params.entity);
     var data = ls.get(req.params.id);
-    
+
     if(data){
         res.send({
             response: "success",
@@ -61,7 +61,7 @@ router.post("/:entity", function (req, res, next) {
     ls.save(entity).then(updates => {
         json.response = "success";
         json._ids = updates.map(n => n._id);
-        json._revs = updates.map(n => n._rev);
+        json._revs = updates.map(n => n.__v);
 
         res.send(json);
     }).catch(err => {
