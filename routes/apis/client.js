@@ -15,7 +15,7 @@ router.get('/:id', function (req, res, next) {
             if (err)
                 return res.send({
                     response: "error",
-                    message: "Error while reading clients list. " + err
+                    message: "Error while reading client. " + err
                 });
             else if(!client){
                 Order.model.findOne({client: req.params.id})
@@ -23,7 +23,7 @@ router.get('/:id', function (req, res, next) {
                         if (err || !order || !order.delivery || !order.phoneNumber)
                             return res.send({
                                 response: "error",
-                                message: "Error while reading clients list. " + (err || "")
+                                message: "Error while reading client. " + (err || "")
                             });
 
                         filter = {
@@ -41,7 +41,7 @@ router.get('/:id', function (req, res, next) {
                                     if (err)
                                         return res.send({
                                             response: "error",
-                                            message: "Error while reading clients list. " + err
+                                            message: "Error while reading client. " + err
                                         });
                                     
                                     if(!client){
