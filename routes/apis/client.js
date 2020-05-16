@@ -153,10 +153,11 @@ router.post("/", function (req, res) {
             message = "Created new client!";
         }else{
             message = "Updating client record!";
-            if (req.body.__v && req.body.__v < client.__v)
+            var _rev = req.body._rev || req.body.__v;
+            if (_rev && _rev < client.__v)
                return res.send({
                    response: "error",
-                   message: `Document Conflict! Rev: ${client.__v} Your's: ${req.body.__v}`,
+                   message: `Document Conflict! Rev: ${client.__v} Your's: ${_rev}`,
                    data: client.toAppObject()
                });            
         }

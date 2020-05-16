@@ -281,9 +281,10 @@ Order.schema.methods.updateClient = function (next) {
             return next();
     }
 
+    var delivery = order.delivery;
     if (order.delivery) {
         var findOption = { "$or": [] };
-        var phoneNumber = (this.delivery.phoneNumber || "").trim();
+        var phoneNumber = (delivery.phoneNumber || "").trim();
 
         if (phoneNumber) {
             if (phoneNumber)

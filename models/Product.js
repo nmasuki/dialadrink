@@ -377,6 +377,7 @@ Product.schema.methods.toAppObject = function () {
     var obj = Object.assign({}, this.toObject(), {
         id: d.id,
         _id: d.id,
+        _rev: d.__v,
         url: [keystone.get('url'), d.href].map(p => p.trim('/')).join('/'),
         
         imageFullSize: d.image.secure_url,

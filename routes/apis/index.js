@@ -61,7 +61,7 @@ router.post("/:entity", function (req, res, next) {
     ls.save(entity).then(updates => {
         json.response = "success";
         json._ids = updates.map(n => n._id);
-        json._revs = updates.map(n => n.__v);
+        json._revs = updates.map(n => n._rev);
 
         res.send(json);
     }).catch(err => {
