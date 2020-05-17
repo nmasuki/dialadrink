@@ -308,7 +308,7 @@ Order.schema.methods.updateClient = function (next) {
                     client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
                     var saveClient = false;
                     if (client) {
-                        if (client.clientIps.indexOf(order.clientIp) < 0){
+                        if (order.clientIp && client.clientIps.indexOf(order.clientIp) < 0) {
                             client.clientIps.push(order.clientIp);
                             saveClient = true;
                         }
