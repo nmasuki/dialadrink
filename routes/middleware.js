@@ -352,25 +352,28 @@ exports.requireAPIUser = function (req, res, next) {
 
 var setAppUser = function (req, res, client) {
     if (client) {
-        res.locals.appUser = global.appUser = client;
+        keystone.list("Client").model.findOne({_id: client._id})
+            .exec((err, client) => {
+                res.locals.appUser = global.appUser = client;
 
+                var tosave = false;
+                if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
+                    client.sessions.push(req.sessionID);
+                    tosave = true;
+                }
 
-        var tosave = false;
-        if (client.sessions.indexOf(req.sessionID) < 0) {
-            client.sessions.push(req.sessionID);
-            tosave = true;
-        }
+                if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
+                    client.clientIps.push(res.locals.clientIp);
+                    tosave = true;
+                }
 
-        if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
-            client.clientIps.push(res.locals.clientIp);
-            tosave = true;
-        }
+                if (tosave)
+                    client.save();
 
-        if (tosave)
-            client.save();
+                return client;
+            });        
     }
 
-    return client;
 };
 
 var setAppUserFromAuth = function (req, res, next) {
