@@ -1,5 +1,5 @@
 var keystone = require("keystone");
-var LocalStorage = require('../helpers/LocalStorage')
+var LocalStorage = require('../helpers/LocalStorage');
 
 function getDeliveryCount(res){
     var deliveries = LocalStorage.getInstance("delivery").getAll();
@@ -7,11 +7,11 @@ function getDeliveryCount(res){
         deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
     if (res.locals.app == "com.dialadrinkkenya.rider"){
-        deliveries = deliveries.filter(d => d.rider && d.rider._id == res.appClient.id);
+        deliveries = deliveries.filter(d => d.riderId == res.locals.appUser.id);
     } else if (res.locals.app == "com.dialadrinkkenya.office") {
         //deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
     } else {
-        deliveries = deliveries.filter(d => d.client && d.client.id == res.appClient.id);
+        deliveries = deliveries.filter(d => d.clientId == res.locals.appUser.id);
     }
     
     return Promise.resolve(deliveries.length);
@@ -20,7 +20,9 @@ function getDeliveryCount(res){
 function getProductCount() {
     var filter = {state: 'published'};
     return new Promise((resolve, reject) => {
-        keystone.list('Product').model.count({filter}).exec((err, count) => resolve(count));
+        keystone.list('Product').model.count(filter).exec((err, count) =>{ 
+            resolve(count);
+        });
     });
 }
 
@@ -81,11 +83,11 @@ function getSalesValue(res){
         sales = sales.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
     if (res.locals.app == "com.dialadrinkkenya.rider") {
-        sales = sales.filter(d => d.rider && d.rider._id == res.appClient.id);
+        sales = sales.filter(d => d.riderId == res.locals.appUser.id);
     } else if (res.locals.app == "com.dialadrinkkenya.office") {
         //deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
     } else {
-        sales = sales.filter(d => d.client && d.client.id == res.appClient.id);
+        sales = sales.filter(d => d.clientId == res.locals.appUser.id);
     }
 
     return Promise.resolve(sales.sum(s => s.salePrice));
@@ -95,7 +97,10 @@ function getPurchasesValue(){ return Promise.resolve(5000); }
 
 function getExpensesValue(){ return Promise.resolve(4000); }
 
-function getRiderCount() { return Promise.resolve(4); }
+function getRiderCount() { 
+    var riders = LocalStorage.getInstance("rider").getAll();
+    return Promise.resolve(riders.length);
+ }
 
 function getCloseOfDayCount() { return Promise.resolve(0); }
 
@@ -105,11 +110,21 @@ function getClientCount() {
     });
 }
 
-function getDashboardItemCount() { return Promise.resolve(13); }
+function getDashboardItemCount() {
+    var items = LocalStorage.getInstance("dashmenuitem").getAll();
+    return Promise.resolve(items.length);
+}
 
-function getAppUserCount() { return Promise.resolve(13); }
+function getAppUserCount() {
+    var items = LocalStorage.getInstance("appuser").getAll();
+    return Promise.resolve(items.length);
+}
 
-function getNotificationCount(){ return Promise.resolve(13); }
+function getNotificationCount(){ 
+    var items = LocalStorage.getInstance("notification").getAll();
+    items = items.filter(d => d.toId == res.locals.appUser.id || d.fromId == res.locals.appUser.id);
+    return Promise.resolve(items.length);
+ }
 
 exports.initLocals = (req, res, next) => {
     if (req.path != "/dashmenuitem") return next();
@@ -131,7 +146,7 @@ exports.initLocals = (req, res, next) => {
             "sales", "purchases",
             "expenses", "riders",
             "closeofday", "client",
-            "dashmenuitem", "user",
+            "dashmenuitem", "appuser",
             "notifications"
         ];
 
