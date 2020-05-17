@@ -80,12 +80,17 @@ router.get('/', function(req, res, next){
 
     if (req.query.query && req.query.query.trim()) {
         var fields = ["firstName", "lastName", "phoneNumber", "houseNumber", "username"];
-        var regex = new RegExp(req.query.query.trim().escapeRegExp(), "i");
+        var regexParts = req.query.query.trim().split(' ')
+            .filter(q => q.trim())
+            .map(q => new RegExp(q.trim().escapeRegExp(), "i"));
+             
         filter.$or = [];
         fields.forEach(f => {
-            x = {};
-            x[f] = regex;
-            filter.$or.push(x);
+            regexParts.forEach(regex => {
+                x = {};
+                x[f] = regex;
+                filter.$or.push(x);
+            });
         });
     }
     

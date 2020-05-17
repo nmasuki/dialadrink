@@ -81,17 +81,16 @@ function LocalStorage(entityName) {
             var id = entity._id || entity.id || entity.Id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
             entity._rev = entity._rev || entity.__v;
 
-            if (all[id] && all[id]._rev > entity._rev) {
-                var msg = ["Document conflict! ", id, all[id].rev, entity._rev].join("\t");
-                errors.push({
-                    _id: id,
-                    error: msg
-                });
+            var curRev = parseInt((all[id] && all[id]._rev || "0").split('-')[0]);
+            var docRev = parseFloat((entity._rev || "0").split('-')[0]);
 
-                return console.error(msg);
-            }
+            if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
+                var msg = ["Document conflict! ", id, all[id]._rev, entity._rev].join(",");
+                errors.push({ _id: id, _rev: all[id]._rev, error: msg });
+                //return console.error(msg);
+            }            
 
-            entity._rev = (entity._rev ? 1 + parseInt(entity._rev.split('-')[0]) : 1) + "-" + uuidv4();
+            entity._rev = (1 + curRev) + "-" + uuidv4();
             all[id] = all[id] || {};
 
             for (var i in entity){

@@ -147,7 +147,7 @@ exports.initLocals = (req, res, next) => {
             "expenses", "riders",
             "closeofday", "client",
             "dashmenuitem", "appuser",
-            "notifications"
+            "notification"
         ];
 
         keys.forEach((k, i) => menuCounts[k] = values[i]);
