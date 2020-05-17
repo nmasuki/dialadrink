@@ -117,13 +117,13 @@ exports.initLocals = (req, res, next) => {
     var menuCounts = (res.locals.menuCounts = {});
     
     return Promise.all([
-            getDeliveryCount(), getProductCount(),
-            getOrderCount(res), getInventoryCount(),
-            getSalesValue(), getPurchasesValue(),
-            getExpensesValue(), getRiderCount(),
-            getCloseOfDayCount(), getClientCount(),
-            getDashboardItemCount(), getAppUserCount(),
-            getNotificationCount()
+            getDeliveryCount(res), getProductCount(res),
+            getOrderCount(res), getInventoryCount(res),
+            getSalesValue(res), getPurchasesValue(res),
+            getExpensesValue(res), getRiderCount(res),
+            getCloseOfDayCount(res), getClientCount(res),
+            getDashboardItemCount(res), getAppUserCount(res),
+            getNotificationCount(res)
         ]).then(values => {
         var keys = [
             "delivery", "product",
