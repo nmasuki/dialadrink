@@ -1,7 +1,20 @@
 var keystone = require("keystone");
+var LocalStorage = require('../helpers/LocalStorage')
 
-function getDeliveryCount(){
+function getDeliveryCount(res){
+    var deliveries = LocalStorage.getInstance("delivery").getAll();
+    if (res.locals.lastCloseOfDay)
+        deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
+    if (res.locals.app == "com.dialadrinkkenya.rider"){
+        deliveries = deliveries.filter(d => d.rider && d.rider._id == res.appClient.id);
+    } else if (res.locals.app == "com.dialadrinkkenya.office") {
+        //deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+    } else {
+        deliveries = deliveries.filter(d => d.client && d.client.id == res.appClient.id);
+    }
+    
+    return Promise.resolve(deliveries.length);
 }
 
 function getProductCount() {
@@ -11,8 +24,8 @@ function getProductCount() {
     });
 }
 
-function getOrderCount() {
-    var filter = {};
+function getOrderCount(res) {
+    var filter = {}, client = global.appUser;
 
     if (res.locals.app == "com.dialadrinkkenya.rider") {
         filter['rider.phoneNumber'] = {
@@ -60,36 +73,52 @@ function getOrderCount() {
     });
 }
 
-function getInventoryCount(){
+function getInventoryCount(){ return Promise.resolve(0); }
 
+function getSalesValue(res){ 
+    var sales = LocalStorage.getInstance("sale").getAll();
+    if (res.locals.lastCloseOfDay)
+        sales = sales.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+
+    if (res.locals.app == "com.dialadrinkkenya.rider") {
+        sales = sales.filter(d => d.rider && d.rider._id == res.appClient.id);
+    } else if (res.locals.app == "com.dialadrinkkenya.office") {
+        //deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+    } else {
+        sales = sales.filter(d => d.client && d.client.id == res.appClient.id);
+    }
+
+    return Promise.resolve(sales.sum(s => s.salePrice));
 }
 
-function getSalesValue(){}
+function getPurchasesValue(){ return Promise.resolve(5000); }
 
-function getPurchasesValue(){}
+function getExpensesValue(){ return Promise.resolve(4000); }
 
-function getExpensesValue(){}
+function getRiderCount() { return Promise.resolve(4); }
 
-function getRiderCount() {}
+function getCloseOfDayCount() { return Promise.resolve(0); }
 
-function getCloseOfDayCount() {}
+function getClientCount() {
+    return new Promise((resolve, reject) => {
+        keystone.list('Client').model.count({}).exec((err, count) => resolve(count));
+    });
+}
 
-function getClientCount() {}
+function getDashboardItemCount() { return Promise.resolve(13); }
 
-function getDashboardItemCount() {}
+function getAppUserCount() { return Promise.resolve(13); }
 
-function getAppUserCount() {}
+function getNotificationCount(){ return Promise.resolve(13); }
 
-function getNotificationCount(){}
-
-exports.globalCache = (req, res, next) => {
-    if (req.params.entity != "dashboarditem") return next();
+exports.initLocals = (req, res, next) => {
+    if (req.path != "/dashmenuitem") return next();
 
     var menuCounts = (res.locals.menuCounts = {});
     
     return Promise.all([
             getDeliveryCount(), getProductCount(),
-            getOrderCount(), getInventoryCount(),
+            getOrderCount(res), getInventoryCount(),
             getSalesValue(), getPurchasesValue(),
             getExpensesValue(), getRiderCount(),
             getCloseOfDayCount(), getClientCount(),
@@ -102,10 +131,11 @@ exports.globalCache = (req, res, next) => {
             "sales", "purchases",
             "expenses", "riders",
             "closeofday", "client",
-            "dashboarditem", "user",
+            "dashmenuitem", "user",
             "notifications"
         ];
 
         keys.forEach((k, i) => menuCounts[k] = values[i]);
+        next();
     });
 };

@@ -19,6 +19,12 @@ router.get("/:entity", function (req, res, next) {
     res.send({
         response: "success",
         data: pageList.map(ret => {
+            if (res.locals.menuCounts && ret.href){
+                var href = ret.href.replace(/^\/|\/$|(ie)?s$/, "");
+                if (res.locals.menuCounts[href] != undefined)
+                    ret.count = res.locals.menuCounts[href];                
+            }
+            
             if (!global.appUser || global.appUser.id != ret.id) {
                 delete ret.httpAuth;
                 delete ret.username;

@@ -20,6 +20,7 @@
 
 var keystone = require('keystone');
 var middleware = require('./middleware');
+var middlewareApi = require('./middleware-api');
 var importRoutes = keystone.importer(__dirname);
 
 //Set admin path
@@ -50,7 +51,7 @@ exports = module.exports = function (app) {
 	apis.forEach(a => {
 		if (a.api && a.api.name == "router") {
 			console.log("Registering:", a.path);
-			app.use(a.path, middleware.requireAPIUser, a.api);
+			app.use(a.path, middleware.requireAPIUser, middlewareApi.initLocals, a.api);
 		}
 	});
 

@@ -65,7 +65,7 @@ exports.initLocals = function (req, res, next) {
     res.locals.appUrl = keystone.get("url");
 
     //App
-    res.locals.app = req.headers.packagename;
+    res.locals.app = global.app = req.headers.packagename;
     
     //AppVersion
     res.locals.appVersion = global.appVersion = req.headers.appversion;
