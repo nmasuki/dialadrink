@@ -87,7 +87,7 @@ function LocalStorage(entityName) {
             if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
                 var msg = ["Document conflict! ", id, all[id]._rev, entity._rev].join(",");
                 errors.push({ _id: id, _rev: all[id]._rev, error: msg });
-                //return console.error(msg);
+                return console.error(msg);
             }            
 
             entity._rev = (1 + curRev) + "-" + uuidv4();
