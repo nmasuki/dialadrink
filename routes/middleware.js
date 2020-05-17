@@ -352,26 +352,31 @@ exports.requireAPIUser = function (req, res, next) {
 
 var setAppUser = function (req, res, client) {
     if (client) {
-        keystone.list("Client").model.findOne({_id: client._id})
-            .exec((err, client) => {
-                res.locals.appUser = global.appUser = client;
+        return new Promise((resolve, reject) => {
+            keystone.list("Client").model.findOne({ _id: client._id })
+                .exec((err, client) => {
+                    if(err)
+                        return reject(err);
 
-                var tosave = false;
-                if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
-                    client.sessions.push(req.sessionID);
-                    tosave = true;
-                }
+                    res.locals.appUser = global.appUser = client;
 
-                if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
-                    client.clientIps.push(res.locals.clientIp);
-                    tosave = true;
-                }
+                    var tosave = false;
+                    if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
+                        client.sessions.push(req.sessionID);
+                        tosave = true;
+                    }
 
-                if (tosave)
-                    client.save();
+                    if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
+                        client.clientIps.push(res.locals.clientIp);
+                        tosave = true;
+                    }
 
-                return client;
-            });        
+                    if (tosave)
+                        client.save();
+
+                    return resolve(client);
+                });
+        });     
     }
 
 };
@@ -399,19 +404,20 @@ var setAppUserFromAuth = function (req, res, next) {
             var client = clients.find(c => password == c.password) ||
                 clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
-            if (setAppUser(req, res, client)) {
-                return next(null, client);
-            } else {
-                if (clients.length)
-                    console.log(`${clients.length} clients match username ${username}. Invalid password? '${password}'`);
-                else
-                    console.log(`No client match the username ${username}`);
+            setAppUser(req, res, client)
+                .then(client => next(null, client))
+                .catch(err => {
+                    if(err) console.error(err);
+                    if (clients.length)
+                        console.log(`${clients.length} clients match username ${username}. Invalid password? '${password}'`);
+                    else
+                        console.log(`No client match the username ${username}`);
 
-                return next({
-                    response: "error",
-                    message: "NotAuthorized"
+                    return next({
+                        response: "error",
+                        message: "NotAuthorized"
+                    });
                 });
-            }
         });
     } else {
         return next({
@@ -447,13 +453,19 @@ var setAppUserFromSession = function (req, res, callback) {
             if(err){
                 if (typeof callback == "function")
                     callback(err);
+                return;
             }
 
-            setAppUser(req, res, client);
+            if(!client){
+                err = client ? null : new Error("No client matches sessionId:" + req.sessionID);
+                if (typeof callback == "function")            
+                    callback(err, client);
+                return;
+            }
 
-            err = client ? null : new Error("No client matches sessionId:" + req.sessionID);
-            if (typeof callback == "function")            
-                callback(err, client);
+            setAppUser(req, res, client)
+                .then(client => typeof callback == "function"?callback(null, client): null)
+                .catch(err => typeof callback == "function"? callback(err): null);            
         });
 };
 
