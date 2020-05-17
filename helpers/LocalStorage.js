@@ -91,7 +91,7 @@ function LocalStorage(entityName) {
                 return console.error(msg);
             }
 
-            entity._rev = (entity._rev ? 1 + entity._rev.split('-')[0] : 1) + "-" + uuidv4();
+            entity._rev = (entity._rev ? 1 + parseInt(entity._rev.split('-')[0]) : 1) + "-" + uuidv4();
             all[id] = all[id] || {};
 
             for (var i in entity){

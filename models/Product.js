@@ -40,6 +40,10 @@ Product.add({
     },
     isGiftPack: {
         type: Types.Boolean
+    }, 
+    
+    reorderLevel: {
+        type: Types.Number, default: 10
     },
 
     state: {
@@ -401,6 +405,7 @@ Product.schema.methods.toAppObject = function () {
         inStock: !!d.inStock,
         hitsPerWeek: d.hitsPerWeek,
         remainingStock: 10,
+        reorderLevel: d.reorderLevel,
         
         //Use cheapest option for price
         price: d.price,

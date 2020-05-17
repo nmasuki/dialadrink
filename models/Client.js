@@ -586,13 +586,15 @@ Client.schema.pre('save', function (next) {
         var opt =  { public_id: "users/" + user.name.cleanId() };
         cloudinary.v2.uploader.upload(user.imageUrl, opt, (err, res) => {
             user.image = res;
-            updateOrderStats(user, next);
+            next();
         });
     } else
-        updateOrderStats(user, next);
+        next();
 });
 
-var updateOrderStats = function(client, next) {
+Client.schema.methods.updateOrderStats = function (next) {
+    var client = this;
+    
     if (client.phoneNumber)
         client.phoneNumber = client.phoneNumber.cleanPhoneNumber();
 
@@ -616,23 +618,26 @@ var updateOrderStats = function(client, next) {
             .populate('client')
             .exec((err, orders) => {
                 if (err)
-                    return next(err);
+                    return typeof next == "function" && next(err);
 
                 orders = orders.filter(x => x);
-                if (client.orderCount && client.orderCount == orders.length)
-                    next();
-
+                if ( client.orderCount && client.orderCount == orders.length){
+                    if (typeof next == "function") next();
+                }
                 client.orderCount = orders.length;
                 client.orderValue = orders.sum(order => order.total);
                 client.lastOrderDate = orders.max(order => order.orderDate);
                 client.avgOrderValue = orders.avg(order => order.total);
 
                 console.log("Saving client details!", client.name, client.orderCount, client.orderValue);
-                next();
+                if(typeof next == "function") 
+                    next();
+                else
+                    client.save();
             });
     } else {
         console.error("This should never be hit!! Client has no phoneNumber or email.");
-        next();
+        if (typeof next == "function") next();
     }
 };
 

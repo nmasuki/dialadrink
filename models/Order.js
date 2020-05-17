@@ -306,32 +306,43 @@ Order.schema.methods.updateClient = function (next) {
                         return console.warn(err);
 
                     client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
-
+                    var saveClient = false;
                     if (client) {
                         if (client.clientIps.indexOf(order.clientIp) < 0){
                             client.clientIps.push(order.clientIp);
+                            saveClient = true;
                         }
 
                         if (client.modifiedDate < order.orderDate){
                             for (var i in client) {
                                 if(client.hasOwnProperty(i)){
                                     if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
-                                        order.client.modifiedDate = new Date();
+                                        client.modifiedDate = new Date();
                                         client[i] = delivery[i];
+                                        saveClient = true;
                                     }
                                 }                            
                             }                            
                         }
                     } else {
+                        saveClient = true;
                         client = keystone.list("Client").model(delivery);
                         client.createdDate = order.orderDate;
                         client.clientIps.push(order.clientIp);
-                        client.save();
                     }
 
-                    order.client = client;
-                    if (typeof next == "function")
-                        next();
+                    if(saveClient){
+                        client.updateOrderStats(() => {
+                            client.save((err, c) => {
+                                order.client = client;
+                                next();
+                            });
+                        });                        
+                    }else{
+                        order.client = client;
+                        if (typeof next == "function")
+                            next();
+                    }
                 });
         else if (typeof next == "function")
             next();
