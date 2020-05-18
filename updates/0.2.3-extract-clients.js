@@ -15,8 +15,7 @@ exports = module.exports = function (done) {
                 var order = orders[++index];
                 if(order){
                     order.updateClient(() => {
-                        order.save();
-                        order.client.save().then(updateClient);
+                        order.save().then(updateClient);
                     });                    
                 }          
             })();

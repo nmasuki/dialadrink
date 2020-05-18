@@ -575,7 +575,7 @@ Client.schema.pre('save', function (next) {
     var user = this;
     if (user.modifiedDate.addSeconds(10) > new Date()){
         console.log("Client saved less than 10 sec ago. Should skipping save!");
-        //return false;
+        return false;
     }
 
     user.modifiedDate = new Date();
