@@ -17,8 +17,7 @@ exports = module.exports = function (done) {
                     order.updateClient(() => {
                         order.save();
                         order.client.save().then(updateClient);
-                    });
-                    
+                    });                    
                 }          
             })();
 

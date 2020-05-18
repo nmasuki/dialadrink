@@ -317,7 +317,6 @@ Order.schema.methods.updateClient = function (next) {
                             for (var i in delivery) {
                                 if (delivery.hasOwnProperty(i) && client.hasOwnProperty(i) && (/[a-z]/i).test(i[0])) {
                                     if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
-                                        client.modifiedDate = new Date();
                                         client[i] = delivery[i];
                                         saveClient = true;
                                     }
