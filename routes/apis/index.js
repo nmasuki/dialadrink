@@ -18,6 +18,7 @@ router.get("/:entity", function (req, res, next) {
     console.log(req.params.entity  + " page:", page, "pageSize:", pageSize, "itemCount:", pageList.length);
     res.send({
         response: "success",
+        fetchDate: new Date().toISOString(),
         data: pageList.map(ret => {
             if (res.locals.menuCounts && ret.href){
                 var href = ret.href.replace(/^\/|\/$|(ie)?s$/, "");
