@@ -54,7 +54,7 @@ function BaseSMS() {
                 return resolve(numberLookup);
 
             var lookUpKey = pickOneApiKey();
-            console.log("Number lookup: ", number, lookUpKey);
+            console.log("Number lookup:", number, lookUpKey);
 
             najax.get({
                 url: `http://apilayer.net/api/validate`,
