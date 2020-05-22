@@ -59,8 +59,11 @@ function processIncoming(message) {
         if (isJSONString(message)) {
             var obj = JSON.parse(message);
             switch (obj.cmd || obj.info) {
+                case 'user':
+                    this.user = obj.data;
+                    break;
                 case 'number':
-                    this.phone = obj.phone;
+                    this.phone = obj.data;
                     break;
                 case 'message_status':
                     console.log("WSS:", "Message Status:" + obj.status, obj.msgid);
@@ -94,9 +97,11 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     }
 
     var retrySendWSMessage = function (err) {
-        console.warn("WSS:", (err || "Unknown Error!") + ". Retrying in %d seconds. Attempt %d of %d", attempts * CONFIG.RetryWait / 1000, attempts, CONFIG.RetryCount);
+        console.warn("WSS:", (err || "Unknown Error!") + ". " +
+            `Retrying in ${attempts * CONFIG.RetryWait / 1000.0} seconds. ` +
+            `Attempt ${attempts} of ${CONFIG.RetryCount}`);
         return new Promise((fulfill, reject) => {
-            setTimeout(() => sendWSMessage(dest, msg, msgid, ++attempts).then(fulfill).catch(reject), CONFIG.RetryWait * (attempts + 1));
+            setTimeout(() => sendWSMessage(dest, msg, msgid, ++attempts).then(fulfill), CONFIG.RetryWait * (attempts + 1));
         });
     };
 
