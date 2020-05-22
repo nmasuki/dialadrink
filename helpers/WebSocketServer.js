@@ -87,8 +87,7 @@ function processIncoming(message) {
 
 function sendWSMessage(dest, msg, msgid, attempts) {
     attempts = attempts || 0;
-    msgid = msgid || Array(10).join('x').split('x')
-            .map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
+    msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
     var clients = Array.from(wss.clients).filter(c => c.readyState === WebSocket.OPEN);
 
     if (attempts > CONFIG.RetryCount) {
