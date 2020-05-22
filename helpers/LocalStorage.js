@@ -80,7 +80,7 @@ function LocalStorage(entityName) {
         function setEntiry(entity) {
             var id = entity._id || entity.id || entity.Id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
             entity._rev = entity._rev || entity.__v;
-
+            
             var curRev = parseInt((all[id] && all[id]._rev || "0").split('-')[0]);
             var docRev = parseFloat((entity._rev || "0").split('-')[0]);
 
@@ -91,6 +91,8 @@ function LocalStorage(entityName) {
             }            
 
             entity._rev = (1 + curRev) + "-" + uuidv4();
+            if (entity.__v) delete entity.__v;
+            
             all[id] = all[id] || {};
 
             for (var i in entity){
