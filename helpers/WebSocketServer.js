@@ -1,6 +1,5 @@
 var WebSocket = require('ws');
-var LocalStorage = require('../helpers/LocalStorage');
-var ls = new LocalStorage('ws-messages');
+var ls = require('../helpers/LocalStorage').getInstance('ws-messages');
 var fs = require('fs');
 
 function getWSSConfigs() {
@@ -104,10 +103,6 @@ function sendWSMessage(dest, msg, msgid, attempts) {
         });
     };
 
-    if (!clients.length)
-        return retrySendWSMessage("No client found!");
-
-    var client = clients[attempts++ % clients.length];
     var payload = {
         id: msgid,
         cmd: 'message',
@@ -125,6 +120,10 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 
     ls.save(payload);
 
+    if (!clients.length)
+        return retrySendWSMessage("No client found!");
+
+    var client = clients[attempts++ % clients.length];
     console.info("Sending message to:", dest, msg);
     return new Promise((fulfill, reject) => {
         client.send(JSON.stringify(payload), function (err) {
@@ -136,6 +135,12 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     });
 }
 
+//Retry sending pending msgs
+var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED');
+if(pendingMsgs.length)
+    pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid, d.data.attempts));
+
+// WebSocket Server    
 var wss = global.wss || (global.wss = new WebSocket.Server(CONFIG));
 
 // Broadcast to all.
