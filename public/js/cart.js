@@ -43,7 +43,7 @@ var cartUtil = function () {
     }
 
     function loadRegionData(location){
-
+        
         if (!self.locations || !self.locations.length)
             return $.get(_url + "locations").then(function(res) {
                 if(res.response == "success"){
@@ -183,7 +183,11 @@ var cartUtil = function () {
 
             //Delivery charges
             if (window.regionData && window.regionData.freeDeliveryThreashold) {
-                if (self.totalCost() < window.regionData.freeDeliveryThreashold)
+                var categories = Object.values(app.cartUtil.getCart())
+                    .map(function(c) { return c.product && c.product.category && c.product.category.key;})
+                    .distinct();
+
+                if (self.totalCost() < window.regionData.freeDeliveryThreashold && categories.length == 1 && categories[0] == "extras")
                     charges.deliveryCharges = window.regionData.deliveryCharges;                
             }
 
