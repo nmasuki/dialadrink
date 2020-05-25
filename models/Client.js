@@ -527,45 +527,46 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
 
 var genderList = null;
 Client.schema.methods.guessGender = function(name){
-       var filename = path.resolve("../", "data", "name_gender.csv");
+    if(!name) return null;
+      
+    var filename = path.resolve("../", "data", "name_gender.csv");
 
-       if (!genderList && fs.existsSync(filename)) {
-           var guessGenderCSV = (fs.readFileSync(filename) || "{}").toString();
-           if (guessGenderCSV) {
-               genderList = guessGenderCSV.split('\n').filter(l => l).map(l => {
-                   var parts = l.split(',');
-                   return {
-                       id: (parts[0] || "").cleanId(),
-                       name: (parts[0]),
-                       gender: parts[1],
-                       probability: parseFloat(parts[2])
-                   };
-               }).orderBy(x => -x.probability);
-           }
-       }
+    if (!genderList && fs.existsSync(filename)) {
+        var guessGenderCSV = (fs.readFileSync(filename) || "{}").toString();
+        if (guessGenderCSV) {
+            genderList = guessGenderCSV.split('\n').filter(l => l).map(l => {
+                var parts = l.split(',');
+                return {
+                    id: (parts[0] || "").cleanId(),
+                    name: (parts[0]),
+                    gender: parts[1],
+                    probability: parseFloat(parts[2])
+                };
+            }).orderBy(x => -x.probability);
+        }
+    }
 
-       var ids = name.split(' ').map(n => n.cleanId());
-       var matches = genderList.filter(x => ids.indexOf(x.id) >= 0);
+    var ids = (name || "").split(' ').map(n => n.cleanId());
+    var matches = genderList.filter(x => ids.indexOf(x.id) >= 0);
 
-       if (matches.length) {
-           var sum = matches.sum(x => x.probability);
-           var ret = {
-               name: name,
-               male: (matches.filter(x => x.gender == "M").sum(x => x.probability) || 0) / sum,
-               female: (matches.filter(x => x.gender == "F").sum(x => x.probability) || 0) / sum,
-               getGender: () => {
-                    var diff = Math.abs(ret.male - ret.female);                   
-                    if (diff > 0.2)
-                       return ret.male > ret.female ? "MALE" : "FEMALE";
-                    else
-                        console.log(name, Math.round(100 * ret.male) + "% male, ", Math.round(100 * ret.female) + "% female");
-               }
-           };
-           return ret;
-       }
+    if (matches.length) {
+        var sum = matches.sum(x => x.probability);
+        var ret = {
+            name: name,
+            male: (matches.filter(x => x.gender == "M").sum(x => x.probability) || 0) / sum,
+            female: (matches.filter(x => x.gender == "F").sum(x => x.probability) || 0) / sum,
+            getGender: () => {
+                var diff = Math.abs(ret.male - ret.female);                   
+                if (diff > 0.2)
+                    return ret.male > ret.female ? "MALE" : "FEMALE";
+                else
+                    console.log(name, Math.round(100 * ret.male) + "% male, ", Math.round(100 * ret.female) + "% female");
+            }
+        };
+        return ret;
+    }
 
-       return null;
-
+    return null;
 };
 
 Client.schema.pre('save', function (next) {
@@ -580,7 +581,7 @@ Client.schema.pre('save', function (next) {
     user.metaDataJSON = JSON.stringify(this._metaDataJSON || {});
 
     if(!user.gender)
-        user.gender = user.guessGender();
+        user.gender = user.guessGender(user.name);
 
     if (user.imageUrl) {
         var opt =  { public_id: "users/" + user.name.cleanId() };
