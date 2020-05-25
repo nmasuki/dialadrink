@@ -65,7 +65,7 @@ exports.initLocals = function (req, res, next) {
     res.locals.appUrl = keystone.get("url");
 
     //App
-    res.locals.app = global.app = req.headers.packagename;
+    res.locals.app = req.headers.packagename;
     
     //AppVersion
     res.locals.appVersion = global.appVersion = req.headers.appversion;
@@ -358,10 +358,7 @@ var setAppUser = function (req, res, client) {
                     if(err)
                         return reject(err);
 
-                    if (global.appUser && global.appUser.__v > client.__v)
-                        client = global.appUser;
                     res.locals.appUser = global.appUser = client;
-
                     var tosave = false;
                     if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
                         client.sessions.push(req.sessionID);

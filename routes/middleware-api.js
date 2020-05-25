@@ -27,7 +27,8 @@ function getProductCount() {
 }
 
 function getOrderCount(res) {
-    var filter = {}, client = global.appUser;
+    var filter = {},
+        client = res.locals.appUser;
 
     if (res.locals.app == "com.dialadrinkkenya.rider") {
         filter['rider.phoneNumber'] = {
