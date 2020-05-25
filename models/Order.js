@@ -574,7 +574,10 @@ Order.schema.methods.toAppObject = function () {
                     order.save();
                 });
         }
+    }else{
+        clients.push(obj.client);
     }
+
     return obj;
 };
 
