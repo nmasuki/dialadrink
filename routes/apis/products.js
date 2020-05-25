@@ -153,7 +153,6 @@ router.get("/:query", function (req, res, next) {
 });
 
 router.get("/related/:productId", function(req, res, next){
-    //
     Product.model.findOne({_id: req.params.productId})
         .exec((err, product) => {
             var json = {
