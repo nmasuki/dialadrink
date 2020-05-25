@@ -554,14 +554,11 @@ Client.schema.methods.guessGender = function(name){
                male: (matches.filter(x => x.gender == "M").sum(x => x.probability) || 0) / sum,
                female: (matches.filter(x => x.gender == "F").sum(x => x.probability) || 0) / sum,
                getGender: () => {
-                   var diff = Math.abs(ret.male - ret.female);
-                   
+                    var diff = Math.abs(ret.male - ret.female);                   
                     if (diff > 0.2)
                        return ret.male > ret.female ? "MALE" : "FEMALE";
                     else
-                        console.log(name,
-                            Math.round(100 * ret.male) + "% male,",
-                            Math.round(100 * ret.female) + "% female");
+                        console.log(name, Math.round(100 * ret.male) + "% male, ", Math.round(100 * ret.female) + "% female");
                }
            };
            return ret;
@@ -581,6 +578,9 @@ Client.schema.pre('save', function (next) {
     user.modifiedDate = new Date();
     user.clientIps = this.clientIps.filter(ip => ip).distinct();
     user.metaDataJSON = JSON.stringify(this._metaDataJSON || {});
+
+    if(!user.gender)
+        user.gender = user.guessGender();
 
     if (user.imageUrl) {
         var opt =  { public_id: "users/" + user.name.cleanId() };

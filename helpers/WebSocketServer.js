@@ -1,6 +1,5 @@
 var WebSocket = require('ws');
-var LocalStorage = require('../helpers/LocalStorage');
-var ls = new LocalStorage('ws-messages');
+var ls = require('../helpers/LocalStorage').getInstance('ws-messages');
 var fs = require('fs');
 
 function getWSSConfigs() {
@@ -88,7 +87,8 @@ function processIncoming(message) {
 function sendWSMessage(dest, msg, msgid, attempts) {
     attempts = attempts || 0;
     msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
-    var clients = Array.from(wss.clients).filter(c => c.readyState === WebSocket.OPEN);
+    var clients = Array.from(wss.clients)
+        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.appPermissions.contains("sms"));
 
     if (attempts > CONFIG.RetryCount) {
         console.warn("WSS:", `Delivery failed after ${attempts} attempts`);
@@ -99,15 +99,12 @@ function sendWSMessage(dest, msg, msgid, attempts) {
         console.warn("WSS:", (err || "Unknown Error!") + ". " +
             `Retrying in ${attempts * CONFIG.RetryWait / 1000.0} seconds. ` +
             `Attempt ${attempts} of ${CONFIG.RetryCount}`);
+            
         return new Promise((fulfill, reject) => {
             setTimeout(() => sendWSMessage(dest, msg, msgid, ++attempts).then(fulfill), CONFIG.RetryWait * (attempts + 1));
         });
     };
 
-    if (!clients.length)
-        return retrySendWSMessage("No client found!");
-
-    var client = clients[attempts++ % clients.length];
     var payload = {
         id: msgid,
         cmd: 'message',
@@ -125,6 +122,10 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 
     ls.save(payload);
 
+    if (!clients.length)
+        return retrySendWSMessage("No client found!");
+
+    var client = clients[attempts++ % clients.length];
     console.info("Sending message to:", dest, msg);
     return new Promise((fulfill, reject) => {
         client.send(JSON.stringify(payload), function (err) {
@@ -136,6 +137,12 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     });
 }
 
+//Retry sending pending msgs
+var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED');
+if(pendingMsgs.length)
+    pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid, d.data.attempts));
+
+// WebSocket Server    
 var wss = global.wss || (global.wss = new WebSocket.Server(CONFIG));
 
 // Broadcast to all.
