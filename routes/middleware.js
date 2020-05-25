@@ -358,10 +358,7 @@ var setAppUser = function (req, res, client) {
                     if(err)
                         return reject(err);
 
-                    if (global.appUser && global.appUser.__v > client.__v)
-                        client = global.appUser;
                     res.locals.appUser = global.appUser = client;
-
                     var tosave = false;
                     if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
                         client.sessions.push(req.sessionID);
