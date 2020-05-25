@@ -581,7 +581,7 @@ Client.schema.pre('save', function (next) {
     user.metaDataJSON = JSON.stringify(this._metaDataJSON || {});
 
     if(!user.gender)
-        user.gender = user.guessGender();
+        user.gender = user.guessGender(user.name);
 
     if (user.imageUrl) {
         var opt =  { public_id: "users/" + user.name.cleanId() };
