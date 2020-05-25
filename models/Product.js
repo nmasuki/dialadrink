@@ -706,7 +706,7 @@ Product.search = function (query, next, deepSearch) {
 
     var allProducts = [];
     //Searching by brand then category then product
-    return Product.findPublished({ $or:[{href: new RegExp("^" + keyStr + "$", "i") }, {_id: query.trim()}], function (err, products) {
+    return Product.findPublished({ $or:[{href: new RegExp("^" + keyStr + "$", "i") }, {_id: query.trim()}]}, function (err, products) {
         if (deepSearch || err || !products || !products.length) {
             if (products && products.length) allProducts = allProducts.concat(products);
             return Product.findPublished(filters, function (err, products) {
@@ -743,7 +743,7 @@ Product.search = function (query, next, deepSearch) {
 
         } else
             next(err, products.orderByDescending(p => p.hitsPerWeek));
-    });
+    })
 };
 
 Product.getUIFilters = function (products, limit) {
