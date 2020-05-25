@@ -541,7 +541,7 @@ Order.schema.methods.toAppObject = function () {
         var client = clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
         if(client){
             order.client = client._id;
-            obj.client = client.toAppObject();
+            obj.client = client.toAppObject? client.toAppObject(): client;
             order.save();
             return obj;
         }
