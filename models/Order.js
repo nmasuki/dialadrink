@@ -537,11 +537,13 @@ Order.schema.methods.toAppObject = function () {
     var phoneNumber = this.delivery.phoneNumber.cleanPhoneNumber();
     var email = this.email;
 
-    if (!obj.client){
+    if (obj.client && order.client)
+        clients.push(order.client);
+    else {
         var client = clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
         if(client){
             order.client = client._id;
-            obj.client = client.toAppObject();
+            obj.client = client.toAppObject? client.toAppObject(): client;
             order.save();
             return obj;
         }
@@ -574,8 +576,6 @@ Order.schema.methods.toAppObject = function () {
                     order.save();
                 });
         }
-    }else{
-        clients.push(obj.client);
     }
 
     return obj;
