@@ -112,7 +112,7 @@ function getPurchasesValue(res){
 
         resolve(items.sum(s => s.cost || s.amount));
     });
- }
+}
 
 function getExpensesValue(res){ 
     return new Promise((resolve, reject) => {
@@ -157,7 +157,7 @@ function getDashboardItemCount(res) {
 function getAppUserCount(res) {
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("appuser").getAll();
-        return Promise.resolve(items.length);
+        return resolve(items.length);
     }); 
 }
 
@@ -165,7 +165,7 @@ function getNotificationCount(res){
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("notification").getAll();
         items = items.filter(d => d.toId == res.locals.appUser.id || d.fromId == res.locals.appUser.id);
-        return Promise.resolve(items.length);
+        return resolve(items.length);
     }); 
  }
 
