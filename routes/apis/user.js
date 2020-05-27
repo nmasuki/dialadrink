@@ -305,7 +305,7 @@ router.post("/login", function (req, res) {
 	if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
 		AppUser.find({ phoneNumber: mobile }).then(users => {
 			var encrypted = password.encryptPassword().encryptedPassword;
-			var user = users.find(c => encrypted == c.password) ||
+			var user = users.find(c => encrypted == c.password  || c.passwords.contains(encrypted)) ||
 				clients.find(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
 			var json = {

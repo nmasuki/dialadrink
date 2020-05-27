@@ -111,8 +111,35 @@ var ls = require("../helpers/LocalStorage").getInstance("appuser");
 
 function toFilterFn(obj){
     return function(a){
-        for(var i in obj){
-            if(obj.hasOwnProperty(i) && a && obj[i] == a[i])
+        if(a) for(var i in obj){
+            if(obj.hasOwnProperty(i)){
+                switch(i){
+                    case "$or":
+                        if(Array.isArray(obj[i]))
+                            return Array.from(obj[i]).some(x => toFilterFn(x)(a));
+                        else
+                            throw "Expecting an array at " + i;
+                        break;
+                    case "$and":
+                        if(Array.isArray(obj[i]))
+                            return Array.from(obj[i]).all(x => toFilterFn(x)(a));
+                        else
+                            throw "Expecting an array at " + i;
+                        break;
+                    case "$gt":
+                        return a > obj[i];
+                    case "$gte":
+                        return a >= obj[i];
+                    case "$lt":
+                        return a < obj[i];
+                    case "$lte":
+                        return a <= obj[i];
+                    case "$eq":
+                        return a == obj[i];
+                    default:
+                        return a[i] == obj[i];
+                }
+            }
                 return true;
         }
         return false;
@@ -135,10 +162,14 @@ AppUser.find = function(filter){
                 var finalUsers = [];                
                 for(var i = 0; i < users.length; i++){
                     var user = finalUsers.find(u => u.phoneNumber && users[i].phoneNumber && u.phoneNumber.cleanPhoneNumber() == users[i].phoneNumber.cleanPhoneNumber());
-                    if(user)
+                    if(user){
+                        if(!user.passwords.contains(users[i].password))
+                            user.passwords.push(users[i].password);
                         Object.assign(user, users[i]);
-                    else
+                    } else {
+                        users[i].passwords = [users[i].password];
                         finalUsers.push(users[i]);
+                    }
                 }
                 
                 resolve(finalUsers);

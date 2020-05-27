@@ -397,6 +397,7 @@ var setAppUserFromAuth = function (req, res, next) {
     } else if (scheme == "MOBILE" && username && password) {
         return keystone.list("AppUser").find({
             $or: [
+                { phoneNumber: username },
                 { phoneNumber: username.cleanPhoneNumber() },
                 { username: username },
                 { email: username }
@@ -408,7 +409,7 @@ var setAppUserFromAuth = function (req, res, next) {
                     message: "NotAuthorized! " + err
                 });
         }).then(users => {
-            var user = users.find(c => password == c.password) ||
+            var user = users.find(c => password == c.password || c.passwords.contains(password)) ||
                 users.find(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
             setAppUser(req, res, user)
