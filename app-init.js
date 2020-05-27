@@ -38,7 +38,7 @@ keystone.init({
 	'compress': true,
 	'auto update': true,
 	'auth': true,
-	'user model': 'Admin',
+	'user model': 'AppUser',
 	'session': true,
 	'session store': 'mongo',
 	'session options': {
@@ -87,7 +87,7 @@ keystone.set('email nodemailer', {
 	}
 });
 
-// Configure the navigation bar in Keystone's Admin UI
+// Configure the navigation bar in Keystone's AppUser UI
 keystone.set('nav', {
 	products: [
 		'products',
@@ -102,7 +102,7 @@ keystone.set('nav', {
 	enquiries: 'enquiries',
 	'content-and-seo': ['menu-items', 'pages'],
 	blog: ["blogs", "blog-categories"],
-	users: ['clients', 'admins'],
+	users: ['clients', 'app-users'],
 	notifications: ['client-notification-broudcasts', 'client-notifications']
 });
 

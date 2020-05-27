@@ -70,6 +70,10 @@ exports.initLocals = function (req, res, next) {
     //AppVersion
     res.locals.appVersion = global.appVersion = req.headers.appversion;
 
+    //Geolocation
+    res.locals.appGeolocation = req.headers.geolocation;
+    if(res.locals.appGeolocation) console.log("Geolocation:", res.locals.appGeolocation);
+
     //Push Notification VAPID public key
     res.locals.vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
 
@@ -107,8 +111,7 @@ exports.initLocals = function (req, res, next) {
     //Other locals only applied to views and not ajax calls
     if (username || password) {
         var ls = require('../helpers/LocalStorage').getInstance("closeofday");
-        var latest = ls.getAll().orderBy(c => c.createdDate).last();
-        
+        var latest = ls.getAll().orderBy(c => c.createdDate).last();        
         var backdate = process.env.NODE_ENV == "production"? 7: 50;        
         if (latest && latest.createdDate)
             res.locals.lastCloseOfDay = new Date(latest.createdDate).addDays(-backdate).toISOString().substr(0, 10);
@@ -129,7 +132,7 @@ exports.initLocals = function (req, res, next) {
     } else {
         var istart = new Date();
 
-        //Admin user
+        //AppUser user
         res.locals.user = req.user;
 
         //Contact number
@@ -350,34 +353,39 @@ exports.requireAPIUser = function (req, res, next) {
     });
 };
 
-var setAppUser = function (req, res, client) {
-    if (client) {
-        return new Promise((resolve, reject) => {
-            keystone.list("Client").model.findOne({ _id: client._id })
-                .exec((err, client) => {
-                    if(err)
-                        return reject(err);
+var setAppUser = function (req, res, user) {
+    if (!user) 
+        return Promise.reject("No matching user found!");
+    
+    return new Promise((resolve, reject) => {
+        keystone.list("AppUser")
+            .find({ phoneNumber: user.phoneNumber.cleanPhoneNumber() })
+            .catch(reject)
+            .then(users => {
+                var tosave = false;
+                var user = users && users[0];
+                
+                res.locals.appUser = global.appUser = user;
+                user.sessions = user.sessions || [];
+                user.clientIps = user.clientIps || [];
+                
+                if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0) {
+                    user.sessions.push(req.sessionID);
+                    tosave = true;
+                }
 
-                    res.locals.appUser = global.appUser = client;
-                    var tosave = false;
-                    if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
-                        client.sessions.push(req.sessionID);
-                        tosave = true;
-                    }
+                if (res.locals.clientIp && user.clientIps.indexOf(res.locals.clientIp) < 0) {
+                    user.clientIps.push(res.locals.clientIp);
+                    tosave = true;
+                }
 
-                    if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
-                        client.clientIps.push(res.locals.clientIp);
-                        tosave = true;
-                    }
+                if (tosave)
+                    keystone.list("AppUser").save(user);
 
-                    if (tosave)
-                        client.save();
-
-                    return resolve(client);
-                });
-        });     
-    }
-
+                return resolve(user);
+            });
+    });     
+    
 };
 
 var setAppUserFromAuth = function (req, res, next) {
@@ -387,28 +395,28 @@ var setAppUserFromAuth = function (req, res, next) {
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk") {
         return next();
     } else if (scheme == "MOBILE" && username && password) {
-        return keystone.list("Client").model.find({
+        return keystone.list("AppUser").find({
             $or: [
                 { phoneNumber: username.cleanPhoneNumber() },
                 { username: username },
                 { email: username }
             ]
-        }).exec((err, clients) => {
+        }).catch(err => {
             if (err)
                 return next({
                     response: "error",
                     message: "NotAuthorized! " + err
                 });
+        }).then(users => {
+            var user = users.find(c => password == c.password) ||
+                users.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
-            var client = clients.find(c => password == c.password) ||
-                clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
-
-            setAppUser(req, res, client)
-                .then(client => next(null, client))
+            setAppUser(req, res, user)
+                .then(user => next(null, user))
                 .catch(err => {
                     if(err) console.error(err);
-                    if (clients.length)
-                        console.log(`${clients.length} clients match username ${username}. Invalid password? '${password}'`);
+                    if (users.length)
+                        console.log(`${users.length} clients match username ${username}. Invalid password? '${password}'`);
                     else
                         console.log(`No client match the username ${username}`);
 

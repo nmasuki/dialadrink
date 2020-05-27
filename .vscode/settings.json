@@ -2,5 +2,5 @@
     "jshint.options": {
         "esversion": 6
     },
-    "editor.formatOnPaste": true,
+    "editor.formatOnPaste": false,
 }

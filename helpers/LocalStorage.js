@@ -96,8 +96,12 @@ function LocalStorage(entityName) {
             all[id] = all[id] || {};
 
             for (var i in entity){
-                if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false))
+                if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false)){
+                    if(/^phone|^mobile/i.test(i) && /^[\d\s]+$/.test(entity[i]))
+                        entity[i] = entity[i].cleanPhoneNumber();
+
                     all[id][i] = entity[i];
+                }
             }
 
             updates.push({

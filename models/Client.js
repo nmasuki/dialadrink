@@ -456,7 +456,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
             });
         });
     } else {
-        return keystone.list("Admin").model.find({ receivesOrders: true })
+        return keystone.list("AppUser").model.find({ receivesOrders: true })
             .exec((err, users) => {
                 if (err)
                     return reject(console.log(err));
@@ -569,11 +569,17 @@ Client.schema.methods.guessGender = function(name){
     return null;
 };
 
+Client.schema.post('save', function(error, doc, next) {
+    console.log(error);
+    next();
+});
+
 Client.schema.pre('save', function (next) {
     var user = this;
     if (user.modifiedDate.addSeconds(10) > new Date()){
-        console.log("Client saved less than 10 sec ago. Should skip save but....");
-        //return false;
+        var error = new Error("Client saved less than 10 sec ago. Should skip save but....");
+        //console.error(error);
+        return next(error.message);
     }
 
     user.modifiedDate = new Date();
