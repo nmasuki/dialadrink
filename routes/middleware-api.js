@@ -17,7 +17,7 @@ function getDeliveryCount(res){
     return Promise.resolve(deliveries.length);
 }
 
-function getProductCount() {
+function getProductCount(res) {
     var filter = {state: 'published'};
     return new Promise((resolve, reject) => {
         keystone.list('Product').model.count(filter).exec((err, count) =>{ 
@@ -96,7 +96,7 @@ function getSalesValue(res){
     });
 }
 
-function getPurchasesValue(){ 
+function getPurchasesValue(res){ 
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("purchase").getAll();
         if (res.locals.lastCloseOfDay)
@@ -114,7 +114,7 @@ function getPurchasesValue(){
     });
  }
 
-function getExpensesValue(){ 
+function getExpensesValue(res){ 
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("expense").getAll();
         if (res.locals.lastCloseOfDay)
@@ -132,7 +132,7 @@ function getExpensesValue(){
     });
 }
 
-function getRiderCount() { 
+function getRiderCount(res) { 
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("rider").getAll();
         resolve(items.length);
@@ -141,27 +141,27 @@ function getRiderCount() {
 
 function getCloseOfDayCount() { return Promise.resolve(0); }
 
-function getClientCount() {
+function getClientCount(res) {
     return new Promise((resolve, reject) => {
         keystone.list('Client').model.count({}).exec((err, count) => resolve(count));
     });
 }
 
-function getDashboardItemCount() {
+function getDashboardItemCount(res) {
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("dashmenuitem").getAll();
         resolve(items.length);
     });    
 }
 
-function getAppUserCount() {
+function getAppUserCount(res) {
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("appuser").getAll();
         return Promise.resolve(items.length);
     }); 
 }
 
-function getNotificationCount(){ 
+function getNotificationCount(res){ 
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("notification").getAll();
         items = items.filter(d => d.toId == res.locals.appUser.id || d.fromId == res.locals.appUser.id);
