@@ -82,8 +82,8 @@ function LocalStorage(entityName) {
             var id = entity._id || entity.id || entity.Id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
             entity._rev = entity._rev || entity.__v;
             
-            var curRev = parseInt((all[id] && all[id]._rev || "0").split('-')[0]);
-            var docRev = parseFloat((entity._rev || "0").split('-')[0]);
+            var curRev = parseInt((all[id] && all[id]._rev || "0").toString().split('-')[0]);
+            var docRev = parseFloat((entity._rev || "0").toString().split('-')[0]);
 
             if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
                 var msg = ["Document conflict! ", id, all[id]._rev, entity._rev].join(",");
