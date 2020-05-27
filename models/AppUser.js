@@ -156,14 +156,14 @@ AppUser.save = function(user){
                     console.error(err);
 
                 if(u){
-                    for(var i in obj)
-                        if(obj.hasOwnProperty(i))
-                            u[i] = obj[i];
+                    for(var i in user)
+                        if(user.hasOwnProperty(i))
+                            u[i] = user[i];
                 }else{
-                    u = new AppUser.model(obj);
+                    u = new AppUser.model(user);
                 }
 
-                ls.save(u.toObject());
+                ls.save(user);
                 u.save((err) => {
                     if(err) 
                         reject(err);
