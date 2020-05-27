@@ -156,8 +156,11 @@ function getDashboardItemCount(res) {
 
 function getAppUserCount(res) {
     return new Promise((resolve, reject) => {
-        var items = LocalStorage.getInstance("appuser").getAll();
-        return resolve(items.length);
+        keystone.list('AppUser').find({accountType: { $ne: null }}).then(users => {
+            if(users && users.length)
+                return resolve(users.length);
+            resolve(0);
+        });
     }); 
 }
 

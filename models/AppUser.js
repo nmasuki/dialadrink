@@ -1,11 +1,6 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
-//var Select = require("../helpers/customTypes/select/SelectType");
-
-/**
- * AppUser Model
- * ==========
- */
+var sms = new (require("../helpers/sms/MoveSMS"))();
 var AppUser = new keystone.List('AppUser');
 
 AppUser.add({
@@ -107,6 +102,54 @@ AppUser.schema.pre('save', function(next){
     next();
 });
 
+AppUser.schema.methods.toAppObject = function(){
+    var obj = this.toObject();
+    obj.firstName = this.name.first;
+    obj.lastName = this.name.last;
+    return obj;
+};
+
+AppUser.schema.methods.sendNewAccountSMS = function (options) {
+    options = options || {};
+    var user = this, 
+        sendOTP = options.sendOTP,
+        otpToken = options.token, 
+        alphaNumberic = options.alphaNumberic;
+
+    user.tempPassword = user.tempPassword || {
+        used: true,
+        resend: 0,
+        expiry: new Date().addMinutes(5).getTime()
+    };
+
+    if(!user.password || sendOTP){
+        if (!user.tempPassword.password || user.tempPassword.used || user.tempPassword.expiry >= Date.now()) {
+            var charset = Array(11).join('x').split('').map((x, i) => String.fromCharCode(49 + i));
+            if (alphaNumberic)
+                charset = charset.concat(Array(27).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
+
+            user.tempPassword.password = Array(alphaNumberic ? 7 : 5)
+                .join('x').split('')
+                .map((x) => charset[Math.round(Math.random() * (charset.length - 1))])
+                .join('');
+
+            user.tempPassword.used = false;
+            user.tempPassword.expiry = new Date().addMinutes(5).getTime();
+        } else {
+            user.tempPassword.resend += 1;
+        }
+        user.save();
+    }
+
+    var msg = "<#>DIALADRINK:" + (options.msg || `Your ${user.accountType} account has been Approved.`);
+    if(!user.password || sendOTP)
+        msg += `Use the Code ${user.tempPassword.password} to login.`;
+    msg += `Download the app from https://bit.ly/2M62mvW.`;
+
+    return sms.sendSMS(user.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
+};
+
+
 var ls = require("../helpers/LocalStorage").getInstance("appuser");
 
 function toFilterFn(obj){
@@ -114,6 +157,8 @@ function toFilterFn(obj){
         if(a) for(var i in obj){
             if(obj.hasOwnProperty(i)){
                 switch(i){
+                    case "$not":
+                        return !toFilterFn(obj[i])(a);
                     case "$or":
                         if(Array.isArray(obj[i]))
                             return Array.from(obj[i]).some(x => toFilterFn(x)(a));
@@ -135,8 +180,16 @@ function toFilterFn(obj){
                     case "$lte":
                         return a <= obj[i];
                     case "$eq":
+                        if(obj[i] instanceof RegExp)
+                            return obj[i].test(a);
                         return a == obj[i];
+                    case "$ne":
+                        if(obj[i] instanceof RegExp)
+                            return !obj[i].test(a);
+                        return a != obj[i];
                     default:
+                        if(obj[i] instanceof RegExp)
+                            return obj[i].test(a[i]);
                         return a[i] == obj[i];
                 }
             }
@@ -163,11 +216,13 @@ AppUser.find = function(filter){
                 for(var i = 0; i < users.length; i++){
                     var user = finalUsers.find(u => u.phoneNumber && users[i].phoneNumber && u.phoneNumber.cleanPhoneNumber() == users[i].phoneNumber.cleanPhoneNumber());
                     if(user){
-                        if(!user.passwords.contains(users[i].password))
+                        if(users[i].password && !user.passwords.contains(users[i].password))
                             user.passwords.push(users[i].password);
                         Object.assign(user, users[i]);
                     } else {
-                        users[i].passwords = [users[i].password];
+                        users[i].passwords = [];
+                        if(users[i].password)
+                            users[i].passwords.push(users[i].password);
                         finalUsers.push(users[i]);
                     }
                 }
@@ -179,19 +234,41 @@ AppUser.find = function(filter){
     });    
 };
 
+AppUser.findOne = function(filter){
+    return AppUser.find(filter).then(users => users && users[0]);
+};
+
 AppUser.save = function(user){
     return new Promise((resolve, reject) => {
-        AppUser.model.findOne({_id: user._id})
+        var filter = { $or: [{_id: user._id}] };
+
+        if(user.phoneNumber){
+            filter.$or.push({phoneNumber: user.phoneNumber})
+            filter.$or.push({phoneNumber: user.phoneNumber.cleanPhoneNumber()})
+        }
+
+        if(user.email)
+            filter.$or.push({email: user.email});
+        
+
+        AppUser.model.findOne(filter)
             .exec((err, u) => {
                 if(err)
                     console.error(err);
 
                 if(u){
+                    var sendSMS = user.accountStatus == "Approved" && (!u.accountStatus || u.accountStatus == "Pending");
+                        
                     for(var i in user)
-                        if(user.hasOwnProperty(i))
+                        if(user.hasOwnProperty(i) && user[i] !== undefined)
                             u[i] = user[i];
-                }else{
+
+                    if(sendSMS)
+                        user.sendNewAccountSMS({alphaNumberic: true});
+
+                } else {
                     u = new AppUser.model(user);
+                    //TODO Send sms notification to new user..
                 }
 
                 ls.save(user);
