@@ -389,7 +389,7 @@ var setAppUser = function (req, res, user) {
 };
 
 var setAppUserFromAuth = function (req, res, next) {
-    var { scheme,  username, password, platform } = getAuthInfo(req);
+    var { scheme, username, password, platform } = getAuthInfo(req);
 
     req.session.platform = platform;
     if (scheme == "BASIC" && username == "appuser" && password == "Di@l @ dr1nk") {
@@ -416,7 +416,7 @@ var setAppUserFromAuth = function (req, res, next) {
                 .catch(err => {
                     if(err) console.error(err);
                     if (users.length)
-                        console.log(`${users.length} clients match username ${username}. Invalid password? '${password}'`);
+                        console.log(`${users.length} clients match username ${username}. Invalid password? '${password}' '${users.map(u => u.password).join()}'` );
                     else
                         console.log(`No client match the username ${username}`);
 

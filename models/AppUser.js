@@ -134,7 +134,7 @@ AppUser.find = function(filter){
     
                 var finalUsers = [];                
                 for(var i = 0; i < users.length; i++){
-                    var user = finalUsers.find(u => u.phoneNumber.cleanPhoneNumber() == users[i].phoneNumber.cleanPhoneNumber());
+                    var user = finalUsers.find(u => u.phoneNumber && users[i].phoneNumber && u.phoneNumber.cleanPhoneNumber() == users[i].phoneNumber.cleanPhoneNumber());
                     if(user)
                         Object.assign(user, users[i]);
                     else
