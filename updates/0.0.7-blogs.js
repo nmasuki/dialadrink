@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var najax = require('najax');
 var cloudinary = require("cloudinary");
-var Admin = keystone.list('Admin');
+var AppUser = keystone.list('AppUser');
 var Blog = keystone.list('Blog');
 var BlogCategory = keystone.list('BlogCategory');
 var baseUrl = keystone.get("url");
@@ -69,7 +69,7 @@ function importBlog(tile, done, categories) {
                 var extentedContent = $("#site-content").html();
                 title = title || $(".main-title").text();
 
-                Admin.model.findOne({}).exec((err, user) => {
+                AppUser.model.findOne({}).exec((err, user) => {
                     if (err)
                         console.log(err);
 

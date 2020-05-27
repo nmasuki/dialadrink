@@ -1,5 +1,5 @@
 /**
- * This script automatically creates a default Admin user when an
+ * This script automatically creates a default AppUser user when an
  * empty database is used for the first time. You can use this
  * technique to insert data into any List you have defined.
  *
@@ -8,19 +8,23 @@
  */
 
 exports.create = {
-	Admin: [{
+	AppUser: [{
 				'name.first': 'Nelson',
 				'name.last': 'Masuki',
+				'phoneNumber': '254720805835',
 				'email': 'nmasuki@gmail.com',
 				'password': 'admin',
 				'accountType': "system admin",
+				'accountStatus': 'Active',
 				'receivesOrders': false
 			}, {
 				'name.first': 'Simon',
 				'name.last': 'Kimari',
+				'phoneNumber': '254723688108',
 				'email': '	simonkimari@gmail.com',
 				'password': 'admin',
 				'accountType': "office admin",
+				'accountStatus': 'Active',
 				'receivesOrders': true
 			},
 	],
@@ -32,15 +36,15 @@ exports.create = {
 
 var keystone = require('keystone');
 var async = require('async');
-var Admin = keystone.list('Admin');
+var AppUser = keystone.list('AppUser');
 
 var admins = [
-	{ email: 'user@keystonejs.com', password: 'admin', name: { first: 'Admin', last: 'Admin' } }
+	{ email: 'user@keystonejs.com', password: 'admin', name: { first: 'AppUser', last: 'AppUser' } }
 ];
 
 function createAdmin (admin, done) {
 
-	var newAdmin = new Admin.model(admin);
+	var newAdmin = new AppUser.model(admin);
 
 	newAdmin.isAdmin = true;
 	newAdmin.save(function (err) {

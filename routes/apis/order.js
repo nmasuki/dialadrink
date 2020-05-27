@@ -52,7 +52,7 @@ router.get("/", function(req, res){
     var skip = (page - 1) * pageSize;
     
     console.log("Looking up orders..","filter:", "page:", page, "pageSize:", pageSize, "skip:", skip);
-    console.log(filter);
+    //console.log(JSON.stringify(filter));
 
     Order.model.find(filter)
         .deepPopulate('cart.product.priceOptions.option')
@@ -117,7 +117,23 @@ router.post("/", function (req, res){
         data: {}
     };
 
-    if (client) {
+    if (res.locals.app == "com.dialadrinkkenya.rider") {
+        res.send({
+            response: "error",
+            message: 'Rider is not allowed to update order'
+        });
+    } else if (res.locals.app == "com.dialadrinkkenya.office") {
+        Order.model.find({_id: req.body._id})
+            .exec((err, orders) => {
+                if (err) {
+                    json.response = "error";
+                    return res.send(json);
+                }
+
+                var order = order[0];
+                
+            });
+    } else if (res.locals.appUser) {
         client.copyAppObject(req.body);
 
         json.response = "success";
@@ -210,7 +226,6 @@ router.post("/cancel/:orderNo", function(req, res){
             return res.send(json);
         });
 });
-
 
 function getCartItems(req){
     var items = Object.values(req.session.cart || {});

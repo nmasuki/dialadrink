@@ -202,6 +202,16 @@ Order.add({
         }
     },
 
+    rider: {
+        assigned: {
+            type: Types.Relationship,
+            ref: 'AppUser',
+            many: false
+        },
+        assignedAt: { type: Date, default: null},
+        deliveredAt: { type: Date, default: null},
+        confirmed: {type: Boolean, default: false}
+    }
 });
 
 Order.schema.pre('save', function (next) {
@@ -276,22 +286,28 @@ Order.schema.virtual("deliveryAddress").get(function () {
 var clients = [];
 Order.schema.methods.updateClient = function (next) {
     var order = this;
+    
+    /*
     if (order.client && order.client.modifiedDate && order.client.modifiedDate.addSeconds(60) > new Date()) {
         if (typeof next == "function")
             return next();
     }
+    */
 
     var delivery = order.delivery;
-    if (order.delivery) {
+    if (delivery) {
         var findOption = { "$or": [] };
         var phoneNumber = (delivery.phoneNumber || "").trim();
 
         if (phoneNumber) {
-            if (phoneNumber)
-                phoneNumber = phoneNumber.cleanPhoneNumber();
+            findOption.$or.push({
+                "phoneNumber": new RegExp(phoneNumber.cleanPhoneNumber())
+            });
             findOption.$or.push({
                 "phoneNumber": new RegExp(phoneNumber)
             });
+
+            delivery.phoneNumber = delivery.phoneNumber.cleanPhoneNumber();
         } else {
             var email = (this.delivery.email || "").trim();
             if (email) {
@@ -305,7 +321,10 @@ Order.schema.methods.updateClient = function (next) {
                     if (err)
                         return console.warn(err);
 
-                    client = client || clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
+                    client = client || clients.find(c => c.phoneNumber == phoneNumber || 
+                        c.phoneNumber.cleanPhoneNumber() == phoneNumber.cleanPhoneNumber() || 
+                        c.email == email);
+
                     var saveClient = false;
                     if (client) {
                         if (order.clientIp && client.clientIps.indexOf(order.clientIp) < 0) {
@@ -551,7 +570,7 @@ Order.schema.methods.toAppObject = function () {
         client = new Client.model(this.delivery);
         clients.push(client);
 
-        order.client = client._id;
+        order.client = client;
         obj.client = client.toAppObject();
         
         var filter = { $or: [] };
@@ -568,11 +587,7 @@ Order.schema.methods.toAppObject = function () {
                     
                     if(_client)
                         order.client = _client;
-                    else{
-                        client.save();
-                        order.client = client;
-                    }
-
+                    
                     order.save();
                 });
         }
