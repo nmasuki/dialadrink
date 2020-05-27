@@ -409,7 +409,7 @@ var setAppUserFromAuth = function (req, res, next) {
                 });
         }).then(users => {
             var user = users.find(c => password == c.password) ||
-                users.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
+                users.find(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
             setAppUser(req, res, user)
                 .then(user => next(null, user))
