@@ -101,7 +101,7 @@ function LocalStorage(entityName) {
                     if(/^phone|^mobile/i.test(i) && /^[\d\s]+$/.test(entity[i]))
                         entity[i] = entity[i].cleanPhoneNumber();
 
-                    if(/password/i.test(i) && (entity[i] || "").length < 40)
+                    if(/^password/i.test(i) && (entity[i] || "").length < 40)
                         entity[i] = (entity[i] || "").toString().encryptPassword().encryptedPassword;
                     
                     all[id][i] = entity[i];

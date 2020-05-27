@@ -79,28 +79,64 @@ function getOrderCount(res) {
 function getInventoryCount(){ return Promise.resolve(0); }
 
 function getSalesValue(res){ 
-    var sales = LocalStorage.getInstance("sale").getAll();
-    if (res.locals.lastCloseOfDay)
-        sales = sales.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+    return new Promise((resolve, reject) => {
+        var items = LocalStorage.getInstance("sale").getAll();
+        if (res.locals.lastCloseOfDay)
+            items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
-    if (res.locals.app == "com.dialadrinkkenya.rider") {
-        sales = sales.filter(d => d.riderId == res.locals.appUser.id);
-    } else if (res.locals.app == "com.dialadrinkkenya.office") {
-        //deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
-    } else {
-        sales = sales.filter(d => d.clientId == res.locals.appUser.id);
-    }
+        if (res.locals.app == "com.dialadrinkkenya.rider") {
+            items = items.filter(d => d.riderId == res.locals.appUser.id);
+        } else if (res.locals.app == "com.dialadrinkkenya.office") {
+            //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        } else {
+            items = items.filter(d => d.clientId == res.locals.appUser.id);
+        }
 
-    return Promise.resolve(sales.sum(s => s.salePrice));
+        resolve(items.sum(s => s.salePrice));
+    });
 }
 
-function getPurchasesValue(){ return Promise.resolve(5000); }
+function getPurchasesValue(){ 
+    return new Promise((resolve, reject) => {
+        var items = LocalStorage.getInstance("purchase").getAll();
+        if (res.locals.lastCloseOfDay)
+            items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
-function getExpensesValue(){ return Promise.resolve(4000); }
+        if (res.locals.app == "com.dialadrinkkenya.rider") {
+            items = items.filter(d => d.riderId == res.locals.appUser.id);
+        } else if (res.locals.app == "com.dialadrinkkenya.office") {
+            //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        } else {
+            items = items.filter(d => d.clientId == res.locals.appUser.id);
+        }
+
+        resolve(items.sum(s => s.cost || s.amount));
+    });
+ }
+
+function getExpensesValue(){ 
+    return new Promise((resolve, reject) => {
+        var items = LocalStorage.getInstance("expense").getAll();
+        if (res.locals.lastCloseOfDay)
+            items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+
+        if (res.locals.app == "com.dialadrinkkenya.rider") {
+            items = items.filter(d => d.riderId == res.locals.appUser.id);
+        } else if (res.locals.app == "com.dialadrinkkenya.office") {
+            //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        } else {
+            items = items.filter(d => d.clientId == res.locals.appUser.id);
+        }
+
+        resolve(items.sum(s => s.amount));
+    });
+}
 
 function getRiderCount() { 
-    var riders = LocalStorage.getInstance("rider").getAll();
-    return Promise.resolve(riders.length);
+    return new Promise((resolve, reject) => {
+        var items = LocalStorage.getInstance("rider").getAll();
+        resolve(items.length);
+    });  
  }
 
 function getCloseOfDayCount() { return Promise.resolve(0); }
@@ -112,19 +148,25 @@ function getClientCount() {
 }
 
 function getDashboardItemCount() {
-    var items = LocalStorage.getInstance("dashmenuitem").getAll();
-    return Promise.resolve(items.length);
+    return new Promise((resolve, reject) => {
+        var items = LocalStorage.getInstance("dashmenuitem").getAll();
+        resolve(items.length);
+    });    
 }
 
 function getAppUserCount() {
-    var items = LocalStorage.getInstance("appuser").getAll();
-    return Promise.resolve(items.length);
+    return new Promise((resolve, reject) => {
+        var items = LocalStorage.getInstance("appuser").getAll();
+        return Promise.resolve(items.length);
+    }); 
 }
 
 function getNotificationCount(){ 
-    var items = LocalStorage.getInstance("notification").getAll();
-    items = items.filter(d => d.toId == res.locals.appUser.id || d.fromId == res.locals.appUser.id);
-    return Promise.resolve(items.length);
+    return new Promise((resolve, reject) => {
+        var items = LocalStorage.getInstance("notification").getAll();
+        items = items.filter(d => d.toId == res.locals.appUser.id || d.fromId == res.locals.appUser.id);
+        return Promise.resolve(items.length);
+    }); 
  }
 
 exports.initLocals = (req, res, next) => {
@@ -141,6 +183,7 @@ exports.initLocals = (req, res, next) => {
             getDashboardItemCount(res), getAppUserCount(res),
             getNotificationCount(res)
         ]).then(values => {
+        
         var keys = [
             "delivery", "product",
             "orders", "inventory",
