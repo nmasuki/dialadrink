@@ -306,13 +306,14 @@ router.post("/login", function (req, res) {
 		AppUser.find({ phoneNumber: mobile }).then(users => {
 			var encrypted = password.encryptPassword().encryptedPassword;
 			var user = users.find(c => encrypted == c.password  || c.passwords.contains(encrypted)) ||
-				clients.find(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
+				users.find(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
 			var json = {
 				response: "error"
 			};
 
 			if (user) {
+                user.password = encrypted;
 				json.response = "success";
 				json.message = "Login successfully";
 				json.data = user;

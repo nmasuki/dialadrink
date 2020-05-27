@@ -24,7 +24,7 @@ function getAll(entityName) {
     try {
         if (fs.existsSync(path.resolve(dataDir, entityName + ".json"))){
             var jsonStr = (fs.readFileSync(path.resolve(dataDir, entityName + ".json")) || "{}").toString();
-            all = JSON.parse(jsonStr.replace(/\/\*.*\*\//g, ""));
+            all = JSON.parse(jsonStr.replace(/\/\*.*\*\//g, "") || "{}");
             if (all.data && all.response)
                 all = all.data;
             
@@ -49,19 +49,11 @@ function getAll(entityName) {
 
 function saveAll(entityName, all) {
     return new Promise((resolve, reject) => {
-        lockFile.lock(path.resolve(dataDir, entityName + ".lock"), function (err) {
-            if (err){
-                console.error("Could not aquire lock.", dataDir + entityName + ".lock", err);
+        fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
+            if(err)
                 return reject(err);
-            }
-            fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
-                lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));
 
-                if(err)
-                    return reject(err);
-
-                resolve();
-            });
+            resolve();
         });
     }).catch(console.error);
 }

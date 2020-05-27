@@ -400,7 +400,7 @@ var setAppUserFromAuth = function (req, res, next) {
                 { phoneNumber: username },
                 { phoneNumber: username.cleanPhoneNumber() },
                 { username: username },
-                { email: username }
+                { email: new RegExp("^" + username, "i") }
             ]
         }).catch(err => {
             if (err)
