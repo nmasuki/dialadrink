@@ -50,9 +50,10 @@ function getAll(entityName) {
 function saveAll(entityName, all) {
     return new Promise((resolve, reject) => {
         lockFile.lock(path.resolve(dataDir, entityName + ".lock"), function (err) {
-            if (err)
-                return reject("Could not aquire lock.", dataDir + entityName + ".lock", err);
-            
+            if (err){
+                console.error("Could not aquire lock.", dataDir + entityName + ".lock", err);
+                return reject(err);
+            }
             fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
                 lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));
 
