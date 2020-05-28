@@ -57,10 +57,14 @@ function saveAll(entityName, all) {
     return new Promise((resolve, reject) => {
         lockFile.lock(path.resolve(dataDir, entityName + ".lock"), function (err) {
             if (err){
-                console.error("Could not aquire lock.", dataDir + entityName + ".lock", err);
-                setTimeout(function(){ saveAll(entityName, all).then(resolve); }, 1);
+                console.warn("Could not aquire lock.", dataDir + entityName + ".lock", err);
+                setTimeout(function(){ 
+                    console.log("Retrying save..");
+                    saveAll(entityName, all).then(resolve).catch(reject); 
+                }, 100);
             }
 
+            console.log("Saving to file. Aquiring lock ", dataDir + entityName + ".lock");
             fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
                 lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));
 
