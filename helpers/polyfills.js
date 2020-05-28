@@ -229,8 +229,8 @@ if (!Function.prototype.promiseCall)
 var limit = function (func, wait, debounce) {
     var timeout, promises = [];
     return function(){
+        var context = this, args = arguments;
         return new Promise(function (resolve, reject) {
-            var context = this, args = arguments;
             this.my_resolve = resolve;
             promises.push(this);
 
