@@ -53,7 +53,7 @@ function getAll(entityName) {
     return all;
 }
 
-function saveAll(entityName, all) {
+var saveAll = function (entityName, all) {
     return new Promise((resolve, reject) => {
         lockFile.lock(path.resolve(dataDir, entityName + ".lock"), function (err) {
             if (err){
@@ -73,9 +73,9 @@ function saveAll(entityName, all) {
     
                 resolve();
             });
-        }.debounce(100));
+        });
     }).catch(console.error);
-}
+}.debounce(100)
 
 function LocalStorage(entityName) {
     var self = this;
