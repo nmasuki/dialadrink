@@ -75,7 +75,7 @@ var saveAll = function (entityName, all) {
             });
         });
     }).catch(console.error);
-}.debounce(100)
+}.debounce(100);
 
 function LocalStorage(entityName) {
     var self = this;
