@@ -350,7 +350,7 @@ Product.schema.methods.findRelated = function (callback) {
 var saveDebounce = function(){ return this.save(); }.debounce();
 Product.schema.methods.addPopularity = function (factor) {
     this.popularity = (this.popularity || 0) + (factor || 1);
-    saveDebounce.apply(this);
+    this.save();
 };
 
 Product.schema.methods.toAppObject = function () {
