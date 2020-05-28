@@ -73,7 +73,7 @@ function saveAll(entityName, all) {
     
                 resolve();
             });
-        });
+        }.debounce(100));
     }).catch(console.error);
 }
 
