@@ -320,7 +320,7 @@ router.post("/login", function (req, res) {
                 
                 user.sessions = user.sessions || [];
                 user.clientIps = user.clientIps || [];
-                console.log(json.message, encrypted, user.password, c.passwords.join());
+                console.log(json.message, encrypted, user.password, user.passwords.join());
                 
                 var tosave = false;
 				if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0){
