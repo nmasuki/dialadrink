@@ -30,14 +30,19 @@ function getAll(entityName) {
     try {
         if (fs.existsSync(path.resolve(dataDir, entityName + ".json"))){
             var jsonStr = (fs.readFileSync(path.resolve(dataDir, entityName + ".json")) || "{}").toString();
-            all = JSON.parse(jsonStr || "{}");
+            var startIndex = Math.min(
+                jsonStr.contains("[")? jsonStr.indexOf("["): 0,
+                jsonStr.contains("{")? jsonStr.indexOf("{"): 0
+            );
+
+            all = JSON.parse(jsonStr.substr(startIndex));
             if (all.data && all.response)
                 all = all.data;
             
             for(var i in all){
                 if(all.hasOwnProperty(i))
                     for(var j in all[i])
-                        if (all[i].hasOwnProperty(j) && j.toString().toLowerCase().indexOf("date") > 0){
+                        if (all[i].hasOwnProperty(j) && /^date|date$/i.test(j.toString())){
                             try {
                                 all[i][j] = new Date(all[i][j]).toISOString();
                             }catch(e){
