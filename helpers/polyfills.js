@@ -239,7 +239,7 @@ var limit = function (func, wait, debounce) {
             promises.forEach(p => p.my_resolve(ret));
 
             console.log("Debounced", promises.length);
-            promises = [];
+            promises.length = 0;
         };
 
         if (debounce && timeout)
