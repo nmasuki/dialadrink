@@ -277,7 +277,7 @@ router.post(["/forgot", "/otp"], function (req, res) {
 				json.data = client.toAppObject();
 				res.locals.appUser = client;
 
-				if (client.sessions.indexOf(req.sessionID) < 0)
+				if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0)
 					client.sessions.push(req.sessionID);
 			}
 
@@ -313,21 +313,34 @@ router.post("/login", function (req, res) {
 			};
 
 			if (user) {
-                console.log(user.password,  encrypted);
-				json.response = "success";
+                json.response = "success";
 				json.message = "Login successfully";
 				json.data = user;
-				res.locals.appUser = user;
-				user.sessions = user.sessions || [];
-
-				if (user.sessions.indexOf(req.sessionID) < 0){
-					user.sessions.push(req.sessionID);
+                res.locals.appUser = user;
+                
+                user.sessions = user.sessions || [];
+                user.clientIps = user.clientIps || [];
+                console.log(user.password, encrypted);
+                
+                var tosave = false;
+				if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0){
+                    user.sessions.push(req.sessionID);
+                    tosave = false;
                 }
 
 				if (user.tempPassword && !user.tempPassword.used && password == user.tempPassword.pwd) {
-					user.tempPassword.used = true;
-					AppUser.save(user);
-				}
+                    user.tempPassword.used = true;
+                    tosave = true;
+                }
+
+                if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
+                    user.clientIps.push(res.locals.clientIp);
+                    tosave = true;
+                }
+                
+                if(tosave)
+                    AppUser.save(user);
+
 			} else {
 				json.message = "Username/Password do not match!!";
 			}
