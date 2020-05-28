@@ -330,10 +330,11 @@ router.post("/login", function (req, res) {
 
 				if (user.tempPassword && !user.tempPassword.used && password == user.tempPassword.pwd) {
                     user.tempPassword.used = true;
+                 
                     tosave = true;
                 }
 
-                if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
+                if (res.locals.clientIp && user.clientIps.indexOf(res.locals.clientIp) < 0) {
                     user.clientIps.push(res.locals.clientIp);
                     tosave = true;
                 }
