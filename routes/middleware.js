@@ -357,35 +357,63 @@ var setAppUser = function (req, res, user) {
     if (!user) 
         return Promise.reject("No matching user found!");
     
-    return new Promise((resolve, reject) => {
-        keystone.list("AppUser")
-            .find({ phoneNumber: user.phoneNumber.cleanPhoneNumber() })
-            .catch(reject)
-            .then(users => {
-                var tosave = false;
-                var user = users && users[0];
-                
-                res.locals.appUser = global.appUser = user;
-                user.sessions = user.sessions || [];
-                user.clientIps = user.clientIps || [];
-                
-                if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0) {
-                    user.sessions.push(req.sessionID);
-                    tosave = true;
-                }
+        if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
+            return new Promise((resolve, reject) => {
+                keystone.list("AppUser")
+                    .find({ phoneNumber: user.phoneNumber.cleanPhoneNumber() })
+                    .catch(reject)
+                    .then(users => {
+                        var tosave = false;
+                        var user = users && users[0];
+                        
+                        res.locals.appUser = global.appUser = user;
+                        user.sessions = user.sessions || [];
+                        user.clientIps = user.clientIps || [];
+                        
+                        if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0) {
+                            user.sessions.push(req.sessionID);
+                            tosave = true;
+                        }
 
-                if (res.locals.clientIp && user.clientIps.indexOf(res.locals.clientIp) < 0) {
-                    user.clientIps.push(res.locals.clientIp);
-                    tosave = true;
-                }
+                        if (res.locals.clientIp && user.clientIps.indexOf(res.locals.clientIp) < 0) {
+                            user.clientIps.push(res.locals.clientIp);
+                            tosave = true;
+                        }
 
-                if (tosave)
-                    keystone.list("AppUser").save(user);
+                        if (tosave)
+                            keystone.list("AppUser").save(user);
 
-                return resolve(user);
-            });
-    });     
-    
+                        return resolve(user);
+                    });
+            });       
+        }
+
+        return new Promise((resolve, reject) => {
+            keystone.list("Client").model.findOne({ phoneNumber: user.phoneNumber.cleanPhoneNumber() })
+                .exec((err, client) => {
+                    if(err)
+                        return reject(err);
+
+                    res.locals.appUser = global.appUser = client;
+ 
+                    var tosave = false;
+                    if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
+                        client.sessions.push(req.sessionID);
+                        tosave = true;
+                    }
+ 
+                    if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
+                        client.clientIps.push(res.locals.clientIp);
+                        tosave = true;
+                    }
+ 
+                    if (tosave)
+                        client.save();
+ 
+                return client;
+                    return resolve(client);
+                });
+        });    
 };
 
 var setAppUserFromAuth = function (req, res, next) {
