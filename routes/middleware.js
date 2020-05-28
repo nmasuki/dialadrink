@@ -410,7 +410,6 @@ var setAppUser = function (req, res, user) {
                     if (tosave)
                         client.save();
  
-                return client;
                     return resolve(client);
                 });
         });    
