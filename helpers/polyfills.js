@@ -237,9 +237,10 @@ var limit = function (func, wait, debounce) {
             var throttler = function () {
                 timeout = null;
                 var ret = func.apply(context, args);
-                promises.forEach(p => p.my_resolve(ret));
 
+                promises.forEach(p => p.my_resolve(ret));
                 console.log("Debounced", promises.length);
+                
                 promises.length = 0;
             };
 
