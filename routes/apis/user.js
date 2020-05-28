@@ -303,7 +303,7 @@ router.post("/login", function (req, res) {
 
 	console.log("Login attempt", mobile, password);
 	if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
-		AppUser.find({ phoneNumber: mobile }).then(users => {
+		AppUser.find({ phoneNumber: mobile, accountStatus: "Active" }).then(users => {
 			var encrypted = password.encryptPassword().encryptedPassword;
 			var user = users.find(c => encrypted == c.password  || c.passwords.contains(encrypted)) ||
 				users.find(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
