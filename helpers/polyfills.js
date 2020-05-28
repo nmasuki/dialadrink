@@ -228,7 +228,7 @@ if (!Function.prototype.promiseCall)
 // Internal function used to implement `_.throttle` and `_.debounce`.
 var limit = function (func, wait, debounce) {
     var timeout, promises = [];
-    return Promise(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
         var context = this, args = arguments;
         this.my_resolve = resolve;
         promises.push(this);
