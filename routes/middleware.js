@@ -359,8 +359,7 @@ var setAppUser = function (req, res, user) {
     
         if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
             return new Promise((resolve, reject) => {
-                keystone.list("AppUser")
-                    .find({ phoneNumber: user.phoneNumber.cleanPhoneNumber() })
+                AppUser.find({ phoneNumber: user.phoneNumber.cleanPhoneNumber(), accountStatus: "Active" })
                     .catch(reject)
                     .then(users => {
                         var tosave = false;
