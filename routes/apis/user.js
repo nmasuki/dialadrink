@@ -313,7 +313,7 @@ router.post("/login", function (req, res) {
 			};
 
 			if (user) {
-                user.password = encrypted;
+                console.log(user.password,  encrypted);
 				json.response = "success";
 				json.message = "Login successfully";
 				json.data = user;
