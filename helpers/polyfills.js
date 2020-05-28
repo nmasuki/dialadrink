@@ -228,26 +228,28 @@ if (!Function.prototype.promiseCall)
 // Internal function used to implement `_.throttle` and `_.debounce`.
 var limit = function (func, wait, debounce) {
     var timeout, promises = [];
-    return new Promise(function (resolve, reject) {
-        var context = this, args = arguments;
-        this.my_resolve = resolve;
-        promises.push(this);
+    return function(){
+        return new Promise(function (resolve, reject) {
+            var context = this, args = arguments;
+            this.my_resolve = resolve;
+            promises.push(this);
 
-        var throttler = function () {
-            timeout = null;
-            var ret = func.apply(context, args);
-            promises.forEach(p => p.my_resolve(ret));
+            var throttler = function () {
+                timeout = null;
+                var ret = func.apply(context, args);
+                promises.forEach(p => p.my_resolve(ret));
 
-            console.log("Debounced", promises.length);
-            promises.length = 0;
-        };
+                console.log("Debounced", promises.length);
+                promises.length = 0;
+            };
 
-        if (debounce && timeout)
-            clearTimeout(timeout);
+            if (debounce && timeout)
+                clearTimeout(timeout);
 
-        if (debounce || !timeout)
-            timeout = setTimeout(throttler, wait || 1500);
-    });
+            if (debounce || !timeout)
+                timeout = setTimeout(throttler, wait || 1500);
+        });
+    }
 };
 
 // Returns a function, that, when invoked, will only be triggered at most once
