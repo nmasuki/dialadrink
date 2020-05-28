@@ -259,10 +259,12 @@ AppUser.save = function(user){
                 if(u){
                     var sendSMS = user.accountStatus == "Approved" && (!u.accountStatus || u.accountStatus == "Pending");
                         
-                    for(var i in user)
-                        if(user.hasOwnProperty(i) && user[i] !== undefined)
+                    for(var i in user){
+                        if(user.hasOwnProperty(i) && user[i] !== undefined && !/^password$/.test(i)){
                             u[i] = user[i];
-
+                        }
+                    }
+                    
                     if(sendSMS)
                         user.sendNewAccountSMS({alphaNumberic: true});
 
