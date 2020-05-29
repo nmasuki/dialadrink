@@ -239,8 +239,9 @@ var limit = function (func, wait, debounce) {
                 var ret = func.apply(context, args);
 
                 promises.forEach(p => p.my_resolve(ret));
-                console.log("Debounced", promises.length);
-                
+                if(promises.length > 1)
+                    console.log("Debounced",func.name, promises.length + " times");
+
                 promises.length = 0;
             };
 
