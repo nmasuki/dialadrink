@@ -359,7 +359,7 @@ var setAppUser = function (req, res, user) {
     
     if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
         return new Promise((resolve, reject) => {
-            AppUser.find({ phoneNumber: user.phoneNumber, accountStatus: "Active" })
+            keystone.list("AppUser").find({ phoneNumber: user.phoneNumber, accountStatus: "Active" })
                 .catch(reject)
                 .then(users => {
                     var tosave = false;
@@ -431,20 +431,20 @@ var setAppUserFromAuth = function (req, res, next) {
             ]
         }).catch(err => {
             if (err)
-                return next({
-                    response: "error",
-                    message: "NotAuthorized! " + err
-                });
+                return next({ response: "error", message: "NotAuthorized! " + err });
         }).then(users => {
-            var user = users.find(c => password == c.password || c.passwords.contains(password)) ||
-                users.find(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
+            
+            var user = users.find(c => password == c.password  || c.passwords.contains(password)) ||
+                users.filter(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now())
+                    .find(c => c.tempPassword.pwd && password == c.tempPassword.pwd.encryptPassword().encryptedPassword);
 
             setAppUser(req, res, user)
                 .then(user => next(null, user))
                 .catch(err => {
                     if(err) console.error(err);
                     if (users.length)
-                        console.log(`${users.length} users match username ${username}. Invalid password? '${password}' '${users.map(u => u.password).join()}'` );
+                        console.log(`${users.length} users match username ${username}.` +
+                            `Invalid password? '${password}' '${users.map(u => u.passwords).join(',')}'`);
                     else
                         console.log(`No client match the username ${username}`);
 

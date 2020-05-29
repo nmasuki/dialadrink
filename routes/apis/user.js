@@ -320,7 +320,7 @@ router.post("/login", function (req, res) {
                 
                 user.sessions = user.sessions || [];
                 user.clientIps = user.clientIps || [];
-                console.log(json.message, encrypted, user.password, user.passwords.join());
+                console.log(json.message, encrypted, user.passwords.join());
                 
                 var tosave = false;
 				if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0){
@@ -329,8 +329,7 @@ router.post("/login", function (req, res) {
                 }
 
 				if (user.tempPassword && !user.tempPassword.used && password == user.tempPassword.pwd) {
-                    user.tempPassword.used = true;
-                 
+                    user.tempPassword.used = true;                 
                     tosave = true;
                 }
 
