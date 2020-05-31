@@ -358,7 +358,7 @@ var setAppUser = function (req, res, user) {
     if (!user) 
         return Promise.reject("No matching user found!");
     else if(user.accountStatus != "Active")
-        return Promise.reject("Account deactivated!");
+        return Promise.reject(`Account in ${user.accountStatus} status!`);
     
     if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
         return new Promise((resolve, reject) => {
