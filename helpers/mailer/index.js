@@ -74,8 +74,7 @@ module.exports = function (email, options, callback) {
 
 	process.nextTick(function () {
 		// send
-		send(
-			{message: options},
+		send({ message: options },
 			// onSuccess
 			function (res) {
 				callback(null, res);
