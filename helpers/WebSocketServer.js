@@ -169,10 +169,7 @@ wss.on('connection', function connection(ws, req) {
         req.socket.remoteAddress || '').trim(':f');
 
     console.log("WSS:", "Client connected! ", ws.clientIp);
-    ws.on('pong', function heartbeat() {
-        this.isAlive = true;
-        console.log("WSS:", "pong!", this.clientIp, this.phone);
-    });
+    ws.on('pong', function heartbeat() { this.isAlive = true; });
 
     ws.on('message', function incoming(message) {
         if (typeof wss.processIncoming == "function")
@@ -187,9 +184,7 @@ var interval = setInterval(function ping() {
             return ws.terminate();
 
         ws.isAlive = false;
-        ws.ping(function noop() {
-            console.log("WSS:", "ping!", ws.clientIp);
-        });
+        ws.ping(function noop() {});
     });
 }, 30000);
 
