@@ -9,7 +9,7 @@
  */
 var _ = require('lodash');
 var keystone = require("keystone");
-var mobile = require('is-mobile');
+var isMobile = require('../helpers/isMobile');
 var memCache = require("memory-cache");
 
 function requestCache(duration, _key) {
@@ -97,7 +97,7 @@ exports.initLocals = function (req, res, next) {
     res.locals.promocode = req.session.promo;
 
     //Check mobile device
-    res.locals.isMobile = mobile(req);
+    res.locals.isMobile = isMobile(req);
 
     //Image placeholder
     res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
