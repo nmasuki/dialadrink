@@ -59,10 +59,10 @@ function processIncoming(message) {
             var obj = JSON.parse(message);
             switch (obj.cmd || obj.info) {
                 case 'user':
-                    var auth = Buffer.from(obj.data).split(":");
+                    var auth = new Buffer.from(obj.data, 'hex').toString().split(":");          
+                    console.log(auth);  
                     this.phone = auth[0];
-                    this.pwd = auth[1];           
-                    console.log(this.phone);      
+                    this.pwd = auth[1];     
                     break;
                 case 'number':
                     this.phone = obj.data;
