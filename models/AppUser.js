@@ -98,12 +98,38 @@ AppUser.schema.set('toObject', {
 });
 
 AppUser.schema.pre('save', function(next){
+    var user = this;
     this.phoneNumber = (this.phoneNumber || "").cleanPhoneNumber();
     
     if(!this.lsUser)
         ls.save(this.toAppObject());
-    
-    next();
+
+    var filter = { $or: [{_id: user._id}] };
+    if(user.phoneNumber){
+        filter.$or.push({phoneNumber: user.phoneNumber});
+        filter.$or.push({phoneNumber: user.phoneNumber.cleanPhoneNumber()});
+    }
+
+    if(user.email)
+        filter.$or.push({email: user.email});    
+
+    AppUser.model.findOne(filter)
+        .exec((err, u) => {
+            if(err)
+                console.error(err);
+
+            var sendSMS = false;
+            if(u){
+                sendSMS = user.accountStatus == "Approved" && (!u.accountStatus || u.accountStatus == "Pending");              
+            } else {
+                sendSMS = user.accountStatus == "Approved";
+            }
+            
+            if(sendSMS)
+                user.sendNewAccountSMS({alphaNumberic: true});
+
+            next();
+        });
 });
 
 AppUser.schema.methods.toAppObject = function(){
@@ -148,7 +174,7 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
     var msg = "<#>DIALADRINK:" + (options.msg || `Your ${user.accountType} account has been Approved.`);
     if(!user.password || sendOTP)
         msg += `Use the Code ${user.tempPassword.password} to login.`;
-    msg += `Download the app from https://bit.ly/2M62mvW.`;
+    msg += `Download the app from https://bit.ly/3eCpxdj`;
 
     return sms.sendSMS(user.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
@@ -270,39 +296,30 @@ AppUser.save = function(user){
         var filter = { $or: [{_id: user._id}] };
 
         if(user.phoneNumber){
-            filter.$or.push({phoneNumber: user.phoneNumber})
-            filter.$or.push({phoneNumber: user.phoneNumber.cleanPhoneNumber()})
+            filter.$or.push({phoneNumber: user.phoneNumber});
+            filter.$or.push({phoneNumber: user.phoneNumber.cleanPhoneNumber()});
         }
 
         if(user.email)
             filter.$or.push({email: user.email});
         
-
         AppUser.model.findOne(filter)
             .exec((err, u) => {
                 if(err)
-                    console.error(err);
+                    return console.error(err);
 
                 if(u){
-                    var sendSMS = user.accountStatus == "Approved" && (!u.accountStatus || u.accountStatus == "Pending");
-                        
                     for(var i in user){
                         if(user.hasOwnProperty(i) && user[i] !== undefined && !/^password$/.test(i)){
                             u[i] = user[i];
                         }
                     }
-                    
-                    if(sendSMS)
-                        user.sendNewAccountSMS({alphaNumberic: true});
-
                 } else {
                     u = new AppUser.model(user);
-                    //TODO Send sms notification to new user..
                 }
 
-                ls.save(user);
-                
                 u.lsUser = user;
+                ls.save(user);                
                 u.save((err) => {
                     if(err) 
                         reject(err);
