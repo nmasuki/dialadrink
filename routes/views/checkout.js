@@ -196,9 +196,7 @@ function okHiIntegration(req, res, order, cartItems, next) {
 	najax.post({
 		url: url,
 		contentType: "application/json; charset=utf-8",
-		headers: {
-			"api-key": res.locals.OkHiKey
-		},
+		headers: { "api-key": res.locals.OkHiKey },
 		data: data,
 		success: function (res) {
 			console.log(res);
@@ -206,7 +204,7 @@ function okHiIntegration(req, res, order, cartItems, next) {
 				next(null, res);
 		},
 		error: function (xhr, status, err) {
-			console.log("Error while making Okhi API call!", status, xhr.responseText, err);
+			console.error("Error while making Okhi API call!", status, xhr.responseText, err);
 			if (typeof next == "function")
 				next(err, url);
 		}

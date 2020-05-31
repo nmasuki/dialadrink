@@ -3,7 +3,7 @@ var axios = require('axios');
 var BaseSMS = require('./MySMS');
 var apiUrl = `https://sms.movesms.co.ke/api/{0}?username=${process.env.MOVESMS_USERNAME}&api_key=${process.env.MOVESMS_APIKEY}`;
     
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
+//process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 module.exports = function MoveSMS(sender) {
     sender = sender || 'SMARTLINK';
     
@@ -13,17 +13,21 @@ module.exports = function MoveSMS(sender) {
     self.balance = function balance(next) {
         return new Promise((resolve, reject) => {
             var url = apiUrl.format('balance');
+            console.log("Getting SMS balance..")
             najax.get({
                 url: url,
-                tls: {rejectUnauthorized: false},
-                agentOptions: { rejectUnauthorized: false },
+                rejectUnauthorized: false,
+                requestCert: true,
+                agent: false,
                 success: function (response) {
+                    console.log("SMS balance:", response);
                     var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
                     resolve(balance);
                     if (typeof next == "function")
                         next(null, balance);
                 },
                 error: function (xhr, status, error) {
+                    console.error(error);
                     reject(error);
                     if (typeof next == "function")
                         next(error);
@@ -74,8 +78,9 @@ module.exports = function MoveSMS(sender) {
                             msgtype: 5,
                             dlr: 0
                         },
-                        tls: {rejectUnauthorized: false},
-                        agentOptions: { rejectUnauthorized: false }
+                        rejectUnauthorized: false,
+                        requestCert: true,
+                        agent: false
                     }).then(function (response) {
                         resolve(balance -= 1);
                         if (typeof next == "function")
@@ -106,9 +111,10 @@ module.exports = function MoveSMS(sender) {
                     message: message,
                     msgtype: 5,
                     dlr: 0
-                },
-                tls: {rejectUnauthorized: false},
-                agentOptions: { rejectUnauthorized: false },
+                },                
+                rejectUnauthorized: false,
+                requestCert: true,
+                agent: false,
                 success: function (response) {
                     resolve(response);
                     if (typeof next == "function")
