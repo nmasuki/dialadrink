@@ -154,54 +154,65 @@ var ls = require("../helpers/LocalStorage").getInstance("appuser");
 
 function toFilterFn(obj){
     return function(a){
+        var matched = !!a;
         if(a) for(var i in obj){
             if(obj.hasOwnProperty(i)){
                 switch(i){
                     case "$not":
-                        return !toFilterFn(obj[i])(a);
+                        matched = matched && !toFilterFn(obj[i])(a);
+                        break;
                     case "$or":
-                        if(Array.isArray(obj[i]))
-                            return Array.from(obj[i]).some(x => toFilterFn(x)(a));
-                        else
-                            throw "Expecting an array at " + i;
+                        if(!Array.isArray(obj[i]))
+                           throw "Expecting an array at " + i;
+                        
+                        matched = matched &&  Array.from(obj[i]).some(x => toFilterFn(x)(a));
                         break;
                     case "$and":
-                        if(Array.isArray(obj[i]))
-                            return Array.from(obj[i]).every(x => toFilterFn(x)(a));
-                        else
+                        if(!Array.isArray(obj[i]))
                             throw "Expecting an array at " + i;
+
+                        
+                        matched = matched &&  Array.from(obj[i]).every(x => toFilterFn(x)(a));
                         break;
                     case "$elemMatch":
                         if(Array.isArray(a))
-                            return Array.from(a).some(x => toFilterFn(x)(obj[i]));
-                        else
                             throw "Expecting an array to evaluate $elemMatch!";
+                        
+                        matched = matched && Array.from(a).some(x => toFilterFn(x)(obj[i]));
                         break;
                     case "$gt":
-                        return a > obj[i];
+                        matched = matched && a > obj[i];
+                        break;
                     case "$gte":
-                        return a >= obj[i];
+                        matched = matched && a >= obj[i];
+                        break;
                     case "$lt":
-                        return a < obj[i];
+                        matched = matched && a < obj[i];
+                        break;
                     case "$lte":
-                        return a <= obj[i];
-                    case "$eq":
-                        if(obj[i] instanceof RegExp)
-                            return obj[i].test(a);
-                        return a == obj[i];
+                        matched = matched && a <= obj[i];
+                        break;
                     case "$ne":
                         if(obj[i] instanceof RegExp)
-                            return !obj[i].test(a);
-                        return a != obj[i];
+                            matched = matched && !obj[i].test(a);
+                        else
+                            matched = matched && a != obj[i];
+                        break;
+                    case "$eq":
+                        if(obj[i] instanceof RegExp)
+                            matched = matched && obj[i].test(a);
+                        else
+                            matched = matched && a == obj[i];
+                        break;
                     default:
                         if(obj[i] instanceof RegExp)
-                            return obj[i].test(a[i]);
-                        return a[i] == obj[i];
+                            matched = matched && obj[i].test(a[i]);
+                        else
+                            matched = matched && a[i] == obj[i];
                 }
-            }
-                return true;
+            }            
         }
-        return false;
+        return matched;
     };
 }
 
