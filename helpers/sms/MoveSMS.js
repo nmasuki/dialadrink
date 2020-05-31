@@ -85,7 +85,7 @@ module.exports = function MoveSMS(sender) {
                         resolve(balance -= 1);
                         if (typeof next == "function")
                             next(null, balance);
-                    }).catch(function (error) {
+                    }).fail(function (error) {
                         reject(error);
                         console.error("Http error:", error);
 
