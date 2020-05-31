@@ -13,6 +13,8 @@ module.exports = function MoveSMS(sender) {
             var url = apiUrl.format('balance');
             najax.get({
                 url: url,
+                tls: {rejectUnauthorized: false},
+                agentOptions: { rejectUnauthorized: false },
                 success: function (response) {
                     var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
                     resolve(balance);
@@ -68,9 +70,8 @@ module.exports = function MoveSMS(sender) {
                             msgtype: 5,
                             dlr: 0
                         },
-                        agentOptions: {
-                            rejectUnauthorized: false
-                        },
+                        tls: {rejectUnauthorized: false},
+                        agentOptions: { rejectUnauthorized: false },
                         success: function (response) {
                             resolve(balance -= 1);
                             if (typeof next == "function")
@@ -103,6 +104,8 @@ module.exports = function MoveSMS(sender) {
                     msgtype: 5,
                     dlr: 0
                 },
+                tls: {rejectUnauthorized: false},
+                agentOptions: { rejectUnauthorized: false },
                 success: function (response) {
                     resolve(response);
                     if (typeof next == "function")
