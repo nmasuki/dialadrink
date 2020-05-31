@@ -1,7 +1,7 @@
 var najax = require('najax');
 var axios = require('axios');
 var BaseSMS = require('./MySMS');
-var apiUrl = `https://sms.movesms.co.ke/api/{0}?username=${process.env.MOVESMS_USERNAME}&api_key=${process.env.MOVESMS_APIKEY}`;
+var apiUrl = `http://sms.movesms.co.ke/api/{0}?username=${process.env.MOVESMS_USERNAME}&api_key=${process.env.MOVESMS_APIKEY}`;
     
 module.exports = function MoveSMS(sender) {
     sender = sender || 'SMARTLINK';
@@ -65,7 +65,7 @@ module.exports = function MoveSMS(sender) {
                 return new Promise((resolve, reject) => {
                     console.log("Sending Http post:", url);
 
-                    najax.get({
+                    najax.post({
                         url: url,
                         data: {
                             to: validNos.join(','),
