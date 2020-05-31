@@ -64,6 +64,7 @@ module.exports = function MoveSMS(sender) {
 
                 return new Promise((resolve, reject) => {
                     console.log("Sending Http post:", url);
+                    
                     axios.post(url, {
                         data: {
                             to: validNos.join(','),
@@ -80,7 +81,7 @@ module.exports = function MoveSMS(sender) {
                     }).catch(function (error) {
                         reject(error);
                         console.error("Http error:", error);
-                        
+
                         if (typeof next == "function")
                             next(error);
                     });
