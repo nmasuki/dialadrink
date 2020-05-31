@@ -198,13 +198,16 @@ function okHiIntegration(req, res, order, cartItems, next) {
 		contentType: "application/json; charset=utf-8",
 		headers: { "api-key": res.locals.OkHiKey },
 		data: data,
+		rejectUnauthorized: false,
+		requestCert: true,
+		agent: false,
 		success: function (res) {
 			console.log(res);
 			if (typeof next == "function")
 				next(null, res);
 		},
 		error: function (xhr, status, err) {
-			console.error("Error while making Okhi API call!", status, xhr.responseText, err);
+			console.error("Error calling OKHI api!", status, xhr.responseText, err);
 			if (typeof next == "function")
 				next(err, url);
 		}

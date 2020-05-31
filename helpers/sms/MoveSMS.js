@@ -21,6 +21,9 @@ module.exports = function MoveSMS(sender) {
             console.log("Getting SMS balance..");
             najax.get({
                 url: url,
+                rejectUnauthorized: false,
+                requestCert: true,
+                agent: false,
                 success: function (response) {
                     console.log("SMS balance:", response);
                     var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
@@ -80,6 +83,9 @@ module.exports = function MoveSMS(sender) {
                             msgtype: 5,
                             dlr: 0
                         },
+                        rejectUnauthorized: false,
+                        requestCert: true,
+                        agent: false,
                     }).then(function (response) {
                         resolve(balance -= 1);
                         if (typeof next == "function")
@@ -110,7 +116,10 @@ module.exports = function MoveSMS(sender) {
                     message: message,
                     msgtype: 5,
                     dlr: 0
-                },                
+                },      
+                rejectUnauthorized: false,
+                requestCert: true,
+                agent: false,          
                 success: function (response) {
                     resolve(response);
                     if (typeof next == "function")
