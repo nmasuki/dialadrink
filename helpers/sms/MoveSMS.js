@@ -64,8 +64,9 @@ module.exports = function MoveSMS(sender) {
 
                 return new Promise((resolve, reject) => {
                     console.log("Sending Http post:", url);
-                    
-                    axios.post(url, {
+
+                    najax.get({
+                        url: url,
                         data: {
                             to: validNos.join(','),
                             message: message,
