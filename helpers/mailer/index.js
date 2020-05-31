@@ -86,5 +86,4 @@ module.exports = function (email, options, callback) {
 			}
 		);
 	});
-}
-
+};
