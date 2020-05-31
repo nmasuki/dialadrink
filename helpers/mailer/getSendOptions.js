@@ -1,6 +1,6 @@
 var getRecipientsAndMergeVars = require('./getRecipientsAndMergeVars');
 var objToMandrillVars = require('./objToMandrillVars');
-var truthy = a => !!a;;
+var truthy = a => !!a;
 
 var defaultOptions = {
 	apiKey: process.env.MANDRILL_API_KEY,
