@@ -1,8 +1,9 @@
 var najax = require('najax');
 var axios = require('axios');
 var BaseSMS = require('./MySMS');
-var apiUrl = `http://sms.movesms.co.ke/api/{0}?username=${process.env.MOVESMS_USERNAME}&api_key=${process.env.MOVESMS_APIKEY}`;
+var apiUrl = `https://sms.movesms.co.ke/api/{0}?username=${process.env.MOVESMS_USERNAME}&api_key=${process.env.MOVESMS_APIKEY}`;
     
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 module.exports = function MoveSMS(sender) {
     sender = sender || 'SMARTLINK';
     
