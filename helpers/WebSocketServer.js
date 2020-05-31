@@ -60,7 +60,7 @@ function processIncoming(message) {
             switch (obj.cmd || obj.info) {
                 case 'user':
                     var auth = new Buffer.from(obj.data, 'hex').toString().split(":");          
-                    console.log(auth);  
+                    console.log("WSS: User details:", auth.join(','));  
                     this.phone = auth[0];
                     this.pwd = auth[1];     
                     break;
@@ -175,7 +175,6 @@ wss.on('connection', function connection(ws, req) {
     });
 
     ws.on('message', function incoming(message) {
-        console.info("WSS:", "Message received:", message);
         if (typeof wss.processIncoming == "function")
             wss.processIncoming.call(this, message);
         processIncoming.call(this, message);
