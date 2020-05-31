@@ -171,6 +171,12 @@ function toFilterFn(obj){
                         else
                             throw "Expecting an array at " + i;
                         break;
+                    case "$elemMatch":
+                        if(Array.isArray(a))
+                            return Array.from(a).some(x => toFilterFn(x)(obj[i]));
+                        else
+                            throw "Expecting an array to evaluate $elemMatch!";
+                        break;
                     case "$gt":
                         return a > obj[i];
                     case "$gte":
