@@ -667,14 +667,14 @@ Order.defaultColumns = 'orderNumber, orderDate|15%, client|15%, delivery.platfor
 Order.register();
 
 Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
+    deliveryDetails = deliveryDetails || {};
     var time = new Date().toISOString().split('T')[1].split(':')[0];
-    if (time >= 17 - 3 || time <= 5 - 3) {
+    if (deliveryDetails.phoneNumber != '254720805835' && (time >= 17 - 3 || time <= 5 - 3)) {
         err = "Due to the national curfew in Kenya. We will not be taking any orders past 5PM. \r\nPlease stay at home to eradicate COVID-19!";
         if(process.env.NODE_ENV == "production")
             return callback(err);
     }
 
-    deliveryDetails = deliveryDetails || {};
     promo = promo || {};
 
     var chargesKeys = Object.keys(deliveryDetails).filter(k => ["charge", "commission"].any(c => k.toLowerCase().contains(c)));
