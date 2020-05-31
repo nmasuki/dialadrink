@@ -60,7 +60,7 @@ function processIncoming(message) {
             switch (obj.cmd || obj.info) {
                 case 'user':
                     var auth = new Buffer.from(obj.data, 'hex').toString().split(":");          
-                    console.log(auth);  
+                    console.log("WSS: User details:", auth.join(','));  
                     this.phone = auth[0];
                     this.pwd = auth[1];     
                     break;
@@ -169,13 +169,9 @@ wss.on('connection', function connection(ws, req) {
         req.socket.remoteAddress || '').trim(':f');
 
     console.log("WSS:", "Client connected! ", ws.clientIp);
-    ws.on('pong', function heartbeat() {
-        this.isAlive = true;
-        console.log("WSS:", "pong!", this.clientIp, this.phone);
-    });
+    ws.on('pong', function heartbeat() { this.isAlive = true; });
 
     ws.on('message', function incoming(message) {
-        console.info("WSS:", "Message received:", message);
         if (typeof wss.processIncoming == "function")
             wss.processIncoming.call(this, message);
         processIncoming.call(this, message);
@@ -188,9 +184,7 @@ var interval = setInterval(function ping() {
             return ws.terminate();
 
         ws.isAlive = false;
-        ws.ping(function noop() {
-            console.log("WSS:", "ping!", ws.clientIp);
-        });
+        ws.ping(function noop() {});
     });
 }, 30000);
 
