@@ -214,6 +214,12 @@ AppUser.find = function(filter){
                     console.log("Error!", err);
         
                 var appUsers = ls.getAll().filter(toFilterFn(filter));
+
+                console.log(JSON.stringify(filter), "Merging: " + 
+                    clients.length + " clients,",
+                    users.length + " AppUsers (mongo),",
+                    appUsers.length + " AppUsers (file store)");
+
                 users = (clients || []).map(u => u.toAppObject && u.toAppObject() || u.toObject())
                     .concat((users || []).map(u => u.toAppObject && u.toAppObject() || u.toObject()))
                     .concat(appUsers);
