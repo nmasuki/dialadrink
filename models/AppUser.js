@@ -99,8 +99,10 @@ AppUser.schema.set('toObject', {
 
 AppUser.schema.pre('save', function(next){
     this.phoneNumber = (this.phoneNumber || "").cleanPhoneNumber();
+    
     if(!this.lsUser)
         ls.save(this.toAppObject());
+    
     next();
 });
 
@@ -299,6 +301,7 @@ AppUser.save = function(user){
                 }
 
                 ls.save(user);
+                
                 u.lsUser = user;
                 u.save((err) => {
                     if(err) 
