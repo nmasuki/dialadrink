@@ -215,7 +215,7 @@ AppUser.find = function(filter){
         
                 var appUsers = ls.getAll().filter(toFilterFn(filter));
 
-                console.log(JSON.stringify(filter), "Merging: " + 
+                console.log(JSON.stringify(filter), "\nMerging: " + 
                     clients.length + " clients,",
                     users.length + " AppUsers (mongo),",
                     appUsers.length + " AppUsers (file store)");
