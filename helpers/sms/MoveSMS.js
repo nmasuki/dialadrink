@@ -63,6 +63,7 @@ module.exports = function MoveSMS(sender) {
                     console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
 
                 return new Promise((resolve, reject) => {
+                    console.log("Sending Http post:", url);
                     axios.post(url, {
                         data: {
                             to: validNos.join(','),
@@ -71,24 +72,15 @@ module.exports = function MoveSMS(sender) {
                             dlr: 0
                         },
                         tls: {rejectUnauthorized: false},
-                        agentOptions: { rejectUnauthorized: false },
-                        success: function (response) {
-                            resolve(balance -= 1);
-                            if (typeof next == "function")
-                                next(null, balance);
-                        },
-                        
-                        error: function (xhr, status, error) {
-                            reject(error);
-                            if (typeof next == "function")
-                                next(error);
-                        }
+                        agentOptions: { rejectUnauthorized: false }
                     }).then(function (response) {
                         resolve(balance -= 1);
                         if (typeof next == "function")
                             next(null, balance);
                     }).catch(function (error) {
                         reject(error);
+                        console.error("Http error:", error);
+                        
                         if (typeof next == "function")
                             next(error);
                     });
