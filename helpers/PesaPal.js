@@ -51,7 +51,7 @@ function shoternUrlGoogleOld(longUrl, next) {
 			if (typeof next == "function")
 				next(null, res);
 		},
-		error: function (err) {
+		error: function (xhr, status, err) {
 			if (typeof next == "function")
 				next(err, url);
 		}
@@ -66,7 +66,7 @@ function shoternUrl24h(longUrl, next) {
 			if (typeof next == "function")
 				next(null, res);
 		},
-		error: function (err) {
+		error: function (xhr, status, err) {
 			next(err, url);
 		}
 	});
