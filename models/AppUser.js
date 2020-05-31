@@ -167,7 +167,7 @@ function toFilterFn(obj){
                         break;
                     case "$and":
                         if(Array.isArray(obj[i]))
-                            return Array.from(obj[i]).all(x => toFilterFn(x)(a));
+                            return Array.from(obj[i]).every(x => toFilterFn(x)(a));
                         else
                             throw "Expecting an array at " + i;
                         break;
