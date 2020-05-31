@@ -308,9 +308,7 @@ router.post("/login", function (req, res) {
 			var user = users.find(c => encrypted == c.password  || c.passwords.contains(encrypted)) ||
 				users.find(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
-			var json = {
-				response: "error"
-			};
+			var json = { response: "error" };
 
 			if (user) {
                 json.response = "success";
@@ -320,20 +318,23 @@ router.post("/login", function (req, res) {
                 
                 user.sessions = user.sessions || [];
                 user.clientIps = user.clientIps || [];
-                console.log(json.message, encrypted, user.passwords.join());
-                
-                var tosave = false;
-				if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0){
-                    user.sessions.push(req.sessionID);
-                    tosave = false;
-                }
-
+				console.log(json.message, encrypted, user.passwords.join());
+				
+				var tosave = false;				
 				if (user.tempPassword && !user.tempPassword.used && password == user.tempPassword.pwd) {
                     user.tempPassword.used = true;                 
                     tosave = true;
+                } else if(user.password != encrypted){
+					user.password = encrypted;
+                    tosave = true;
+				}
+
+				if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0){
+                    user.sessions.push(req.sessionID);
+                    tosave = true;
                 }
 
-                if (res.locals.clientIp && user.clientIps.indexOf(res.locals.clientIp) < 0) {
+				if (res.locals.clientIp && user.clientIps.indexOf(res.locals.clientIp) < 0) {
                     user.clientIps.push(res.locals.clientIp);
                     tosave = true;
                 }
