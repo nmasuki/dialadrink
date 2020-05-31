@@ -1,5 +1,3 @@
-var assign = require('object-assign');
-
 var getRecipientsAndMergeVars = require('./getRecipientsAndMergeVars');
 var objToMandrillVars = require('./objToMandrillVars');
 var truthy = a => !!a;;
@@ -16,7 +14,7 @@ var defaultOptions = {
 
 function getSendOptions (options) {
 	// default options
-	options = assign({}, defaultOptions, options);
+	options = Object.assign({}, defaultOptions, options);
 	// parse from name and email into options
 	var fromName = options.from_name;
 	var fromEmail = options.from_email;
