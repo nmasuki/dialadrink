@@ -36,7 +36,7 @@ ProductBrand.findPopularBrands = function (callback) {
     return keystone.list('Product').findPublished({})
         .sort('-popularity')
         .exec((err, _products) => {
-            var brands = _products.map(p => {
+            var brands = (_products ||[]).map(p => {
                 if(p.brand && p.category && p.brand.category != p.category._id){
                     p.brand.category = p.category;
                     p.brand.save();

@@ -1,7 +1,6 @@
 // Simulate config options from your production environment by
 // customising the .env file in your project's root folder.
 require('dotenv').config();
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 // Require keystone
 var keystone = require('keystone');
