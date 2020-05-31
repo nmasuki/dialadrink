@@ -160,7 +160,7 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
 
             user.tempPassword.password = Array(alphaNumberic ? 7 : 5)
                 .join('x').split('')
-                .map((x) => charset[Math.round(Math.random() * (charset.length - 1))])
+                .map(() => charset[Math.round(Math.random() * (charset.length - 1))])
                 .join('');
 
             user.tempPassword.used = false;
@@ -174,7 +174,7 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
     var msg = "<#>DIALADRINK:" + (options.msg || `Your ${user.accountType} account has been Approved.`);
     if(!user.password || sendOTP)
         msg += `Use the Code ${user.tempPassword.password} to login.`;
-    msg += `Download the app from https://bit.ly/3eCpxdj`;
+    msg += `Download the app from https://bit.ly/2Xhk4Ts`;
 
     return sms.sendSMS(user.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
@@ -255,11 +255,12 @@ AppUser.find = function(filter){
                     console.log("Error!", err);
         
                 var appUsers = ls.getAll().filter(toFilterFn(filter));
-
+                /*
                 console.log(JSON.stringify(filter), "\nMerging: " + 
                     clients.length + " clients,",
                     users.length + " AppUsers (mongo),",
                     appUsers.length + " AppUsers (file store)");
+                /** */
 
                 users = (clients || []).map(u => u.toAppObject && u.toAppObject() || u.toObject())
                     .concat((users || []).map(u => u.toAppObject && u.toAppObject() || u.toObject()))
