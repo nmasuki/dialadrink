@@ -357,10 +357,12 @@ exports.requireAPIUser = function (req, res, next) {
 var setAppUser = function (req, res, user) {
     if (!user) 
         return Promise.reject("No matching user found!");
+    else if(user.accountStatus != "Active")
+        return Promise.reject("Account deactivated!");
     
     if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
         return new Promise((resolve, reject) => {
-            keystone.list("AppUser").find({ phoneNumber: user.phoneNumber, accountStatus: "Active" })
+            keystone.list("AppUser").find({ phoneNumber: user.phoneNumber })
                 .catch(reject)
                 .then(users => {
                     var tosave = false;
@@ -423,7 +425,7 @@ var setAppUserFromAuth = function (req, res, next) {
         return next();
     } else if (scheme == "MOBILE" && username && password) {
         return keystone.list("AppUser").find({
-            $and:[{ accountStatus: "Active" }],
+            //$and:[{ accountStatus: "Active" }],
             $or: [
                 { phoneNumber: username },
                 { phoneNumber: username.cleanPhoneNumber() },
