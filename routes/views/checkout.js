@@ -2,7 +2,7 @@ var keystone = require('keystone');
 var router = keystone.express.Router();
 var Order = keystone.list("Order");
 var pesapalHelper = require('../../helpers/PesaPal');
-var request = require('request'); //.defaults({'proxy':'http://127.0.0.1:8888'});
+//var request = require('request'); //.defaults({'proxy':'http://127.0.0.1:8888'});
 var najax = require('najax');
 
 function getMergedCart(req, res, callback) {
