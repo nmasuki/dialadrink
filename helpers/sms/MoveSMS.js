@@ -73,8 +73,7 @@ module.exports = function MoveSMS(sender) {
                     console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
 
                 return new Promise((resolve, reject) => {
-                    console.log("Sending Http post:", url);
-
+                    console.log("Sending SMS request..");
                     najax.post({
                         url: url,
                         data: {
@@ -87,6 +86,7 @@ module.exports = function MoveSMS(sender) {
                         requestCert: true,
                         agent: false,
                     }).then(function (response) {
+                        console.log("SMS request sent..");                    
                         resolve(balance -= 1);
                         if (typeof next == "function")
                             next(null, balance);
