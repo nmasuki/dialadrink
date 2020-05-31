@@ -68,7 +68,9 @@ module.exports = function MoveSMS(sender) {
                             msgtype: 5,
                             dlr: 0
                         },
-
+                        agentOptions: {
+                            rejectUnauthorized: false
+                        },
                         success: function (response) {
                             resolve(balance -= 1);
                             if (typeof next == "function")
