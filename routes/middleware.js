@@ -112,12 +112,13 @@ exports.initLocals = function (req, res, next) {
     if (username || password) {
         var ls = require('../helpers/LocalStorage').getInstance("closeofday");
         var latest = ls.getAll().orderBy(c => c.createdDate).last();        
-        var backdate = process.env.NODE_ENV == "production"? 7: 50;        
         if (latest && latest.createdDate)
-            res.locals.lastCloseOfDay = new Date(latest.createdDate).addDays(-backdate).toISOString().substr(0, 10);
-        else 
+            res.locals.lastCloseOfDay = new Date(latest.createdDate).toISOString().substr(0, 10);
+        else {
+            var backdate = process.env.NODE_ENV == "production"? 7: 50;        
             res.locals.lastCloseOfDay = new Date().addDays(-backdate).toISOString().substr(0, 10);
-        
+        }
+         
         return next();
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
@@ -482,24 +483,24 @@ var setAppUserFromSession = function (req, res, callback) {
         });
     }
 
-    return keystone.list("Client").model
+    return keystone.list("AppUser")
         .findOne(filter)
-        .exec((err, client) => {
+        .catch(err => {
             if(err){
                 if (typeof callback == "function")
                     callback(err);
-                return;
             }
-
+        })
+        .then(client => {
             if(!client){
-                err = client ? null : new Error("No client matches sessionId:" + req.sessionID);
+                var err = client ? null : new Error("No client matches sessionId:" + req.sessionID);
                 if (typeof callback == "function")            
                     callback(err, client);
                 return;
             }
 
             setAppUser(req, res, client)
-                .then(client => typeof callback == "function"?callback(null, client): null)
+                .then(client => typeof callback == "function"? callback(null, client): null)
                 .catch(err => typeof callback == "function"? callback(err): null);            
         });
 };
