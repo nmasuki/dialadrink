@@ -313,7 +313,7 @@ router.post("/login", function (req, res) {
 			if (!user) {
 				json.message = "Username/Password do not match!!";
 			} else if(user.accountStatus != "Active"){
-				json.message = "Account deactivated!";
+				json.message = `Account in ${user.accountStatus} status!`;
 			} else {
                 json.response = "success";
 				json.message = "Login successfully";
