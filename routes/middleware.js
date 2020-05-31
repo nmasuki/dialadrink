@@ -423,7 +423,7 @@ var setAppUserFromAuth = function (req, res, next) {
         return next();
     } else if (scheme == "MOBILE" && username && password) {
         return keystone.list("AppUser").find({
-            accountStatus: "Active",
+            $and:[{ accountStatus: "Active" }],
             $or: [
                 { phoneNumber: username },
                 { phoneNumber: username.cleanPhoneNumber() },
