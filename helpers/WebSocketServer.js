@@ -59,7 +59,10 @@ function processIncoming(message) {
             var obj = JSON.parse(message);
             switch (obj.cmd || obj.info) {
                 case 'user':
-                    this.user = obj.data;
+                    var auth = Buffer.from(obj.data).split(":");
+                    this.phone = auth[0];
+                    this.pwd = auth[1];           
+                    console.log(this.phone);      
                     break;
                 case 'number':
                     this.phone = obj.data;
@@ -168,7 +171,7 @@ wss.on('connection', function connection(ws, req) {
     console.log("WSS:", "Client connected! ", ws.clientIp);
     ws.on('pong', function heartbeat() {
         this.isAlive = true;
-        console.log("WSS:", "pong!", this.clientIp);
+        console.log("WSS:", "pong!", this.clientIp, this.phone);
     });
 
     ws.on('message', function incoming(message) {
