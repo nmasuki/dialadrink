@@ -18,7 +18,7 @@ module.exports = function MoveSMS(sender) {
     self.balance = function balance(next) {
         return new Promise((resolve, reject) => {
             var url = apiUrl.format('balance');
-            console.log("Getting SMS balance..")
+            console.log("Getting SMS balance..");
             najax.get({
                 url: url,
                 success: function (response) {
@@ -29,7 +29,7 @@ module.exports = function MoveSMS(sender) {
                         next(null, balance);
                 },
                 error: function (xhr, status, error) {
-                    console.error(error);
+                    console.error("Error getting SMS balance!", error);
                     reject(error);
                     if (typeof next == "function")
                         next(error);
