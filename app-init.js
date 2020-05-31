@@ -15,7 +15,8 @@ var handlebars = require('express-handlebars').create({
 	helpers: new require('./templates/views/helpers')(),
 	precompiled: require('./templates'),
 	extname: '.hbs',
-	cache: true,
+	allowedProtoProperties: true ,
+	cache: true
 });
 
 

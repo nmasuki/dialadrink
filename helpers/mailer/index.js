@@ -1,4 +1,3 @@
-var assign = require('object-assign');
 var keystone = require('keystone');
 var nodemailer = require('nodemailer');
 var getSendOptions = require('./getSendOptions');
@@ -66,7 +65,7 @@ function send(toSend, onSuccess, onFailure) {
 }
 
 module.exports = function (email, options, callback) {
-	options = assign(getSendOptions(options), email);
+	options = Object.assign(getSendOptions(options), email);
 	
 	// validate
 	if (!options.to.length) {
@@ -75,8 +74,7 @@ module.exports = function (email, options, callback) {
 
 	process.nextTick(function () {
 		// send
-		send(
-			{message: options},
+		send({ message: options },
 			// onSuccess
 			function (res) {
 				callback(null, res);
@@ -87,5 +85,4 @@ module.exports = function (email, options, callback) {
 			}
 		);
 	});
-}
-
+};
