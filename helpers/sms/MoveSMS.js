@@ -1,4 +1,5 @@
 var najax = require('najax');
+var axios = require('axios');
 var BaseSMS = require('./MySMS');
 var apiUrl = `https://sms.movesms.co.ke/api/{0}?username=${process.env.MOVESMS_USERNAME}&api_key=${process.env.MOVESMS_APIKEY}`;
     
@@ -62,8 +63,7 @@ module.exports = function MoveSMS(sender) {
                     console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
 
                 return new Promise((resolve, reject) => {
-                    najax.post({
-                        url: url,
+                    axios.post(url, {
                         data: {
                             to: validNos.join(','),
                             message: message,
@@ -83,6 +83,14 @@ module.exports = function MoveSMS(sender) {
                             if (typeof next == "function")
                                 next(error);
                         }
+                    }).then(function (response) {
+                        resolve(balance -= 1);
+                        if (typeof next == "function")
+                            next(null, balance);
+                    }).catch(function (error) {
+                        reject(error);
+                        if (typeof next == "function")
+                            next(error);
                     });
                 });
             });
