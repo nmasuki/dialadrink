@@ -102,8 +102,10 @@ AppUser.schema.pre('save', function(next){
     this.phoneNumber = (this.phoneNumber || "").cleanPhoneNumber();
     this.email = this.email.trim();
     
-    if(!this.lsUser)
-        ls.save(this.toAppObject());
+    if(!this.lsUser){
+        this.lsUser = this.toAppObject();
+        ls.save(this.lsUser);
+    }
 
     var filter = { $or: [{_id: user._id}] };
     if(user.phoneNumber){
