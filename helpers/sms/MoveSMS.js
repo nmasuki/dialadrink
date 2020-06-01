@@ -25,8 +25,8 @@ module.exports = function MoveSMS(sender) {
                 requestCert: true,
                 agent: false,
                 success: function (response) {
-                    console.log("SMS balance:", response);
                     var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
+                    console.log("SMS balance:", balance);
                     resolve(balance);
                     if (typeof next == "function")
                         next(null, balance);

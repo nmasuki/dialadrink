@@ -9,25 +9,26 @@
 
 exports.create = {
 	AppUser: [{
-				'name.first': 'Nelson',
-				'name.last': 'Masuki',
-				'phoneNumber': '254720805835',
-				'email': 'nmasuki@gmail.com',
-				'password': 'admin',
-				'accountType': "system admin",
-				'accountStatus': 'Active',
-				'receivesOrders': false
-			}, {
-				'name.first': 'Simon',
-				'name.last': 'Kimari',
-				'phoneNumber': '254723688108',
-				'email': '	simonkimari@gmail.com',
-				'password': 'admin',
-				'accountType': "office admin",
-				'accountStatus': 'Active',
-				'receivesOrders': true
-			},
-	],
+		'name.first': 'Nelson',
+		'name.last': 'Masuki',
+		'phoneNumber': '254720805835',
+		'email': 'nmasuki@gmail.com',
+		'username': 'nmasuki',
+		'password': 'admin',
+		'accountType': "system admin",
+		'accountStatus': 'Active',
+		'receivesOrders': false
+	}, {
+		'name.first': 'Simon',
+		'name.last': 'Kimari',
+		'phoneNumber': '254721750922',
+		'email': 'simonkimari@gmail.com',
+		'username': 'skimari',
+		'password': 'admin',
+		'accountType': "office admin",
+		'accountStatus': 'Active',
+		'receivesOrders': true
+	}]
 };
 
 /*

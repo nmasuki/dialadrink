@@ -66,7 +66,7 @@ AppUser.schema.virtual('canAccessKeystone').get(function () {
     for (var i in allowedAccountTypes) {
         var a = allowedAccountTypes[i];
         if (this.accountType == a)
-            return this.accountStatus == "Approved";
+            return this.accountStatus == "Active";
     }
     
     return false;
@@ -123,9 +123,9 @@ AppUser.schema.pre('save', function(next){
 
             var sendSMS = false;
             if(u){
-                sendSMS = user.accountStatus == "Approved" && (!u.accountStatus || u.accountStatus == "Pending");              
+                sendSMS = user.accountStatus == "Active" && (!u.accountStatus || u.accountStatus == "Pending");              
             } else {
-                sendSMS = user.accountStatus == "Approved";
+                sendSMS = user.accountStatus == "Active";
             }
             
             if(sendSMS)
@@ -150,9 +150,7 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
         alphaNumberic = options.alphaNumberic;
 
     user.tempPassword = user.tempPassword || {
-        used: true,
-        resend: 0,
-        expiry: new Date().addMinutes(5).getTime()
+        used: true, resend: 0, expiry: new Date().addMinutes(5).getTime()
     };
 
     if(!user.password || sendOTP){
@@ -174,14 +172,13 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
         user.save();
     }
 
-    var msg = "<#>DIALADRINK:" + (options.msg || `Your ${user.accountType} account has been Approved.`);
+    var msg = "<#>DIALADRINK:" + (options.msg || `Your ${user.accountType} account has been created. `);
     if(!user.password || sendOTP)
-        msg += `Use the Code ${user.tempPassword.password} to login.`;
+        msg += `Use the Code ${user.tempPassword.password} to login. `;
     msg += `Download the app from https://bit.ly/2Xhk4Ts`;
 
     return sms.sendSMS(user.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
-
 
 var ls = require("../helpers/LocalStorage").getInstance("appuser");
 
