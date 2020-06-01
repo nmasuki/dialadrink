@@ -66,7 +66,7 @@ AppUser.schema.virtual('canAccessKeystone').get(function () {
     for (var i in allowedAccountTypes) {
         var a = allowedAccountTypes[i];
         if (this.accountType == a)
-            return true;
+            return this.accountStatus == "Approved";
     }
     
     return false;
