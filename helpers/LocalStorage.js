@@ -164,7 +164,7 @@ function LocalStorage(entityName) {
     };
 }
 
-LocalStorage.getInstance = function(e){ return new LocalStorage(e); }
+LocalStorage.getInstance = (e => new LocalStorage(e));
 
 module.exports = LocalStorage;
 
