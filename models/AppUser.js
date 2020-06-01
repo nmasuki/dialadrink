@@ -100,6 +100,7 @@ AppUser.schema.set('toObject', {
 AppUser.schema.pre('save', function(next){
     var user = this;
     this.phoneNumber = (this.phoneNumber || "").cleanPhoneNumber();
+    this.email = this.email.trim();
     
     if(!this.lsUser)
         ls.save(this.toAppObject());
