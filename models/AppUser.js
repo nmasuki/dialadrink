@@ -66,7 +66,7 @@ AppUser.schema.virtual('canAccessKeystone').get(function () {
     for (var i in allowedAccountTypes) {
         var a = allowedAccountTypes[i];
         if (this.accountType == a)
-            return true;
+            return this.accountStatus == "Approved";
     }
     
     return false;
@@ -100,9 +100,12 @@ AppUser.schema.set('toObject', {
 AppUser.schema.pre('save', function(next){
     var user = this;
     this.phoneNumber = (this.phoneNumber || "").cleanPhoneNumber();
+    this.email = this.email.trim();
     
-    if(!this.lsUser)
-        ls.save(this.toAppObject());
+    if(!this.lsUser){
+        this.lsUser = this.toAppObject();
+        ls.save(this.lsUser);
+    }
 
     var filter = { $or: [{_id: user._id}] };
     if(user.phoneNumber){
