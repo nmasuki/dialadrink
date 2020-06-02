@@ -364,7 +364,7 @@ router.post("/login", function (req, res) {
 			var client = clients.find(c => encrypted == c.password) ||
 				clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
-			var json = { response: "error" };
+			var json = { response: "error", data: null };
 
 			if (client) {
 				json.response = "success";

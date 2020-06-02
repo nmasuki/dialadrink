@@ -49,7 +49,7 @@ Client.add({
     tempPassword: { 
         pwd: { type: String }, 
         used: {type: Boolean },
-        expiry: { type: Types.Datetime, default: Date.now },
+        expiry: { type: Number, default: Date.now() },
         resend: { type: Number, noedit: true, default: 0 },
     },
 
@@ -516,6 +516,7 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
             .join('');
 
         client.tempPassword.used = false;
+        client.tempPassword.resend = 0;
         client.tempPassword.expiry = new Date().addMinutes(5).getTime();
     } else {
         client.tempPassword.resend += 1;
