@@ -43,8 +43,7 @@ function AfricaTalkingSMS(sender) {
                     reject(error);
                     if (typeof next == "function")
                         next(error);
-                })
-                .catch(console.log);
+                });
         });
     };
 

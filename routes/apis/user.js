@@ -351,9 +351,7 @@ router.post("/login", function (req, res) {
 			res.send(json);
 		});
 	} else {
-		Client.model.find({
-			phoneNumber: mobile
-		})
+		Client.model.find({phoneNumber: mobile})
 		.exec((err, clients) => {
 
 			if (err)
@@ -366,9 +364,7 @@ router.post("/login", function (req, res) {
 			var client = clients.find(c => encrypted == c.password) ||
 				clients.find(c => !c.tempPassword.used && c.tempPassword.expiry < Date.now() && password == c.tempPassword.pwd);
 
-			var json = {
-				response: "error"
-			};
+			var json = { response: "error" };
 
 			if (client) {
 				json.response = "success";

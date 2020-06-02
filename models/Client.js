@@ -48,8 +48,8 @@ Client.add({
 
     tempPassword: { 
         pwd: { type: String }, 
-        used: {type: Boolean, noedit: true},
-		expiryDate: { type: Types.Datetime, default: Date.now }
+        used: {type: Boolean },
+		expiry: { type: Types.Datetime, default: Date.now }
     },
 
     deliverydays: {
@@ -505,7 +505,7 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
     };
 
     if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {
-        var charset = Array(11).join('x').split('').map((x, i) => String.fromCharCode(49 + i));
+        var charset = Array(11).join('x').split('').map((x, i) => String.fromCharCode(48 + i));
         if (alphaNumberic)
             charset = charset.concat(Array(27).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
 
@@ -520,9 +520,19 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
         client.tempPassword.resend += 1;
     }
 
-    client.save();
-    var msg = `<#>Your temporary password is ${client.tempPassword.password}`;    
-    return sms.sendSMS(client.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
+    return new Promise((resolve, reject) => {
+        client.save(err => {
+            if(err){
+                console.error(err);
+                return reject(err);
+            }
+
+            var msg = `<#>Your temporary password is ${client.tempPassword.password}\r\n${otpToken || process.env.APP_ID || ""}`;   
+            console.log("OTP to:" + client.phoneNumber, msg); 
+        
+            sms.sendSMS(client.phoneNumber, msg).then(resolve);
+        });
+    });
 };
 
 var genderList = null;
@@ -530,7 +540,6 @@ Client.schema.methods.guessGender = function(name){
     if(!name) return null;
       
     var filename = path.resolve("../", "data", "name_gender.csv");
-
     if (!genderList && fs.existsSync(filename)) {
         var guessGenderCSV = (fs.readFileSync(filename) || "{}").toString();
         if (guessGenderCSV) {
@@ -547,7 +556,7 @@ Client.schema.methods.guessGender = function(name){
     }
 
     var ids = (name || "").split(' ').map(n => n.cleanId());
-    var matches = genderList.filter(x => ids.indexOf(x.id) >= 0);
+    var matches = (genderList || []).filter(x => ids.indexOf(x.id) >= 0);
 
     if (matches.length) {
         var sum = matches.sum(x => x.probability);

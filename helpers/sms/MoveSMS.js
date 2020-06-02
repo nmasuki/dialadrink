@@ -8,7 +8,6 @@ najax.defaults({
     agent: false
 });
 
-//process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 module.exports = function MoveSMS(sender) {
     sender = sender || 'SMARTLINK';
     
@@ -54,7 +53,7 @@ module.exports = function MoveSMS(sender) {
             if (process.env.NODE_ENV != "production") {
                 err = "Ignoring SMS notification for non-prod environment!";
                 console.warn(err + "\r\n------SMS------\r\n" + to + ":\r\n" + message + "\r\n------");                
-                return _sendSMS.call(this, to, message);
+                return _sendSMS.call(this, to, message, next);
             }
 
             var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
@@ -86,13 +85,14 @@ module.exports = function MoveSMS(sender) {
                         requestCert: true,
                         agent: false,
                     }).then(function (response) {
-                        console.log("SMS request sent..");                    
-                        resolve(balance -= 1);
+                        console.log("SMS request sent. Http response:", response);                    
+                        resolve(--balance);
+
                         if (typeof next == "function")
                             next(null, balance);
                     }).fail(function (error) {
-                        reject(error);
                         console.error("Http error:", error);
+                        reject(error);
 
                         if (typeof next == "function")
                             next(error);
