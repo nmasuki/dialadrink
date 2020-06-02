@@ -134,12 +134,12 @@ router.get('/', function (req, res) {
 
 				if (!c.productId && c.product){
 					c.productId = c.product.id || c.product._id;
-					//delete c.product;
+					delete c.product;
 				}
 
 				if(!c.imageUrl && c.image){
 					c.imageUrl = c.image.secure_url;
-					//delete c.image;
+					delete c.image;
 				}
 
 				return c;
