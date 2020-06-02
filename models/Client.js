@@ -49,7 +49,8 @@ Client.add({
     tempPassword: { 
         pwd: { type: String }, 
         used: {type: Boolean },
-		expiry: { type: Types.Datetime, default: Date.now }
+        expiry: { type: Types.Datetime, default: Date.now },
+        resend: { type: Number, noedit: true, default: 0 },
     },
 
     deliverydays: {
@@ -504,12 +505,12 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
         expiry: new Date().addMinutes(5).getTime()
     };
 
-    if (!client.tempPassword.password || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {
+    if (!client.tempPassword.pwd || client.tempPassword.used || client.tempPassword.expiry >= Date.now()) {
         var charset = Array(11).join('x').split('').map((x, i) => String.fromCharCode(48 + i));
         if (alphaNumberic)
             charset = charset.concat(Array(27).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
 
-        client.tempPassword.password = Array(alphaNumberic ? 7 : 5)
+        client.tempPassword.pwd = Array(alphaNumberic ? 7 : 5)
             .join('x').split('')
             .map((x) => charset[Math.round(Math.random() * (charset.length - 1))])
             .join('');
@@ -527,7 +528,7 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
                 return reject(err);
             }
 
-            var msg = `<#>Your temporary password is ${client.tempPassword.password}\r\n${otpToken || process.env.APP_ID || ""}`;   
+            var msg = `<#>Your temporary password is ${client.tempPassword.pwd}\r\n${otpToken || process.env.APP_ID || ""}`;   
             console.log("OTP to:" + client.phoneNumber, msg); 
         
             sms.sendSMS(client.phoneNumber, msg).then(resolve);

@@ -154,12 +154,12 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
     };
 
     if(!user.password || sendOTP){
-        if (!user.tempPassword.password || user.tempPassword.used || user.tempPassword.expiry >= Date.now()) {
+        if (!user.tempPassword.pwd || user.tempPassword.used || user.tempPassword.expiry >= Date.now()) {
             var charset = Array(11).join('x').split('').map((x, i) => String.fromCharCode(49 + i));
             if (alphaNumberic)
                 charset = charset.concat(Array(27).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
 
-            user.tempPassword.password = Array(alphaNumberic ? 7 : 5)
+            user.tempPassword.pwd = Array(alphaNumberic ? 7 : 5)
                 .join('x').split('')
                 .map(() => charset[Math.round(Math.random() * (charset.length - 1))])
                 .join('');
@@ -174,7 +174,7 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
 
     var msg = "<#>DIALADRINK:" + (options.msg || `Your ${user.accountType} account has been created. `);
     if(!user.password || sendOTP)
-        msg += `Use the Code ${user.tempPassword.password} to login. `;
+        msg += `Use the Code ${user.tempPassword.pwd} to login. `;
     msg += `Download the app from https://bit.ly/2Xhk4Ts`;
 
     return sms.sendSMS(user.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
