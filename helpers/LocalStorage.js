@@ -117,10 +117,10 @@ function LocalStorage(entityName) {
                         entity[i] = entity[i].cleanPhoneNumber();
 
                     if(/^password/i.test(i)){
-                        if(!/^(\$..){2}\$.{53}/.test(entity[i] || ""))//Reset password
+                        if(!/^(\$\w\w)+/.test(entity[i] || ""))//Reset password
                             entity[i] = (entity[i] || "").toString().encryptPassword().encryptedPassword;
                         else if(all[id][i])
-                            continue;//Do'nt change password
+                            continue;//Don't change password
                     } 
                     
                     all[id][i] = entity[i];
