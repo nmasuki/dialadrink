@@ -159,12 +159,13 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
             if (alphaNumberic)
                 charset = charset.concat(Array(27).join('x').split('').map((x, i) => String.fromCharCode(65 + i)));
 
-            user.tempPassword.pwd = Array(alphaNumberic ? 7 : 5)
+            user.tempPassword.pwd = Array(alphaNumberic ? 8 : 5)
                 .join('x').split('')
                 .map(() => charset[Math.round(Math.random() * (charset.length - 1))])
                 .join('');
 
             user.tempPassword.used = false;
+            user.tempPassword.resend = 0;
             user.tempPassword.expiry = new Date().addMinutes(5).getTime();
         } else {
             user.tempPassword.resend += 1;
