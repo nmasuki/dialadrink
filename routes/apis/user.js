@@ -123,9 +123,7 @@ router.get("/check/:mobile", function (req, res) {
 			message: "Mobile number required!!"
 		});
 
-	Client.model.find({
-		phoneNumber: mobile
-	})
+	Client.model.find({ phoneNumber: mobile })
 	.exec((err, clients) => {
 		if (err)
 			return res.send({
@@ -134,11 +132,12 @@ router.get("/check/:mobile", function (req, res) {
 			});
 
 		var client = clients && clients[0];
+		var isRegistered = !!(client && client.isAppRegistered)
 		var json = {
 			response: "success",
-			message: "",
 			isValidNumber: !!client,
-			isRegistered: !!(client && client.isAppRegistered)
+			isRegistered: isRegistered,
+			data: isRegistered? client.toAppObject(): undefined
 		};
 
 		if (client) {
