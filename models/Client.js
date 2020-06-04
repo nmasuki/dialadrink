@@ -213,7 +213,7 @@ Client.schema.methods.toAppObject = function (appVersion) {
     if (!global.appUser || global.appUser.id != user.id) {
         var toDel = [
             "image", "tempPassword", 
-            "httpAuth", "password", 
+            "httpAuth", //"password", 
             "user_unique_code", "user_password", 
             "metaDataJSON", "key"
         ];
