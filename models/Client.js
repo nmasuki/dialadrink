@@ -230,8 +230,11 @@ Client.schema.methods.copyAppObject = function (obj) {
 
     var mapping = {
         "userid": "id",
+        "mobile": "phoneNumber",
         "user_mobile": "phoneNumber",
+        "image": "imageUrl",
         "user_image": "imageUrl",
+        "reg_date": "registrationDate",
         "user_reg_date": "registrationDate"
     };
 
@@ -245,12 +248,6 @@ Client.schema.methods.copyAppObject = function (obj) {
         if (obj.hasOwnProperty(j))
             client[mapping[j]] = obj[j];
     }
-
-    for (var j in obj) {
-        if (obj.hasOwnProperty(j))
-            client[j] = obj[j];
-    }
-
 };
 
 Client.schema.methods.getSessions = function (next) {

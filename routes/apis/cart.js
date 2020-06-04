@@ -142,6 +142,9 @@ router.get('/', function (req, res) {
 					delete c.image;
 				}
 
+				if(c.product)
+					c.name = c.product.name;
+										
 				return c;
 			}),
 			promo: req.session.promo

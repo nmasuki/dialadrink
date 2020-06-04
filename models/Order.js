@@ -303,16 +303,16 @@ Order.schema.methods.updateClient = function (next) {
             findOption.$or.push({
                 "phoneNumber": new RegExp(phoneNumber.cleanPhoneNumber())
             });
+
             findOption.$or.push({
-                "phoneNumber": new RegExp(phoneNumber)
+                "phoneNumber": new RegExp(phoneNumber.replace(/^[^\d]+|[^\d]$/, ""))
             });
 
             delivery.phoneNumber = delivery.phoneNumber.cleanPhoneNumber();
         } else {
             var email = (this.delivery.email || "").trim();
-            if (email) {
-                findOption.$or.push({ "email": new RegExp(email.escapeRegExp(), "i") });
-            }
+            if (email) 
+                findOption.$or.push({ "email": new RegExp(email.escapeRegExp(), "i") });            
         }
 
         if (findOption.$or.length)
