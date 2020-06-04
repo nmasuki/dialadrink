@@ -374,8 +374,8 @@ Order.schema.methods.updateClient = function (next) {
 };
 
 Order.schema.methods.placeOrder = function (next) {
-    console.log("Placing order!");
     var order = this;
+    console.log("Placing order " + order.orderNumber + "!");
     return order.sendOrderNotification().then((data) => {
         console.log("Updating order state='placed'!", data.orderNumber);
 
