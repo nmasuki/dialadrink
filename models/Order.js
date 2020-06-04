@@ -297,7 +297,8 @@ Order.schema.methods.updateClient = function (next) {
     var delivery = order.delivery;
     if (delivery) {
         var findOption = { "$or": [] };
-        var phoneNumber = (delivery.phoneNumber || "").trim();
+        var phoneNumber = (delivery.phoneNumber || "").trim()
+            .replace(/^[^\d]+|[^\d]$/, "").trim();
 
         if (phoneNumber) {
             findOption.$or.push({
@@ -305,10 +306,10 @@ Order.schema.methods.updateClient = function (next) {
             });
 
             findOption.$or.push({
-                "phoneNumber": new RegExp(phoneNumber.replace(/^[^\d]+|[^\d]$/, ""))
+                "phoneNumber": new RegExp(phoneNumber)
             });
 
-            delivery.phoneNumber = delivery.phoneNumber.cleanPhoneNumber();
+            delivery.phoneNumber = phoneNumber.cleanPhoneNumber();
         } else {
             var email = (this.delivery.email || "").trim();
             if (email) 
