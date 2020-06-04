@@ -164,8 +164,7 @@ router.post("/", function (req, res){
                     order.delivery.phoneNumber,
                     order.payment.amount,
                     order.orderNumber
-                );
-                
+                );                
             } else if (order.payment.method == "Mpesa2") {
                 json.message = "Processing payment. Please check your mobile handsets to complete the transaction.";
                 var africasTalking = require('../helpers/AfricasTalking').Instance;
