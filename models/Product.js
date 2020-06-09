@@ -408,8 +408,8 @@ Product.schema.methods.toAppObject = function () {
         reorderLevel: d.reorderLevel,
         
         //Use cheapest option for price
-        price: d.price,
-        offerPrice: d.offerPrice,
+        price: d.price || 0,
+        offerPrice: d.offerPrice || 0,
         quantity: d.quantity,        
         currency: d.currency,
     });
