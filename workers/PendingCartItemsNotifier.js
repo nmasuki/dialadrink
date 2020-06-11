@@ -93,18 +93,17 @@ function doWork(err, sessions, next) {
 
             if (clients)
                 clients.forEach(c => {
-                    if (c.lastNotificationDate > (new Date()).addDays(-7))
-                        return;
-
-                    ClientNotification.model.find({
-                        status: 'pending',
-                        client: c._id
-                    }).exec((err, pending) => {
+                    ClientNotification.model.find({ client: c._id }).exec((err, notifications) => {
                         if (err)
                             return console.error(err);
 
+                        var lastNotificationDate = notifications.max(n => n.scheduleDate || n.createdDate);
+                        if (lastNotificationDate > (new Date()).addDays(-7))
+                            return console.log(`Skipping cart notification to '${c.name}'. Send once every 7 days`);
+
+                        var pending = notifications.filter(n => n.status == "pending");
                         if(pending && pending.length)
-                            return console.log(`Skipping notification to '${c.name}'. User has ${pending.length} pending notifications.`);
+                            return console.log(`Skipping cart notification to '${c.name}'. User has ${pending.length} pending notifications.`);
 
                         var date = new Date().toISOString();
                         var scheduleDate = new Date(date.substr(0, 10));
