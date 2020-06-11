@@ -550,6 +550,7 @@ Order.schema.methods.toAppObject = function () {
     var order = this;
     var obj = Object.assign(this.toObject(), {
         orderAmount: this.orderAmount || this.total,
+        client: this.client && this.client.toAppObject? this.client.toAppObject(): this.client,
         clientName: this.client? this.client.name: "",
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
@@ -715,8 +716,14 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     order.deliveryLocation = deliveryDetails.location || deliveryDetails.deliveryLocation;
     
     chargesKeys.forEach(k => {
-        order.charges.chargesName.push(k);
-        order.charges.chargesAmount.push(deliveryDetails[k]);
+        try{
+            if(k && deliveryDetails[k]){
+                order.charges.chargesName.push(k);
+                order.charges.chargesAmount.push(deliveryDetails[k]);
+            }
+        } catch(e){
+            console.warn(e);
+        }
     });
 
     return Promise.all(cartItems.map(c => c.save())).then(function () {

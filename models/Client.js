@@ -215,12 +215,14 @@ Client.schema.methods.toAppObject = function (appVersion) {
             "image", "tempPassword", 
             "httpAuth", //"password", 
             "user_unique_code", "user_password", 
-            "metaDataJSON", "key"
+            "metaDataJSON", "key", "sessions"
         ];
         toDel.forEach(x => delete ret[x]);
     }
 
     ret._rev = user.__v;
+    delete ret.sessions;
+    
     return ret;
 };
 

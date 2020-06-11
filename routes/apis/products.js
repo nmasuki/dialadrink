@@ -68,10 +68,7 @@ router.get("/categories", function (req, res) {
             else if (categories && categories.length) {
                 json.response = "success";
                 json.data = categories.orderBy(c => {
-                    var menus = c.menus
-                        .filter(m => m.type == "top")
-                        .orderBy(m => m.index);
-                        
+                    var menus = c.menus.orderBy(m => m.index);                        
                     return menus.length? menus[0].index: 100;
                 }).map(d => {
                     return {
@@ -93,9 +90,7 @@ router.get("/categories", function (req, res) {
 });
 
 router.get("/category/:category", function (req, res) {
-    ProductCategory.model.find({
-            key: req.params.category.cleanId()
-        })
+    ProductCategory.model.find({ key: req.params.category.cleanId() })
         .exec((err, categories) => {
             var filter = {
                 category: {
