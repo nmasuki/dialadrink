@@ -135,7 +135,6 @@ function doWork(err, sessions, next) {
                             }
                         });
 
-
                         ClientNotification.schema.options.strict = false;
                         n.save();
                         ClientNotification.schema.options.strict = true;
