@@ -53,22 +53,23 @@ ClientNotification.add({
 	},
 
 	message: {
-		title: {
-			type: Types.Text
-		},
-		body: {
-			type: Types.Html,
-			wysiwyg: true,
-			height: 150
-		},
+		title: { type: Types.Text },
+		body: { type: Types.Html, wysiwyg: true, height: 150 },
 		icon: {
 			type: Types.CloudinaryImage,
 			folder: "notifications",
-			dependsOn: {
-				type: 'push'
-			}
-		},
-	},
+			dependsOn: { type: 'push' }
+		}
+	}
+});
+
+ClientNotification.schema.pre("save", function(next){
+	ClientNotification.schema.options.strict = false;
+	next();
+});
+
+ClientNotification.schema.post("save", function(doc){
+	ClientNotification.schema.options.strict = false;
 });
 
 ClientNotification.defaultColumns = 'message.title, client, type|10%, status|10%, createdDate, scheduleDate';

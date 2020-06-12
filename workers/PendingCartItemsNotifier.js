@@ -135,7 +135,11 @@ function doWork(err, sessions, next) {
                             }
                         });
 
+
+                        ClientNotification.schema.options.strict = false;
                         n.save();
+                        ClientNotification.schema.options.strict = true;
+
                         console.log(`Cart item notification to '${c.name}' scheduled for ${n.scheduleDate.toISOString()}`);
                     });
                 });
