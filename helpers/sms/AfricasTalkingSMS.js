@@ -9,7 +9,7 @@ var credentials = {
 function AfricaTalkingSMS(sender) {
     var AfricasTalking = require("africastalking")(credentials);
 
-    sender = sender || process.env.AFRICASTALKING_SENDEID || 'DIALADRINK';
+    sender = sender || process.env.AFRICASTALKING_SENDEID;
     var self = BaseSMS.call(this);
 
     self.balance = function balance() {
@@ -26,25 +26,29 @@ function AfricaTalkingSMS(sender) {
 
             var options = {
                 to: (Array.isArray(to) ? to : [to]).map(t => '+' + t.cleanPhoneNumber()),
-                message: message,
-                from: sender
+                message: message
             };
+
+            if(sender)
+                options.from = sender;
 
             return AfricasTalking.SMS.send(options)
                 .then((response) => {
                     console.log("SMS sent!", response);
                     options.status = "pending_carrier_callback";
                     ls.save(options);
-                    
-                    var cost = parseFloat(/([\d]+\.[\d]+)/.exec(response.SMSMessageData.Message).pop() || "0");
-                    resolve(cost);
+
+                    var regex = /([\d]+\.[\d]+)/, code = 0;
+                    if(regex.test(response.SMSMessageData.Message))
+                        code = parseFloat(regex.exec(response.SMSMessageData.Message).pop() || "0");
+                        
                     if (typeof next == "function")
                         next(null, code);
+                    
+                    return code;
                 })
                 .catch((error) => {
                     console.warn("Error sending SMS!", error, options);
-
-                    reject(error);
                     if (typeof next == "function")
                         next(error);
                 });

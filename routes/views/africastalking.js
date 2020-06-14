@@ -2,7 +2,7 @@ var keystone = require('keystone');
 var Order = keystone.list("Order");
 var Payment = keystone.list("Payment");
 var AfricasTalking = require('../../helpers/sms/AfricasTalkingSMS');
-var ls = require('../LocalStorage').getInstance("atsms");
+var ls = require('../../helpers/LocalStorage').getInstance("atsms");
 
 var PesaPalStatusMap = {
 	"COMPLETED": "Paid",
@@ -30,7 +30,7 @@ router.post("/paymentvalidation", function (req, res) {
 
 	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
 	payment.save();
-	
+
 	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
 		.deepPopulate('cart.product.priceOptions.option')
 		.populate('client')
