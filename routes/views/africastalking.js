@@ -12,6 +12,12 @@ var PesaPalStatusMap = {
 };
 var router = keystone.express.Router();
 
+router.post("/deliveryreport", function (req, res) {
+	var data = Object.assign({}, req.body || {}, req.query || {});
+	console.log("Received %s", req.url, data);
+	res.status(200);
+});
+
 router.post("/incomingsmsnotification", function (req, res) {
 	var data = Object.assign({}, req.body || {}, req.query || {});
 	console.log("Received %s", req.url, data);
