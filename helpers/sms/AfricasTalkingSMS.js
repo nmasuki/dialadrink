@@ -1,4 +1,5 @@
 var BaseSMS = require('./MySMS');
+var ls = require('../LocalStorage').getInstance("atsms");
 
 var credentials = {
     username: process.env.AFRICASTALKING_USER || "dialadrink",
@@ -32,6 +33,9 @@ function AfricaTalkingSMS(sender) {
             return AfricasTalking.SMS.send(options)
                 .then((response) => {
                     console.log("SMS sent!", response);
+                    options.status = "pending_carrier_callback";
+                    ls.save(options);
+                    
                     var cost = parseFloat(/([\d]+\.[\d]+)/.exec(response.SMSMessageData.Message).pop() || "0");
                     resolve(cost);
                     if (typeof next == "function")

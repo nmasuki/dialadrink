@@ -1,4 +1,4 @@
-var MoveSms = require("../../helpers/sms/MoveSMS");
+var MoveSms = require("../../helpers/sms/AfricasTalkingSMS");
 var keystone = require('keystone');
 var Client = keystone.list("Client");
 var AppUser = keystone.list("AppUser");

@@ -1,4 +1,4 @@
-var MoveSms = require("../helpers/sms/MoveSMS");
+var MoveSms = require("../helpers/sms/AfricasTalkingSMS");
 var pesapalHelper = require('../helpers/PesaPal');
 var keystone = require('keystone');
 var CartItem = keystone.list("CartItem");
@@ -671,7 +671,7 @@ Order.register();
 Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     deliveryDetails = deliveryDetails || {};
     var time = new Date().toISOString().split('T')[1].split(':')[0];
-    if (deliveryDetails.email != process.env.DEVELOPER_EMAIL && (time >= 17 - 3 || time <= 5 - 3)) {
+    if (deliveryDetails.email != process.env.DEVELOPER_EMAIL && (time >= 21 - 3 || time <= 5 - 3)) {
         err = "Due to the national curfew in Kenya. We will not be taking any orders past 5PM. \r\nPlease stay at home to eradicate COVID-19!";
         if(process.env.NODE_ENV == "production")
             return callback(err);

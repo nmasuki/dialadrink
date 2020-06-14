@@ -2,6 +2,7 @@ var keystone = require('keystone');
 var Order = keystone.list("Order");
 var Payment = keystone.list("Payment");
 var AfricasTalking = require('../../helpers/sms/AfricasTalkingSMS');
+var ls = require('../LocalStorage').getInstance("atsms");
 
 var PesaPalStatusMap = {
 	"COMPLETED": "Paid",
@@ -18,7 +19,7 @@ router.post("/incomingsmsnotification", function (req, res) {
 });
 
 router.post("/optoutsmsnotification", function (req, res) {
-	var data = Object.assign({}, req.body || {}, req.query || {});
+	var data = Object.assign({}, req.body || {}, req.query || {});	
 	console.log("Received %s", req.url, data);
 	res.status(200);
 });
@@ -29,22 +30,19 @@ router.post("/paymentvalidation", function (req, res) {
 
 	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
 	payment.save();
-	Order.model.findOne({
-			orderNumber: payment.metadata.orderNumber
-		})
+	
+	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
 		.deepPopulate('cart.product.priceOptions.option')
 		.populate('client')
 		.exec((err, order) => {
-			if (!order) {
+			if (err || !order) {
 				console.log("Error while reading Order id:", payment.metadata.orderNumber);
 				return res.status(400);
 			}
 
 			res.status(200);
 		});
-
-	res.status(200);
-})
+});
 
 router.post("/paymentnotification", function (req, res) {
 	var payment = Payment.model({});
@@ -53,9 +51,7 @@ router.post("/paymentnotification", function (req, res) {
 	payment.save();
 
 	console.log("Recieved AfricasTalking IPN!", payment.metadata);
-	Order.model.findOne({
-			orderNumber: payment.metadata.orderNumber
-		})
+	Order.model.findOne({ orderNumber: payment.metadata.orderNumber })
 		.deepPopulate('cart.product.priceOptions.option')
 		.populate('client')
 		.exec((err, order) => {
