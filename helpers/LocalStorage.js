@@ -50,7 +50,7 @@ function getAll(entityName) {
             }
         }            
     } catch (e) {
-        console.error(e);
+        console.error(entityName + ".json", e);
     }
 
     return all;
