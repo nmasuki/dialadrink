@@ -19,7 +19,7 @@ router.post('/upload', function (req, res) {
                     if(error)
                         json.errors.push(error);
                     else
-                        json.data.push(result);
+                        json.data.push(result.secure_url);
                     
                     var l = json.data.length + json.errors.length;
                     if(l >= Object.keys(req.files).length){
