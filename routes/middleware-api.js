@@ -197,7 +197,8 @@ exports.initLocals = (req, res, next) => {
             "notification"
         ];
 
-        keys.forEach((k, i) => menuCounts[k] = values[i]);
+        keys.forEach((k, i) => menuCounts[k] = parseInt(values[i]));
+        
         next();
     });
 };

@@ -35,8 +35,10 @@ function AfricaTalkingSMS(sender) {
             return AfricasTalking.SMS.send(options)
                 .then((response) => {
                     console.log("SMS sent!", response);
-                    options.status = "pending_carrier_callback";
-                    ls.save(options);
+                    
+                    var data = Object.assign({}, options, response || {});
+                    data.status = data.status || "pending_carrier_callback";
+                    ls.save(data);
 
                     var regex = /([\d]+\.[\d]+)/, code = 0;
                     if(regex.test(response.SMSMessageData.Message))
