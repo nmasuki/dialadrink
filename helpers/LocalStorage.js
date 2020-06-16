@@ -22,6 +22,23 @@ function uuidv4() {
     });
 }
 
+function tryDateParse(str){
+    try {
+        return new Date(str).toISOString();
+    }catch(e){
+        return undefined;
+    }
+}
+
+function tryParse(str){
+    try{
+        return JSON.parse(str);
+    }catch(e){
+        console.error("Error parsing json. \n\n" + str);
+        return null;
+    }
+}
+
 function getAll(entityName) {
     var all = {};
     
@@ -33,20 +50,28 @@ function getAll(entityName) {
                 jsonStr.contains("{")? jsonStr.indexOf("{"): 0
             );
 
-            all = JSON.parse(jsonStr.substr(startIndex));
+            all = tryParse(jsonStr.substr(startIndex)) || {};
             if (all.data && all.response)
                 all = all.data;
             
+            if(Array.isArray(all)){
+                var obj = {};
+                all.forEach(a => {
+                    var id = a._id || a.id || a.Id || (a._id = entityName.toLowerCase() + "-" + uuidv4());
+                    obj[id] = a;
+                });
+
+                all = obj;
+            }
+            
             for(var i in all){
-                if(all.hasOwnProperty(i))
-                    for(var j in all[i])
+                if(all.hasOwnProperty(i)){
+                    for(var j in all[i]){
                         if (all[i].hasOwnProperty(j) && /^date|date$/i.test(j.toString())){
-                            try {
-                                all[i][j] = new Date(all[i][j]).toISOString();
-                            }catch(e){
-                                delete all[i][j];
-                            }
+                            all[i][j] = tryDateParse(all[i][j]);                            
                         }
+                    }
+                }
             }
         }            
     } catch (e) {
@@ -58,7 +83,7 @@ function getAll(entityName) {
 
 var saveAll = function (entityName, all) {
     return new Promise((resolve, reject) => {
-        console.log("Saving to file. Aquiring lock ", path.resolve(dataDir, entityName + ".lock"));
+        console.log("Aquiring lock ", path.resolve(dataDir, entityName + ".lock"));
         lockFile.lock(path.resolve(dataDir, entityName + ".lock"), function (err) {
             if (err){
                 console.warn("Could not aquire lock.", err);
@@ -68,8 +93,9 @@ var saveAll = function (entityName, all) {
                 }, 100);
             }
 
+            console.log("Saving to file.", path.resolve(dataDir, entityName + ".json"));
             fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
-                console.log("Releasing lock ", path.resolve(dataDir, entityName + ".lock"));
+                console.log("Saved to file.", path.resolve(dataDir, entityName + ".json"), "releasing lock", path.resolve(dataDir, entityName + ".lock"));
                 lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));
 
                 if(err)
@@ -84,9 +110,7 @@ var saveAll = function (entityName, all) {
 function LocalStorage(entityName) {
     var self = this;
 
-    self.saveAll = function (all) {
-        return self.save(all);
-    };
+    self.saveAll = function (entity) { return self.save(entity); };
 
     self.save = function (entity) {
         var all = getAll(entityName),
@@ -141,18 +165,14 @@ function LocalStorage(entityName) {
         saveAll(entityName, all);
         return new Promise((resolve, reject) => {
             if (updates.length)
-                return resolve({
-                    updates,
-                    errors
-                });
+                return resolve({ updates, errors });
             if (errors.length)
                 return reject(errors);
         });
     };
 
     self.getAll = function () {
-        var all = getAll(entityName);
-        return Object.values(all);
+        return Object.values(getAll(entityName));
     };
 
     self.get = function (id) {
