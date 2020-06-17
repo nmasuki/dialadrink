@@ -46,8 +46,7 @@ function AfricaTalkingSMS(sender) {
                     });
 
                     var status = record.messages.map(m => m.status.toUpperCase()).distinct();
-                    record.status = status.length > 1
-                        ? status.map(s => "PARTIAL_" + s).join('; ')
+                    record.status = status.length > 1? status.map(s => "PARTIAL_" + s).join('; ')
                         : status[0] || "pending_carrier_callback".toUpperCase();
 
                     if(data.Message){
