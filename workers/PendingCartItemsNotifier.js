@@ -97,7 +97,7 @@ function doWork(err, sessions, next) {
                         if (err)
                             return console.error(err);
 
-                        var lastNotificationDate = notifications.max(n => n.scheduleDate || n.createdDate);
+                        var lastNotificationDate = notifications.max(n => n && (n.scheduleDate || n.createdDate));
                         if (lastNotificationDate > (new Date()).addDays(-7))
                             return console.log(`Skipping cart notification to '${c.name}'. Send once every 7 days`);
 

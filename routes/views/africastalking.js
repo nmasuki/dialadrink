@@ -25,7 +25,7 @@ router.post("/deliveryreport", function (req, res) {
 
 		var status = record.Recipients.map(r => r.status).distinct();
 		record.status = status.length > 1
-			? status.map(s => "Partial " + s).join("; ")
+			? status.map(s => "Partial_" + s).join("; ")
 			: status[0] || record.status;
 
 	} else {
