@@ -70,13 +70,15 @@ function getClientByReq(req, res, next){
 }
 
 router.get('/', function(req, res, next){
-    console.log(`Getting clients for ${res.locals.app || 'app'}..`);
     var filter = {};
 
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 5000);
     var skip = (page - 1) * pageSize;
-    console.log("Looking up clients..", "page:", page, "pageSize:", pageSize, "skip:", skip);
+    console.log(
+        `Getting clients for ${res.locals.app || 'app'}..`, 
+        "page:", page, "pageSize:", pageSize, "skip:", skip
+    );
 
     if (req.query.query && req.query.query.trim()) {
         var fields = ["firstName", "lastName", "phoneNumber", "houseNumber", "username"];
