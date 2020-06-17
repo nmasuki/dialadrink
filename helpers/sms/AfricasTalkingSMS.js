@@ -45,16 +45,18 @@ function AfricaTalkingSMS(sender) {
                         activities: []
                     });
 
+                    var states = record.messages.map(m => m.status.toUpperCase()).distinct();
+                    record.status = status.length > 1
+                        ? status.map(s => "PARTIAL_" + s).join('; ')
+                        : status[0] || "pending_carrier_callback".toUpperCase();
+
                     if(data.Message){
                         record.activities.push({
-                            status: record.messages.map(m => m.status).distinct().join(','), 
+                            status: record.status, 
                             message: data.Message
                         });
                     }
 
-                    if(!data.Recipients)
-                        record.status = data.status || "pending_carrier_callback".toUpperCase();                    
-                    
                     var regex = /([\d]+\.[\d]+)/;
                     if(data.Message && regex.test(data.Message))
                         record.totalCost = parseFloat(regex.exec(data.Message)[0] || "0");
