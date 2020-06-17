@@ -58,8 +58,8 @@ function AfricaTalkingSMS(sender) {
                     if(record.Message && regex.test(response.Message))
                         record.totalCost = parseFloat(regex.exec(record.Message).pop() || "0");
                         
-                    ls.save(data);
-                    
+                    ls.save(record);
+
                     if (typeof next == "function")
                         next(null, record.totalCost);
                     
