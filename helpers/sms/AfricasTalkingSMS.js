@@ -35,19 +35,35 @@ function AfricaTalkingSMS(sender) {
             return AfricasTalking.SMS.send(options)
                 .then((response) => {
                     console.log("SMS sent!", response);
-                    
-                    var data = Object.assign({}, options, response || {});
-                    data.status = data.status || "pending_carrier_callback";
-                    ls.save(data);
 
-                    var regex = /([\d]+\.[\d]+)/, code = 0;
-                    if(response && response.SMSMessageData && regex.test(response.SMSMessageData.Message))
-                        code = parseFloat(regex.exec(response.SMSMessageData.Message).pop() || "0");
-                        
-                    if (typeof next == "function")
-                        next(null, code);
+                    var data = (response || {}).SMSMessageData || {};                    
+                    var record = Object.assign({}, {
+                        to: options.to,
+                        from: options.from || "AFRICASTKNG",
+                        text: options.message,
+                        massages: data.Recipients || [],
+                        activities: []
+                    });
+
+                    if(data.Message){
+                        record.activities.push({
+                            message: data.Message
+                        });
+                    }
+
+                    if(!data.Recipients)
+                        record.status = data.status || "pending_carrier_callback".toUpperCase();                    
                     
-                    return code;
+                    var regex = /([\d]+\.[\d]+)/;
+                    if(record.Message && regex.test(response.Message))
+                        record.totalCost = parseFloat(regex.exec(record.Message).pop() || "0");
+                        
+                    ls.save(data);
+                    
+                    if (typeof next == "function")
+                        next(null, record.totalCost);
+                    
+                    return record.totalCost;
                 })
                 .catch((error) => {
                     console.warn("Error sending SMS!", error, options);

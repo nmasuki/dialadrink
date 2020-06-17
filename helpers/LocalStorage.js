@@ -217,7 +217,8 @@ function LocalStorage(entityName) {
             entity._rev = (1 + curRev) + "-" + uuidv4();
             if (entity.__v) delete entity.__v;
             
-            all[id] = all[id] || {};
+            all[id] = all[id] || { createdDate: new Date() };
+            all[id].modifiedDate = new Date();
 
             for (var i in entity){
                 if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false)){
