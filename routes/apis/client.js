@@ -70,7 +70,7 @@ function getClientByReq(req, res, next){
 }
 
 router.get('/', function(req, res, next){
-    console.log("Getting clients for app..");
+    console.log(`Getting clients for ${res.locals.app || 'app'}..`);
     var filter = {};
 
     var page = parseInt(req.query.page || 1);
