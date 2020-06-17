@@ -47,6 +47,7 @@ function AfricaTalkingSMS(sender) {
 
                     if(data.Message){
                         record.activities.push({
+                            status: record.messages.map(m => m.status).distinct().join(','), 
                             message: data.Message
                         });
                     }
@@ -55,8 +56,8 @@ function AfricaTalkingSMS(sender) {
                         record.status = data.status || "pending_carrier_callback".toUpperCase();                    
                     
                     var regex = /([\d]+\.[\d]+)/;
-                    if(record.Message && regex.test(response.Message))
-                        record.totalCost = parseFloat(regex.exec(record.Message).pop() || "0");
+                    if(data.Message && regex.test(data.Message))
+                        record.totalCost = parseFloat(regex.exec(data.Message)[0] || "0");
                         
                     ls.save(record);
 
