@@ -25,7 +25,7 @@ router.post('/upload', function (req, res) {
                     var l = json.data.length + json.errors.length;
                     if(l >= Object.keys(req.files).length){
                         json.response = json.data.length? "success": "error";
-                        console.log(json.data);
+                        console.log(json);
                         res.send(json);
                     }
                 });

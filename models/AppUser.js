@@ -183,70 +183,6 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
 
 var ls = require("../helpers/LocalStorage").getInstance("appuser");
 
-function toFilterFn(obj){
-    return function(a){
-        var matched = !!a;
-        if(a) for(var i in obj){
-            if(obj.hasOwnProperty(i)){
-                switch(i){
-                    case "$not":
-                        matched = matched && !toFilterFn(obj[i])(a);
-                        break;
-                    case "$or":
-                        if(!Array.isArray(obj[i]))
-                           throw "Expecting an array at " + i;
-                        
-                        matched = matched &&  Array.from(obj[i]).some(x => toFilterFn(x)(a));
-                        break;
-                    case "$and":
-                        if(!Array.isArray(obj[i]))
-                            throw "Expecting an array at " + i;
-
-                        
-                        matched = matched &&  Array.from(obj[i]).every(x => toFilterFn(x)(a));
-                        break;
-                    case "$elemMatch":
-                        if(Array.isArray(a))
-                            throw "Expecting an array to evaluate $elemMatch!";
-                        
-                        matched = matched && Array.from(a).some(x => toFilterFn(x)(obj[i]));
-                        break;
-                    case "$gt":
-                        matched = matched && a > obj[i];
-                        break;
-                    case "$gte":
-                        matched = matched && a >= obj[i];
-                        break;
-                    case "$lt":
-                        matched = matched && a < obj[i];
-                        break;
-                    case "$lte":
-                        matched = matched && a <= obj[i];
-                        break;
-                    case "$ne":
-                        if(obj[i] instanceof RegExp)
-                            matched = matched && !obj[i].test(a);
-                        else
-                            matched = matched && a != obj[i];
-                        break;
-                    case "$eq":
-                        if(obj[i] instanceof RegExp)
-                            matched = matched && obj[i].test(a);
-                        else
-                            matched = matched && a == obj[i];
-                        break;
-                    default:
-                        if(obj[i] instanceof RegExp)
-                            matched = matched && obj[i].test(a[i]);
-                        else
-                            matched = matched && a[i] == obj[i];
-                }
-            }            
-        }
-        return matched;
-    };
-}
-
 AppUser.find = function(filter){
     var Client = keystone.list("Client");
     return new Promise((resolve, reject) => {
@@ -255,7 +191,7 @@ AppUser.find = function(filter){
                 if(err)
                     console.log("Error!", err);
         
-                var appUsers = ls.getAll().filter(toFilterFn(filter));
+                var appUsers = ls.getAll(filter);
                 /*
                 console.log(JSON.stringify(filter), "\nMerging: " + 
                     clients.length + " clients,",

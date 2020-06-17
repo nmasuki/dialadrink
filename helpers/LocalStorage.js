@@ -39,6 +39,92 @@ function tryParse(str){
     }
 }
 
+function toFilterFn(filter){
+    return function(val){
+        if(!filter) return true;
+
+        var matched = true;
+		
+        for(var i in filter){
+			if(!matched) return matched;
+				
+			var parts = i.split(".");
+			
+			if(parts.length > 1){
+				for(var j = 0; j < parts.length - 1; j++){
+					if(filter.hasOwnProperty(p)){
+						filter = filter[p];
+						i = i.substr(i.indexOf("."));
+					}
+				}
+			}
+
+			if(filter.hasOwnProperty(i)){
+				switch(i){
+					case "$not":
+						matched = matched && !toFilterFn(filter[i])(val);
+						break;
+					case "$or":
+						if(!Array.isArray(filter[i]))
+						   throw "Expecting an array at " + i;
+						
+						matched = matched &&  Array.from(filter[i]).some(f => toFilterFn(f)(val));
+						break;
+					case "$and":
+						if(!Array.isArray(filter[i]))
+							throw "Expecting an array at " + i;
+						
+						matched = matched &&  Array.from(filter[i]).every(f => toFilterFn(f)(val));
+						break;
+					case "$elemMatch":
+						if(!val || !Array.isArray(val))
+							throw `Expecting an array at '${i}' to evaluate!`;
+						
+						matched = matched && Array.from(val).some(v => toFilterFn(filter[i])(v));
+						break;
+					case "$in":
+						if(!Array.isArray(filter[i]))
+							throw `Expecting an array at '${i}' to evaluate!`;
+						
+						matched = matched && Array.from(filter[i]).some(f => toFilterFn(f)(val));
+						break;
+					case "$gt":
+						matched = matched && val > filter[i];
+						break;
+					case "$gte":
+						matched = matched && val >= filter[i];
+						break;
+					case "$lt":
+						matched = matched && val < filter[i];
+						break;
+					case "$lte":
+						matched = matched && val <= filter[i];
+						break;
+					case "$ne":
+						if(filter[i] instanceof RegExp)
+							matched = matched && !filter[i].test(val);
+						else
+							matched = matched && val != filter[i];
+						break;
+					case "$eq":
+						if(filter[i] instanceof RegExp)
+							matched = matched && filter[i].test(val);
+						else
+							matched = matched && val == filter[i];
+						break;
+					default:
+						if(filter[i] instanceof RegExp)
+							matched = matched && val && filter[i].test(val[i]);
+						else
+							matched = matched && val && val[i] == filter[i];
+				}
+			}           
+        }
+        
+        return matched;
+    };
+}
+
 function getAll(entityName) {
     var all = {};
     
@@ -66,11 +152,9 @@ function getAll(entityName) {
             
             for(var i in all){
                 if(all.hasOwnProperty(i)){
-                    for(var j in all[i]){
-                        if (all[i].hasOwnProperty(j) && /^date|date$/i.test(j.toString())){
-                            all[i][j] = tryDateParse(all[i][j]);                            
-                        }
-                    }
+                    for(var j in all[i])
+                        if (all[i].hasOwnProperty(j) && /^date|date$/i.test(j.toString()))
+                            all[i][j] = tryDateParse(all[i][j]); 
                 }
             }
         }            
@@ -171,15 +255,15 @@ function LocalStorage(entityName) {
         });
     };
 
-    self.getAll = function () {
-        return Object.values(getAll(entityName));
+    self.getAll = function (filter) {
+        return Object.values(getAll(entityName, filter)).filter(toFilterFn(filter));
     };
 
     self.get = function (id) {
         if (id == undefined)
             return self.getAll();
-        var all = getAll(entityName);
 
+        var all = getAll(entityName);
         return all[id];
     };
 }

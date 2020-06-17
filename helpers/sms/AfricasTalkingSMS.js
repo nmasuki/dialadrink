@@ -26,7 +26,7 @@ function AfricaTalkingSMS(sender) {
 
             var options = {
                 to: (Array.isArray(to) ? to : [to]).map(t => '+' + t.cleanPhoneNumber()),
-                message: message
+                message: message.replace(/\s{2,}/g, " ")
             };
 
             if(sender)
@@ -41,7 +41,7 @@ function AfricaTalkingSMS(sender) {
                     ls.save(data);
 
                     var regex = /([\d]+\.[\d]+)/, code = 0;
-                    if(regex.test(response.SMSMessageData.Message))
+                    if(response && response.SMSMessageData && regex.test(response.SMSMessageData.Message))
                         code = parseFloat(regex.exec(response.SMSMessageData.Message).pop() || "0");
                         
                     if (typeof next == "function")

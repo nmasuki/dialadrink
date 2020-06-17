@@ -15,7 +15,30 @@ var router = keystone.express.Router();
 router.post("/deliveryreport", function (req, res) {
 	var data = Object.assign({}, req.body || {}, req.query || {});
 	console.log("Received %s", req.url, data);
+
+	var record = ls.getAll({ "SMSMessageData.Recipients.messageId": data.id })[0];
+		
+	if (record) {
+		var m = (record.Recipients || []).find(r => r.messageId);
+		(m.activities || (m.activities = [])).push(data);
+		m.status = data.status;
+
+		var status = record.Recipients.map(r => r.status).distinct();
+		record.status = status.length > 1
+			? status.map(s => "Partial " + s).join("; ")
+			: status[0] || record.status;
+
+	} else {
+		record = {
+			to: [data.phoneNumber],
+			info: "Untracked deliveryreport",
+			data: data
+		};
+	}
+
+	ls.save(record);
 	res.status(200);
+
 });
 
 router.post("/optout", function (req, res) {

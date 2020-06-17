@@ -34,7 +34,7 @@ function BaseSMS() {
             if (validNos.length < numbers.length)
                 console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
 
-            return wss.sendSMS(validNos, message).then(a => {
+            return wss.sendSMS(validNos, message.replace(/\s{2,}/g, " ")).then(a => {
                 if (typeof next == "function")
                     next(null, a);
                     

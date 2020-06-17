@@ -77,7 +77,7 @@ module.exports = function MoveSMS(sender) {
                         url: url,
                         data: {
                             to: validNos.join(','),
-                            message: message,
+                            message: message.replace(/\s{2,}/g, " "),
                             msgtype: 5,
                             dlr: 0
                         },

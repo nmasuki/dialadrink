@@ -480,7 +480,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                 if (!location.url && (location.lat && location.lng))
                     location.url = mapUrl;
                 
-                var p = new Promise((resolve, reject) => {
+                promise.then(() => new Promise((resolve, reject) => {
                     if (mapUrl.length <= 30){
                         resolve(mapUrl);
                         return sms.sendSMS(vendorNumber, msg + " " + mapUrl);
@@ -498,9 +498,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
                         return sms.sendSMS(vendorNumber, msg);
                     });
-                });
-
-                promise.then(() => p);
+                }));
             } else {
                 promise.then(() => sms.sendSMS(vendorNumber, msg));
             }
@@ -530,7 +528,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
         });
     };
 
-    if (!that.cart.any(c => !c.product || !c.product.name))
+    if (that.cart.every(c => c.product && c.product.name))
         return Promise.resolve(sendOrderNotification(that));
     else{
         return Order.model.findOne({ _id: that._id })

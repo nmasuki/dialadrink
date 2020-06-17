@@ -111,8 +111,8 @@ router.get("/testsms/:mobile", function (req, res) {
 			message: "No message defined!"
 		});
 
-	var mySMS = new(require('../../helpers/sms/MySMS'))();
-	mySMS.sendSMS(mobile, msg).then(data => res.send({ response: "success", data: data }));
+	var _sms = new(require('../../helpers/sms/MySMS'))();
+	_sms.sendSMS(mobile, msg).then(data => res.send({ response: "success", data: data }));
 });
 
 router.get("/check/:mobile", function (req, res) {
