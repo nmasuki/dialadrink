@@ -37,13 +37,13 @@ function AfricaTalkingSMS(sender) {
                     console.log("SMS sent!", response);
 
                     var data = (response || {}).SMSMessageData || {};                    
-                    var record = Object.assign({}, {
+                    var record = {
                         to: options.to,
                         from: options.from || "AFRICASTKNG",
                         text: options.message,
                         messages: data.Recipients || [],
                         activities: []
-                    });
+                    };
 
                     var status = record.messages.map(m => m.status.toUpperCase()).distinct();
                     record.status = status.length > 1? status.map(s => "PARTIAL_" + s).join('; ')
