@@ -207,11 +207,12 @@ AppUser.find = function(filter){
                 for(var i = 0; i < users.length; i++){
                     var user = finalUsers.find(u => u.phoneNumber && users[i].phoneNumber && u.phoneNumber.cleanPhoneNumber() == users[i].phoneNumber.cleanPhoneNumber());
                     if(user){
-                        if(users[i].password && !user.passwords.contains(users[i].password))
-                            user.passwords.push(users[i].password);
+                        if(users[i].password && (!user.passwords || user.passwords.contains(users[i].password)))
+                            (user.passwords || (user.passwords = [])).push(users[i].password);
+
                         Object.assign(user, users[i]);
                     } else {
-                        users[i].passwords = [];
+                        users[i].passwords = [] || users[i].passwords;
                         if(users[i].password)
                             users[i].passwords.push(users[i].password);
                         finalUsers.push(users[i]);
