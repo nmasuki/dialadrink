@@ -41,7 +41,7 @@ function AfricaTalkingSMS(sender) {
                         to: options.to,
                         from: options.from || "AFRICASTKNG",
                         text: options.message,
-                        massages: data.Recipients || [],
+                        messages: data.Recipients || [],
                         activities: []
                     });
 
