@@ -31,19 +31,24 @@ function AfricaTalkingSMS(sender) {
 
             if(sender)
                 options.from = sender;
+                
+            var record = {    
+                createdDate: new Date(),
+                to: options.to,
+                from: options.from || "AFRICASTKNG",
+                text: options.message,            
+                activities: [{
+                    createdDate: new Date(),
+                    status: "INITIALIZED".toUpperCase(), 
+                }]
+            };
 
             return AfricasTalking.SMS.send(options)
                 .then((response) => {
                     console.log("SMS sent!", response);
 
                     var data = (response || {}).SMSMessageData || {};                    
-                    var record = {
-                        to: options.to,
-                        from: options.from || "AFRICASTKNG",
-                        text: options.message,
-                        messages: data.Recipients || [],
-                        activities: []
-                    };
+                    record.messages = data.Recipients || [];
 
                     var status = record.messages.map(m => m.status.toUpperCase()).distinct();
                     record.status = status.length > 1? status.map(s => "PARTIAL_" + s).join('; ')
@@ -51,6 +56,7 @@ function AfricaTalkingSMS(sender) {
 
                     if(data.Message){
                         record.activities.push({
+                            createdDate: new Date(),
                             status: record.status, 
                             message: data.Message
                         });
