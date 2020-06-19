@@ -357,7 +357,7 @@ exports.requireAPIUser = function (req, res, next) {
 var setAppUser = function (req, res, user) {
     if (!user) 
         return Promise.reject("No matching user found!");
-    else if(user.accountStatus && user.accountStatus != "Active")
+    else if(user.accountStatus && user.accountStatus != "Active" && (!res.locals.app || res.locals.app != "com.dialadrinkkenya"))
         return Promise.reject(`Account in ${user.accountStatus} status!`);
     
     if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {

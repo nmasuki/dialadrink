@@ -66,6 +66,7 @@ router.get("/banners", function (req, res) {
                             id: p.id,
                             title: p.title,
                             meta: p.meta,
+                            href: p.href,
                             image: cloudinary.url(b.public_id, {
                                 secure: true,
                                 height: 450,
