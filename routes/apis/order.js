@@ -177,7 +177,11 @@ router.post("/", function (req, res){
 
             delete req.session.cart;
             req.session.save();
-            
+
+            //OKHi intergration
+            if (process.env.OKHI_KEY && req.body.user && req.body.location)
+                okHiIntegration(req, res, order, cartItems);
+
             return res.send(json);
         });
     }
@@ -225,6 +229,64 @@ router.post("/cancel/:orderNo", function(req, res){
             return res.send(json);
         });
 });
+
+function okHiIntegration(req, res, order, cartItems, next) {
+	var url = res.locals.OkHiEnv == "prod" ?
+		"https://server.okhi.co/v1/interactions" :
+		"https://sandbox-server.okhi.dev/v1/interactions";
+
+	var data = {
+		id: order.orderNumber,
+		useCase: "e-commerce",
+		locationId: req.body.location.id,
+		value: order.payment.amount,
+		user: req.body.user,
+		properties: {
+			brand: "dialadrink",
+			branch: "cbd",
+			paymentMethod: (order.payment.method || "cash"),
+			sendToQueue: true,
+			currency: "KES",
+			basket: cartItems.map(c => {
+				var item = {
+					"sku": c.product._id,
+					"value": c.product.price,
+					"name": c.product.name,
+					"description": c.product.description,
+					"category": c.product.category ? c.product.category.name || c.product.category : "alcohol",
+					"quantity": c.pieces
+				};
+				return item;
+			})
+		},
+		shipping: {
+			"cost": 0,
+			"class": "Flat rate",
+			"expectedDeliveryDate": order.orderDate.addMinutes(30)
+		}
+	};
+
+	console.log("Calling OKHI api:", url);
+	najax.post({
+		url: url,
+		contentType: "application/json; charset=utf-8",
+		headers: { "api-key": res.locals.OkHiKey },
+		data: data,
+		rejectUnauthorized: false,
+		requestCert: true,
+		agent: false,
+		success: function (res) {
+			console.log(res);
+			if (typeof next == "function")
+				next(null, res);
+		},
+		error: function (xhr, status, err) {
+			console.error("Error calling OKHI api!", status, xhr.responseText, err);
+			if (typeof next == "function")
+				next(err, url);
+		}
+	});
+}
 
 function getCartItems(req){
     var items = Object.values(req.session.cart || {});

@@ -101,11 +101,10 @@ CartItem.schema.methods.toAppObject = function () {
         offerPrice: priceOption.offerPrice,
         quantity: priceOption.quantity,
         //product: this.product && this.product.toAppObject ? this.product.toAppObject() : null,
-        productId: this.product && this.product.id
+        productId: (this.product && this.product._id).toString()
     });
 
     delete obj.product;
-
     return obj;
 };
 

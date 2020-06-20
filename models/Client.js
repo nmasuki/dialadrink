@@ -222,6 +222,9 @@ Client.schema.methods.toAppObject = function (appVersion) {
 
     ret._rev = user.__v;
     delete ret.sessions;
+    delete ret.image;
+    delete ret.clientIps;
+    delete ret.deliveryLocationMeta;
     
     return ret;
 };

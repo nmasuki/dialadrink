@@ -548,10 +548,11 @@ Order.schema.methods.toAppObject = function () {
     var order = this;
     var obj = Object.assign(this.toObject(), {
         orderAmount: this.orderAmount || this.total,
-        client: this.client && this.client.toAppObject? this.client.toAppObject(): this.client,
         clientName: this.client? this.client.name: "",
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
+
+    obj.client = this.client && this.client.toAppObject? this.client.toAppObject(): new Client.model(this.client).toAppObject();
 
     var phoneNumber = this.delivery.phoneNumber.cleanPhoneNumber();
     var email = this.email;
@@ -562,7 +563,6 @@ Order.schema.methods.toAppObject = function () {
         var client = clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
         if(client){
             order.client = client._id;
-            obj.client = client.toAppObject? client.toAppObject(): client;
             order.save();
             return obj;
         }
@@ -571,7 +571,6 @@ Order.schema.methods.toAppObject = function () {
         clients.push(client);
 
         order.client = client;
-        obj.client = client.toAppObject();
         
         var filter = { $or: [] };
         if(client.phoneNumber)

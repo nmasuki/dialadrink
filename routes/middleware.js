@@ -387,7 +387,7 @@ var setAppUser = function (req, res, user) {
 
                     return resolve(user);
                 });
-        });       
+        });
     }
 
     return new Promise((resolve, reject) => {
