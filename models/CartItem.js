@@ -101,7 +101,7 @@ CartItem.schema.methods.toAppObject = function () {
         offerPrice: priceOption.offerPrice,
         quantity: priceOption.quantity,
         //product: this.product && this.product.toAppObject ? this.product.toAppObject() : null,
-        productId: (this.product && this.product._id).toString()
+        productId: (this.product && (this.product._id || this.product.id) || "").toString()
     });
 
     delete obj.product;
