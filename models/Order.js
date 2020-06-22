@@ -1,11 +1,10 @@
-var MoveSms = require("../helpers/sms/AfricasTalkingSMS");
 var pesapalHelper = require('../helpers/PesaPal');
 var keystone = require('keystone');
 var CartItem = keystone.list("CartItem");
 var Client = keystone.list("Client");
 
 var Types = keystone.Field.Types;
-var sms = new MoveSms();
+var sms = require("../helpers/sms").getInstance();
 
 /**
  * Order Model

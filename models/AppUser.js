@@ -1,6 +1,6 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
-var sms = new (require("../helpers/sms/AfricasTalkingSMS"))();
+var sms = require("../helpers/sms").getInstance();
 var AppUser = new keystone.List('AppUser');
 
 AppUser.add({

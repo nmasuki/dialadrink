@@ -1,11 +1,10 @@
-var MoveSms = require("../../helpers/sms/AfricasTalkingSMS");
 var keystone = require('keystone');
 var Client = keystone.list("Client");
 var AppUser = keystone.list("AppUser");
 var webpush = require("web-push");
 var najax = require('najax');
 
-var sms = new MoveSms();
+var sms = require("../../helpers/sms").getInstance();
 
 var router = keystone.express.Router();
 

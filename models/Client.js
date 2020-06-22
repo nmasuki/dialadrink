@@ -5,7 +5,7 @@ var fs = require('fs');
 var path = require('path');
 
 var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
-var sms = new (require("../helpers/sms/AfricasTalkingSMS"))();
+var sms = require("../helpers/sms").getInstance();
 
 var Types = keystone.Field.Types;
 
