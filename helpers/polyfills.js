@@ -242,7 +242,7 @@ var limit = function (func, wait, debounce) {
 
                 promises.forEach(p => p.my_resolve(ret));
                 if(promises.length > 1)
-                    console.log("Debounced", func.name, promises.length, "times");
+                    console.log(debounce? "Debounced": "Throttled", func.name, promises.length, "times");
 
                 promises.length = 0;
             };
@@ -253,7 +253,7 @@ var limit = function (func, wait, debounce) {
             if (debounce || !timeout)
                 timeout = setTimeout(throttler, wait || 1500);
         });
-    }
+    };
 };
 
 // Returns a function, that, when invoked, will only be triggered at most once
