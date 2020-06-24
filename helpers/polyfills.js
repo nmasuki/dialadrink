@@ -237,6 +237,8 @@ var limit = function (func, wait, debounce) {
             var throttler = function () {
                 timeout = null;
                 var ret = func.apply(context, args);
+                if(ret instanceof Promise)
+                    ret.catch(console.error);
 
                 promises.forEach(p => p.my_resolve(ret));
                 if(promises.length > 1)
