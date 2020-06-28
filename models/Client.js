@@ -604,13 +604,13 @@ Client.schema.pre('save', function (next) {
 
     if (user.imageUrl && user.imageUrl.indexOf(user.name.cleanId()) < 0) {
         var ls = require("../helpers/LocalStorage").getInstance("app-uploads");
-        var matches = ls.getAll({secure_url:secure_url});
+        var matches = ls.getAll({secure_url: user.imageUrl});
         if(matches.length){
             user.image = matches[0];            
             next();         
         }else{
             var opt =  { public_id: "users/" + user.name.cleanId() };
-            cloudinary.v2.uploader.upload(secure_url, opt, (err, res) => {
+            cloudinary.v2.uploader.upload(user.imageUrl, opt, (err, res) => {
                 user.image = res;
                 next();
             });
@@ -651,7 +651,7 @@ Client.schema.methods.updateOrderStats = function (next) {
                 if ( client.orderCount && client.orderCount == orders.length){
                     if (typeof next == "function") next();
                 }
-                
+
                 client.orderCount = orders.length;
                 client.orderValue = orders.sum(order => order && order.total);
                 client.lastOrderDate = orders.max(order => order && order.orderDate);
