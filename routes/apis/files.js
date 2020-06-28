@@ -11,16 +11,19 @@ router.post('/upload', function (req, res) {
     };
 
     if(req.files){
+        var ls = require("../../helpers/LocalStorage").getInstance("app-uploads");
         for(var i in req.files){
             var file = req.files[i];
-            var options =  {public_id: "app-uploads/" + file.originalname }
+            var options =  {public_id: "app-uploads/" + file.originalname };
             cloudinary.v2.uploader.upload(
                 file.path, options,
                 (error, result) => {
                     if(error)
                         json.errors.push(error);
-                    else
+                    else{
                         json.data.push(result.secure_url);
+                        ls.save(result);
+                    }
                     
                     var l = json.data.length + json.errors.length;
                     if(l >= Object.keys(req.files).length){

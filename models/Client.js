@@ -602,12 +602,19 @@ Client.schema.pre('save', function (next) {
     if(!user.gender)
         user.gender = user.guessGender(user.name);
 
-    if (user.imageUrl) {
-        var opt =  { public_id: "users/" + user.name.cleanId() };
-        cloudinary.v2.uploader.upload(user.imageUrl, opt, (err, res) => {
-            user.image = res;
-            next();
-        });
+    if (user.imageUrl && user.imageUrl.indexOf(user.name.cleanId()) < 0) {
+        var ls = require("../helpers/LocalStorage").getInstance("app-uploads");
+        var matches = ls.getAll({secure_url:secure_url});
+        if(matches.length){
+            user.image = matches[0];            
+            next();         
+        }else{
+            var opt =  { public_id: "users/" + user.name.cleanId() };
+            cloudinary.v2.uploader.upload(secure_url, opt, (err, res) => {
+                user.image = res;
+                next();
+            });
+        }
     } else
         next();
 });
@@ -644,6 +651,7 @@ Client.schema.methods.updateOrderStats = function (next) {
                 if ( client.orderCount && client.orderCount == orders.length){
                     if (typeof next == "function") next();
                 }
+                
                 client.orderCount = orders.length;
                 client.orderValue = orders.sum(order => order && order.total);
                 client.lastOrderDate = orders.max(order => order && order.orderDate);

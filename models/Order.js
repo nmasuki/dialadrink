@@ -350,12 +350,11 @@ Order.schema.methods.updateClient = function (next) {
                     }
 
                     if(saveClient){
-                        client.updateOrderStats(() => {
-                            client.save((err, c) => {
-                                order.client = client;
-                                clients.push(client);
-                                next();
-                            });
+                        delete client.__v;
+                        client.save((err, c) => {
+                            order.client = client;
+                            clients.push(client);
+                            next();
                         });                        
                     }else{
                         order.client = client;
