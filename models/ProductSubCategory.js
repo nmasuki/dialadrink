@@ -1,11 +1,11 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
+var MenuItem = keystone.list("MenuItem");
 
 /**
  * ProductSubCategory Model
  * ==================
  */
-
 var ProductSubCategory = new keystone.List('ProductSubCategory', {
     autokey: {from: 'name', path: 'key', unique: true},
 });
@@ -70,7 +70,7 @@ ProductSubCategory.schema.methods.updateMenu = function(next){
                             return m;
                         });
                     }else{
-                        var menu = keystone.list("MenuItem").model({
+                        var menu = new MenuItem.model({
                             index: 1,
                             level: 2,
                             href: href,

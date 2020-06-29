@@ -344,7 +344,7 @@ Order.schema.methods.updateClient = function (next) {
                         }
                     } else {
                         saveClient = true;
-                        client = keystone.list("Client").model(delivery);
+                        client = new Client.model(delivery);
                         client.createdDate = order.orderDate;
                         client.clientIps.push(order.clientIp);
                     }

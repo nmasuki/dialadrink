@@ -1,6 +1,6 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
-var Product = keystone.list("Product");
+var MenuItem = keystone.list("MenuItem");
 
 /**
  * ProductCategory Model
@@ -67,7 +67,7 @@ ProductCategory.schema.methods.updateMenu = function(next){
                             return m;
                         });
                     }else{
-                        var menu = keystone.list("MenuItem").model({
+                        var menu = new MenuItem.model({
                             index: 1,
                             level: 2,
                             href: href,
