@@ -12,7 +12,7 @@ router.get("/", function (req, res, next) {
     var regex = new RegExp("(" + query.escapeRegExp() + ")", "ig");
     
     var accountType = res.locals.appUser && res.locals.appUser.accountType;
-    var all = ls.getAll({ viewList:{ $elemMatch: accountType }}), 
+    var all = ls.getAll(), //{ viewList:{ $elemMatch: accountType }}
         filteredList = all.filter(a => !query || regex.test(JSON.stringify(a))),
         pageList = filteredList.slice(start, start + pageSize);
 
