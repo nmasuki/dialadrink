@@ -21,8 +21,12 @@ router.get("/:brand", function (req, res, next) {
             locals.brand = brands.first();
             if (locals.brand)
             {
+                if(locals.page.h1 == req.params.brand.toProperCase())
+                    locals.page.h1 = locals.brand.name.toProperCase();
+
                 title += locals.brand.name;
                 locals.page.meta = locals.brand.description || locals.brand.company.description || title;
+                
                 if(locals.brand.pageTitle)
                     locals.page.title = locals.brand.pageTitle;
             }

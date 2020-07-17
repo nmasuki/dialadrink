@@ -239,7 +239,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     var cachedPage = memCache ? memCache.get("__breadcrumbs__" + cleanId) : null;
 
     if (cachedPage) {
-        res.locals.breadcrumbs = Array.from(Object.assign(res.locals.breadcrumbs || {}, cachedPage || {})).filter(b => b.label);
+        res.locals.breadcrumbs = (cachedPage || []).filter(b => b.label);
 
         if (typeof next == "function")
             next(err);
@@ -251,10 +251,9 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
     return keystone.list('MenuItem').model
-        .find({
-            key: regex
-        })
-        .deepPopulate("parent.parent")
+        .find({ key: regex })
+        .sort({ index: 1 })
+        .deepPopulate("parent.parent.parent")
         .exec((err, menus) => {
             var menu = menus.orderBy(m => m.href.length).first();
 
@@ -265,12 +264,14 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
                 } while (menu = menu.parent);
             }
 
-            if (breadcrumbs.length)
-                res.locals.breadcrumbs = breadcrumbs
-                .orderBy(m => m.level)
-                .filter(b => b.label)
-                .distinctBy(b => (b.href || "").toLowerCase().trim());
-            else
+            if (breadcrumbs.length){
+                breadcrumbs = breadcrumbs.reverse()
+                    .filter(b => b.label)
+                    .distinctBy(b => b.index)
+                    .distinctBy(b => (b.href || "").split("/").last().toLowerCase().trim());
+                    
+                res.locals.breadcrumbs = breadcrumbs;
+            }else
                 res.locals.breadcrumbs = [{
                     "label": "Home",
                     "href": "/"
