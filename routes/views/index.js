@@ -19,10 +19,9 @@ function search(req, res, next) {
     //    return next();
 
     //Searching h1 title
-    locals.page = Object.assign(locals.page || {}, {
-        h1: ((req.params.query || "").replace(/[^\w]+/g, " ")
-            .toProperCase()).replace(/Whiskies|Whiskey|Wine|Gin/g, "").trim()
-    });
+    locals.page = Object.assign({
+        h1: ((req.params.query || "").replace(/[^\w]+/g, " ").toProperCase()).replace(/Whiskies|Whiskey|Wine|Gin/g, "").trim()
+    }, locals.page || {});
 
     locals.page.canonical = [keystone.get('url'), (req.params.query || "").cleanId()]
         .filter(p => p).map(p => p.trim('/')).join('/');
@@ -224,9 +223,9 @@ router.get("/payment/:orderNo", function (req, res) {
                 locals.cartItems = [];
 
             locals.order = order;
-            locals.page = Object.assign(locals.page, {
+            locals.page = Object.assign({
                 h1: `Order #${order.orderNumber} Payment. (by ${order.delivery.firstName} ${order.delivery.lastName})`
-            });
+            }, locals.page || {});
 
             if (req.session.userData && req.session.userData.saveInfo)
                 locals.userData = req.session.userData;

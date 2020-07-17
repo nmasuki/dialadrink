@@ -12,7 +12,7 @@ router.get("/:brand", function (req, res, next) {
     var regex2 = new RegExp(req.params.brand.cleanId().trim(), "i");
     locals.filters = {"$or": [{name: regex}, {key: regex2}]};
 
-    locals.page = Object.assign(locals.page, {h1: req.params.brand.toProperCase()});
+    locals.page = Object.assign({h1: req.params.brand.toProperCase()}, locals.page || {});
 
     var title = ""
     keystone.list('Product').findByBrand(locals.filters, (err, products) => {

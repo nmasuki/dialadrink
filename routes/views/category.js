@@ -13,9 +13,7 @@ router.get("/:category", function (req, res) {
         category: req.params.category || ""
     };
 
-    locals.page = Object.assign(locals.page, {
-        h1: locals.filters.category.toProperCase()
-    });
+    locals.page = Object.assign({ h1: locals.filters.category.toProperCase() }, locals.page || {});
 
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
@@ -101,10 +99,6 @@ router.get("/:category/:subcategory", function (req, res) {
         category: req.params.category,
         subcategory: req.params.subcategory
     };
-
-    locals.page = Object.assign(locals.page, {
-        h1: locals.filters.category.toProperCase()
-    });
     
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
@@ -130,7 +124,7 @@ router.get("/:category/:subcategory", function (req, res) {
                     if (!locals.page.title || locals.page.title == keystone.get("name"))
                         locals.page.title = title + " | " + keystone.get("name");
 
-                    if (subCategories.first(a => !!a))
+                    if (!locals.page.h1 && subCategories.first(a => !!a))
                         locals.page.h1 = subCategories.first(a => !!a).name;
 
                     locals.products = products;

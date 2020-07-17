@@ -7,10 +7,10 @@ function index(req, res) {
 
     // Set locals
     locals.section = 'store';
-    locals.page = Object.assign(locals.page, {
+    locals.page = Object.assign({
         title: "Alcohol Delivery Nairobi | Dial A Drink Kenya - Fast, Free delivery",
         h1: "Today's Offers"
-    });
+    }, locals.page || {});
 
     locals.page.canonical = [keystone.get('url'), 'index.html']
         .filter(p => p).map(p => p.trim('/')).join('/');

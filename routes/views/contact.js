@@ -7,7 +7,7 @@ router.post("/", function (req, res) {
 		var locals = res.locals;
 
 		// Set locals
-		locals.page = Object.assign(locals.page, {title: "Contact Us", h1: "Contact Form"});
+		locals.page = Object.assign({title: "Contact Us", h1: "Contact Form"}, locals.page || {});
 		locals.section = 'contact';
 		locals.enquiryTypes = Enquiry.fields.enquiryType.ops;
 		locals.formData = req.body || {};
@@ -47,7 +47,7 @@ router.get("/", function (req, res) {
 		var locals = res.locals;
 
 		// Set locals
-		locals.page = Object.assign(locals.page, {title: "Contact Us", h1: "Contact Form"});
+		locals.page = Object.assign({title: "Contact Us", h1: "Contact Form"}, locals.page || {});
 		locals.section = 'contact';
 		locals.enquiryTypes = Enquiry.fields.enquiryType.ops;
 		locals.formData = req.body || {};

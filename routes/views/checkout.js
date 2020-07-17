@@ -43,7 +43,7 @@ router.get('/', function (req, res) {
 	var view = new keystone.View(req, res);
 	var locals = res.locals;
 
-	locals.page = Object.assign(locals.page, { h1: "Your Order Details" });
+	locals.page = Object.assign({ h1: "Your Order Details" }, locals.page || {});
 
 	locals.breadcrumbs.push({
 		href: "/cart",
