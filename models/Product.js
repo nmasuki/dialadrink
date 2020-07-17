@@ -20,8 +20,11 @@ Product.add({
     },
 
     alcoholContent: {
-        type: Number,
-        initial: true
+        type: Number
+    },
+    
+    countryOfOrigin: {
+        type: String
     },
 
     priceOptions: {
@@ -67,9 +70,11 @@ Product.add({
     pageTitle: {
         type: String
     },
+
     tags: {
         type: Types.TextArray
     },
+
     description: {
         type: Types.Html,
         wysiwyg: true,
