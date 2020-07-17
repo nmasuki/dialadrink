@@ -18,10 +18,9 @@ function search(req, res, next) {
     //if (locals.page && locals.page._id && locals.page.content)
     //    return next();
 
+    var queryTitle = ((req.params.query || "").replace(/[^\w]+/g, " ").toProperCase()).replace(/\s(Whiskies|Whiskey|Wine|Gin)/g, "").trim()
     //Searching h1 title
-    locals.page = Object.assign({
-        h1: ((req.params.query || "").replace(/[^\w]+/g, " ").toProperCase()).replace(/Whiskies|Whiskey|Wine|Gin/g, "").trim()
-    }, locals.page || {});
+    locals.page = Object.assign({ h1: queryTitle }, locals.page || {});
 
     locals.page.canonical = [keystone.get('url'), (req.params.query || "").cleanId()]
         .filter(p => p).map(p => p.trim('/')).join('/');
@@ -48,12 +47,13 @@ function search(req, res, next) {
                 success: 'success',
                 title: locals.page.title,
                 meta: locals.page.meta,
-                data: products.map(p => p.name)
+                data: products.map(p => p.toAppObject())
             });
 
         if (products.length == 1) {
             if (locals.breadcrumbs && locals.breadcrumbs.length)
                 locals.breadcrumbs.pop();
+
             renderSingleResults(products.first());
         } else {
             locals.products = products;
@@ -85,16 +85,40 @@ function search(req, res, next) {
 
             if (locals.breadcrumbs) {
                 locals.breadcrumbs = locals.breadcrumbs.filter(b => b.label);
+
                 if (req.originalUrl.startsWith("/search"))
                     locals.breadcrumbs.push({
                         label: "Search Results",
                         href: req.originalUrl
                     });
-                else if (!locals.breadcrumbs.find(b => b.label == locals.page.h1))
-                    locals.breadcrumbs.push({
-                        label: locals.page.h1,
-                        href: req.originalUrl
-                    });
+                else {
+                    if(locals.breadcrumbs.length == 0){
+                        if (categories.length == 1) {
+                            var cat = categories[0].category;
+                            if (cat && cat.name && !locals.breadcrumbs.find(b => b.label == cat.name))
+                                locals.breadcrumbs.push({
+                                    label: cat.name,
+                                    href: "/" + cat.name.cleanId()
+                                });
+                        }
+                        
+                        if (subCategories.length == 1) {
+                            var subCat = categories[0].subCategory;
+                            if (subCat && subCat.name && !locals.breadcrumbs.find(b => b.label == subCat.name))
+                                locals.breadcrumbs.push({
+                                    label: subCat.name,
+                                    href: "/" + subCat.name.cleanId()
+                                });
+                        }
+                    }
+                    
+                    var href = req.originalUrl.split("/").last().toLowerCase();
+                    if (locals.page.h1 && !locals.breadcrumbs.find(b => b.href.split("/").last().toLowerCase() == href))
+                        locals.breadcrumbs.push({
+                            label: locals.page.h1,
+                            href: req.originalUrl
+                        });
+                }
             }
 
             view.render('products');
