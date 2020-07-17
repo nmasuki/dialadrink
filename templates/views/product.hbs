@@ -84,6 +84,14 @@
                     </div>
                 {{/if}}
 
+                {{#if countryOfOrigin}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            Country Of Origin <span class="monospaced label label-info">{{countryOfOrigin}}</span>
+                        </div>
+                    </div>
+                {{/if}}
+                
                 {{#if brand.name}}
                     <div class="row" style="padding-bottom: 3px;">
                         <div class="col-md-12">
@@ -91,7 +99,7 @@
                                 Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
                             </p>
                         </div>
-                    </div><!-- end row -->
+                    </div>
                 {{/if}}
                 
                 <div class="row">
