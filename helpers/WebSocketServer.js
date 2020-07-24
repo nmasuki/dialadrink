@@ -107,6 +107,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
         }
     };
 
+    payload.activities = payload.activities || [];
     payload.attempts = attempts;
     ls.save(payload); 
     
