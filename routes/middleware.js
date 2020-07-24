@@ -268,7 +268,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
                 breadcrumbs = breadcrumbs.reverse()
                     .filter(b => b.label)
                     .distinctBy(b => b.index)
-                    .distinctBy(b => (b.href || "").split("/").last().toLowerCase().trim());
+                    .distinctBy(b => (b.href || "").replace(/^https?\:\/\/[^\/]*/,"").toLowerCase().trim());
                     
                 res.locals.breadcrumbs = breadcrumbs;
             }else

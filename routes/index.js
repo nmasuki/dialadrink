@@ -73,6 +73,7 @@ exports = module.exports = function (app) {
 	app.use('/order', routes.views.order);
 	app.use('/pesapal', routes.views.pesapal);
 	app.use('/africastalking', routes.views.africastalking);
+	app.use('/cybersource', routes.views.cybersource);
 
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);

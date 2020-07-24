@@ -42,6 +42,8 @@ function BaseSMS() {
             }).catch(err => {
                 if (typeof next == "function")
                     next(err);
+                else
+                    console.error(err);
             });
         });
     };

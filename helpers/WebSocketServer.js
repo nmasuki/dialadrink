@@ -88,62 +88,83 @@ function processIncoming(message) {
 }
 
 function sendWSMessage(dest, msg, msgid, attempts) {
-    attempts = attempts || 0;
+    attempts = (attempts || 0) + 1;
     msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
-    var clients = Array.from(wss.clients)
-        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.appPermissions.contains("sms"));
-
-    if (attempts > CONFIG.RetryCount) {
-        console.warn("WSS:", `Delivery failed after ${attempts} attempts`);
-        return Promise.reject(`Delivery failed after ${attempts} attempts`);
-    }
-
-    var retrySendWSMessage = function (err) {
-        console.warn("WSS:", (err || "Unknown Error!") + ". " +
-            `Retrying in ${attempts * CONFIG.RetryWait / 1000.0} seconds. ` +
-            `Attempt ${attempts} of ${CONFIG.RetryCount}`);
-            
-        return new Promise((fulfill, reject) => {
-            setTimeout(() => sendWSMessage(dest, msg, msgid, ++attempts).then(fulfill), CONFIG.RetryWait * (attempts + 1));
-        });
-    };
-
-    var payload = {
+        
+    var payload = ls.get(msgid) || {
         id: msgid,
         cmd: 'message',
         status: "INITIALIZED",
+        activities: [],
+        attempts: attempts,
         data: {
             msgid: msgid,
             text: msg,
             dest: dest,
             inbound: false,
             sending: true,
-            created_at: new Date().toISOString(),
-            attempts: attempts
+            created_at: new Date().toISOString(),            
         }
     };
 
-    ls.save(payload);
+    payload.activities = payload.activities || [];
+    payload.attempts = attempts;
+    ls.save(payload); 
+    
+    var retrySendWSMessage = function (err) {
+        if (attempts > CONFIG.RetryCount) {
+            var _err = `Delivery failed after ${attempts-1} attempts`;
+            payload.status = "TERMINAL_FAILURE";
+            payload.activities.push({created_at: new Date().toISOString(), status:payload.status, error: _err});
+            ls.save(payload);
+
+            return Promise.reject(_err);
+        }   
+
+        console.warn("WSS:", (err || "Unknown Error") + "! " +
+            `Retrying in ${attempts * CONFIG.RetryWait / 1000.0} seconds. ` +
+            `Attempt ${attempts} of ${CONFIG.RetryCount}`);
+            
+        return new Promise((fulfill, reject) => {
+            setTimeout(() => sendWSMessage(dest, msg, msgid, attempts).then(fulfill).catch(), CONFIG.RetryWait * attempts);
+        });
+    };
+
+    if(!wss) return retrySendWSMessage("WSS not set!");    
+
+    var clients = Array.from(wss.clients)
+        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.appPermissions.contains("sms"));
 
     if (!clients.length)
         return retrySendWSMessage("No client found!");
 
-    var client = clients[attempts++ % clients.length];
+    payload.attempts = ++attempts;
+    var client = clients[attempts % clients.length];
     console.info("Sending message to:", dest, msg);
+
     return new Promise((fulfill, reject) => {
         client.send(JSON.stringify(payload), function (err) {
-            if (err)
-                return retrySendWSMessage(err).then(fulfill).catch(reject);
-
+            if (err){
+                payload.status = payload.attempts >= CONFIG.RetryCount? "TERMINAL_FAILURE": "RETRYABLE_FAILURE";
+                payload.activities.push({created_at: new Date().toISOString(), status:payload.status,  error: err});
+                ls.save(payload);
+                if(payload.status == "RETRYABLE_FAILURE")
+                    return retrySendWSMessage(err).then(fulfill).catch(reject);
+            }else{
+                payload.status = "SUCCESS";
+                payload.activities.push({created_at: new Date().toISOString(), status:payload.status});
+                ls.save(payload);                
+            }
+                
             fulfill(payload.data);
         });
     });
 }
 
 //Retry sending pending msgs
-var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED');
+var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED' || d.status == 'RETRYABLE_FAILURE');
 if(pendingMsgs.length)
-    pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid, d.data.attempts));
+    pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid, d.attempts).catch(console.error));
 
 // WebSocket Server    
 var wss = global.wss || (global.wss = new WebSocket.Server(CONFIG));

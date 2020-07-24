@@ -44,7 +44,6 @@ module.exports = function MoveSMS(sender) {
         var url = apiUrl.format('compose') + `&sender=${sender}`;
 
         return self.balance().then(function (balance) {
-            console.log("SMS Balance:", balance);
             var err = "";
             
             if (balance < 0)

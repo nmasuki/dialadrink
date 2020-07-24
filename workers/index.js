@@ -1,6 +1,4 @@
-require('daemon').daemon(null, [], {
-  cwd: __dirname
-});
+require('daemon').daemon(null, [], { cwd: __dirname });
 
 var async = require('async');
 var fs = require('fs');
@@ -10,7 +8,7 @@ var isFirstPass = true;
 
 function loadWorkers(next) {
   if (isFirstPass)
-    console.log("Loading: ", __dirname);
+    console.log("Loading:", __dirname);
 
   fs.readdir(__dirname + "/../locks", (err, files) => {
     if (err)

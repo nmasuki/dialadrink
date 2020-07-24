@@ -153,7 +153,10 @@ router.post("/", function (req, res){
             }
             
             json.data = order.toAppObject();
-            if (order.payment.method == "PesaPal") {
+            if (order.payment.method == "CyberSource") {
+                json.redirect = "/cybersource/pay/" + order.orderNumber;
+                json.message = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+            } else if (order.payment.method == "PesaPal") {
                 json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
                 json.message = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
             } else if (order.payment.method == "Mpesa") {

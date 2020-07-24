@@ -561,7 +561,7 @@ if (!Array.prototype.groupBy)
     Array.prototype.groupBy = function (compare) {
         var i = 0;
         return this.reduce(function (groups, x) {
-            var groupKey = (typeof compare == "function" ? compare(x, i) : (x[compare] || x || 0));
+            var groupKey = (typeof compare == "function" ? compare(x, i) : (x && x[compare] || x || 0));
             (groups[groupKey] = groups[groupKey] || []).push(x);
             i++;
             return groups;
