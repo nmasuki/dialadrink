@@ -506,7 +506,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
         if (order.delivery.phoneNumber && !order.smsNotificationSent) {
             message = `DIALADRINK: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
 
-            if (order.payment.method == "PesaPal")
+            if (order.payment.method == "PesaPal" || order.payment.method == "CyberSource")
                 message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
             else
                 message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}`;
@@ -667,7 +667,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     deliveryDetails = deliveryDetails || {};
     var time = new Date().toISOString().split('T')[1].split(':')[0];
     if (deliveryDetails.email != process.env.DEVELOPER_EMAIL && (time >= 21 - 3 || time <= 5 - 3)) {
-        err = "Due to the national curfew in Kenya. We will not be taking any orders past 5PM. \r\nPlease stay at home to eradicate COVID-19!";
+        err = "Due to the national curfew in Kenya. We will not be taking any orders past 9PM. \r\nPlease stay at home to eradicate COVID-19!";
         if(process.env.NODE_ENV == "production")
             return callback(err);
     }
@@ -727,7 +727,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
                 return console.warn("Error while saving Order! " + err);
 
             order.cart = cartItems;
-            if (order.payment.method == "PesaPal") {
+            if (order.payment.method == "PesaPal" || order.payment.method == "CyberSource") {
                 var paymentUrl = [keystone.get('url'), 'payment', order.orderNumber].filter(p => p).map(p => p.toString().trim('/')).join('/');
                 pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
                     order.payment.url = paymentUrl;

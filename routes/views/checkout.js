@@ -54,7 +54,8 @@ router.get('/', function (req, res) {
 	});
 
 	locals.enableMPesa = process.env.MPESA_ENABLED;
-	locals.enablePaypal = process.env.PESAPAL_ENABLED;
+	locals.enablePaypal = !process.env.PESAPAL_ENABLED;
+	locals.enableCyberSource = !locals.enablePaypal;
 
 	getMergedCart(req, res, cart =>{
 		locals.cart = cart || req.session.cart || {};
@@ -84,7 +85,10 @@ router.post("/", function (req, res, next) {
 			json.msg = err ? (err.msg || err.message || err) : "Order placed successfully! We will contact you shortly with details of your dispatch."
 
 			if (!err) {
-				if (order.payment.method == "PesaPal") {
+				if (order.payment.method == "CyberSource") {
+					json.redirect = "/cybersource/pay/" + order.orderNumber;
+					json.message = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
+				} else if (order.payment.method == "PesaPal") {
 					json.redirect = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
 					json.msg = err ? (err.msg || err.message || err) : "Redirecting to process payment.";
 				} else if (order.payment.method == "Mpesa") {

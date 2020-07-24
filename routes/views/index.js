@@ -112,8 +112,8 @@ function search(req, res, next) {
                         }
                     }
                     
-                    var href = req.originalUrl.split("/").last().toLowerCase();
-                    if (locals.page.h1 && !locals.breadcrumbs.find(b => b.href.split("/").last().toLowerCase() == href))
+                    var href = req.originalUrl.replace(/^https?\:\/\/[^\/]*/,"").toLowerCase();
+                    if (locals.page.h1 && !locals.breadcrumbs.find(b => b.href.replace(/^https?\:\/\/[^\/]*/,"").toLowerCase() == href))
                         locals.breadcrumbs.push({
                             label: locals.page.h1,
                             href: req.originalUrl

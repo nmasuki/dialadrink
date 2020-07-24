@@ -311,8 +311,8 @@ function handleSearchingAndPaging() {
 }
 
 function handleSearchAutoComplete() {
-    if ($.fn.autocomplete)
-        $("#search_box").autocomplete({
+    if ($.fn.autocomplete){
+        var ac = $("#search_box").autocomplete({
             source: function (request, response) {
                 $.ajax({
                     url: "/search/" + request.term,
@@ -323,7 +323,14 @@ function handleSearchAutoComplete() {
                 });
             },
             minLength: 2,
-            select: function (event, ui) {
+            select: function (event, ui) {            
+                var query = ui.item.value || ui.item;
+                if (query !== "") {
+                    console.log(query)
+                    window.location.href = "/search/" + query;
+                }
+            },
+            fucus: function (event, ui) {
                 var query = ui.item.value || ui.item;
                 if (query !== "") {
                     console.log(query)
@@ -331,8 +338,16 @@ function handleSearchAutoComplete() {
                 }
             }
         });
-    else
+        
+        ac.data("autocomplete")._renderItem = function( ul, item ) {
+            var html = "<a><img style='height:32px;width: 32px' src='{0}'/>{1}</a>".format(item.imageSmallSize, item.name)
+            return $("<li></li>").data("item.autocomplete", item)
+                .append(html)
+                .appendTo(ul);
+        };
+    } else {
         setTimeout(handleSearchAutoComplete, 1000);
+    }
 }
 
 function checkcookie() {

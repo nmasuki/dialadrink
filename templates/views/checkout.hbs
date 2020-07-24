@@ -254,10 +254,17 @@
                             <label class="custom-control-label" for="swipeOnDelivery">Swipe on Delivery (+2.5% processing fee)</label>
                         </div>
 
-                        {{#if enablePaypal}}
+                        {{!-- {{#if enableCyberSource}} --}}
                             <div class="custom-control custom-radio">
-                                <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
-                                <label class="custom-control-label" for="debit">Pay online (+3% processing fee)</label>
+                                <input id="cyberSource" name="paymentMethod" type="radio" class="custom-control-input" value="CyberSource">
+                                <label class="custom-control-label" for="cyberSource">Pay online (Testing)</label>
+                            </div>
+                        {{!-- {{/if}} --}}
+
+                        {{#if enablePesaPal}}
+                            <div class="custom-control custom-radio">
+                                <input id="pesaPal" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
+                                <label class="custom-control-label" for="pesaPal">Pay online (+3% processing fee)</label>
                             </div>
                         {{/if}}
                         
