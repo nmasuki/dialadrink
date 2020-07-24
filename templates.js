@@ -1116,13 +1116,13 @@ this["templates"]["views"]["cybersource"]["hbs"]["templates/views/cybersource.hb
 
   return "<div class=\"container\">\r\n    <div class=\"row\">\r\n        <form id=\"payment_form\" action=\""
     + alias4(((helper = (helper = helpers.paymentUrl || (depth0 != null ? depth0.paymentUrl : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"paymentUrl","hash":{},"data":data}) : helper)))
-    + "\" method=\"post\">\r\n            <fieldset id=\"confirmation\">\r\n                <legend>Review Payment Details</legend>\r\n"
+    + "\" method=\"post\">            \r\n            <input type=\"submit\" id=\"submit\" name=\"submit\" class=\"btn btn-primary btn-lg\" value=\"Continue\"/>\r\n\r\n            <fieldset id=\"confirmation\">\r\n                <legend>Review Payment Details</legend>\r\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.data : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </fieldset>\r\n\r\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.data : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\r\n            <input type=\"hidden\" id=\"signature\" name=\"signature\" value=\""
     + alias4(((helper = (helper = helpers.signature || (depth0 != null ? depth0.signature : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"signature","hash":{},"data":data}) : helper)))
-    + "\">\r\n            <input type=\"submit\" id=\"submit\" name=\"submit\" class=\"btn btn-primary btn-lg\" value=\"Continue\"/>\r\n        </form>\r\n    </div>\r\n</div>\r\n\r\n<style>\r\na {\r\n    font-size: 1.0em;\r\n    text-decoration: none;\r\n}\r\n\r\ninput[type=submit] {\r\n    margin-top: 10px;\r\n}\r\n\r\nspan {\r\n    font-weight: bold;\r\n    width: 350px;\r\n    display: inline-block;\r\n}\r\n\r\n.fieldName {\r\n    width: 400px;\r\n    font-weight: bold;\r\n    vertical-align: top;\r\n}\r\n\r\n.fieldValue {\r\n    width: 400px;\r\n    font-weight: normal;\r\n    vertical-align: top;\r\n}\r\n</style>\r\n";
+    + "\">\r\n        </form>\r\n    </div>\r\n</div>\r\n\r\n<style>\r\na {\r\n    font-size: 1.0em;\r\n    text-decoration: none;\r\n}\r\n\r\ninput[type=submit] {\r\n    margin-top: 10px;\r\n}\r\n\r\nspan {\r\n    font-weight: bold;\r\n    width: 350px;\r\n    display: inline-block;\r\n}\r\n\r\n.fieldName {\r\n    width: 400px;\r\n    font-weight: bold;\r\n    vertical-align: top;\r\n}\r\n\r\n.fieldValue {\r\n    width: 400px;\r\n    font-weight: normal;\r\n    vertical-align: top;\r\n}\r\n</style>\r\n";
 },"useData":true});
 
 this["templates"]["views"]["errors"]["404"]["hbs"]["templates/views/errors/404.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {

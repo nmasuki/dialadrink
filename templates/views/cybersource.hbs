@@ -1,6 +1,8 @@
 <div class="container">
     <div class="row">
-        <form id="payment_form" action="{{paymentUrl}}" method="post">
+        <form id="payment_form" action="{{paymentUrl}}" method="post">            
+            <input type="submit" id="submit" name="submit" class="btn btn-primary btn-lg" value="Continue"/>
+
             <fieldset id="confirmation">
                 <legend>Review Payment Details</legend>
                 {{#each data}}
@@ -16,7 +18,6 @@
             {{/each}}
 
             <input type="hidden" id="signature" name="signature" value="{{signature}}">
-            <input type="submit" id="submit" name="submit" class="btn btn-primary btn-lg" value="Continue"/>
         </form>
     </div>
 </div>
