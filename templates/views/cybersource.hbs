@@ -3,7 +3,7 @@
         <form id="payment_form" action="{{paymentUrl}}" method="post">            
             <input type="submit" id="submit" name="submit" class="btn btn-primary btn-lg" value="Continue"/>
 
-            <fieldset id="confirmation">
+            <fieldset id="confirmation" style="display: none;">
                 <legend>Review Payment Details</legend>
                 {{#each data}}
                     <div>
@@ -21,6 +21,10 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.getElementById("submit").click();
+</script>
 
 <style>
 a {
