@@ -164,7 +164,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 //Retry sending pending msgs
 var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED' || d.status == 'RETRYABLE_FAILURE');
 if(pendingMsgs.length)
-    pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid, d.attempts).catch(console.error));
+    pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid).catch(console.error));
 
 // WebSocket Server    
 var wss = global.wss || (global.wss = new WebSocket.Server(CONFIG));
