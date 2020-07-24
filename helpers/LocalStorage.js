@@ -34,7 +34,7 @@ function tryParse(str){
     try{
         return JSON.parse(str);
     }catch(e){
-        console.error("Error parsing json. \n\n" + str);
+        console.error("Error parsing json.", str, e);
         return null;
     }
 }

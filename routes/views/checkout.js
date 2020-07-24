@@ -53,9 +53,9 @@ router.get('/', function (req, res) {
 		label: "Checkout"
 	});
 
-	locals.enableMPesa = process.env.MPESA_ENABLED;
-	locals.enablePaypal = !process.env.PESAPAL_ENABLED;
-	locals.enableCyberSource = !locals.enablePaypal;
+	locals.enableMPesa = !!process.env.MPESA_ENABLED;
+	locals.enablePaypal = !!process.env.PESAPAL_ENABLED;
+	locals.enableCyberSource = !process.env.PESAPAL_ENABLED && process.env.CYBERSOURCE_ENABLED;
 
 	getMergedCart(req, res, cart =>{
 		locals.cart = cart || req.session.cart || {};

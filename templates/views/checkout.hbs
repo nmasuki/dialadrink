@@ -222,8 +222,7 @@
                                 <input type="text" class="form-control" name="houseNumber" id="houseNumber"
                                     placeholder="House Number" value="{{userData.houseNumber}}">
                             </div>
-                        </div>
-                        
+                        </div>                        
                     </div>
                     {{!--
                     <div class="custom-control custom-checkbox">
@@ -251,20 +250,22 @@
 
                         <div class="custom-control custom-radio">
                             <input id="swipeOnDelivery" name="paymentMethod" type="radio" class="custom-control-input" value="Swipe on Delivery">
-                            <label class="custom-control-label" for="swipeOnDelivery">Swipe on Delivery (+2.5% processing fee)</label>
+                            <label class="custom-control-label" for="swipeOnDelivery">Swipe on Delivery<small>(+2.5% processing fee)</small></label>
                         </div>
 
-                        {{!-- {{#if enableCyberSource}} --}}
+                        {{enableCyberSource}}<br/>
+                        
+                        {{#if enableCyberSource}}
                             <div class="custom-control custom-radio">
                                 <input id="cyberSource" name="paymentMethod" type="radio" class="custom-control-input" value="CyberSource">
-                                <label class="custom-control-label" for="cyberSource">Pay online (Testing)</label>
+                                <label class="custom-control-label" for="cyberSource">Pay online</label>
                             </div>
-                        {{!-- {{/if}} --}}
+                        {{/if}}
 
                         {{#if enablePesaPal}}
                             <div class="custom-control custom-radio">
                                 <input id="pesaPal" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
-                                <label class="custom-control-label" for="pesaPal">Pay online (+3% processing fee)</label>
+                                <label class="custom-control-label" for="pesaPal">Pay online<small>(+3% processing fee)</small></label>
                             </div>
                         {{/if}}
                         
@@ -425,7 +426,17 @@
                             });
 
                             form.replaceWith(iframe);
-                            iframe.get(0).onload = function(){ modal.modal("hide"); }
+                            iframe.get(0).onload = function(){
+                                 modal.modal("hide");
+                                 var doc;
+                                 try{
+                                     doc = this.document || this.contentDocument || this.contentWindow.document;
+                                 }catch(e){
+                                     console.error(e);
+                                 }
+
+                                 console.log("Iframe load!", doc, this, arguments);
+                            }
                         } else {
                             app.showModal({
                                 msg: res.msg,
