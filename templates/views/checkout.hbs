@@ -442,10 +442,10 @@
                                 height: (form.height()) + 'px'
                             });
 
-                            form.replaceWith(iframe);
+                            form.replaceWith(iframe);                            
+                            $(".float-right-icon").hide();
                             iframe.get(0).onload = function(){
                                  modal.modal("hide");
-                                 $(".float-right-icon").hide();
                                  $('html, body').animate({ scrollTop: iframe.offset().top - $(".nav-logo").offset().top }, 1000);
 
                                  try{
