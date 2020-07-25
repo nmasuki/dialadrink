@@ -89,9 +89,7 @@ var cartUtil = function () {
             deliveryCharges: 0
         }, matches.last() || {});
 
-        if(matches.length)
-            self.updateView();
-
+        self.updateView();
         console.log(deliveryDistance, window.regionData);
         return $.Deferred().resolve(window.regionData.deliveryCharges);
     }
@@ -377,7 +375,7 @@ var cartUtil = function () {
                 tchargesView.find(".cart-amount").text(charges.transactionCharges.formatNumber(2));
                 tchargesView.slideDown();
             } else {
-                tchargesView.slideUp();
+                tchargesView.hide();
             }
 
             if (charges.deliveryCharges) {
@@ -391,7 +389,7 @@ var cartUtil = function () {
                 dchargesView.find(".cart-amount").text(charges.deliveryCharges.formatNumber(2));
                 dchargesView.slideDown();
             } else {
-                dchargesView.slideUp();
+                dchargesView.hide();
             }
 
             console.log(charges);
