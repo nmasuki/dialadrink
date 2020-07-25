@@ -72,7 +72,7 @@ function shoternUrl24h(longUrl, next) {
 	});
 }
 
-function getPasaPalUrl(order, host) {
+function getPesaPalUrl(order, host) {
 	var customer = new PesaPal.Customer(order.delivery.email || process.env.EMAIL_FROM, order.delivery.phoneNumber);
 	customer.firstName = order.delivery.firstName;
 	customer.lastName = order.delivery.lastName;
@@ -90,7 +90,7 @@ function getPasaPalUrl(order, host) {
 	return url;
 }
 
-function getPasaPalUrlOld(order, host) {
+function getPesaPalUrlOld(order, host) {
 	var pesapal = require('pesapal')({
 		consumerKey: process.env.PESAPAL_KEY,
 		consumerSecret: process.env.PESAPAL_SECRET,
@@ -114,6 +114,6 @@ function getPasaPalUrlOld(order, host) {
 }
 
 module.exports = {
-    getPasaPalUrl: getPasaPalUrl,
+    getPesaPalUrl: getPesaPalUrl,
     shoternUrl: shortenUrlBitly
 };

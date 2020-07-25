@@ -197,7 +197,8 @@ var cartUtil = function () {
                 
                 var mapping = {
                     "Swipe on Delivery": "2.5%",
-                    "PesaPal": "3%"
+                    "CyberSource": "2.5%",
+                    "PesaPal": "3%",
                 };
 
                 if (mapping[paymentMode]){

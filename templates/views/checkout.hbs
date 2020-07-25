@@ -451,6 +451,7 @@
                                  try{
                                      var doc = this.document || this.contentDocument || this.contentWindow.document;
                                      //back to our site
+                                     iframe.hide();
                                      return window.location = "/";
                                  }catch(e){
                                      console.error(e);                                     

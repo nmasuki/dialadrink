@@ -262,7 +262,7 @@ router.get("/payment/:orderNo", function (req, res) {
                 label: "Payment"
             });
 
-            locals.orderUrl = pesapalHelper.getPasaPalUrl(order, req.headers.origin);
+            locals.orderUrl = pesapalHelper.getPesaPalUrl(order, req.headers.origin);
             return view.render('checkout');
         });
 });
