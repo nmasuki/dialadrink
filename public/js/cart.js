@@ -85,8 +85,8 @@ var cartUtil = function () {
         var deliveryDistance = Math.round(10 * distanceFromNai(location))/10;
         window.regionData = Object.assign({
             deliveryDistance: deliveryDistance,
-            freeDeliveryThreashold: Math.min(deliveryDistance * 100 || 500, 500),
-            deliveryCharges: Math.max(deliveryDistance * 100, 200)
+            freeDeliveryThreashold: 0,
+            deliveryCharges: 0
         }, matches.last() || {});
 
         if(matches.length)
