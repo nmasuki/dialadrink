@@ -256,21 +256,21 @@
                         {{#if enableCyberSource}}
                             <div class="custom-control custom-radio">
                                 <input id="cyberSource" name="paymentMethod" type="radio" class="custom-control-input" value="CyberSource">
-                                <label class="custom-control-label" for="cyberSource">Pay online</label>
+                                <label class="custom-control-label" for="cyberSource">Pay online <small>(+2.5% processing fee)</small></label>
                             </div>
                         {{/if}}
 
                         {{#if enablePesaPal}}
                             <div class="custom-control custom-radio">
                                 <input id="pesaPal" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
-                                <label class="custom-control-label" for="pesaPal">Pay online<small>(+3% processing fee)</small></label>
+                                <label class="custom-control-label" for="pesaPal">Pay online <small>(+3% processing fee)</small></label>
                             </div>
                         {{/if}}
                         
                         {{#if enableMPesa}}
                             <div class="custom-control custom-radio">
                                 <input id="mpesa" name="paymentMethod" type="radio" class="custom-control-input" value="MPesa">
-                                <label class="custom-control-label" for="mpesa">M-PESA (2% processing fee)</label>
+                                <label class="custom-control-label" for="mpesa">M-PESA <small>(+2% processing fee)</small></label>
                             </div>
                         {{/if}}
                     </div>
@@ -365,6 +365,22 @@
         if(window.addressData)
             app.cartUtil.loadCharges(window.addressData.location);
 
+        window.addEventListener('message', function(event) {
+            console.log("Message:", arguments);
+
+            // IMPORTANT: check the origin of the data! 
+            if (event.origin.startsWith('https://dialadrinkkenya.com')) { 
+                // The data was sent from your site.
+                // Data sent with postMessage is stored in event.data:
+                console.log(event.data); 
+            } else {
+                // The data was NOT sent from your site! 
+                // Be careful! Do not use it. This else branch is
+                // here just for clarity, you usually shouldn't need it.
+                return; 
+            } 
+        });
+
 {{#if orderUrl}}
         var iframe = $("<iframe style='min-height: 670px' src='{{orderUrl}}'/>");        
         iframe.css({
@@ -414,6 +430,9 @@
                     type: "POST",
                     success: function (res) {
                         if(res.redirect) {
+                            //if(!/https?:\/\//.test(res.redirect))
+                            //    return window.location = res.redirect;
+
                             modal.find("span.loading-msg").text("Loading payment options! Please wait..")
                             var iframe = $("<iframe src='" + res.redirect + "'/>");
                             
@@ -426,14 +445,16 @@
                             form.replaceWith(iframe);
                             iframe.get(0).onload = function(){
                                  modal.modal("hide");
-                                 var doc;
-                                 try{
-                                     doc = this.document || this.contentDocument || this.contentWindow.document;
-                                 }catch(e){
-                                     console.error(e);
-                                 }
+                                 $(".float-right-icon").hide();
+                                 $('html, body').animate({ scrollTop: iframe.offset().top - $(".nav-logo").offset().top }, 1000);
 
-                                 console.log("Iframe load!", doc, this, arguments);
+                                 try{
+                                     var doc = this.document || this.contentDocument || this.contentWindow.document;
+                                     //back to our site
+                                     return window.location = "/";
+                                 }catch(e){
+                                     console.error(e);                                     
+                                 }
                             }
                         } else {
                             app.showModal({

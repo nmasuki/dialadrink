@@ -1,49 +1,10 @@
 var WebSocket = require('ws');
 var ls = require('../helpers/LocalStorage').getInstance('ws-messages');
-var fs = require('fs');
+var CONFIG = require('../../data/wsconfig');
 
-function getWSSConfigs() {
-    var wssConfigs = require('../../data/wsconfig');
-    var config = {};
+// WebSocket Server    
+var wss = global.wss || (global.wss = new WebSocket.Server(CONFIG.WebSocketServer));
 
-    if (wssConfigs.perMessageDeflate)
-        config.perMessageDeflate = wssConfigs.perMessageDeflate;
-
-    var certFiles = {
-        privateKey: wssConfigs.WebSocketServer.privateKey || 'ssl-cert/privkey.pem',
-        certificate: wssConfigs.WebSocketServer.certificate || 'ssl-cert/fullchain.pem'
-    };
-
-    if (!fs.existsSync(certFiles.privateKey) || !fs.existsSync(certFiles.certificate)) {
-        console.warn("WSS:", "Missing files:", certFiles.privateKey, certFiles.certificate);
-        config.port = wssConfigs.WebSocketServer.port;
-        return config;
-    }
-
-    console.info("WSS:", 'Loading certificate files [%s, %s]', certFiles.privateKey, certFiles.certificate);
-    // read ssl certificate
-    var privateKey = fs.readFileSync(certFiles.privateKey, 'utf8');
-    var certificate = fs.readFileSync(certFiles.certificate, 'utf8');
-
-    var credentials = {
-        key: privateKey,
-        cert: certificate
-    };
-
-    //pass in your credentials to create an https server
-    config.server = require('https').createServer(credentials);
-    config.server.listen(wssConfigs.WebSocketServer.port || 8080);
-
-    if (wssConfigs.perMessageDeflate)
-        config.perMessageDeflate = wssConfigs.perMessageDeflate;
-
-    return config;
-}
-
-var CONFIG = Object.assign({
-    RetryCount: 5,
-    RetryWait: 10000
-}, getWSSConfigs());
 
 function isJSONString(text){
     if (typeof text == "string" && /^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
@@ -92,7 +53,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
         
     var payload = ls.get(msgid) || {
-        id: msgid,
+        _id: msgid,
         cmd: 'message',
         status: "INITIALIZED",
         activities: [],
@@ -107,24 +68,29 @@ function sendWSMessage(dest, msg, msgid, attempts) {
         }
     };
 
-    payload.activities = payload.activities || [];
+    payload.activities = payload.activities || [{created_at: new Date().toISOString(), status:payload.status}];
     payload.attempts = attempts;
     ls.save(payload); 
     
     var retrySendWSMessage = function (err) {
+        var errMsg;
         if (attempts > CONFIG.RetryCount) {
-            var _err = `Delivery failed after ${attempts-1} attempts`;
+            errMsg = `Delivery failed after ${attempts-1} attempts`;
             payload.status = "TERMINAL_FAILURE";
-            payload.activities.push({created_at: new Date().toISOString(), status:payload.status, error: _err});
+            payload.activities.push({created_at: new Date().toISOString(), status:payload.status, error: errMsg});
             ls.save(payload);
 
-            return Promise.reject(_err);
+            return Promise.reject(errMsg);
         }   
-
-        console.warn("WSS:", (err || "Unknown Error") + "! " +
+        errMsg = (err || "Unknown Error") + "! " +
             `Retrying in ${attempts * CONFIG.RetryWait / 1000.0} seconds. ` +
-            `Attempt ${attempts} of ${CONFIG.RetryCount}`);
-            
+            `Attempt ${attempts} of ${CONFIG.RetryCount}`;
+
+        console.warn("WSS:", errMsg);
+        payload.status = "RETRYABLE_FAILURE";          
+        payload.activities.push({created_at: new Date().toISOString(), status:payload.status,  error: errMsg});
+        ls.save(payload);
+
         return new Promise((fulfill, reject) => {
             setTimeout(() => sendWSMessage(dest, msg, msgid, attempts).then(fulfill).catch(), CONFIG.RetryWait * attempts);
         });
@@ -135,19 +101,22 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     var clients = Array.from(wss.clients)
         .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.appPermissions.contains("sms"));
 
-    if (!clients.length)
+    payload.attempts = attempts;
+    payload.status = "PROCESSING";
+
+     if (!clients.length)
         return retrySendWSMessage("No client found!");
 
-    payload.attempts = ++attempts;
+               
     var client = clients[attempts % clients.length];
     console.info("Sending message to:", dest, msg);
 
     return new Promise((fulfill, reject) => {
         client.send(JSON.stringify(payload), function (err) {
             if (err){
-                payload.status = payload.attempts >= CONFIG.RetryCount? "TERMINAL_FAILURE": "RETRYABLE_FAILURE";
                 payload.activities.push({created_at: new Date().toISOString(), status:payload.status,  error: err});
                 ls.save(payload);
+
                 if(payload.status == "RETRYABLE_FAILURE")
                     return retrySendWSMessage(err).then(fulfill).catch(reject);
             }else{
@@ -164,10 +133,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 //Retry sending pending msgs
 var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED' || d.status == 'RETRYABLE_FAILURE');
 if(pendingMsgs.length)
-    pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid).catch(console.error));
-
-// WebSocket Server    
-var wss = global.wss || (global.wss = new WebSocket.Server(CONFIG));
+    pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid, d.attempts).catch(console.error));
 
 // Broadcast to all.
 wss.broadcast = function broadcast(payload) {
