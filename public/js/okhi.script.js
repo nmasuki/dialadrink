@@ -3,16 +3,17 @@
 $(document).ready(function(){    
     window.addressData = window.addressData || null;
 
-    var loadLocationCard = function(user){
-        $('#lets-okhi').hide();
+    $(document).on("load", "#lets-okhi-card iframe", function(){
+        console.log(arguments);
+    });
 
-        var errorTimeOut = setTimeout(function(){            
-            $("#lets-okhi").parent().hide();            
-            $("#addressInputs").slideDown();
-    
-            $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location! Please enter your address</strong>");
-            $(".alert-danger").slideDown();
-        }, 5000);
+    $(document).on("error", "#lets-okhi-card iframe", function(){
+        console.error(arguments);
+    });
+
+    var loadLocationCard = function(user){
+        var errorTimeOut;
+        $('#lets-okhi').hide();
 
         var handleOnSuccess = function (data){
             clearTimeout(errorTimeOut);
@@ -65,8 +66,18 @@ $(document).ready(function(){
             if (window.locationCard){
                 window.locationCard.user = user;
             } else {
-                var element = document.getElementById("lets-okhi-card");
+                
+                errorTimeOut = setTimeout(function(){     
+                    window.addressData = null;      
+                    $('#lets-okhi').hide();
+                    $("#lets-okhi-card").parent().hide();            
+                    $("#addressInputs").slideDown();
+            
+                    $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location! Please enter your address</strong>");
+                    $(".alert-danger").slideDown();
+                }, 5000);
 
+                var element = document.getElementById("lets-okhi-card");
                 window.locationCard = new okhi.LocationCard({
                     element: element, // required
                     user: user, // required
@@ -113,7 +124,8 @@ $(document).ready(function(){
         };
 
         if(user.phone && user.firstName && user.lastName){  
-            errorTimeOut = setTimeout(function(){            
+            errorTimeOut = setTimeout(function(){   
+                window.addressData = null;         
                 $("#lets-okhi").parent().hide();            
                 $("#addressInputs").slideDown();
         
