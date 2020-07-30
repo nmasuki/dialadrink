@@ -61,21 +61,22 @@ $(document).ready(function(){
         if (!user.lastName) delete user.lastName;
 
         if(user.phone && user.phone.length >= 10){
-            window.addressData = null;
-            
+            errorTimeOut = setTimeout(function(){     
+                if(window.addressData) return;      
+                $('#lets-okhi').hide();
+                $("#lets-okhi-card").parent().hide();            
+                $("#addressInputs").slideDown();
+        
+                $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location! Please enter your address</strong>");
+                $(".alert-danger").slideDown();
+            }, 5000);            
+                
+            window.addressData = null;            
             if (window.locationCard){
                 window.locationCard.user = user;
             } else {
                 
-                errorTimeOut = setTimeout(function(){     
-                    window.addressData = null;      
-                    $('#lets-okhi').hide();
-                    $("#lets-okhi-card").parent().hide();            
-                    $("#addressInputs").slideDown();
-            
-                    $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location! Please enter your address</strong>");
-                    $(".alert-danger").slideDown();
-                }, 5000);
+
 
                 var element = document.getElementById("lets-okhi-card");
                 window.locationCard = new okhi.LocationCard({
