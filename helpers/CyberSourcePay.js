@@ -44,11 +44,11 @@ module.exports = {
 			amount: order.total,
 			currency: "KES",
 
+			bill_to_address_line1: order.delivery.address || "Nairobi CBD",
 			bill_to_address_city: "Nairobi",
 			bill_to_address_country: "KE",
 			
 			bill_to_email: order.delivery.email || "",
-			bill_to_address_line1: order.delivery.address,
 			bill_to_surname: order.delivery.lastName,
 			bill_to_forename: order.delivery.firstName
 		};
