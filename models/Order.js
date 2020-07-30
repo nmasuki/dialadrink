@@ -5,6 +5,7 @@ var Client = keystone.list("Client");
 
 var Types = keystone.Field.Types;
 var sms = require("../helpers/sms").getInstance();
+var najax = require('najax');
 
 /**
  * Order Model
@@ -512,7 +513,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                                             
                                         return resolve(address);
                                     }
-                                    
+
                                     resolve();
                                 },
                                 error: function () {
