@@ -6,7 +6,16 @@ $(document).ready(function(){
     var loadLocationCard = function(user){
         $('#lets-okhi').hide();
 
+        var errorTimeOut = setTimeout(function(){            
+            $("#lets-okhi").parent().hide();            
+            $("#addressInputs").slideDown();
+    
+            $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location! Please enter your address</strong>");
+            $(".alert-danger").slideDown();
+        }, 5000);
+
         var handleOnSuccess = function (data){
+            clearTimeout(errorTimeOut);
             window.addressData = data;
 
             if (window.addressData){
@@ -33,10 +42,11 @@ $(document).ready(function(){
         };
         
         var handleOnError = function (data){
-            window.addressData = null;
-            
+            clearTimeout(errorTimeOut);
+            window.addressData = null;            
             console.warn("Error Implimentation not done!", arguments);
-            $('#lets-okhi').show();
+
+            $('#lets-okhi').show().animate({width:'toggle'}, 350);
             $("#lets-okhi-card").hide();
         };
 
@@ -131,13 +141,8 @@ $(document).ready(function(){
             
         var form = $(this).parents("form");
         $(".alert-danger").hide();
-
-        if (form[0].checkValidity()) {
-            loadLocationLookUp();
-        } else {
-            $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.");
-            $(".alert-danger").slideDown();
-        }
+           
+        loadLocationLookUp();
     });
 
 });
