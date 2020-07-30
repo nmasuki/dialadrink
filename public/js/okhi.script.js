@@ -46,7 +46,7 @@ $(document).ready(function(){
             window.addressData = null;            
             console.warn("Error Implimentation not done!", arguments);
 
-            $('#lets-okhi').show().animate({width:'toggle'}, 350);
+            $('#lets-okhi').animate({width:'toggle'}, 350);
             $("#lets-okhi-card").hide();
         };
 
@@ -79,7 +79,9 @@ $(document).ready(function(){
     };
 
     var loadLocationLookUp = function(user){
+        var errorTimeOut;
         var handleOnSuccess = function (data) {
+            clearTimeout(errorTimeOut);
             window.addressData = data;
 
             $('#lets-okhi').animate({ width:'toggle' }, 350);
@@ -89,18 +91,18 @@ $(document).ready(function(){
             $("[name=building]").val(data.location.streetName);
             $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
             
-            $("#addressInputs").slideDown();
-            
+            $("#lets-okhi").parent().show();              
             loadLocationCard();           
         };
     
         var handleOnError = function (error) {
-            window.addressData = data;
+            clearTimeout(errorTimeOut);
+            window.addressData = null;
             
             $('#lets-okhi').animate({width:'toggle'}, 350);
             $("#addressInputs").slideDown();
     
-            $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location!</strong> " + error)
+            $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location!</strong> " + error);
             $(".alert-danger").slideDown();
         };
     
@@ -110,7 +112,15 @@ $(document).ready(function(){
             lastName: $("#lastName").val(),
         };
 
-        if(user.phone && user.firstName && user.lastName){                
+        if(user.phone && user.firstName && user.lastName){  
+            errorTimeOut = setTimeout(function(){            
+                $("#lets-okhi").parent().hide();            
+                $("#addressInputs").slideDown();
+        
+                $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location! Please enter your address</strong>");
+                $(".alert-danger").slideDown();
+            }, 5000);
+                  
             var locationManager = new okhi.LocationManager({
                 user: user,
                 onSuccess: handleOnSuccess,
@@ -120,7 +130,7 @@ $(document).ready(function(){
 
             locationManager.launch({mode: 'select_location'});
         }else{
-            $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
+            $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please fill in your <b>names</b> and <b>phone number</b>.")
             $(".alert-danger").slideDown();
         }
     };
