@@ -37,8 +37,8 @@ module.exports = {
 			signed_field_names: SIGNED_FIELDS,
 			unsigned_field_names: "",
 
-			signed_date_time: new Date().toISOString().substr(0, 19) + "Z",
 			locale: "en",
+			signed_date_time: new Date().toISOString().substr(0, 19) + "Z",
 			transaction_type: "authorization",
 			reference_number: order.orderNumber,
 			amount: order.total,
