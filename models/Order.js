@@ -11,7 +11,6 @@ var najax = require('najax');
  * Order Model
  * ==========
  */
-
 var Order = new keystone.List('Order', {
     defaultSort: '-orderDate',
     autokey: {
@@ -500,12 +499,15 @@ Order.schema.methods.sendOrderNotification = function (next) {
                 }));
 
                 if(!order.delivery.address){
+                    console.log(`No address provided! Running reverse geocode ${location.lat},${location.lng}.`);
                     promise.then(() => {
                         return new Promise(resolve => {
                             var url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.GOOGLE_API_KEY1}`;
                             najax.get({
                                 url: url,
                                 success: function (json) {
+                                    console.log(`reverse geocode ${location.lat},${location.lng}.`, json);
+
                                     if(json){
                                         var address = JSON.parse(json).results[0];
                                         if(address)
