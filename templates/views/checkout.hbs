@@ -411,13 +411,31 @@
             var array = form.serializeArray();
             $(".alert-danger").hide();
 
-            if (form[0].checkValidity()) {
+            var address = window.addressData || {};
+            if($("[name=address]").val())
+                address.address = $("[name=address]").val();
+            if($("[name=building]").val())
+                address.building = $("[name=building]").val();
+            if($("[name=address]").val())
+                address.houseNumber = $("[name=houseNumber]").val();
+
+            if(form[0].checkValidity()) {
+                $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
+                $(".alert-danger").slideDown();
+            } else if(!Object.values(address).find(x => !!x)){
+                $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid address. Please review your delivery address.")
+                $(".alert-danger").slideDown();
+            } else {
                 var that = $(this);
 
                 that.attr("disabled", true);
                 $('body,html').animate({scrollTop: 0}, 800, 'swing');
 
-                var data = Object.assign({ saveInfo: $("#saveInfo").is(":checked") }, app.cartUtil.getCharges(), window.addressData || {});
+                var data = Object.assign({ 
+                    saveInfo: $("#saveInfo").is(":checked") }, 
+                    app.cartUtil.getCharges(), 
+                    window.addressData || {}
+                );
                 array.forEach(function (a) { data[a.name] = a.value; });
 
                 var modal = app.showLoading("<span id='msgSpan'>Processing your order! Please wait..</span>", 60000);
@@ -481,9 +499,6 @@
                     }
                 });
 
-            } else {
-                $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
-                $(".alert-danger").slideDown();
             }
         });
         
