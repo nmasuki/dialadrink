@@ -2,8 +2,8 @@ var BaseSMS = require('./MySMS');
 var ls = require('../LocalStorage').getInstance("atsms");
 
 var credentials = {
-    username: process.env.AFRICASTALKING_USER || "dialadrink",
-    apiKey: process.env.AFRICASTALKING_APIKEY || '8e42f0b0477b3c1312997e33fd698f2d8e27fc609b9f323cb5237fb8d46f50ff'
+    username: "dialadrink",
+    apiKey: '8e42f0b0477b3c1312997e33fd698f2d8e27fc609b9f323cb5237fb8d46f50ff'
 };
 
 function AfricaTalkingSMS(sender) {
