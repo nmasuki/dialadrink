@@ -499,10 +499,11 @@ Order.schema.methods.sendOrderNotification = function (next) {
                 }));
 
                 if(!order.delivery.address){
+                    order.delivery.address = "Nairobi";
                     console.log(`No address provided! Running reverse geocode ${location.lat},${location.lng}.`);
                     promise.then(() => {
                         return new Promise(resolve => {
-                            var url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.GOOGLE_API_KEY1}`;
+                            var url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.GOOGLE_API_KEY}`;
                             najax.get({
                                 url: url,
                                 success: function (json) {
@@ -519,6 +520,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                                     resolve();
                                 },
                                 error: function () {
+                                    console.log(`reverse geocode ${location.lat},${location.lng}.`, arguments);
                                     resolve();
                                 }
                             });
