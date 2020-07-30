@@ -16,8 +16,7 @@ router.post('/upload', function (req, res) {
             var file = req.files[i];
             var options =  {public_id: "app-uploads/" + file.originalname };
             cloudinary.v2.uploader.upload(
-                file.path, options,
-                (error, result) => {
+                file.path, options, (error, result) => {
                     if(error)
                         json.errors.push(error);
                     else{

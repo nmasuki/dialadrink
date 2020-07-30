@@ -470,7 +470,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
             var itemsMsg = `Drinks:${items.map(c => c.pieces + '*' + c.product.name).join(', ')}`.trim();
             var msg = `${order.payment.method} order:${order.delivery.firstName} ${order.delivery.phoneNumber}, Amount:${order.payment.amount}, ${itemsMsg}.`;
             var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
-            var location = order.deliveryLocation;
+            var location = order.deliveryLocation;           
 
             if (location) {
                 var mapUrl = location.url || `http://maps.google.com/maps?daddr=${location.lat},${location.lng}`;
@@ -497,6 +497,31 @@ Order.schema.methods.sendOrderNotification = function (next) {
                         return sms.sendSMS(vendorNumber, msg);
                     });
                 }));
+
+                if(!order.delivery.address){
+                    promise.then(() => {
+                        return new Promise(resolve => {
+                            var url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.GOOGLE_API_KEY1}`;
+                            najax.get({
+                                url: url,
+                                success: function (json) {
+                                    if(json){
+                                        var address = JSON.parse(json).results[0];
+                                        if(address)
+                                            order.delivery.address = address.formatted_address;
+                                            
+                                        return resolve(address);
+                                    }
+                                    
+                                    resolve();
+                                },
+                                error: function () {
+                                    resolve();
+                                }
+                            });
+                        });                        
+                    });
+                }
             } else {
                 promise.then(() => sms.sendSMS(vendorNumber, msg));
             }
