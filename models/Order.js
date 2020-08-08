@@ -244,7 +244,7 @@ Order.schema.virtual("discount").get(function () {
 Order.schema.virtual("chargesAmt").get(function () {
     var charges = 0;
 
-    if (this.charges)
+    if (this.charges && this.charges.chargesAmount)
         charges = this.charges.chargesAmount.sum(c => parseFloat("" + c));
 
     return charges;
@@ -294,6 +294,7 @@ Order.schema.methods.updateClient = function (next) {
     */
 
     var delivery = order.delivery;
+    
     if (delivery) {
         var findOption = { "$or": [] };
         var phoneNumber = (delivery.phoneNumber || "").trim()

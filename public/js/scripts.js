@@ -656,7 +656,7 @@ function handleProductSorting() {
             if(qty.indexOf(".") >= 0)
                 console.log(qty, value, measure);
 
-            if(measure.startsWith("l"))
+            if(measure[0] == "l")
                 return parseFloat(value) * 1000;
 
             return parseFloat(value);
