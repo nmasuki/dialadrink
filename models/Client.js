@@ -379,6 +379,9 @@ Client.schema.methods.sendSMSNotification = function (message) {
     if (!client.phoneNumber || !client.phoneNumber.trim())
         return Promise.reject("SMS does not allow empty phoneNumber");
 
+    if (!client.firstName && !client.lastName)
+        return Promise.reject("SMS does not allow empty names");
+
     message = message.replace(/<(?:.|\n)*?>/gm, '').format(client).trim();
     if(message.indexOf("http") < 0)
         message += " http://bit.ly/2TCl4MI";
