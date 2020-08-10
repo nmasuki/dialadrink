@@ -294,11 +294,11 @@ Order.schema.methods.updateClient = function (next) {
     */
 
     var delivery = order.delivery;
-    
+
     if (delivery) {
         var findOption = { "$or": [] };
         var phoneNumber = (delivery.phoneNumber || "").trim()
-            .replace(/^[^\d]+|[^\d]$/, "").trim();
+            .replace(/^[^\d]+|[^\d]+$/, "").trim();
 
         if (phoneNumber) {
             findOption.$or.push({
@@ -739,18 +739,21 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         delivery: deliveryDetails,
     });
 
-    order.deliveryLocation = deliveryDetails.location || deliveryDetails.deliveryLocation;
-    
+    order.deliveryLocation = deliveryDetails.location || deliveryDetails.deliveryLocation;    
+    var c = { chargesName: [], chargesAmount: [] };
     chargesKeys.forEach(k => {
         try{
             if(k && deliveryDetails[k]){
-                order.charges.chargesName.push(k);
-                order.charges.chargesAmount.push(deliveryDetails[k]);
+                c.chargesName.push(k);
+                c.chargesAmount.push(deliveryDetails[k]);
             }
         } catch(e){
             console.warn(e);
         }
     });
+
+    order.charges.chargesName = c.chargesName;
+    order.charges.chargesAmount = c.chargesAmount;
 
     return Promise.all(cartItems.map(c => c.save())).then(function () {
         return order.save((err) => {
@@ -780,8 +783,6 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
             return order;
         });
     });
-
-    
 };
 
 //Some random number from which to start order order Ids
