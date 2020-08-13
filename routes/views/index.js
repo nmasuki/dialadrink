@@ -366,9 +366,7 @@ router.get("/pricelist", function (req, res) {
             }
         }
 
-        view.render('pricelist', {
-            layout: 'newsletter'
-        }, printPdf);
+        view.render('pricelist', { layout: 'newsletter' }, printPdf);
     });
 });
 
