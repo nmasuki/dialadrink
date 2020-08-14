@@ -3,7 +3,7 @@ var Payment = keystone.list("Payment");
 var Order = keystone.list("Order");
 var CyberSourcePay = require("../../helpers/CyberSourcePay"); 
 
-var PesaPalStatusMap = {
+var CyberSourceStatusMap = {
 	"COMPLETED": "Paid",
 	"PENDING": "Pending",
 	"INVALID": "Cancelled",
@@ -13,7 +13,7 @@ var router = keystone.express.Router();
 
 router.post("/ipn", function (req, res) {
 	var data = Object.assign({}, req.body || {}, req.query || {})
-	console.log("Recieved PesaPal IPN!", data);
+	console.log("Recieved CyberSource IPN!", data);
 	
 	var payment = Payment.model({ referenceId: data.reference_number });
 	payment.metadata = data;
@@ -28,36 +28,22 @@ router.post("/ipn", function (req, res) {
 				return res.status(404).render('errors/404');
 			}
 
-			var options = {
-				reference: payment.referenceId,
-				transaction: payment.transactionId
-			};
+			if (data.reference)
+				order.payment.referenceId = data.reference;
+			if (payment.transaction)
+				order.payment.transactionId = data.transaction;
+			if (payment.notificationType)
+				order.payment.notificationType = payment.notificationType;
+			if(payment.method)
+				order.payment.method = (payment.method.split("_").first() || "");
+				
+			order.payment.state = CyberSourceStatusMap[data.status] || "unexpected_" + data.status;
+			order.state = order.payment.state.toLowerCase();
 
-			console.log("Reading PesaPal transaction id:" + payment.transactionId + ", ref:" + payment.referenceId)
-			PesaPal.getPaymentDetails(options).then(function (data) {
-					//data -> {transaction, method, status, reference}
-					if (data) {
-						if (data.reference)
-							order.payment.referenceId = data.reference;
-						if (payment.transaction)
-							order.payment.transactionId = data.transaction;
-						if (notificationType)
-							order.payment.notificationType = payment.notificationType;
-
-						order.payment.method = (payment.method.split("_").first() || "");
-						order.payment.state = PesaPalStatusMap[data.status] || "unexpected_" + data.status;
-						order.state = order.payment.state.toLowerCase();
-
-						if (data.status == "COMPLETED")
-							order.sendPaymentNotification();
-						else
-							console.log("PesaPal payment %s", data.status);
-					}
-				})
-				.catch(function (error) {
-					/* do stuff*/
-					console.warn(error);
-				});
+			if (data.status == "COMPLETED")
+				order.sendPaymentNotification();
+			else
+				console.log("CyberSource payment %s", data.status);
 		});
 
 	res.send(`pesapal_notification_type=${notificationType}` +
