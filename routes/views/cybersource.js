@@ -12,10 +12,11 @@ var PesaPalStatusMap = {
 var router = keystone.express.Router();
 
 router.post("/ipn", function (req, res) {
-	console.log("Recieved PesaPal IPN!");
-	var payment = Payment.model({});
-
-	payment.metadata = Object.assign({}, req.body || {}, req.query || {});
+	var data = Object.assign({}, req.body || {}, req.query || {})
+	console.log("Recieved PesaPal IPN!", data);
+	
+	var payment = Payment.model({ referenceId: data.reference_number });
+	payment.metadata = data;
 	payment.save();
 
 	Order.model.findOne({ orderNumber: payment.referenceId })
