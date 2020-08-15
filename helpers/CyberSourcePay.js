@@ -38,12 +38,12 @@ module.exports = {
 			unsigned_field_names: "",
 
 			locale: "en",
+			currency: "KES",
 			signed_date_time: new Date().toISOString().substr(0, 19) + "Z",
 			transaction_type: "authorization",
 			reference_number: order.orderNumber,
 			amount: order.total,
-			currency: "KES",
-
+			
 			bill_to_address_line1: order.delivery.address || "Nairobi CBD",
 			bill_to_address_city: "Nairobi",
 			bill_to_address_country: "KE",
