@@ -430,7 +430,7 @@ Order.schema.methods.sendPaymentNotification = function (next) {
             if (!order.payment.smsNotificationSent)
                 order.client.sendSMSNotification(message).then(() => {
                     order.payment.smsNotificationSent = true;
-                });
+                }).catch(console.warn);
         }
 
         //Sent Email Notification
