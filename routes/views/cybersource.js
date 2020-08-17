@@ -7,7 +7,8 @@ var CyberSourceStatusMap = {
 	"COMPLETED": "Paid",
 	"PENDING": "Pending",
 	"INVALID": "Cancelled",
-	"FAILED": "Cancelled"
+	"FAILED": "Cancelled",
+	"DECLINE": "Cancelled",
 };
 var router = keystone.express.Router();
 
@@ -15,11 +16,11 @@ router.post("/ipn", function (req, res) {
 	var data = Object.assign({}, req.body || {}, req.query || {})
 	console.log("Recieved CyberSource IPN!", data);
 	
-	var payment = Payment.model({ referenceId: data.reference_number });
+	var payment = Payment.model({ referenceId: data.req_reference_number });
 	payment.metadata = data;
 	payment.save();
 
-	Order.model.findOne({ orderNumber: payment.referenceId })
+	Order.model.findOne({ orderNumber: payment.req_reference_number })
 		.deepPopulate('cart.product.priceOptions.option')
 		.populate('client')
 		.exec((err, order) => {
@@ -28,12 +29,12 @@ router.post("/ipn", function (req, res) {
 				return res.status(404).render('errors/404');
 			}
 
-			if (data.reference)
-				order.payment.referenceId = data.reference;
-			if (payment.transaction)
-				order.payment.transactionId = data.transaction;
-			if (payment.notificationType)
-				order.payment.notificationType = payment.notificationType;
+			if (data.req_reference_number)
+				order.payment.referenceId = data.req_reference_number;
+			if (data.transaction_id)
+				order.payment.transactionId = data.transaction_id;
+			if (data.notificationType)
+				order.payment.notificationType = data.notificationType;
 			if(payment.method)
 				order.payment.method = (payment.method.split("_").first() || "");
 				
