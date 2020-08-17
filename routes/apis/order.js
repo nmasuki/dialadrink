@@ -139,7 +139,7 @@ router.post("/", function (req, res){
         json.response = "success";
         var cartItems = getCartItems(req);
         var promo = req.session.promo || {};
-        var deliveryDetails = Object.assign({}, client.toObject(), req.body, {
+        var deliveryDetails = Object.assign({location: res.locals.appGeolocation }, client.toObject(), req.body, {
             platform: req.session.platform,
             clientIp: res.locals && res.locals.clientIp
         });

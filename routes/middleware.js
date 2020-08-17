@@ -71,8 +71,17 @@ exports.initLocals = function (req, res, next) {
     res.locals.appVersion = global.appVersion = req.headers.appversion;
 
     //Geolocation
-    res.locals.appGeolocation = req.headers.geolocation;
-    if(res.locals.appGeolocation) console.log("Geolocation:", res.locals.appGeolocation);
+    if(req.headers.geolocation){
+        var regex = /geo:(-?\d+\.?\d*),(-?\d+\.?\d*);cgen=gps/i
+        var split = regex.exec(req.headers.geolocation);
+        
+        res.locals.appGeolocation = {
+            lat: split[1],
+            lng: split[2]
+        }
+
+        console.log("Geolocation:", res.locals.appGeolocation);
+    } 
 
     //Push Notification VAPID public key
     res.locals.vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
