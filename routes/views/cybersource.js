@@ -29,7 +29,8 @@ router.post("/ipn", function (req, res) {
 		.exec((err, order) => {
 			if (err || !order) {
 				console.log("Error while reading Order id: %s", payment.referenceId, err);
-				return res.status(404).render('errors/404');
+				if(err)
+					return res.status(404).render('errors/404');
 			}
 
 			if(order){
