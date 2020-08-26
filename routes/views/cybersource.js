@@ -1,6 +1,8 @@
 var keystone = require('keystone');
 var Payment = keystone.list("Payment");
 var Order = keystone.list("Order");
+
+var sms = require("../../helpers/sms").getInstance();
 var CyberSourcePay = require("../../helpers/CyberSourcePay"); 
 
 var CyberSourceStatusMap = {
@@ -9,6 +11,7 @@ var CyberSourceStatusMap = {
 	"INVALID": "Cancelled",
 	"FAILED": "Cancelled",
 	"DECLINE": "Cancelled",
+	"ERROR": "Cancelled"
 };
 var router = keystone.express.Router();
 
@@ -20,7 +23,7 @@ router.post("/ipn", function (req, res) {
 	payment.metadata = data;
 	payment.save();
 
-	Order.model.findOne({ orderNumber: payment.req_reference_number })
+	Order.model.findOne({ orderNumber: payment.referenceId })
 		.deepPopulate('cart.product.priceOptions.option')
 		.populate('client')
 		.exec((err, order) => {
@@ -29,27 +32,31 @@ router.post("/ipn", function (req, res) {
 				return res.status(404).render('errors/404');
 			}
 
-			if (data.req_reference_number)
-				order.payment.referenceId = data.req_reference_number;
-			if (data.transaction_id)
-				order.payment.transactionId = data.transaction_id;
-			if (data.notificationType)
-				order.payment.notificationType = data.notificationType;
-			if(payment.method)
-				order.payment.method = (payment.method.split("_").first() || "");
-				
-			order.payment.state = CyberSourceStatusMap[data.status] || "unexpected_" + data.status;
-			order.state = order.payment.state.toLowerCase();
+			if(order){
+				if (data.req_reference_number)
+					order.payment.referenceId = data.req_reference_number;
+				if (data.transaction_id)
+					order.payment.transactionId = data.transaction_id;
+				if (data.notificationType)
+					order.payment.notificationType = data.notificationType;				
+				if(payment.method)
+					order.payment.method = (payment.method.split("_").first() || "");
+					
+				order.payment.state = CyberSourceStatusMap[data.decision] || "unexpected_" + data.status;
+				order.state = order.payment.state.toLowerCase();
 
-			if (data.status == "COMPLETED")
-				order.sendPaymentNotification();
-			else
-				console.log("CyberSource payment %s", data.status);
+				if (order.payment.state == "COMPLETED")
+					order.sendPaymentNotification();
+				else
+					console.log("CyberSource payment %s, %s", data.decision, data.message);
+			}
+			
+			var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
+            var message = `COOP ${data.req_payment_method} payment ${data.decision}, ${data.message}. Order: ${data.req_reference_number}, Amount: ${data.req_reference_number}${data.req_amount}`
+			sms.sendSMS(vendorNumber, message);
+
+			res.send(`OK!`);
 		});
-
-	res.send(`pesapal_notification_type=${notificationType}` +
-		`&pesapal_transaction_tracking_id=${transactionId}` +
-		`&pesapal_merchant_reference=${referenceId}`);
 });
 
 router.get("/pay/:orderNo", function (req, res){	
