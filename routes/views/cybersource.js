@@ -42,17 +42,16 @@ router.post("/ipn", function (req, res) {
 				if(payment.method)
 					order.payment.method = (payment.method.split("_").first() || "");
 					
-				order.payment.state = CyberSourceStatusMap[data.decision] || "unexpected_" + data.status;
+				order.payment.state = CyberSourceStatusMap[data.decision] || "unexpected_" + data.decision;
 				order.state = order.payment.state.toLowerCase();
 
-				if (order.payment.state == "COMPLETED")
+				if (order.payment.state == "Paid")
 					order.sendPaymentNotification();
-				else
-					console.log("CyberSource payment %s, %s", data.decision, data.message);
 			}
 			
+			console.log("CyberSource payment %s, %s", data.decision, data.message);
 			var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
-            var message = `COOP ${data.req_payment_method} payment ${data.decision}, ${data.message}. Order: ${data.req_reference_number}, Amount: ${data.req_reference_number}${data.req_amount}`
+            var message = `COOP ${data.req_payment_method} payment ${data.decision}, ${data.message}. Order: ${data.req_reference_number}, Amount: ${data.req_reference_number}${data.req_amount}`;
 			sms.sendSMS(vendorNumber, message);
 
 			res.send(`OK!`);
