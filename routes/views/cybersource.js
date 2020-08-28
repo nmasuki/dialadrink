@@ -19,7 +19,10 @@ router.post("/ipn", function (req, res) {
 	var data = Object.assign({}, req.body || {}, req.query || {})
 	console.log("Recieved CyberSource IPN!", data);
 	
-	var payment = Payment.model({ referenceId: data.req_reference_number });
+	var payment = Payment.model({ 
+		referenceId: data.req_reference_number,
+		status: data.decision,		
+	});
 	payment.metadata = data;
 	payment.save();
 
