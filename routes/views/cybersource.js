@@ -20,8 +20,11 @@ router.post("/ipn", function (req, res) {
 	console.log("Recieved CyberSource IPN!", data);
 	
 	var payment = Payment.model({ 
+		transactionId: data.transaction_id,
 		referenceId: data.req_reference_number,
 		status: data.decision,		
+		amount: data.req_amount,
+		currency: data.req_currency
 	});
 	payment.metadata = data;
 	payment.save();
@@ -51,11 +54,13 @@ router.post("/ipn", function (req, res) {
 
 				if (order.payment.state == "Paid")
 					order.sendPaymentNotification();
+					
+				order.save();
 			}
 			
 			console.log("CyberSource payment %s, %s", data.decision, data.message);
 			var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
-            var message = `COOP ${data.req_payment_method} payment ${data.decision}, ${data.message}. Order: ${data.req_reference_number}, Amount: ${data.req_reference_number}${data.req_amount}`;
+            var message = `COOP ${data.req_payment_method} payment ${data.decision}, ${data.message}. Order: ${data.req_reference_number}, Amount: ${data.req_currency}${data.req_amount}`;
 			sms.sendSMS(vendorNumber, message);
 
 			res.send(`OK!`);
