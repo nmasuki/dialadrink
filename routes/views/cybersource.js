@@ -54,13 +54,15 @@ router.post("/ipn", function (req, res) {
 
 				if (order.payment.state == "Paid")
 					order.sendPaymentNotification();
-					
+
 				order.save();
 			}
 			
 			console.log("CyberSource payment %s, %s", data.decision, data.message);
 			var vendorNumber = (process.env.CONTACT_PHONE_NUMBER || "254723688108").cleanPhoneNumber();
-            var message = `COOP ${data.req_payment_method} payment ${data.decision}, ${data.message}. Order: ${data.req_reference_number}, Amount: ${data.req_currency}${data.req_amount}`;
+			var message = `COOP ${data.req_payment_method} payment ${data.decision}, ${data.message}. ` +
+			`Order: ${data.req_reference_number} by ${data.req_bill_to_forename} ${data.req_bill_to_surname}, ` + 
+			`Amount: ${data.req_currency}${data.req_amount}`;
 			sms.sendSMS(vendorNumber, message);
 
 			res.send(`OK!`);
