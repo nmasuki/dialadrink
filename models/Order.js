@@ -84,6 +84,7 @@ Order.add({
             type: Number,
             noedit: true
         },
+
         amount: {
             type: Number,
             noedit: true
@@ -93,6 +94,7 @@ Order.add({
             type: Boolean,
             noedit: true
         },
+
         notificationSent: {
             type: Boolean,
             noedit: true
@@ -106,6 +108,7 @@ Order.add({
             type: String,
             noedit: true
         },
+        
         shortUrl: {
             type: String,
             noedit: true

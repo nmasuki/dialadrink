@@ -40,7 +40,7 @@ module.exports = {
 			locale: "en",
 			currency: "KES",
 			signed_date_time: new Date().toISOString().substr(0, 19) + "Z",
-			transaction_type: "authorization",
+			transaction_type: "sale",//"authorization",
 			reference_number: order.orderNumber,
 			amount: order.total,
 			
