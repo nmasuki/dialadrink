@@ -755,13 +755,15 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         }
     });
 
-    order.charges.chargesName = c.chargesName;
-    order.charges.chargesAmount = c.chargesAmount;
+    if(c.chargesName.length)
+        order.charges.chargesName = c.chargesName;
+    if(c.chargesAmount.length)
+        order.charges.chargesAmount = c.chargesAmount;
 
     return Promise.all(cartItems.map(c => c.save())).then(function () {
         return order.save((err) => {
             if (err)
-                return console.warn("Error while saving Order! " + err);
+                return console.warn(`Error while saving Order ${order.orderNumber}! ${err}`);
 
             order.cart = cartItems;
             if (order.payment.method == "PesaPal" || order.payment.method == "CyberSource") {
