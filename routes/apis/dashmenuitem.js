@@ -9,11 +9,11 @@ router.get("/", function (req, res, next) {
     var pageSize = parseInt(req.query.pageSize || 1500);
     var start = (page - 1) * pageSize;
     var query = req.query.query || "";
-    var regex = new RegExp("(" + query.escapeRegExp() + ")", "ig");
-    
-    var accountType = res.locals.appUser && res.locals.appUser.accountType;
-    var all = ls.getAll(), //{ viewList:{ $elemMatch: accountType }}
-        filteredList = all.filter(a => !query || regex.test(JSON.stringify(a))),
+
+    //var accountType = res.locals.appUser && res.locals.appUser.accountType;
+    //var filter = { viewList:{ $elemMatch: accountType }};
+
+    var filteredList = ls.getAll(query, req.query.sort),
         pageList = filteredList.slice(start, start + pageSize);
 
     console.log(req.params.entity  + " page:", page, "pageSize:", pageSize, "itemCount:", pageList.length);

@@ -40,6 +40,11 @@ function tryParse(str){
 }
 
 function toFilterFn(filter){
+    if(typeof filter == "string"){
+        var regex = new RegExp("(" + filter.escapeRegExp() + ")", "ig");
+        return (val => !filter || regex.test(JSON.stringify(val)));
+    }
+           
     return function(val){
         if(!filter) return true;
 
@@ -256,8 +261,24 @@ function LocalStorage(entityName) {
         });
     };
 
-    self.getAll = function (filter) {
-        return Object.values(getAll(entityName, filter)).filter(toFilterFn(filter));
+    self.getAll = function (filter, sortBy) {
+        var filtered = Object.values(getAll(entityName, filter)).filter(toFilterFn(filter));
+        
+        var sort = {};
+        if(sortBy){
+            var sortParts = sortBy.split(" ").filter(s => !!s);
+            sort[sortParts[0]] = (sortParts[1] || "ASC").toUpperCase() == "ASC"? 1: -1;
+        } else {
+            sort = { createdDate: -1 };
+        }
+
+        var sortProp = Object.keys(sort).first();
+        var dir = sort[sortProp] || 1;
+
+        if(dir == -1)
+            return filtered.orderByDescending(u => u[sortProp] || u.createdDate);
+        else
+            return filtered.orderBy(u => u[sortProp] || u.createdDate);
     };
 
     self.get = function (id) {

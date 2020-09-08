@@ -375,7 +375,7 @@ Client.schema.methods.sendSMSNotification = function (message) {
 
     if (!message || !message.trim())
         return Promise.reject("SMS does not allow empty text!");
-    else{
+    else {
         message = message.replace(/<(?:.|\n)*?>/gm, '').format(client).trim();
         if(message.indexOf("http") < 0)
             message += " http://bit.ly/2TCl4MI";

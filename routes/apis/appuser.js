@@ -10,7 +10,22 @@ router.get("/", function (req, res, next) {
     var query = req.query.query || "";
     var regex = new RegExp("(" + query.escapeRegExp() + ")", "ig");
 
+    var sort = {};
+	if(req.query.sort){
+		var sortParts = req.query.sort.split(" ").filter(s => !!s);
+		sort[sortParts[0]] = (sortParts[1] || "ASC").toUpperCase() == "ASC"? 1: -1;
+	} else{
+		sort = { createdDate: -1 };
+    }
+
     AppUser.find({accountType: { $ne: null }}).then(users => {
+        var sortProp = Object.keys(sort).first();
+        var dir = sort[sortProp];
+        if(dir == -1)
+            return users.orderByDescending(u => u[sortProp] || u.createdDate);
+        else
+            return users.orderBy(u => u[sortProp] || u.createdDate);
+    }).then(users => {
         var all = users || [], 
         filteredList = all.filter(a => !query || regex.test(JSON.stringify(a))),
         pageList = filteredList.slice(start, start + pageSize);
