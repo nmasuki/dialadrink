@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var WorkProcessor = require('../helpers/WorkProcessor');
+var Client = keystone.list("Client");
 var ClientNotification = keystone.list('ClientNotification');
 
 var self = module.exports = new WorkProcessor(getWork, doWork);
@@ -16,7 +17,7 @@ function getWork(next) {
         }]
     };
 
-    if(process.env.NODE_ENV == "development"){
+    if(false && process.env.NODE_ENV == "development"){
         filter.$and.push({
             session: /(254720805835|254723688108)/
         });
@@ -78,18 +79,26 @@ function getWork(next) {
 }
 
 function doWork(err, sessions, next) {
-    if(err || ! sessions)
-        return console.error("Error while creating cart item notification!", err);
+    if(err || !sessions)
+        return console.error("Error while creating cart item notification!", err || "No sessions found!");
 
     var title = `Your shopping cart at '${keystone.get("name")}'`;
     var body = "Hi {firstName}. You have some items waiting in your cart.";
 
     sessions.forEach(s => {
-        keystone.list("Client").model.find({
+        Client.model.find({
             sessions: { $elemMatch: { $eq: s._id } }
         }).exec((err, clients) => {
-            if (err || !clients || clients.length == 0)
-                return console.error(err || "Got no client from session:", s._id);
+            if (err || !clients || clients.length == 0){
+                console.warn(err || "Got no client from session:", s._id);
+                clients = [
+                    new Client.model({
+                        _id: "guest-client",
+                        firstName: "Guest",
+                        sessions: [s._id]
+                    })
+                ];
+            }                
 
             if (clients)
                 clients.forEach(c => {
@@ -99,7 +108,7 @@ function doWork(err, sessions, next) {
 
                         var lastNotificationDate = notifications.filter(n => !!n).max(n => n && (n.scheduleDate || n.createdDate));
                         if (lastNotificationDate > (new Date()).addDays(-7))
-                            return console.log(`Skipping cart notification to '${c.name}'. Send once every 7 days`);
+                            return console.log(`Skipping cart notification to '${c.name}'. Send once every 7 days. last sent on ${lastNotificationDate.toISOString()}`);
 
                         var pending = notifications.filter(n => n.status == "pending");
                         if(pending && pending.length)
@@ -119,6 +128,7 @@ function doWork(err, sessions, next) {
 
                         var n = new ClientNotification.model({
                             client: c,
+                            session: s,
                             scheduleDate: new Date(scheduleDate.toISOString().substr(0, 10) + "T" + scheduleTime.join(":")),
                             type: "push",
                             status: 'pending',
