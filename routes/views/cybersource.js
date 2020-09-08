@@ -6,6 +6,7 @@ var sms = require("../../helpers/sms").getInstance();
 var CyberSourcePay = require("../../helpers/CyberSourcePay"); 
 
 var CyberSourceStatusMap = {
+	"ACCEPT": "Paid",
 	"COMPLETED": "Paid",
 	"PENDING": "Pending",
 	"INVALID": "Cancelled",
@@ -49,7 +50,8 @@ router.post("/ipn", function (req, res) {
 				if(payment.method)
 					order.payment.method = (payment.method.split("_").first() || "");
 					
-				order.payment.state = CyberSourceStatusMap[data.decision] || "unexpected_" + data.decision;
+				var state = (data.decision || "").toUpperCase();
+				order.payment.state = CyberSourceStatusMap[state] || "unexpected_" + state;
 				order.state = order.payment.state.toLowerCase();
 
 				if (order.payment.state == "Paid")

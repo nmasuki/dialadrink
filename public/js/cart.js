@@ -217,6 +217,7 @@ var cartUtil = function () {
 
         addItem: function (productId, pieces, qty) {
             var view = self.view('.number');
+            
             qty = qty || "";
             var cartId = productId + "|" + qty;
             var cartItem = _cart[cartId] || (_cart[cartId] = {

@@ -11,11 +11,12 @@
 exports.create = {
 	Admin: [
 		{ 
-			'name.first': 'Nelson', 
-			'name.last': 'Masuki', 
-			'email': 'nmasuki@gmail.com', 
-			'password': 'admin', 
-			'isAdmin': true 
+			'name.first': 'Nelson',
+			'name.last': 'Masuki',
+			'email': 'nmasuki@gmail.com',
+			'password': 'admin',
+			'accountType': "system admin",
+			'receivesOrders': false
 		},
 	],
 };
