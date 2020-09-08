@@ -374,17 +374,18 @@ Client.schema.methods.sendSMSNotification = function (message) {
     var client = this;
 
     if (!message || !message.trim())
-        return Promise.reject("SMS does not allow empty text");
+        return Promise.reject("SMS does not allow empty text!");
+    else{
+        message = message.replace(/<(?:.|\n)*?>/gm, '').format(client).trim();
+        if(message.indexOf("http") < 0)
+            message += " http://bit.ly/2TCl4MI";
+    }
 
     if (!client.phoneNumber || !client.phoneNumber.trim())
-        return Promise.reject("SMS does not allow empty phoneNumber");
+        return Promise.reject("SMS does not allow empty phoneNumber!");
 
     if (!client.firstName && !client.lastName)
-        return Promise.reject("SMS does not allow empty names");
-
-    message = message.replace(/<(?:.|\n)*?>/gm, '').format(client).trim();
-    if(message.indexOf("http") < 0)
-        message += " http://bit.ly/2TCl4MI";
+        return Promise.reject(`SMS does not allow empty names! ${client.phoneNumber}: ${message}`);
 
     return sms.sendSMS([client.phoneNumber], message, function (err, res) {
         if (!err)
