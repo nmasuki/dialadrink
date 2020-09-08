@@ -117,8 +117,16 @@ router.get('/', function(req, res, next){
          });
     }
 
+    var sort = {};
+	if(req.query.sort){
+		var sortParts = req.query.sort.split(" ").filter(s => !!s);
+		sort[sortParts[0]] = (sortParts[1] || "ASC").toUpperCase() == "ASC"? 1: -1;
+	} else{
+		sort = { createdDate: -1 };
+    }
+    
     Client.model.find(filter)
-        .sort({createdDate: 1})
+        .sort(sort)
         .skip(skip)
         .limit(pageSize)
         .exec((err, clients) => {
