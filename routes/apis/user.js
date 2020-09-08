@@ -46,9 +46,7 @@ router.get("/", function (req, res) {
 	console.log("Looking up client..", "filter:", "page:", page, "pageSize:", pageSize, "skip:", skip);
 
 	Client.model.find(filter)
-	.sort({
-		registrationDate: -1
-	})
+	.sort({ firstName: -1 })
 	.skip(skip)
 	.limit(pageSize)
 	.exec((err, clients) => {
