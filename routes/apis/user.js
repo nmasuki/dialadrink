@@ -45,8 +45,16 @@ router.get("/", function (req, res) {
 	var skip = page * pageSize;
 	console.log("Looking up client..", "filter:", "page:", page, "pageSize:", pageSize, "skip:", skip);
 
+	var sort = {};
+	if(req.query.sort){
+		var sortParts = req.query.sort.split(" ").filter(s => !!s);
+		sort[sortParts[0]] = (sortParts[1] || "ASC").toUpperCase() == "ASC"? 1: -1;
+	} else{
+		sort = { firstName: 1, registrationDate: -1 };
+	}
+
 	Client.model.find(filter)
-	.sort({ firstName: -1 })
+	.sort(sort)
 	.skip(skip)
 	.limit(pageSize)
 	.exec((err, clients) => {
