@@ -207,7 +207,7 @@ function LocalStorage(entityName) {
             errors = [];
 
         function setEntiry(entity) {
-            var id = entity._id || entity.id || entity.Id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
+            var id = entity._id || entity.id || entity.Id || entity.public_id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
             entity._rev = entity._rev || entity.__v;
             
             var curRev = parseInt((all[id] && all[id]._rev || "0").toString().split('-')[0]);
@@ -225,16 +225,17 @@ function LocalStorage(entityName) {
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
             all[id].modifiedDate = new Date();
             
-            all[id].createdBy = all[id].createdBy || global.appUser;
-            all[id].lastModifiedBy = global.appUser;
+            var userId = global.appUser && global.appUser._id || null;
+            all[id].createdBy = all[id].createdBy || userId;
+            all[id].lastModifiedBy = userId;
 
             for (var i in entity){
                 if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false)){
-                    if(/^phone|^mobile/i.test(i) && /^[\d\s]+$/.test(entity[i]))
+                    if(/^phone|^mobile/i.test(i) && /^[\d\s]+$/.test(entity[i] || ""))
                         entity[i] = entity[i].cleanPhoneNumber();
 
-                    if(/^password/i.test(i)){
-                        if(!/^(\$\w\w){3}/.test(entity[i] || ""))//Reset password
+                    else if(/^password/i.test(i)){
+                        if(entity[i] && !/^(\$\w\w){3}/.test(entity[i] || ""))//Reset password
                             entity[i] = (entity[i] || "").toString().encryptPassword().encryptedPassword;
                         else if(all[id][i])
                             continue;//Don't change password

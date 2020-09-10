@@ -48,7 +48,8 @@ router.post('/upload', function (req, res) {
                             json.data.push(url); 
                         }                            
                         else
-                            json.data.push(result.secure_url);                        
+                            json.data.push(result.secure_url); 
+                                                   
                         ls.save(result);
                     }
                     

@@ -177,22 +177,22 @@ Client.schema.virtual("imageUrl")
         var client = this;
 
         if(imageUrl && typeof imageUrl == "string"){
-            var public_id = new RegExp(imageUrl.split("/").last(n => n) + "$");
+            var public_id = imageUrl.replace(/^https?:\/\/(((?!v)[^\/]+\/){4,5})(v[^\/]+\/)/, "").replace(/.(jpe?g|png)$/, "");
+            var pidReg = new RegExp(public_id + "$");
+
             var file = fileStore.getOne({
                 $or:[
-                    { url: imageUrl},
-                    { secure_url: imageUrl},
-                    { public_id: public_id}
+                    { url: imageUrl },
+                    { secure_url: imageUrl },
+                    { public_id: public_id },
+                    { public_id: pidReg }
                 ]
             });
     
             if(file)   
                 client.image = file;
             else {
-                if(client.image && client.image.url.contains("res.cloudinary.com/") && (
-                    client.image.url == imageUrl || 
-                    client.image.secure_url == imageUrl ||
-                    public_id.test(client.image.public_id))){
+                if(client.image && client.image.url && pidReg.test(client.image.url)){
                     console.log(`URLs match:
                         ${client.image.secure_url}
                         ${imageUrl}`
@@ -202,6 +202,8 @@ Client.schema.virtual("imageUrl")
 
                 var opt =  { public_id: "users/" + client.name.cleanId() };
                 cloudinary.v2.uploader.upload(imageUrl, opt, (err, res) => {
+                    if(err || !res)
+                        return console(`Error uploading ${imageUrl}\n${err || "Upload gave no response!"}`)
                     client.image = res;
                 });
             }
@@ -252,7 +254,7 @@ Client.schema.methods.toAppObject = function (appVersion) {
         };
     }
 
-    if (!global.appUser || global.appUser.id != client.id) {
+    if (!global.appUser || global.appUser._id != client.id) {
         var toDel = [
             "image", "tempPassword", 
             "httpAuth", //"password", 
