@@ -192,7 +192,6 @@ Client.schema.virtual("imageUrl")
                 var opt =  { public_id: "users/" + client.name.cleanId() };
                 cloudinary.v2.uploader.upload(imageUrl, opt, (err, res) => {
                     client.image = res;
-                    next();
                 });
             }
         }
