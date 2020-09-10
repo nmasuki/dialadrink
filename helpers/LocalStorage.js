@@ -224,6 +224,9 @@ function LocalStorage(entityName) {
             
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
             all[id].modifiedDate = new Date();
+            
+            all[id].createdBy = all[id].createdBy || global.appUser;
+            all[id].lastModifiedBy = global.appUser;
 
             for (var i in entity){
                 if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false)){
@@ -262,24 +265,31 @@ function LocalStorage(entityName) {
     };
 
     self.getAll = function (filter, sortBy) {
+        sortBy = sortBy || "";
         var filtered = Object.values(getAll(entityName, filter)).filter(toFilterFn(filter));
-        
-        var sort = {};
-        if(sortBy){
-            var sortParts = sortBy.split(" ").filter(s => !!s);
-            sort[sortParts[0]] = (sortParts[1] || "ASC").toUpperCase() == "ASC"? 1: -1;
-        } else {
-            sort = { createdDate: -1 };
+        var dir = /(^|\s)DESC($|\s)/i.test(sortBy)? -1: 1;        
+
+        var sortByFxns = sortBy.split(/[^\w\s]/).filter(s => !!s).map(sort =>{
+            var parts = sort.split(" ");
+            return (u => u[parts[0]]);
+        });
+
+        var sorted = filtered;
+        if(sortByFxns.length){
+            if(dir == -1)
+                sorted = sorted.orderByDescending(sortByFxns);
+            else
+                sorted = sorted.orderBy(sortByFxns);
         }
 
-        var sortProp = Object.keys(sort).first();
-        var dir = sort[sortProp] || 1;
-
-        if(dir == -1)
-            return filtered.orderByDescending(u => u[sortProp] || u.createdDate);
-        else
-            return filtered.orderBy(u => u[sortProp] || u.createdDate);
+        return sorted;
     };
+
+    self.getOne = function(filter, sortBy){
+        var all = self.getAll(filter, sortBy) || [];
+        return all[0];
+    };
+
 
     self.get = function (id) {
         if (id == undefined)

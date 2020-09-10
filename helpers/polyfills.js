@@ -581,28 +581,49 @@ if (!Array.prototype.distinct)
     };
 
 if (!Array.prototype.orderBy)
-    Array.prototype.orderBy = function (clause) {
+    Array.prototype.orderBy = function (args) {
+        var clauseArray = (Array.isArray(args)? args: [args]); 
         return this.slice(0).sort(function (a, b) {
-            var x = typeof clause === "function" ? clause(a) : a[clause] || a;
-            var y = typeof clause === "function" ? clause(b) : b[clause] || b;
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            for(var i in clauseArray){
+                if(!clauseArray.hasOwnProperty(i)) continue;
+
+                var clause = clauseArray[i];
+                var x = typeof clause === "function" ? clause(a) : a;
+                var y = typeof clause === "function" ? clause(b) : b;
+            
+                if(x < y) return -1;
+                if(x > y) return 1;
+            }
+            
+            return 0;
         });
     };
+
+if (!Array.prototype.orderByDescending)
+    Array.prototype.orderByDescending = function (args) {
+        var clauseArray = (Array.isArray(args)? args: [args]); 
+        return this.slice(0).sort(function (a, b) {
+            for(var i in clauseArray){
+                if(!clauseArray.hasOwnProperty(i)) continue;
+
+                var clause = clauseArray[i];
+                var x = typeof clause === "function" ? clause(a) : a;
+                var y = typeof clause === "function" ? clause(b) : b;
+            
+                if(x < y) return 1;
+                if(x > y) return -1;
+            }
+            
+            return 0;
+        });
+    };
+
 
 if (!Array.prototype.count)
     Array.prototype.count = function (clause) {
         return this.filter(function (a) {
             return !!(typeof clause === "function" ? clause(a) : a);
         }).length;
-    };
-
-if (!Array.prototype.orderByDescending)
-    Array.prototype.orderByDescending = function (clause) {
-        return this.slice(0).sort(function (a, b) {
-            var x = typeof clause === "function" ? clause(a) : a;
-            var y = typeof clause === "function" ? clause(b) : b;
-            return ((x < y) ? 1 : ((x > y) ? -1 : 0));
-        });
     };
 
 if (!Array.prototype.max)
