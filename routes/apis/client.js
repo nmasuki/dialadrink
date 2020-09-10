@@ -1,6 +1,6 @@
 var keystone = require('keystone');
 var Client = keystone.list("Client");
-var Order = keystone.list("Order");
+var Order = keystone.list("Order");     
 
 var router = keystone.express.Router();
 
@@ -12,8 +12,7 @@ function getClientByReq(req, res, next){
     req.query = req.query || {};
     var id = req.body._id || req.params.id || req.query.id;
 
-    if(id)
-        filter.$or.push({ _id: id });
+    if(id) filter.$or.push({ _id: id });
     
     if(req.body.phoneNumber || req.query.mobile){
         var phoneNumber = req.body.phoneNumber || req.params.mobile || req.query.mobile;
@@ -39,13 +38,11 @@ function getClientByReq(req, res, next){
                             });
 
                         filter = {
-                            $or: [{
-                                phoneNumber: order.phoneNumber
-                            }, {
-                                phoneNumber: order.phoneNumber.cleanPhoneNumber()
-                            }, {
-                                phoneNumber: order.phoneNumber.cleanPhoneNumber().replace(/^254/, "0")
-                            }].distinct()
+                            $or: [
+                                { phoneNumber: order.phoneNumber }, 
+                                { phoneNumber: order.phoneNumber.cleanPhoneNumber() }, 
+                                { phoneNumber: order.phoneNumber.cleanPhoneNumber().replace(/^254/, "0") }
+                            ].distinct()
                         };
 
                         Client.model.findOne(filter)
@@ -174,7 +171,9 @@ router.post("/", function (req, res) {
                    response: "error",
                    message: `Document Conflict! Rev: ${client.__v} Your's: ${_rev}`,
                    data: client.toAppObject()
-               });            
+               });  
+
+            client.copyAppObject(req.body);     
         }
 
         client.save(err => {

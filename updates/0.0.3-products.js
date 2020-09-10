@@ -156,8 +156,7 @@ function importProducts(_products, categories, subcategories, options, done) {
                     product.priceOptions = priceOptions.concat(newOptionPrices);
 
                     if (data.image && !data.image.secure_url)
-                        cloudinary.v2.uploader.upload(data.image,
-                            {public_id: "products/" + data.name.cleanId()},
+                        cloudinary.v2.uploader.upload(data.image, {public_id: "products/" + data.name.cleanId()},
                             function (error, result) {
                                 product.image = result;
                                 product.altImages.push(result);

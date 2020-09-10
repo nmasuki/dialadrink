@@ -6,6 +6,7 @@ var path = require('path');
 
 var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
 var sms = require("../helpers/sms").getInstance();
+var fileStore = require("../helpers/LocalStorage").getInstance("app-uploads");   
 
 var Types = keystone.Field.Types;
 
@@ -150,8 +151,8 @@ Client.schema.virtual("imageUrl")
         var user = this;
         
         var imagePlaceHolder = this.gender && this.gender[0].toUpperCase() == "F"?
-            "https://cdn1.vectorstock.com/i/thumb-large/46/55/person-gray-photo-placeholder-woman-vector-22964655.jpg":
-            "https://www.cobdoglaps.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg";
+            "https://res.cloudinary.com/nmasuki/image/upload/w_200,c_fill,ar_1:1,g_auto,r_max/v1599750746/female-placeholder.jpg":
+            "https://res.cloudinary.com/nmasuki/image/upload/w_200,c_fill,ar_1:1,g_auto,r_max/v1599750746/male-placeholder.jpg";
 
         var cloudinaryOptions = {
             secure: true,
@@ -166,6 +167,33 @@ Client.schema.virtual("imageUrl")
 
         return (user.image && user.image.secure_url && cloudinary.url(user.image.public_id, cloudinaryOptions)) || imagePlaceHolder;
     });
+
+Client.schema.virtual("imageUrl")
+    .set(function (imageUrl) {
+        var client = this;
+
+        if(imageUrl && typeof imageUrl == "string"){
+            var public_id = imageUrl.split("/").last();
+            var file = fileStore.getOne({
+                $or:[
+                    { url: imageUrl},
+                    { secure_url: imageUrl},
+                    { public_id: new RegExp(public_id + "$")}
+                ]
+            });
+    
+            if(file)   
+                client.image = file;
+            else {
+                var opt =  { public_id: "users/" + user.name.cleanId() };
+                cloudinary.v2.uploader.upload(imageUrl, opt, (err, res) => {
+                    client.image = res;
+                    next();
+                });
+            }
+        }
+});
+
 
 Client.schema.virtual("httpAuth")
     .get(function () {
@@ -244,9 +272,8 @@ Client.schema.methods.copyAppObject = function (obj) {
     };
 
     for(var i in obj){
-        if (!mapping[i]  && obj.hasOwnProperty(i)) {
-            mapping[i] = i.replace(/^user\_/, "");
-        }
+        if (!mapping[i]  && obj.hasOwnProperty(i))
+            mapping[i] = i.replace(/^user\_/, "");        
     }
 
     for(var j in mapping){
@@ -606,21 +633,7 @@ Client.schema.pre('save', function (next) {
     if(!user.gender)
         user.gender = user.guessGender(user.name);
 
-    if (user.imageUrl && user.imageUrl.indexOf(user.name.cleanId()) < 0) {
-        var ls = require("../helpers/LocalStorage").getInstance("app-uploads");
-        var matches = ls.getAll({secure_url: user.imageUrl});
-        if(matches.length){
-            user.image = matches[0];            
-            next();         
-        }else{
-            var opt =  { public_id: "users/" + user.name.cleanId() };
-            cloudinary.v2.uploader.upload(user.imageUrl, opt, (err, res) => {
-                user.image = res;
-                next();
-            });
-        }
-    } else
-        next();
+    next();
 });
 
 Client.schema.methods.updateOrderStats = function (next) {

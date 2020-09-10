@@ -62,7 +62,7 @@ function getOrderCount(res) {
                     $gt: new Date(res.locals.lastCloseOfDay)
                 }
             }];
-    } else {
+    } else if(client) {
         filter['delivery.phoneNumber'] = {
             $in: [
                 client.phoneNumber.cleanPhoneNumber(),
@@ -88,7 +88,7 @@ function getSalesValue(res){
             items = items.filter(d => d.riderId == res.locals.appUser.id);
         } else if (res.locals.app == "com.dialadrinkkenya.office") {
             //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
-        } else {
+        } else if (res.locals.appUser){
             items = items.filter(d => d.clientId == res.locals.appUser.id);
         }
 
@@ -124,7 +124,7 @@ function getExpensesValue(res){
             items = items.filter(d => d.riderId == res.locals.appUser.id);
         } else if (res.locals.app == "com.dialadrinkkenya.office") {
             //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
-        } else {
+        } else if(res.locals.appUser){
             items = items.filter(d => d.clientId == res.locals.appUser.id);
         }
 
