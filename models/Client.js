@@ -177,18 +177,29 @@ Client.schema.virtual("imageUrl")
         var client = this;
 
         if(imageUrl && typeof imageUrl == "string"){
-            var public_id = imageUrl.split("/").last();
+            var public_id = new RegExp(imageUrl.split("/").last(n => n) + "$");
             var file = fileStore.getOne({
                 $or:[
                     { url: imageUrl},
                     { secure_url: imageUrl},
-                    { public_id: new RegExp(public_id + "$")}
+                    { public_id: public_id}
                 ]
             });
     
             if(file)   
                 client.image = file;
             else {
+                if(client.image && client.image.url.contains("res.cloudinary.com/") && (
+                    client.image.url == imageUrl || 
+                    client.image.secure_url == imageUrl ||
+                    public_id.test(client.image.public_id))){
+                    console.log(`URLs match:
+                        ${client.image.secure_url}
+                        ${imageUrl}`
+                    );
+                    return;
+                }
+
                 var opt =  { public_id: "users/" + client.name.cleanId() };
                 cloudinary.v2.uploader.upload(imageUrl, opt, (err, res) => {
                     client.image = res;
