@@ -148,9 +148,10 @@ Client.schema.virtual("deliveryLocation")
 
 Client.schema.virtual("imageUrl")
     .get(function () {
-        var user = this;
+        var client = this;
+        var gender = this.gender || this.guessGender(this.name).getGender() || "M";        
         
-        var imagePlaceHolder = this.gender && this.gender[0].toUpperCase() == "F"?
+        var imagePlaceHolder = gender[0].toUpperCase() == "F"?
             "https://res.cloudinary.com/nmasuki/image/upload/w_200,c_fill,ar_1:1,g_auto,r_max/v1599750746/female-placeholder.jpg":
             "https://res.cloudinary.com/nmasuki/image/upload/w_200,c_fill,ar_1:1,g_auto,r_max/v1599750746/male-placeholder.jpg";
 
@@ -165,7 +166,10 @@ Client.schema.virtual("imageUrl")
             }]
         };
 
-        return (user.image && user.image.secure_url && cloudinary.url(user.image.public_id, cloudinaryOptions)) || imagePlaceHolder;
+        if(client.image && client.image.secure_url)
+            return cloudinary.url(client.image.public_id, cloudinaryOptions);
+        
+        return imagePlaceHolder;
     });
 
 Client.schema.virtual("imageUrl")
@@ -185,7 +189,7 @@ Client.schema.virtual("imageUrl")
             if(file)   
                 client.image = file;
             else {
-                var opt =  { public_id: "users/" + user.name.cleanId() };
+                var opt =  { public_id: "users/" + client.name.cleanId() };
                 cloudinary.v2.uploader.upload(imageUrl, opt, (err, res) => {
                     client.image = res;
                     next();
@@ -197,48 +201,48 @@ Client.schema.virtual("imageUrl")
 
 Client.schema.virtual("httpAuth")
     .get(function () {
-        var user = this;
-        var str = [user.phoneNumber, user.password, new Date().getTime()].join(':');
+        var client = this;
+        var str = [client.phoneNumber, client.password, new Date().getTime()].join(':');
         return Buffer.from(str).toString('hex');
     });
 
 Client.schema.methods.toAppObject = function (appVersion) {
-    var user = this;
+    var client = this;
     var ret = null; 
 
     if (appVersion || global.appVersion) {
         ret = Object.assign({ 
-            userid: user.id,
-            username: user.username || (user.email || '').split('@')[0]
-        }, user.toObject());
+            userid: client.id,
+            username: client.username || (client.email || '').split('@')[0]
+        }, client.toObject());
 
         var allowed = ["name", "httpAuth", "imageUrl", "deliveryLocation", "isAppRegistered"];
-        allowed.forEach(a => ret[a] = user[a]);
+        allowed.forEach(a => ret[a] = client[a]);
     }else{
         ret = {
-            userid: user.id || '',
-            user_name: user.name || '',
-            username: user.username || (user.email || '').split('@')[0],
-            user_unique_code: user.httpAuth,
-            user_password: user.password || '',
-            user_email: user.email || '',
-            user_mobile: user.phoneNumber || '',
-            user_state: user.city || '',
-            user_city: user.city || '',
-            user_country: user.country || '',
-            user_address: user.address || '',
-            user_directions: user.additional_directions || '',
-            user_image: user.imageUrl,
-            user_phone_verified: user.isPhoneVerified || '',
-            user_reg_date: user.registrationDate || '',
-            user_deliverydays: user.deliverydays || '',
-            user_status: user.status || '',
-            ips: user.clientIps || [],
-            deliveryLocation: user.deliveryLocation
+            userid: client.id || '',
+            user_name: client.name || '',
+            username: client.username || (client.email || '').split('@')[0],
+            user_unique_code: client.httpAuth,
+            user_password: client.password || '',
+            user_email: client.email || '',
+            user_mobile: client.phoneNumber || '',
+            user_state: client.city || '',
+            user_city: client.city || '',
+            user_country: client.country || '',
+            user_address: client.address || '',
+            user_directions: client.additional_directions || '',
+            user_image: client.imageUrl,
+            user_phone_verified: client.isPhoneVerified || '',
+            user_reg_date: client.registrationDate || '',
+            user_deliverydays: client.deliverydays || '',
+            user_status: client.status || '',
+            ips: client.clientIps || [],
+            deliveryLocation: client.deliveryLocation
         };
     }
 
-    if (!global.appUser || global.appUser.id != user.id) {
+    if (!global.appUser || global.appUser.id != client.id) {
         var toDel = [
             "image", "tempPassword", 
             "httpAuth", //"password", 
@@ -248,7 +252,7 @@ Client.schema.methods.toAppObject = function (appVersion) {
         toDel.forEach(x => delete ret[x]);
     }
 
-    ret._rev = user.__v;
+    ret._rev = client.__v;
     delete ret.sessions;
     delete ret.image;
     delete ret.clientIps;
@@ -264,10 +268,11 @@ Client.schema.methods.copyAppObject = function (obj) {
     var mapping = {
         "userid": "id",
         "mobile": "phoneNumber",
-        "user_mobile": "phoneNumber",
         "image": "imageUrl",
-        "user_image": "imageUrl",
         "reg_date": "registrationDate",
+
+        "user_mobile": "phoneNumber",
+        "user_image": "imageUrl",
         "user_reg_date": "registrationDate"
     };
 
@@ -610,7 +615,7 @@ Client.schema.methods.guessGender = function(name){
         return ret;
     }
 
-    return null;
+    return { getGender: () => null };
 };
 
 Client.schema.post('save', function(error, doc, next) {
@@ -619,19 +624,21 @@ Client.schema.post('save', function(error, doc, next) {
 });
 
 Client.schema.pre('save', function (next) {
-    var user = this;
-    if (user.modifiedDate.addSeconds(10) > new Date()){
+    var client = this;
+    if (client.modifiedDate.addSeconds(10) > new Date()){
         var error = new Error("Client saved less than 10 sec ago. Should skip save but....");
         //console.error(error);
         return next(error.message);
     }
 
-    user.modifiedDate = new Date();
-    user.clientIps = this.clientIps.filter(ip => ip).distinct();
-    user.metaDataJSON = JSON.stringify(this._metaDataJSON || {});
+    client.modifiedDate = new Date();
+    client.clientIps = this.clientIps.filter(ip => ip).distinct();
+    client.metaDataJSON = JSON.stringify(this._metaDataJSON || {});
 
-    if(!user.gender)
-        user.gender = user.guessGender(user.name);
+    if(!client.gender){
+        console.log("No gender provided. Trying to guess from name. '" + client.name + "'");
+        client.gender = client.guessGender(client.name).getGender();
+    }
 
     next();
 });
