@@ -270,7 +270,7 @@ function LocalStorage(entityName) {
 
     self.getAll = function (filter, sortBy) {
         sortBy = sortBy || "";
-        var filtered = Object.values(getAll(entityName, filter)).filter(toFilterFn(filter));
+        var filtered = Object.values(getAll(entityName)).filter(toFilterFn(filter));
         var dir = /(^|\s)DESC($|\s)/i.test(sortBy)? -1: 1;        
 
         var sortByFxns = sortBy.split(/[^\w\s]/).filter(s => !!s).map(sort =>{

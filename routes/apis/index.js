@@ -10,7 +10,9 @@ router.get("/:entity", function (req, res, next) {
     var start = (page - 1) * pageSize;
     var query = req.query.query || "";
 
-    var filteredList = ls.getAll(query, req.query.sort),
+    var filterByCloseOfDay = res.locals.lastCloseOfDay && ["sale", "purchase", "expense"].contains(req.params.entity);
+    var list = ls.getAll(query, req.query.sort),
+        filteredList = filterByCloseOfDay? list.filter(d => d.createdDate > res.locals.lastCloseOfDay): list,
         pageList = filteredList.slice(start, start + pageSize);
 
     console.log(req.params.entity  + " page:", page, "pageSize:", pageSize, "itemCount:", pageList.length);
