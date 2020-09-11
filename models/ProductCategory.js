@@ -24,7 +24,7 @@ ProductCategory.add({
 ProductCategory.relationship({ref: 'Product', refPath: 'category'});
 ProductCategory.relationship({ref: 'ProductSubCategory', refPath: 'category'});
 
-Product.defaultColumns = 'name, image, menus, pageTitle, priorityTags, description';
+ProductCategory.defaultColumns = 'name, image, menus, pageTitle, priorityTags, description';
 
 ProductCategory.schema.pre('save', function(next){
     var that = this;
