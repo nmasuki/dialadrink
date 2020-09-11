@@ -7,11 +7,11 @@ function getDeliveryCount(res){
         deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
     if (res.locals.app == "com.dialadrinkkenya.rider"){
-        deliveries = deliveries.filter(d => d.riderId == res.locals.appUser.id);
+        deliveries = deliveries.filter(d => d.riderId == res.locals.appUser._id);
     } else if (res.locals.app == "com.dialadrinkkenya.office") {
         //deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
     } else {
-        deliveries = deliveries.filter(d => d.clientId == res.locals.appUser.id);
+        deliveries = deliveries.filter(d => d.clientId == res.locals.appUser._id);
     }
     
     return Promise.resolve(deliveries.length);
@@ -84,15 +84,18 @@ function getSalesValue(res){
         if (res.locals.lastCloseOfDay)
             items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
-        if (res.locals.app == "com.dialadrinkkenya.rider") {
-            items = items.filter(d => d.riderId == res.locals.appUser.id);
-        } else if (res.locals.app == "com.dialadrinkkenya.office") {
+        if (res.locals.app == "com.dialadrinkkenya.office") {
             //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        } else if (res.locals.app == "com.dialadrinkkenya.rider") {
+            items = items.filter(d => d.riderId == res.locals.appUser._id);
         } else if (res.locals.appUser){
-            items = items.filter(d => d.clientId == res.locals.appUser.id);
+            items = items.filter(d => d.clientId == res.locals.appUser._id);
         }
 
-        resolve(items.sum(s => s.salePrice));
+        var sales = items.sum(s => s.salePrice);
+        console.log("Sales items:" + items.length + " total sum:" + sales);
+
+        resolve(sales);
     });
 }
 
@@ -103,11 +106,11 @@ function getPurchasesValue(res){
             items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
         if (res.locals.app == "com.dialadrinkkenya.rider") {
-            items = items.filter(d => d.riderId == res.locals.appUser.id);
+            items = items.filter(d => d.riderId == res.locals.appUser._id);
         } else if (res.locals.app == "com.dialadrinkkenya.office") {
             //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
         } else {
-            items = items.filter(d => d.clientId == res.locals.appUser.id);
+            items = items.filter(d => d.clientId == res.locals.appUser._id);
         }
 
         resolve(items.sum(s => s.cost || s.amount));
@@ -121,11 +124,11 @@ function getExpensesValue(res){
             items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
         if (res.locals.app == "com.dialadrinkkenya.rider") {
-            items = items.filter(d => d.riderId == res.locals.appUser.id);
+            items = items.filter(d => d.riderId == res.locals.appUser._id);
         } else if (res.locals.app == "com.dialadrinkkenya.office") {
             //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
         } else if(res.locals.appUser){
-            items = items.filter(d => d.clientId == res.locals.appUser.id);
+            items = items.filter(d => d.clientId == res.locals.appUser._id);
         }
 
         resolve(items.sum(s => s.amount));
@@ -167,7 +170,7 @@ function getAppUserCount(res) {
 function getNotificationCount(res){ 
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("notification").getAll();
-        items = items.filter(d => d.toId == res.locals.appUser.id || d.fromId == res.locals.appUser.id);
+        items = items.filter(d => d.toId == res.locals.appUser._id || d.fromId == res.locals.appUser._id);
         return resolve(items.length);
     }); 
  }
