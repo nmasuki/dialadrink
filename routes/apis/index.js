@@ -24,7 +24,7 @@ router.get("/:entity", function (req, res, next) {
                     ret.count = res.locals.menuCounts[href];                
             }
             
-            if (!res.locals.appUser || res.locals.appUser.id != ret.id) {
+            if (!res.locals.appUser || res.locals.appUser._id != ret.id) {
                 delete ret.httpAuth;
                 delete ret.username;
                 delete ret.password;

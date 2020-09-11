@@ -20,7 +20,7 @@ router.get("/", function (req, res, next) {
             response: "success",
             fetchDate: new Date().toISOString(),
             data: pageList.map(ret => {
-                if (!res.locals.appUser || res.locals.appUser.id != ret.id) {
+                if (!res.locals.appUser || res.locals.appUser._id != ret.id) {
                     delete ret.httpAuth;
                     delete ret.username;
                     delete ret.password;
