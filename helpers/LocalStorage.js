@@ -226,6 +226,9 @@ function LocalStorage(entityName) {
             all[id].modifiedDate = new Date();
             
             var userId = global.appUser && global.appUser._id || null;
+            if(all[id].createdBy && all[id].createdBy._id)
+                all[id].createdBy = all[id].createdBy._id;
+            
             all[id].createdBy = all[id].createdBy || userId;
             all[id].lastModifiedBy = userId;
 
