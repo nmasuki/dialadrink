@@ -135,10 +135,12 @@ function getExpensesValue(res){
 }
 
 function getRiderCount(res) { 
-    keystone.list('AppUser').find({accountType: "rider"}).then(users => {
-        if(users && users.length)
-            return resolve(users.length);
-        resolve(0);
+    return new Promise((resolve, reject) => {
+        keystone.list('AppUser').find({accountType: "rider"}).then(users => {
+            if(users && users.length)
+                return users.length;
+            return 0;
+        });
     });
  }
 
