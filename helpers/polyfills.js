@@ -718,6 +718,27 @@ Date.prototype.addMilliseconds = function(value){
     return new Date(this.getTime() + value);
 };
 
+Date.prototype.since = function(date){
+    var ms = this.getTime() - new Date(date).getTime();
+    var mapping = {
+        ms: 1,
+        secs: 1000,
+        mins: 1000 * 60,
+        hours: 1000 * 60 * 60,
+        days: 1000 * 60 * 60 * 24,
+        weeks: 1000 * 60 * 60 * 24 * 7
+    };
+
+    var val = ms, period = "ms";
+    for(var i in mapping){
+        period = i;
+        val = ms / mapping[i];
+        if(val <= 10) break;
+    }
+
+    return "{0}{1}".format(val, period);
+};
+
 Number.prototype.pad = function pad(width, z) {
     var n = this + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join(z || '0') + n;
