@@ -30,7 +30,7 @@ router.get("/", function (req, res, next) {
             if(ret.description && ret.description.contains("last 7 days")){
                 if (res.locals.lastCloseOfDay){
                     var timeSince = new Date().since(new Date(res.locals.lastCloseOfDay));
-                    ret.description = ret.description.replace("last 7 days", "since " + timeSince);
+                    ret.description = ret.description.replace("last 7 days", "last " + timeSince);
                 }
             }
             
