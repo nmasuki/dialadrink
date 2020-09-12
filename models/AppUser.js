@@ -219,7 +219,7 @@ AppUser.find = function(filter){
                     }
                 }
                 
-                resolve(finalUsers.distictBy(u => u.phoneNumber.cleanPhoneNumber()));
+                resolve(finalUsers.distinctBy(u => u.phoneNumber.cleanPhoneNumber()));
             });
         });
         
