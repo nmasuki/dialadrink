@@ -272,14 +272,14 @@ AppUser.save = function(user){
                     u = new AppUser.model(user);
                 }
 
-                user._id = u._id;                        
                 u.lsUser = user;                               
                 u.save((err) => {
                     if(err) 
                         reject(err);
-                    else{
-                        user._id = u._id;
+                    else {
+                        user._id = u._id.toString();
                         ls.save(user); 
+
                         resolve(u);
                     }
                 });
