@@ -218,7 +218,7 @@ function LocalStorage(entityName) {
             if(!entity._rev || curRev == docRev)
                 entity._rev = parseInt(1 + curRev) + "-" + uuidv4();
             else if(docRev > curRev){
-                if(Math.abs(docRev > curRev) < 1)
+                if(Math.abs(docRev - curRev) < 1)
                     entity._rev = parseInt(1 + docRev) + "-" + uuidv4();
                 else
                     entity._rev = parseInt(docRev) + "-" + uuidv4();                    
