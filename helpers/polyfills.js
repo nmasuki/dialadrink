@@ -746,7 +746,7 @@ Date.prototype.since = function(date){
             }
 
             if(period == "days"){
-                if(parseInt(val) == 1)
+                if(parseInt(val) == 0)
                     return "Today";
                 else if(parseInt(val) == 1)
                     return "Yesterday";
