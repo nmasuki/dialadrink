@@ -90,8 +90,6 @@ function getSalesValue(res){
         }
 
         var sales = items.sum(s => s.salePrice);
-        console.log("Sales items:" + items.length + " total sum:" + sales);
-
         resolve(sales);
     });
 }

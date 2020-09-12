@@ -223,7 +223,7 @@ function LocalStorage(entityName) {
                 else
                     entity._rev = parseInt(docRev) + "-" + uuidv4();                    
             } else if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
-                var msg = ["Document conflict! ", id, all[id]._rev, entity._rev].join(",");
+                var msg = ["Document conflict! ", id, all[id]._rev + " --> " + entity._rev].join("\n\t-");
                 errors.push({ _id: id, _rev: all[id]._rev, error: msg });
                 return console.error(msg);
             }
