@@ -231,8 +231,7 @@ function LocalStorage(entityName) {
             if (entity.__v) delete entity.__v;       
             
             if(all[id])
-                console.log("Updating " + entityName + " _id:" + id +
-                    " from _rev:" +all[id]._rev + " to " + entity._rev);
+                console.log("Updating " + entityName + "..\n\t _id:" + id + "\n\t_rev:" +all[id]._rev + " ---> " + entity._rev);
 
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
             all[id].modifiedDate = new Date();
