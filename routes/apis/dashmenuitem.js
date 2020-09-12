@@ -26,6 +26,13 @@ router.get("/", function (req, res, next) {
                 if (res.locals.menuCounts[href] != undefined)
                     ret.count = res.locals.menuCounts[href];                
             }
+
+            if(ret.description && ret.description.contains("last 7 days")){
+                if (res.locals.lastCloseOfDay){
+                    var timeSince = new Date().since(new Date(res.locals.lastCloseOfDay));
+                    ret.description = ret.description.replace("last 7 days", "since " + timeSince);
+                }
+            }
             
             if (!res.locals.appUser || res.locals.appUser._id != ret.id) {
                 delete ret.httpAuth;
@@ -34,6 +41,7 @@ router.get("/", function (req, res, next) {
                 delete ret.user_unique_code;
                 delete ret.user_password;
             }
+
             return ret;
         })
     });
