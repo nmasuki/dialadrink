@@ -80,12 +80,11 @@ function getInventoryCount(){ return Promise.resolve(0); }
 
 function getSalesValue(res){ 
     return new Promise((resolve, reject) => {
-        var items = LocalStorage.getInstance("sale").getAll();
-        if (res.locals.lastCloseOfDay)
-            items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        var items = LocalStorage.getInstance("sale").getAll();        
 
         if (res.locals.app == "com.dialadrinkkenya.office") {
-            //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+            if (res.locals.lastCloseOfDay)
+                items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
         } else if (res.locals.app == "com.dialadrinkkenya.rider") {
             items = items.filter(d => d.riderId == res.locals.appUser._id);
         } else if (res.locals.appUser){

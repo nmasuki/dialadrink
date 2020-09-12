@@ -124,7 +124,7 @@ exports.initLocals = function (req, res, next) {
         if (latest && latest.createdDate)
             res.locals.lastCloseOfDay = new Date(latest.createdDate).toISOString().substr(0, 10);
         else {
-            var backdate = process.env.NODE_ENV == "production"? 7: 50;        
+            var backdate = process.env.NODE_ENV == "production"? 7: 100;        
             res.locals.lastCloseOfDay = new Date().addDays(-backdate).toISOString().substr(0, 10);
         }
          

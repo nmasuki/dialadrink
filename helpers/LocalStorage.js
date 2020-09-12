@@ -31,6 +31,8 @@ function tryDateParse(str){
 }
 
 function tryParse(str){
+    if(!str) return null;
+    
     try{
         return JSON.parse(str);
     }catch(e){
