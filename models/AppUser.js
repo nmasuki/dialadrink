@@ -219,7 +219,7 @@ AppUser.find = function(filter){
                     }
                 }
                 
-                resolve(finalUsers);
+                resolve(finalUsers.distictBy(u => u.phoneNumber.cleanPhoneNumber()));
             });
         });
         
@@ -227,7 +227,7 @@ AppUser.find = function(filter){
 };
 
 AppUser.findOne = function(filter){
-    return AppUser.find(filter).then(users => users && users[0]);
+    return AppUser.find(filter).then(users => users && users[0] || null);
 };
 
 AppUser.save = function(user){

@@ -3,15 +3,16 @@ var LocalStorage = require('../helpers/LocalStorage');
 
 function getDeliveryCount(res){
     var deliveries = LocalStorage.getInstance("delivery").getAll();
-    if (res.locals.lastCloseOfDay)
-        deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
     if (res.locals.app == "com.dialadrinkkenya.rider"){
-        deliveries = deliveries.filter(d => d.riderId == res.locals.appUser._id);
+        if(res.locals.appUser)
+            deliveries = deliveries.filter(d => d.riderId == res.locals.appUser._id);
     } else if (res.locals.app == "com.dialadrinkkenya.office") {
-        //deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        if (res.locals.lastCloseOfDay)
+            deliveries = deliveries.filter(d => d.createdDate > res.locals.lastCloseOfDay);
     } else {
-        deliveries = deliveries.filter(d => d.clientId == res.locals.appUser._id);
+        if(res.locals.appUser)
+            deliveries = deliveries.filter(d => d.clientId == res.locals.appUser._id);
     }
     
     return Promise.resolve(deliveries.length);
@@ -44,16 +45,12 @@ function getOrderCount(res) {
                     $gt: new Date(res.locals.lastCloseOfDay)
                 }
             }];
+        
     } else if (res.locals.app == "com.dialadrinkkenya.office") {
-        filter.$or = [{
-                'rider': null
-            },
-            {
-                'rider.confirmed': null
-            },
-            {
-                'rider.confirmed': false
-            }
+        filter.$or = [
+            { 'rider': null },
+            { 'rider.confirmed': null },
+            { 'rider.confirmed': false }
         ];
 
         if (res.locals.lastCloseOfDay)
@@ -86,7 +83,8 @@ function getSalesValue(res){
             if (res.locals.lastCloseOfDay)
                 items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
         } else if (res.locals.app == "com.dialadrinkkenya.rider") {
-            items = items.filter(d => d.riderId == res.locals.appUser._id);
+            if(res.locals.appUser)
+                items = items.filter(d => d.riderId == res.locals.appUser._id);
         } else if (res.locals.appUser){
             items = items.filter(d => d.clientId == res.locals.appUser._id);
         }
@@ -101,14 +99,14 @@ function getSalesValue(res){
 function getPurchasesValue(res){ 
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("purchase").getAll();
-        if (res.locals.lastCloseOfDay)
-            items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
-
-        if (res.locals.app == "com.dialadrinkkenya.rider") {
-            items = items.filter(d => d.riderId == res.locals.appUser._id);
-        } else if (res.locals.app == "com.dialadrinkkenya.office") {
-            //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
-        } else {
+        
+        if (res.locals.app == "com.dialadrinkkenya.office") {
+            if (res.locals.lastCloseOfDay)
+                items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        } else if (res.locals.app == "com.dialadrinkkenya.rider") {
+            if(res.locals.appUser)
+                items = items.filter(d => d.riderId == res.locals.appUser._id);
+        } else if(res.locals.appUser){
             items = items.filter(d => d.clientId == res.locals.appUser._id);
         }
 
@@ -122,23 +120,26 @@ function getExpensesValue(res){
         if (res.locals.lastCloseOfDay)
             items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
 
-        if (res.locals.app == "com.dialadrinkkenya.rider") {
-            items = items.filter(d => d.riderId == res.locals.appUser._id);
-        } else if (res.locals.app == "com.dialadrinkkenya.office") {
-            //items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        if (res.locals.app == "com.dialadrinkkenya.office") {
+            if (res.locals.lastCloseOfDay)
+                items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+        } else if (res.locals.app == "com.dialadrinkkenya.rider") {
+            if(res.locals.appUser)
+                items = items.filter(d => d.riderId == res.locals.appUser._id);
         } else if(res.locals.appUser){
             items = items.filter(d => d.clientId == res.locals.appUser._id);
-        }
+        }    
 
         resolve(items.sum(s => s.amount));
     });
 }
 
 function getRiderCount(res) { 
-    return new Promise((resolve, reject) => {
-        var items = LocalStorage.getInstance("rider").getAll();
-        resolve(items.length);
-    });  
+    keystone.list('AppUser').find({accountType: "rider"}).then(users => {
+        if(users && users.length)
+            return resolve(users.length);
+        resolve(0);
+    });
  }
 
 function getCloseOfDayCount() { return Promise.resolve(0); }
@@ -169,7 +170,8 @@ function getAppUserCount(res) {
 function getNotificationCount(res){ 
     return new Promise((resolve, reject) => {
         var items = LocalStorage.getInstance("notification").getAll();
-        items = items.filter(d => d.toId == res.locals.appUser._id || d.fromId == res.locals.appUser._id);
+        if(res.locals.appUser)
+            items = items.filter(d => d.toId == res.locals.appUser._id || d.fromId == res.locals.appUser._id);
         return resolve(items.length);
     }); 
  }
