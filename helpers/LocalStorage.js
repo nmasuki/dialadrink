@@ -215,15 +215,21 @@ function LocalStorage(entityName) {
             var curRev = parseInt((all[id] && all[id]._rev || "0").toString().split('-')[0]);
             var docRev = parseFloat((entity._rev || "0").toString().split('-')[0]);
 
-            if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
+            if(!entity._rev || curRev == docRev)
+                entity._rev = parseInt(1 + curRev) + "-" + uuidv4();
+            else if(docRev > curRev){
+                if(Math.abs(docRev > curRev) < 1)
+                    entity._rev = parseInt(1 + docRev) + "-" + uuidv4();
+                else
+                    entity._rev = parseInt(docRev) + "-" + uuidv4();                    
+            }
+            else if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
                 var msg = ["Document conflict! ", id, all[id]._rev, entity._rev].join(",");
                 errors.push({ _id: id, _rev: all[id]._rev, error: msg });
                 return console.error(msg);
-            }            
-
-            entity._rev = parseInt(1 + docRev) + "-" + uuidv4();
-            if (entity.__v) delete entity.__v;
+            }
             
+            if (entity.__v) delete entity.__v;            
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
             all[id].modifiedDate = new Date();
             
