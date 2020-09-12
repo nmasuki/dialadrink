@@ -188,9 +188,11 @@ AppUser.find = function(filter){
     return new Promise((resolve, reject) => {
         Client.model.find(filter).exec((err, clients) => {
             AppUser.model.find(filter).exec((err, users) => {
-                if(err)
-                    console.log("Error!", err);
-        
+                if(err || !users){
+                    console.log("Error!", err || "No user found");
+                    users = [];
+                }
+
                 var appUsers = ls.getAll(filter);
                 /*
                 console.log(JSON.stringify(filter), "\nMerging: " + 
