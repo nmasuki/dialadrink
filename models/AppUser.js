@@ -235,8 +235,14 @@ AppUser.findOne = function(filter){
 AppUser.save = function(user){
     return new Promise((resolve, reject) => {
         var filter = { $or: [] };
-        var id = user._id && user._id.contains("-")? user._id.substr(user._id.indexOf("-") + 1): user._id;
-
+        var id = null;
+        
+        if(user._id){
+            id = user._id.toString();
+            if(id.contains("-"))
+                id = id.substr(id.indexOf("-") + 1);
+        }
+        
         if(id && id.length == 24)
             filter.$or.push({_id: id});
         
