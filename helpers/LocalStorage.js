@@ -32,7 +32,7 @@ function tryDateParse(str){
 
 function tryParse(str){
     if(!str) return null;
-    
+
     try{
         return JSON.parse(str);
     }catch(e){
@@ -221,7 +221,7 @@ function LocalStorage(entityName) {
                 return console.error(msg);
             }            
 
-            entity._rev = (1 + curRev) + "-" + uuidv4();
+            entity._rev = parseInt(1 + docRev) + "-" + uuidv4();
             if (entity.__v) delete entity.__v;
             
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
