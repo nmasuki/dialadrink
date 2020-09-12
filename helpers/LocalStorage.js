@@ -222,14 +222,18 @@ function LocalStorage(entityName) {
                     entity._rev = parseInt(1 + docRev) + "-" + uuidv4();
                 else
                     entity._rev = parseInt(docRev) + "-" + uuidv4();                    
-            }
-            else if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
+            } else if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
                 var msg = ["Document conflict! ", id, all[id]._rev, entity._rev].join(",");
                 errors.push({ _id: id, _rev: all[id]._rev, error: msg });
                 return console.error(msg);
             }
             
-            if (entity.__v) delete entity.__v;            
+            if (entity.__v) delete entity.__v;       
+            
+            if(all[id])
+                console.log("Updating " + entityName + " _id:" + id +
+                    " from _rev:" +all[id]._rev + " to " + entity._rev);
+
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
             all[id].modifiedDate = new Date();
             
