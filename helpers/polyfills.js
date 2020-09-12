@@ -727,6 +727,7 @@ Date.prototype.since = function(date){
         hours: 1000 * 60 * 60,
         days: 1000 * 60 * 60 * 24,
         weeks: 1000 * 60 * 60 * 24 * 7,         
+        months: 1000 * 60 * 60 * 24 * 28,         
         years: 1000 * 60 * 60 * 24 * 365.25,
     };
 
@@ -762,7 +763,11 @@ Date.prototype.since = function(date){
         }
     }
 
-    return "{0} {1} {2}".format(parseInt(val), period, val < 0? "to come": "ago");
+    val = Math.round(val);
+    if(val == 1)
+        period = period.replace(/(ie)?s$/, "");
+
+    return "{0} {1} {2}".format(val, period, val < 0? "to come": "ago");
 };
 
 Number.prototype.pad = function pad(width, z) {
