@@ -4,6 +4,8 @@ var LocalStorage = require('../../helpers/LocalStorage');
 var router = keystone.express.Router();
 
 router.get("/:entity", function (req, res, next) {
+    console.log("Getting " + req.params.entity + "..");
+
     var ls = new LocalStorage(req.params.entity);
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 1500);
@@ -23,7 +25,14 @@ router.get("/:entity", function (req, res, next) {
             if (res.locals.menuCounts && ret.href){
                 var href = ret.href.replace(/^\/|\/$|(ie)?s$/, "");
                 if (res.locals.menuCounts[href] != undefined)
-                    ret.count = res.locals.menuCounts[href];                
+                    ret.count = res.locals.menuCounts[href];     
+                
+                if(req.params.entity == "dashmenuitem" && href == "orders"){
+                    if (res.locals.lastCloseOfDay){
+                        var timeSince = new Date().since(new Date(res.locals.lastCloseOfDay));
+                        ret.description = "Pending orders (last {0})".format(timeSince);
+                    }
+                }                         
             }
             
             if (!res.locals.appUser || res.locals.appUser._id != ret.id) {

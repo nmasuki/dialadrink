@@ -4,6 +4,8 @@ var ls = require('../../helpers/LocalStorage').getInstance("dashboarditem");
 var router = keystone.express.Router();
 
 router.get("/", function (req, res, next) {
+    console.log("Getting dashmenuitems.....");
+    
     var ls = new LocalStorage(req.params.entity);
     var page = parseInt(req.query.page || 1);
     var pageSize = parseInt(req.query.pageSize || 1500);
