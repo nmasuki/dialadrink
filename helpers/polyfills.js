@@ -736,7 +736,7 @@ Date.prototype.since = function(date){
         if(val <= 10) break;
     }
 
-    return "{0}{1}".format(val, period);
+    return "{0} {1}".format(val, period);
 };
 
 Number.prototype.pad = function pad(width, z) {
