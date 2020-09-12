@@ -28,6 +28,7 @@ router.get("/:entity", function (req, res, next) {
                     ret.count = res.locals.menuCounts[href];     
                 
                 if(href == "orders"){
+                    console.log("Order description..", res.locals.lastCloseOfDay);
                     if (res.locals.lastCloseOfDay){
                         var timeSince = new Date().since(new Date(res.locals.lastCloseOfDay));
                         ret.description = "Pending orders (last {0})".format(timeSince);
