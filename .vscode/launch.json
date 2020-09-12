@@ -6,15 +6,19 @@
     "configurations": [    
         {
             "type": "node",
+            "protocol": "inspector",
             "request": "launch",
             "name": "Dial a Drink Kenya",
-            "program": "${workspaceFolder}\\app.js"
+            "program": "${workspaceFolder}\\app.js",
+            "sourceMaps": false
         },   
         {
             "type": "node",
+            "protocol": "inspector",
             "request": "launch",
             "name": "Dial a Drink Kenya - Workers",
-            "program": "${workspaceFolder}\\workers\\index.js"
+            "program": "${workspaceFolder}\\workers\\index.js",
+            "sourceMaps": false
         }
     ]
 }

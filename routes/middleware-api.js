@@ -136,8 +136,8 @@ function getRiderCount(res) {
     return new Promise((resolve, reject) => {
         keystone.list('AppUser').find({accountType: "rider"}).then(users => {
             if(users && users.length)
-                return users.length;
-            return 0;
+                return resolve(users.length);
+            return resolve(0);
         });
     });
  }

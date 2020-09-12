@@ -115,19 +115,19 @@ exports.initLocals = function (req, res, next) {
     var possibleIps = [req.ip, (req.headers['x-forwarded-for'] || '').split(',').pop(), req.connection.remoteAddress, req.socket.remoteAddress];
     res.locals.clientIp = possibleIps.find(ip => ip && ip != '127.0.0.1' && ip != '::1');
 
+    //Close of day Date    
+    var latest = require('../helpers/LocalStorage').getInstance("closeofday").getAll().orderBy(c => c.createdDate).last();        
+    if (latest && latest.createdDate)
+        res.locals.lastCloseOfDay = new Date(latest.createdDate).toISOString().substr(0, 10);
+    else {
+        var backdate = process.env.NODE_ENV == "production"? 7: 100;        
+        res.locals.lastCloseOfDay = new Date().addDays(-backdate).toISOString().substr(0, 10);
+    }
+
     //Authorization
     var { username, password } = getAuthInfo(req);
     //Other locals only applied to views and not ajax calls
-    if (username || password) {
-        var ls = require('../helpers/LocalStorage').getInstance("closeofday");
-        var latest = ls.getAll().orderBy(c => c.createdDate).last();        
-        if (latest && latest.createdDate)
-            res.locals.lastCloseOfDay = new Date(latest.createdDate).toISOString().substr(0, 10);
-        else {
-            var backdate = process.env.NODE_ENV == "production"? 7: 100;        
-            res.locals.lastCloseOfDay = new Date().addDays(-backdate).toISOString().substr(0, 10);
-        }
-         
+    if (username || password) {         
         return next();
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);

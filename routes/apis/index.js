@@ -31,7 +31,7 @@ router.get("/:entity", function (req, res, next) {
                     console.log("Order description..", res.locals.lastCloseOfDay);
                     if (res.locals.lastCloseOfDay){
                         var timeSince = new Date().since(new Date(res.locals.lastCloseOfDay));
-                        ret.description = "Pending orders (last {0})".format(timeSince);
+                        ret.description = "Pending orders (from {0})".format(timeSince);
                     }
                 }                        
             }

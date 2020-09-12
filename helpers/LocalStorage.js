@@ -184,7 +184,6 @@ var saveAll = function (entityName, all) {
                 }, 100);
             }
 
-            console.log("Saving to file.", path.resolve(dataDir, entityName + ".json"));
             fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
                 console.log("Saved to file.", path.resolve(dataDir, entityName + ".json"), "releasing lock", path.resolve(dataDir, entityName + ".lock"));
                 lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));
@@ -230,9 +229,10 @@ function LocalStorage(entityName) {
             
             if (entity.__v) delete entity.__v;       
             
-            if(all[id])
+            if(all[id] && entityName != "appuser"){
                 console.log("Updating " + entityName + 
                 "..\n\t _id:" + id + "\n\t_rev:" + all[id]._rev + " ---> " + entity._rev);
+            }
 
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
             all[id].modifiedDate = new Date();

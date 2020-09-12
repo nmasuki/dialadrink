@@ -726,17 +726,43 @@ Date.prototype.since = function(date){
         mins: 1000 * 60,
         hours: 1000 * 60 * 60,
         days: 1000 * 60 * 60 * 24,
-        weeks: 1000 * 60 * 60 * 24 * 7
+        weeks: 1000 * 60 * 60 * 24 * 7,         
+        years: 1000 * 60 * 60 * 24 * 365.25,
     };
 
     var val = ms, period = "ms";
     for(var i in mapping){
         period = i;
         val = ms / mapping[i];
-        if(val <= 10) break;
+        if(Math.abs(val) <= 10){
+            if(period == "hours"){
+                var time = new Date().addHours(-val).toISOString(0, 10);
+                var today = new Date().toISOString(0, 10);
+                if(time < today)
+                    return "Yesterday";
+                else if(time > new Date(today).addDays(1).toISOString(0, 10))
+                    return "Tomorrow";
+            }
+
+            if(period == "days"){
+                if(parseInt(val) == 1)
+                    return "Yesterday";
+                else if(parseInt(val) == -1)
+                    return "Tomorrow";
+                else{
+                    var index = parseInt(val);
+                    if(Math.abs(index) < 5){
+                        var days = ["Sunday", "Monday", "Tuesaday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                        return (index < 0? "this ": "") + days[new Date().addDays(-index).getDay()];
+                    }
+                }
+            }
+
+            break;
+        }
     }
 
-    return "{0} {1}".format(val, period);
+    return "{0} {1} {2}".format(parseInt(val), period, val < 0? "to come": "ago");
 };
 
 Number.prototype.pad = function pad(width, z) {
