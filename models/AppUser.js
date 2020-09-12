@@ -232,8 +232,12 @@ AppUser.findOne = function(filter){
 
 AppUser.save = function(user){
     return new Promise((resolve, reject) => {
-        var filter = { $or: [{_id: user._id}] };
+        var filter = { $or: [] };
+        var id = user._id && user._id.contains("-")? user._id.substr(user._id.indexOf("-") + 1): user._id;
 
+        if(id && id.length == 24)
+            filter.$or.push({_id: id});
+        
         if(user.phoneNumber){
             filter.$or.push({phoneNumber: user.phoneNumber});
             filter.$or.push({phoneNumber: user.phoneNumber.cleanPhoneNumber()});
@@ -241,6 +245,9 @@ AppUser.save = function(user){
 
         if(user.email)
             filter.$or.push({email: user.email});
+
+        if(!filter.$or.length)
+            filter.$or.push({none_existing: 1});
         
         AppUser.model.findOne(filter)
             .exec((err, u) => {
@@ -257,13 +264,16 @@ AppUser.save = function(user){
                     u = new AppUser.model(user);
                 }
 
-                u.lsUser = user;
-                ls.save(user);                
+                user._id = u._id;                        
+                u.lsUser = user;                               
                 u.save((err) => {
                     if(err) 
                         reject(err);
-                    else
+                    else{
+                        user._id = u._id;
+                        ls.save(user); 
                         resolve(u);
+                    }
                 });
             });
     });

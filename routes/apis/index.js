@@ -32,7 +32,7 @@ router.get("/:entity", function (req, res, next) {
                         var timeSince = new Date().since(new Date(res.locals.lastCloseOfDay));
                         ret.description = "Pending orders (last {0})".format(timeSince);
                     }
-                }                         
+                }                        
             }
             
             if (!res.locals.appUser || res.locals.appUser._id != ret.id) {
