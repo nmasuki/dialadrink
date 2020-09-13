@@ -2,7 +2,6 @@ var keystone = require('keystone');
 var ClientNotification = keystone.list('ClientNotification');
 
 var WorkProcessor = require('../helpers/WorkProcessor');
-
 var self = module.exports = new WorkProcessor(getWork, doWork);
 
 function getWork(next, done) {
@@ -46,7 +45,9 @@ function doWork(err, notifications, next) {
 
     if (notifications && notifications.length) {
         notifications = notifications.filter(n => n.client);
-        console.log(notifications.length + " client notifications to send..");
+        if(notifications.length)
+            console.log(notifications.length + " client notifications to send..");
+        
         return Promise.all(notifications.map(n => {
                 var markNotification = function(status){
                     return function () {
