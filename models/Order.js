@@ -354,22 +354,26 @@ Order.schema.methods.updateClient = function (next) {
                         }
                     } else {
                         saveClient = true;
-                        client = new Client.model(delivery);
+                        client = new Client.model(delivery.toJSON());
                         client.registrationDate = order.orderDate;
                         if(order.clientIp) client.clientIps.push(order.clientIp);
                     }
 
                     if(saveClient){
-                        delete client.__v;
-                        client.save((err, c) => {
-                            order.client = c || client;
-                            delete order.__v;
+                        client.save((err) => {
+                            if(err)
+                                return console.error("Error saving client!!", err);
+
+                            order.client = client;
                             order.save();
+
                             clients.push(client);
-                            next();
+                            if (typeof next == "function")
+                                next();
                         });                        
                     }else{
                         order.client = client;
+
                         clients.push(client);
                         if (typeof next == "function")
                             next();
