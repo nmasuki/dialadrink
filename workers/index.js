@@ -76,7 +76,7 @@ function start() {
         });
           
         if (isFirstPass)
-					console.log("Loaded " + activeWorkers.length + "/" + workers.length + " active workers..");
+					console.log("Loaded " + workers.filter(m => m.worker.isActive).length + "/" + workers.length + " active workers..");
 
 				isFirstPass = false;
 				if (activeWorkers.length)
