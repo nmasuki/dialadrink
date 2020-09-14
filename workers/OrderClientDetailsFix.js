@@ -7,7 +7,7 @@ var self = module.exports = new WorkProcessor(getWork, doWork);
 function getWork(next, done) {
     var filter = {
         orderDate:{ 
-            $gt: new Date(self.lastRun || '2017-01-01')
+            $gt: new Date('2017-01-01')
         }
     };
 
@@ -21,6 +21,8 @@ function getWork(next, done) {
             orders = orders.filter(o => !o.client);
             if(orders.length)
                 console.log(orders.length + " require client detail fixing..");
+            else
+                console.log("No orders need fixing since " + filter.orderDate.$gt.toISOString());
 
             next(null, orders, done);
         });
@@ -33,6 +35,7 @@ function doWork(err, orders, next) {
     if (orders && orders.length) {
         if(orders.length)
             console.log(orders.length + " client orders to send..");
+        
         
         var index = -1;
         (function updateClient(){
