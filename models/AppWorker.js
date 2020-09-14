@@ -38,9 +38,7 @@ AppWorker.add({
         default: 'hourly',
         index: true
     },
-    sequence: {
-        type: String
-    },
+    sequence: { type: String },
     isActive: {
         type: Boolean
     },

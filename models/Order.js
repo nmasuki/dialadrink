@@ -289,12 +289,12 @@ var clients = [];
 Order.schema.methods.updateClient = function (next) {
     var order = this;
     
-    /*
+    /***************/
     if (order.client && order.client.modifiedDate && order.client.modifiedDate.addSeconds(60) > new Date()) {
         if (typeof next == "function")
             return next();
     }
-    */
+    /**************/
 
     var delivery = order.delivery;
 
@@ -305,12 +305,18 @@ Order.schema.methods.updateClient = function (next) {
 
         if (phoneNumber) {
             findOption.$or.push({
-                "phoneNumber": new RegExp(phoneNumber.cleanPhoneNumber())
+                "phoneNumber": new RegExp(phoneNumber)
             });
 
             findOption.$or.push({
-                "phoneNumber": new RegExp(phoneNumber)
+                "phoneNumber": new RegExp(phoneNumber.replace(/^254/, "0"))
             });
+
+            var cleanNumber = phoneNumber.cleanPhoneNumber();
+            if(cleanNumber != phoneNumber)
+                findOption.$or.push({
+                    "phoneNumber": new RegExp(cleanNumber)
+                });
 
             delivery.phoneNumber = phoneNumber.cleanPhoneNumber();
         } else {
@@ -349,14 +355,16 @@ Order.schema.methods.updateClient = function (next) {
                     } else {
                         saveClient = true;
                         client = new Client.model(delivery);
-                        client.createdDate = order.orderDate;
+                        client.registrationDate = order.orderDate;
                         if(order.clientIp) client.clientIps.push(order.clientIp);
                     }
 
                     if(saveClient){
                         delete client.__v;
                         client.save((err, c) => {
-                            order.client = client;
+                            order.client = c || client;
+                            delete order.__v;
+                            order.save();
                             clients.push(client);
                             next();
                         });                        
