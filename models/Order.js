@@ -579,6 +579,7 @@ var clients = [];
 Order.schema.methods.toAppObject = function () {
     var order = this;
     var obj = Object.assign(this.toObject(), {
+        orderNumber: "{0}{1}".format(this.delivery && this.delivery.platform && this.delivery.platform[0] || "", this.orderNumber),
         orderAmount: this.orderAmount || this.total,
         clientName: this.client? this.client.name: "",
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
