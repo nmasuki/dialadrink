@@ -350,7 +350,7 @@ Order.schema.methods.updateClient = function (next) {
                         saveClient = true;
                         client = new Client.model(delivery);
                         client.createdDate = order.orderDate;
-                        client.clientIps.push(order.clientIp);
+                        if(order.clientIp) client.clientIps.push(order.clientIp);
                     }
 
                     if(saveClient){
