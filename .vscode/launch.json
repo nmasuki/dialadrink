@@ -17,7 +17,7 @@
             "protocol": "inspector",
             "request": "launch",
             "name": "Dial a Drink Kenya - Workers",
-            "program": "${workspaceFolder}\\workers\\index.js",
+            "program": "${workspaceFolder}\\app-workers.js",
             "sourceMaps": false
         }
     ]
