@@ -83,10 +83,10 @@ router.get("/:orderNo", function (req, res) {
         message: "Error while getting order #" + req.params.orderNo,
         data: {}
     };
-    var filter = {$or:[]};
+    var filter = { $or:[] };
 
-    if (/\w?\d+$/.test(req.params.orderNo))
-        filter.$or.push({ orderNumber: req.params.orderNo });
+    if (/^\w?\d+$/.test(req.params.orderNo))
+        filter.$or.push({ orderNumber: req.params.orderNo.replace(/^\w/, "") });
     else
         filter.$or.push({ _id: req.params.orderNo });
 
@@ -197,12 +197,10 @@ router.post("/cancel/:orderNo", function(req, res){
         message: "Error while getting order #" + orderNumber,
         data: {}
     };
-    var filter = {
-        $or: []
-    };
+    var filter = { $or: [] };
 
-    if (/\w?\d+$/.test(orderNumber))
-        filter.$or.push({ orderNumber: orderNumber });
+    if (/^\w?\d+$/.test(orderNumber))
+        filter.$or.push({ orderNumber: orderNumber.replace(/^\w/, "") });
     else
         filter.$or.push({ _id: orderNumber });
 
