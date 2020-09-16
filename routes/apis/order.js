@@ -85,7 +85,7 @@ router.get("/:orderNo", function (req, res) {
     };
     var filter = {$or:[]};
 
-    if (/^\d+$/.test(req.params.orderNo))
+    if (/\w?\d+$/.test(req.params.orderNo))
         filter.$or.push({ orderNumber: req.params.orderNo });
     else
         filter.$or.push({ _id: req.params.orderNo });
@@ -201,14 +201,10 @@ router.post("/cancel/:orderNo", function(req, res){
         $or: []
     };
 
-    if (/^\d+$/.test(orderNumber))
-        filter.$or.push({
-            orderNumber: orderNumber
-        });
+    if (/\w?\d+$/.test(orderNumber))
+        filter.$or.push({ orderNumber: orderNumber });
     else
-        filter.$or.push({
-            _id: orderNumber
-        });
+        filter.$or.push({ _id: orderNumber });
 
     Order.model.findOne(filter)
         .deepPopulate('cart.product.priceOptions.option')

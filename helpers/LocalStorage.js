@@ -209,12 +209,15 @@ function LocalStorage(entityName) {
 
         function setEntiry(entity) {
             var id = entity._id || entity.id || entity.Id || entity.public_id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
-            entity._rev = entity._rev || entity.__v;
-            
+            entity._rev = entity._rev || entity.__v;            
+
             var curRev = parseInt((all[id] && all[id]._rev || "0").toString().split('-')[0]);
             var docRev = parseFloat((entity._rev || "0").toString().split('-')[0]);
 
-            if(!entity._rev || curRev == docRev)
+            var curRevGuid = (all[id] && all[id]._rev || "").toString().split('-').splice(1).join('-');
+            var docRevGuid = (entity._rev || "0").toString().split('-').splice(1).join('-');
+
+            if(!docRev || curRevGuid == docRevGuid)
                 entity._rev = parseInt(1 + curRev) + "-" + uuidv4();
             else if(docRev > curRev){
                 if(Math.abs(docRev - curRev) < 1)

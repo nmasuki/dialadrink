@@ -7,7 +7,7 @@ var self = module.exports = new WorkProcessor(getWork, doWork);
 function getWork(next, done) {
     var filter = {
         orderDate:{ 
-            $gt: new Date('2017-01-01')
+            $gt: new Date(self.lastRun || '2017-01-01')
         }
     };
 
