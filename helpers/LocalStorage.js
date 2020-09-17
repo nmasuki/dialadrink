@@ -238,15 +238,15 @@ function LocalStorage(entityName) {
             }
 
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
-            all[id].modifiedDate = new Date();
             
             var userId = global.appUser && global.appUser._id || null;
             if(all[id].createdBy && all[id].createdBy._id)
                 all[id].createdBy = all[id].createdBy._id;
             
-            all[id].createdBy = all[id].createdBy || userId;
-            all[id].lastModifiedBy = userId;
+            entity.createdBy = all[id].createdBy || userId;
+            entity.lastModifiedBy = userId;
 
+            entity.modifiedDate = new Date();
             for (var i in entity){
                 if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false)){
                     if(/^phone|^mobile/i.test(i) && /^[\d\s]+$/.test(entity[i] || ""))
