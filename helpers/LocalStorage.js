@@ -223,7 +223,9 @@ function LocalStorage(entityName) {
                 if(Math.abs(docRev - curRev) < 1)
                     entity._rev = parseInt(1 + docRev) + "-" + uuidv4();
                 else
-                    entity._rev = parseInt(docRev) + "-" + uuidv4();                    
+                    entity._rev = parseInt(docRev) + "-" + uuidv4();
+                //TODO Log posible confict
+
             } else if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
                 var msg = ["Document conflict! ", id, all[id]._rev + " --> " + entity._rev].join("\n\t-");
                 errors.push({ _id: id, _rev: all[id]._rev, error: msg });
@@ -308,7 +310,6 @@ function LocalStorage(entityName) {
         var all = self.getAll(filter, sortBy) || [];
         return all[0];
     };
-
 
     self.get = function (id) {
         if (id == undefined)
