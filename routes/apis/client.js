@@ -69,7 +69,7 @@ function getClientByReq(req, res, next){
 router.get('/', function(req, res, next){
     var filter = {};
 
-    var page = parseInt(req.query.page || 1);
+    var page = parseInt(req.query.page || "1") || 1;
     var pageSize = parseInt(req.query.pageSize || 5000);
     var skip = (page - 1) * pageSize;
     console.log(
