@@ -663,47 +663,26 @@ Product.search = function (query, next, deepSearch) {
     var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, ".*?");
     var keyStr = query.cleanId().trim().escapeRegExp();
 
-    var nameRegex = new RegExp(nameStr + ".*?", "i");
-    var keyRegex = new RegExp(keyStr + ".*?", "i");
+    var nameRegex = new RegExp("^|\\W" + nameStr + ".*?", "i");
+    var keyRegex = new RegExp("^|\\W" + keyStr + ".*?", "i");
 
-    // Set locals
+    // Set filters
     var filters = {
-        "$or": [{
-                'category.key': new RegExp(keyStr + "$", "i")
-            }, {
-                key: keyRegex
-            },
+        "$or": [
+            { 'category.key': new RegExp(keyStr + "$", "i") },
+            { key: keyRegex },
+            { href: keyRegex },
+            { href: nameRegex },
+            { tags: keyRegex },
+            { tags: nameRegex },
+            { name: nameRegex },
+            { name: keyRegex },
+            { quantity: nameRegex },
+            { quantity: keyRegex },
             {
-                href: keyRegex
-            },
-            {
-                href: nameRegex
-            },
-            {
-                tags: keyRegex
-            },
-            {
-                tags: nameRegex
-            },
-            {
-                name: nameRegex
-            },
-            {
-                name: keyRegex
-            },
-            {
-                quantity: nameRegex
-            },
-            {
-                quantity: keyRegex
-            },
-            {
-                "$or": [{
-                        'company.name': keyRegex
-                    },
-                    {
-                        'company.name': nameRegex
-                    }
+                $or: [
+                    { 'company.name': keyRegex },
+                    { 'company.name': nameRegex }
                 ]
             }
         ]
