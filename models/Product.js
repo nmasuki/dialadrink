@@ -92,7 +92,7 @@ Product.add({
 
     popularity: {
         type: Number,
-        noedit: true
+        //noedit: true
     },
 
     category: {

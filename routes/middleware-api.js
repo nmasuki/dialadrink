@@ -80,8 +80,10 @@ function getSalesValue(res){
         var items = LocalStorage.getInstance("sale").getAll();        
 
         if (res.locals.app == "com.dialadrinkkenya.office") {
-            if (res.locals.lastCloseOfDay)
-                items = items.filter(d => d.createdDate > res.locals.lastCloseOfDay);
+            if (res.locals.lastCloseOfDay){
+                items = items.filter(d => d.createdDate >= res.locals.lastCloseOfDay);
+                console.log("Filtering sale from " + res.locals.lastCloseOfDay);
+            }
         } else if (res.locals.app == "com.dialadrinkkenya.rider") {
             if(res.locals.appUser)
                 items = items.filter(d => d.riderId == res.locals.appUser._id);

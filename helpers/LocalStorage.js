@@ -224,8 +224,7 @@ function LocalStorage(entityName) {
                     entity._rev = parseInt(1 + docRev) + "-" + uuidv4();
                 else
                     entity._rev = parseInt(docRev) + "-" + uuidv4();
-                //TODO Log posible confict
-
+                //TODO Log possible confict
             } else if (all[id] && all[id]._rev && entity._rev && curRev > docRev) {
                 var msg = ["Document conflict! ", id, all[id]._rev + " --> " + entity._rev].join("\n\t-");
                 errors.push({ _id: id, _rev: all[id]._rev, error: msg });
@@ -235,8 +234,10 @@ function LocalStorage(entityName) {
             if (entity.__v) delete entity.__v;       
             
             if(all[id] && entityName != "appuser"){
-                console.log("Updating " + entityName + 
-                "..\n\t _id:" + id + "\n\t_rev:" + all[id]._rev + " ---> " + entity._rev);
+                console.log(
+                    "Updating " + entityName + "..\n\t _id:" + id + ",", 
+                    "_rev:" + all[id]._rev + " ---> " + entity._rev
+                );
             }
 
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
@@ -253,7 +254,6 @@ function LocalStorage(entityName) {
                 if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false)){
                     if(/^phone|^mobile/i.test(i) && /^[\d\s]+$/.test(entity[i] || ""))
                         entity[i] = entity[i].cleanPhoneNumber();
-
                     else if(/^password/i.test(i)){
                         if(entity[i] && !/^(\$\w\w){3}/.test(entity[i] || ""))//Reset password
                             entity[i] = (entity[i] || "").toString().encryptPassword().encryptedPassword;
@@ -265,10 +265,7 @@ function LocalStorage(entityName) {
                 }
             }
 
-            updates.push({
-                _id: id,
-                _rev: entity._rev
-            });
+            updates.push({ _id: id, _rev: entity._rev });
         }
 
         if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i))
@@ -321,6 +318,5 @@ function LocalStorage(entityName) {
 }
 
 LocalStorage.getInstance = (e => new LocalStorage(e));
-
 module.exports = LocalStorage;
 
