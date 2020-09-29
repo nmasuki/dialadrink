@@ -285,7 +285,6 @@ Order.schema.virtual("deliveryAddress").get(function () {
     return ['address', 'building', 'houseNumber'].map(i => (order.delivery[i] || '').trim()).join(',').split(',').distinctBy(x => x.cleanId()).join(', ');
 });
 
-var clients = [];
 Order.schema.methods.updateClient = function (next) {
     var order = this;
     
@@ -331,10 +330,6 @@ Order.schema.methods.updateClient = function (next) {
                     if (err)
                         return console.warn(err);
 
-                    client = client || clients.find(c => c.phoneNumber == phoneNumber || 
-                        c.phoneNumber.cleanPhoneNumber() == phoneNumber.cleanPhoneNumber() || 
-                        c.email == email);
-
                     var saveClient = false;
                     if (client) {
                         if (order.clientIp && client.clientIps.indexOf(order.clientIp) < 0) {
@@ -367,14 +362,12 @@ Order.schema.methods.updateClient = function (next) {
                             order.client = client;
                             order.save();
 
-                            clients.push(client);
                             if (typeof next == "function")
                                 next();
                         });                        
                     }else{
                         order.client = client;
 
-                        clients.push(client);
                         if (typeof next == "function")
                             next();
                     }
@@ -587,7 +580,6 @@ Order.schema.methods.sendOrderNotification = function (next) {
     }
 };
 
-var clients = [];
 Order.schema.methods.toAppObject = function () {
     var order = this;
     var obj = Object.assign(this.toObject(), {
@@ -597,31 +589,23 @@ Order.schema.methods.toAppObject = function () {
         cart: this.cart && this.cart.length ? this.cart.map(c => c.toAppObject()): []
     });
 
-    obj.client = this.client && this.client.toAppObject? this.client.toAppObject(): new Client.model(this.client).toAppObject();
+    if(!obj.client){
+        if(order.client && order.client.toAppObject)
+            obj.client = order.client.toAppObject();
+    }
 
     var phoneNumber = this.delivery.phoneNumber.cleanPhoneNumber();
     var email = this.email;
 
-    if (obj.client && order.client)
-        clients.push(order.client);
-    else {
-        var client = clients.find(c => c.phoneNumber == phoneNumber || c.email == email);
-        if(client){
-            order.client = client._id;
-            order.save();
-            return obj;
-        }
-
+    if (!order.client){
         client = new Client.model(this.delivery);
-        clients.push(client);
-
         order.client = client;
         
         var filter = { $or: [] };
-        if(client.phoneNumber)
-            filter.$or.push({phoneNumber: client.phoneNumber.cleanPhoneNumber()});
-        if(client.email)
-            filter.$or.push({email: client.email});
+        if(phoneNumber)
+            filter.$or.push({phoneNumber: phoneNumber});
+        if(email)
+            filter.$or.push({email: email});
 
         if(filter.$or.length){
             Client.model.findOne(filter)
