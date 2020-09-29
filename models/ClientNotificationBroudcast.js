@@ -25,15 +25,15 @@ ClientNotificationBroudcast.add({
 	type: {type: Types.Select, options: 'email, sms, push', default: 'email', index: true},	
 	
 	message: {
-		pushTitle: {type: Types.Text, default:"" , dependsOn: {type: 'push'}},
-		pushBody: {type: Types.Html, default:"", wysiwyg: true, height: 150 , dependsOn: {type: 'push'}},
-		pushIcon: {type: Types.CloudinaryImage, folder: "notifications", dependsOn: {type: 'push'}},
+		pushTitle: { type: Types.Text, default:"" , dependsOn: {type: 'push'} },
+		pushBody: { type: Types.Html, default:"", wysiwyg: true, height: 150 , dependsOn: {type: 'push'} },
+		pushIcon: { type: Types.CloudinaryImage, folder: "notifications", dependsOn: {type: 'push'} },
 		
-		emailSubject: {type: Types.Text, default:"" , dependsOn: {type: 'email'}},
-		emailBody: {type: Types.Html, default:"", wysiwyg: true, height: 150 , dependsOn: {type: 'email'}},	
+		emailSubject: { type: Types.Text, default:"" , dependsOn: {type: 'email'} },
+		emailBody: { type: Types.Html, default:"", wysiwyg: true, height: 150 , dependsOn: {type: 'email'} },	
 		
-		smsBody: {type: Types.Text, default:"", multiline: true, height: 150 , dependsOn: {type: 'sms'}},
-		smsBalance: {type:Number, noedit: true , dependsOn: {type: 'sms'}},
+		smsBody: { type: Types.Text, default:"", multiline: true, height: 150 , dependsOn: {type: 'sms'} },
+		smsBalance: { type:Number, noedit: true , dependsOn: {type: 'sms'} },
 	},
 
 	target:{
@@ -131,6 +131,7 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 		else
 			sort[broudcast.target.by] = broudcast.target.by.contains("Date") ? -1 : 1;
 
+		console.log("Sort by", sort);
 		keystone.list("Client").model
 			.find(filter)
 			.sort(sort)
