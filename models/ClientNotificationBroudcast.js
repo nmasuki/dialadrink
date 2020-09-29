@@ -64,7 +64,7 @@ ClientNotificationBroudcast.schema.virtual("msg").get(function(){
 	if (broudcast.type == "push") {
 		message.title = broudcast.message.pushTitle || message.title;
 		message.body = broudcast.message.pushBody;
-		message.icon = broudcast.message.pushIcon;
+		//message.icon = broudcast.message.pushIcon;
 	}
 
 	return message;
@@ -91,6 +91,7 @@ ClientNotificationBroudcast.schema.pre('validate', function (next, obj, error) {
 
 ClientNotificationBroudcast.schema.pre('save', function (next) {
 	var broudcast = this;
+	var targetCount = broudcast.target.count || 10;
 	
 	if(!broudcast.isActive)
 		return next();
@@ -109,13 +110,17 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 				n.broudcast = broudcast;
 				n.type = broudcast.type;
 				n.message = broudcast.msg;
-
-				if (broudcast.status != "pending")
-					broudcast.status = "pending";
 					
 				n.save();
 			});
-			return next();
+
+			if (broudcast.status != "pending")
+				broudcast.status = "pending";
+			
+			if(notifications.length >= targetCount)
+				return next();
+				
+			targetCount = targetCount - notifications.length;
 		}		
 
 		var sort = {};
@@ -145,7 +150,7 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 							var count = 0;
 							return c.getSessions().then(sessions => {
 								var pushOrFCM = sessions.find(s => s.webpush || s.fcm);
-								if (pushOrFCM && ++count <= broudcast.target.count) {
+								if (pushOrFCM && ++count <= targetCount) {
 									var n = new ClientNotification.model({
 										client: c,
 										broudcast: broudcast,
@@ -168,7 +173,7 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 					clients = clients.filter(c => c.lastNotificationDate == null || c.lastNotificationDate < notifyDateThreashold);
 					
 					//Pick top matches
-					clients = clients.slice(0, broudcast.target.count || 2);
+					clients = clients.slice(0, targetCount || 2);
 
 					//Create Notification per user
 					clients.forEach(c => {

@@ -69,7 +69,7 @@ ClientNotification.schema.pre("save", function(next){
 });
 
 ClientNotification.schema.post("save", function(doc){
-	ClientNotification.schema.options.strict = false;
+	ClientNotification.schema.options.strict = true;
 });
 
 ClientNotification.defaultColumns = 'message.title, client, type|10%, status|10%, createdDate, scheduleDate';
