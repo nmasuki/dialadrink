@@ -390,9 +390,13 @@ Order.schema.methods.placeOrder = function (next) {
         order.state = 'placed';
         order.save((err) => {
             if (err)
-                console.warn(err);
-            else
-                console.log("Order updated!");
+                return console.warn(err);
+            
+            console.log("Order updated!");
+            if(order.client && (!order.client.lastOrderDate || order.client.lastOrderDate < order.orderDate)){
+                order.client.lastOrderDate = order.orderDate;
+                order.client.save();
+            }
         });
 
         if (typeof next == "function")
