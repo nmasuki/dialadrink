@@ -337,7 +337,7 @@ Order.schema.methods.updateClient = function (next) {
                             saveClient = true;
                         }
 
-                        if (client.modifiedDate < order.orderDate){
+                        if (order.orderDate > new Date('2020-10-01') && client.modifiedDate < order.orderDate){
                             for (var i in delivery) {
                                 if (delivery.hasOwnProperty(i) && client.hasOwnProperty(i) && (/[a-z]/i).test(i[0])) {
                                     if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {

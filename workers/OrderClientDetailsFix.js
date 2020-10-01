@@ -8,7 +8,8 @@ function getWork(next, done) {
     var filter = {
         orderDate:{ 
             $gt: new Date(self.lastRun || '2017-01-01')
-        }
+        },
+        'delivery.firstName': { $gt: "" }
     };
 
     Order.model.find(filter)
@@ -18,7 +19,7 @@ function getWork(next, done) {
             if(err)
                 return console.error("Error reading orders!", err || "Unknown");
 
-            orders = orders.filter(o => !o.client);
+            orders = orders.filter(o => !o.client || (!o.client.firstName && !o.client.lastName));
             if(orders.length)
                 console.log(orders.length + " require client detail fixing..");
             else
