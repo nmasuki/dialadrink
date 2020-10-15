@@ -41,6 +41,7 @@ module.exports = function MoveSMS(sender) {
                 error: function (xhr, status, error) {
                     console.error("Error getting SMS balance!", error);
                     reject(error);
+                    
                     if (typeof next == "function")
                         next(error);
                 }
