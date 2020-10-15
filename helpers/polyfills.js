@@ -294,8 +294,9 @@ if (!String.prototype.format)
                     var obj = Array.from(arguments).find(function (o) {
                         return typeof o != "string" && o && o[key];
                     }) || {};
-                    var value = obj[key] || arguments[key] || "";
-
+                    var value = obj[key] || arguments[key];
+                    
+                    if(value == undefined) value = "";
                     try {
                         if (ko && ko.unwrap)
                             value = ko.unwrap(value);
@@ -397,7 +398,7 @@ if (!String.prototype.escapeRegExp)
 
 if (!String.prototype.cleanId)
     String.prototype.cleanId = function () {
-        return this.toLowerCase().replace(/\W+/g, " ").trim().replace(/\W+/g, "-");
+        return this.toLowerCase().replace(/\W+/g, " ").trim().replace(/\W+/g, "-").substr(0, 64);
     };
 
 if (!String.prototype.sanitizePhoneNumber)
@@ -570,9 +571,10 @@ if (!Array.prototype.groupBy)
 
 
 if (!Array.prototype.distinctBy)
-    Array.prototype.distinctBy = function (compare) {
-        var groups = this.groupBy(compare);
-        return Object.keys(groups).map(k => groups[k][0]);
+    Array.prototype.distinctBy = function (clause, selector) {
+        var groups = this.groupBy(clause);
+        if(typeof selector != "function") selector = g => g[0];
+        return Object.values(groups).map(selector);
     };
 
 if (!Array.prototype.distinct)
@@ -719,7 +721,10 @@ Date.prototype.addMilliseconds = function(value){
 };
 
 Date.prototype.since = function(date){
-    var ms = this.getTime() - new Date(date).getTime();
+
+    var ms = date ? this.getTime() - new Date(date).getTime()
+        : new Date().getTime() - this.getTime();
+    
     var mapping = {
         ms: 1,
         secs: 1000,
@@ -731,11 +736,18 @@ Date.prototype.since = function(date){
         years: 1000 * 60 * 60 * 24 * 365.25,
     };
 
-    var val = ms, period = "ms";
-    for(var i in mapping){
-        period = i;
-        val = ms / mapping[i];
-        if(Math.abs(val) <= 10){
+    var values = Object.values(mapping), 
+        keys = Object.keys(mapping),
+        period = "ms",
+        val = ms;
+
+    for(var i in values){
+        var limit = values[i] || Infinity;
+
+        if(Math.abs(ms / values[i]) <= limit){
+            period = keys[i];
+            val = ms / values[i];
+
             if(period == "hours"){
                 var time = new Date().addHours(-val).toISOString(0, 10);
                 var today = new Date().toISOString(0, 10);
@@ -765,11 +777,13 @@ Date.prototype.since = function(date){
         }
     }
 
-    val = Math.round(val);
-    if(val == 1)
+    var rval = Math.round(Math.abs(val));
+    if(rval == 1)
         period = period.replace(/(ie)?s$/, "");
 
-    return "{0} {1} {2}".format(val, period, val < 0? "to come": "ago");
+    console.log(rval, val, period);
+
+    return "{0} {1} {2} {3}".format(val < 0? "in": "", rval, period, val < 0? "": "ago").trim();
 };
 
 Number.prototype.pad = function pad(width, z) {

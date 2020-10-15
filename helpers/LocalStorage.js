@@ -41,7 +41,7 @@ function tryParse(str){
     }
 }
 
-function toFilterFn(filter){
+function mongoFilterToFunction(filter){
     if(typeof filter == "string"){
         var regex = new RegExp("(" + filter.escapeRegExp() + ")", "ig");
         return (val => !filter || regex.test(JSON.stringify(val)));
@@ -69,31 +69,31 @@ function toFilterFn(filter){
 			if(filter.hasOwnProperty(i)){
 				switch(i){
 					case "$not":
-						matched = matched && !toFilterFn(filter[i])(val);
+						matched = matched && !mongoFilterToFunction(filter[i])(val);
 						break;
 					case "$or":
 						if(!Array.isArray(filter[i]))
 						   throw "Expecting an array at " + i;
 						
-						matched = matched &&  Array.from(filter[i]).some(f => toFilterFn(f)(val));
+						matched = matched &&  Array.from(filter[i]).some(f => mongoFilterToFunction(f)(val));
 						break;
 					case "$and":
 						if(!Array.isArray(filter[i]))
 							throw "Expecting an array at " + i;
 						
-						matched = matched &&  Array.from(filter[i]).every(f => toFilterFn(f)(val));
+						matched = matched &&  Array.from(filter[i]).every(f => mongoFilterToFunction(f)(val));
 						break;
 					case "$elemMatch":
 						if(!val || !Array.isArray(val))
 							throw `Expecting an array at '${i}' to evaluate!`;
 						
-						matched = matched && Array.from(val).some(v => toFilterFn(filter[i])(v));
+						matched = matched && Array.from(val).some(v => mongoFilterToFunction(filter[i])(v));
 						break;
 					case "$in":
 						if(!Array.isArray(filter[i]))
 							throw `Expecting an array at '${i}' to evaluate!`;
 						
-						matched = matched && Array.from(filter[i]).some(f => toFilterFn(f)(val));
+						matched = matched && Array.from(filter[i]).some(f => mongoFilterToFunction(f)(val));
 						break;
 					case "$gt":
 						matched = matched && val > filter[i];
@@ -164,7 +164,7 @@ function getAll(entityName) {
                             all[i][j] = tryDateParse(all[i][j]); 
                 }
             }
-        }            
+        } 
     } catch (e) {
         console.error(entityName + ".json", e);
     }
@@ -174,8 +174,11 @@ function getAll(entityName) {
 
 var saveAll = function (entityName, all) {
     return new Promise((resolve, reject) => {
-        console.log("Aquiring lock ", path.resolve(dataDir, entityName + ".lock"));
-        lockFile.lock(path.resolve(dataDir, entityName + ".lock"), function (err) {
+        var filePath = path.resolve(dataDir, entityName + ".json");
+        var lockFilePath = path.resolve(dataDir, entityName + ".lock");
+
+        console.log("Aquiring lock ", lockFilePath);
+        lockFile.lock(lockFilePath, function (err) {
             if (err){
                 console.warn("Could not aquire lock.", err);
                 setTimeout(function(){ 
@@ -184,9 +187,10 @@ var saveAll = function (entityName, all) {
                 }, 100);
             }
 
-            fs.writeFile(path.resolve(dataDir, entityName + ".json"), JSON.stringify(all, null, 2), function (err) {
-                console.log("Saved to file.", path.resolve(dataDir, entityName + ".json"), "releasing lock", path.resolve(dataDir, entityName + ".lock"));
-                lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));
+            
+            fs.writeFile(filePath, JSON.stringify(all, null, 2), function (err) {
+                console.log("Saved to file", filePath, "Releasing lock", lockFilePath);
+                lockFile.unlock(lockFilePath);
 
                 if(err)
                     return reject(err);
@@ -284,7 +288,7 @@ function LocalStorage(entityName) {
 
     self.getAll = function (filter, sortBy) {
         sortBy = sortBy || "";
-        var filtered = Object.values(getAll(entityName)).filter(toFilterFn(filter));
+        var filtered = Object.values(getAll(entityName)).filter(mongoFilterToFunction(filter));
         var dir = /(^|\s)DESC($|\s)/i.test(sortBy)? -1: 1;        
 
         var sortByFxns = sortBy.split(/[^\w\s]/).filter(s => !!s).map(sort =>{
@@ -304,16 +308,14 @@ function LocalStorage(entityName) {
     };
 
     self.getOne = function(filter, sortBy){
-        var all = self.getAll(filter, sortBy) || [];
-        return all[0];
+        return (self.getAll(filter, sortBy) || [])[0];
     };
 
     self.get = function (id) {
         if (id == undefined)
             return self.getAll();
 
-        var all = getAll(entityName);
-        return all[id];
+        return getAll(entityName)[id];
     };
 }
 

@@ -332,20 +332,24 @@ Order.schema.methods.updateClient = function (next) {
 
                     var saveClient = false;
                     if (client) {
-                        if (order.clientIp && client.clientIps.indexOf(order.clientIp) < 0) {
-                            client.clientIps.push(order.clientIp);
+                        var clientId = order.clientIp || delivery.clientIp;
+                        if (clientId && client.clientIps.indexOf(clientId) < 0) {
+                            client.clientIps.push(clientId);
                             saveClient = true;
                         }
 
                         if (order.orderDate < new Date('2020-10-01') || client.modifiedDate < order.orderDate){
-                            for (var i in delivery) {
-                                if (delivery.hasOwnProperty(i) && client.hasOwnProperty(i) && (/[a-z]/i).test(i[0])) {
-                                    if (delivery[i] && typeof delivery[i] != "function" && client[i] != delivery[i]) {
+                            var keys = Object.keys(delivery)
+                                .filter(i => (/[a-z]/i.test(i[0]) && typeof delivery[i] != "function"));
+                            
+                            keys.forEach(i => {
+                                if (delivery.hasOwnProperty(i)) {
+                                    if (delivery[i] && client[i] != delivery[i]) {
                                         client[i] = delivery[i];
                                         saveClient = true;
                                     }
-                                }                            
-                            }                            
+                                }
+                            });                         
                         }
                     } else {
                         saveClient = true;

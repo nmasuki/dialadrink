@@ -7,7 +7,7 @@ var self = module.exports = new WorkProcessor(getWork, doWork);
 function getWork(next, done) {
     var filter = {
         orderDate:{ 
-            $gt: new Date(self.lastRun || '2017-01-01')
+            $gt: new Date(self.worker.lastRun || '2017-01-01')
         },
         'delivery.firstName': { $gt: "" }
     };
@@ -20,10 +20,7 @@ function getWork(next, done) {
                 return console.error("Error reading orders!", err || "Unknown");
 
             orders = orders.filter(o => !o.client || (!o.client.firstName && !o.client.lastName));
-            if(orders.length)
-                console.log(orders.length + " require client detail fixing..");
-            else
-                console.log("No orders need fixing since " + filter.orderDate.$gt.toISOString());
+            console.log(orders.length + " orders need fixing since " + filter.orderDate.$gt.toISOString());
 
             next(null, orders, done);
         });
