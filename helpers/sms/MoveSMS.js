@@ -14,21 +14,29 @@ module.exports = function MoveSMS(sender) {
     var self = BaseSMS.call(this);
     var _sendSMS = self.sendSMS;
 
+    var _balance = 0;
     self.balance = function balance(next) {
+        if(_balance)
+            return Promise.resolve(_balance);
+
+        setTimeout(function(){ _balance = 0; }, 10000);
+
         return new Promise((resolve, reject) => {
             var url = apiUrl.format('balance');
             console.log("Getting SMS balance..");
+
             najax.get({
                 url: url,
                 rejectUnauthorized: false,
                 requestCert: true,
                 agent: false,
                 success: function (response) {
-                    var balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
-                    console.log("SMS balance:", balance);
-                    resolve(balance);
+                    _balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
+                    console.log("SMS balance:", _balance);
+                    resolve(_balance);
+
                     if (typeof next == "function")
-                        next(null, balance);
+                        next(null, _balance);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error getting SMS balance!", error);
