@@ -170,23 +170,29 @@ var cartUtil = function () {
             });
         },
 
-        getCart: function () {
-            return _cart;
-        },
+        getCart: function () { return _cart; },
 
         loadCharges: loadRegionData,
 
         getCharges: function(){
             var charges = {};
-
+            var categories = Object.values(self.getCart())
+                .map(function(c) { return c.product && c.product.category && c.product.category.key;})
+                .distinct();
+                
             //Delivery charges
             if (window.regionData && window.regionData.freeDeliveryThreashold) {
-                var categories = Object.values(app.cartUtil.getCart())
-                    .map(function(c) { return c.product && c.product.category && c.product.category.key;})
-                    .distinct();
-
-                if (self.totalCost() < window.regionData.freeDeliveryThreashold && categories.length == 1 && categories[0] == "extras")
-                    charges.deliveryCharges = window.regionData.deliveryCharges;                
+                if (self.totalCost() < window.regionData.freeDeliveryThreashold || (categories.length == 1 && categories[0] == "extras"))
+                    charges.deliveryCharges = window.regionData.deliveryCharges;  
+                else { 
+                    if(categories.length == 1 && categories[0] == "extras") {
+                        charges.deliveryCharges = 200;
+                    }    
+                }        
+            } else { 
+                if(categories.length == 1 && categories[0] == "extras") {
+                    charges.deliveryCharges = 210;
+                }    
             }
 
             //Transaction Charges
@@ -201,9 +207,10 @@ var cartUtil = function () {
 
                 if (mapping[paymentMode]){
                     var v = mapping[paymentMode].replace('%', '/100');
+                    
                     if(/[^\d\.]/.test(v))
                         v = eval(v) * self.totalCost();
-
+                    
                     charges.transactionCharges = v;
                 }
             }
@@ -247,6 +254,7 @@ var cartUtil = function () {
                 fail: function () {
                     console.warn("Added to cart fails. Could not reach Server");
                     app.showToast("Added to cart fails. Could not reach Server!", 1500, "red");
+
                     cartItem.pieces -= pieces;
                     self.updateView();
                     self.viewNotUpdated = false;
