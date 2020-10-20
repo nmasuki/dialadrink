@@ -663,9 +663,9 @@ Product.search = function (query, next, deepSearch) {
     var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, ".*?");
     var keyStr = query.cleanId().trim().escapeRegExp();
 
-    var nameRegex = new RegExp("[^|\\W]" + nameStr + ".*?", "i");
-    var keyRegex = new RegExp("[^|\\W]" + keyStr + ".*?", "i");
-
+    var nameRegex = new RegExp(nameStr + ".*?", "i");
+    var keyRegex = new RegExp(keyStr + ".*?", "i");
+    
     // Set filters
     var filters = {
         "$or": [
