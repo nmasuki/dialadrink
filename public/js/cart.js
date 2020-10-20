@@ -132,11 +132,10 @@ var cartUtil = function () {
 
     function fillIn(cartItem) {
         var priceOption = cartItem.product.priceOptions.find(function (po) {
-            return po.option.quantity === cartItem.quantity
+            return po.option.quantity === cartItem.quantity;
         });
 
-        var price = cartItem.price || (priceOption.offerPrice && priceOption.price > priceOption.offerPrice ?
-            priceOption.offerPrice : priceOption.price);
+        var price = cartItem.price || (priceOption.offerPrice && priceOption.price > priceOption.offerPrice ? priceOption.offerPrice : priceOption.price);
 
         cartItem._id = cartItem._id || cartItem.product._id + "|" + cartItem.quantity;
         cartItem.image = cartItem.image || cartItem.product.image;
@@ -445,7 +444,7 @@ var cartUtil = function () {
 
                 if (item.product.priceOptions) {
                     var priceOption = item.product.priceOptions.find(function (po) {
-                        return po.option.quantity === item.quantity
+                        return po.option.quantity === item.quantity;
                     });
                     view.find(".cart-currency").html(item.currency || (priceOption && priceOption.currency) || "KES");
                     view.find(".cart-price").html((item.pieces * item.price).formatNumber(2));
@@ -550,9 +549,9 @@ $(function () {
         if (cartId) {
             app.cartUtil.updateItem(cartId, pieces);
         } else {
-            console.warn("Could not get cart id!!")
+            console.warn("Could not get cart id!!");
         }
-    })
+    });
 
     $(document).on("click", ".pieces-plus", function () {
         var view = $(this).siblings(".pieces");
@@ -563,9 +562,9 @@ $(function () {
         if (cartId) {
             app.cartUtil.updateItem(cartId, pieces);
         } else {
-            console.warn("Could not get cart id!!")
+            console.warn("Could not get cart id!!");
         }
-    })
+    });
 
     $(document).on('change', '#change-quantity', function (e) {
         e.preventDefault();
@@ -580,7 +579,7 @@ $(function () {
 
         var opt = $(this).find(':selected').text().trim();
         $(".add-to-cart").data("qty", opt);
-    })
+    });
 
     $(document).on('click', '#checkout-form', function (e) {
         e.preventDefault();
@@ -613,13 +612,13 @@ $(function () {
                 url: '/cart/checkout/' + name + "/" + location + "/" + cell + "/" + email + "/" + street + "/" + building + "/" + houseno,
                 data: data,
                 success: function (data) {
-                    console.log(data)
+                    console.log(data);
                     if (data.state) {
                         window.location.href = "/order-placed";
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(XMLHttpRequest, textStatus, errorThrown)
+                    console.log(XMLHttpRequest, textStatus, errorThrown);
                 }
             });
         } //checkout if the form is filled
