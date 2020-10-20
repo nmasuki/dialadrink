@@ -83,17 +83,17 @@ function mongoFilterToFunction(filter){
 						
 						matched = matched &&  Array.from(filter[i]).every(f => mongoFilterToFunction(f)(val));
 						break;
-					case "$elemMatch":
-						if(!val || !Array.isArray(val))
-							throw `Expecting an array at '${i}' to evaluate!`;
-						
-						matched = matched && Array.from(val).some(v => mongoFilterToFunction(filter[i])(v));
-						break;
 					case "$in":
 						if(!Array.isArray(filter[i]))
 							throw `Expecting an array at '${i}' to evaluate!`;
 						
 						matched = matched && Array.from(filter[i]).some(f => mongoFilterToFunction(f)(val));
+						break;
+					case "$elemMatch":
+						if(!val || !Array.isArray(val))
+							throw `Expecting an array at '${i}' to evaluate!`;
+						
+						matched = matched && Array.from(val).some(v => mongoFilterToFunction(filter[i])(v));
 						break;
 					case "$gt":
 						matched = matched && val > filter[i];
