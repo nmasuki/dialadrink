@@ -968,7 +968,7 @@ this["templates"]["views"]["checkout"]["hbs"]["templates/views/checkout.hbs"] = 
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.enableMPesa : depth0),{"name":"if","hash":{},"fn":container.program(26, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                    </div>\n";
 },"22":function(container,depth0,helpers,partials,data) {
-    return "                            <div class=\"custom-control custom-radio\">\n                                <input id=\"cyberSource\" name=\"paymentMethod\" type=\"radio\" class=\"custom-control-input\" value=\"CyberSource\">\n                                <label class=\"custom-control-label\" for=\"cyberSource\">Pay online <small>(+2.5% processing fee)</small></label>\n                            </div>\n";
+    return "                            <div class=\"custom-control custom-radio\">\n                                <input id=\"cyberSource\" name=\"paymentMethod\" type=\"radio\" class=\"custom-control-input\" value=\"CyberSource\">\n                                <label class=\"custom-control-label\" for=\"cyberSource\">Pay online</label>\n                            </div>\n";
 },"24":function(container,depth0,helpers,partials,data) {
     return "                            <div class=\"custom-control custom-radio\">\n                                <input id=\"pesaPal\" name=\"paymentMethod\" type=\"radio\" class=\"custom-control-input\" value=\"PesaPal\">\n                                <label class=\"custom-control-label\" for=\"pesaPal\">Pay online <small>(+3% processing fee)</small></label>\n                            </div>\n";
 },"26":function(container,depth0,helpers,partials,data) {
