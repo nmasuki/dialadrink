@@ -19,7 +19,7 @@ exports = module.exports = function (done) {
                                 if(error){
                                     return fixNext(--index);
                                 }
-                                Product.model.find({_id: category._id})
+                                ProductCategory.model.find({_id: category._id})
                                     .exec((err, p) => {
                                         p.image = result;                                
                                         p.altImages = [result];
