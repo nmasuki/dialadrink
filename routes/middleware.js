@@ -189,9 +189,7 @@ exports.initPageLocals = function (req, res, next) {
 
     var regex = new RegExp("(" + cleanId.escapeRegExp() + ")", "i");
     return keystone.list('Page').model
-        .find({
-            key: regex
-        })
+        .find({ key: regex })
         .exec((err, pages) => {
             var page = pages.orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
