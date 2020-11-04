@@ -7,19 +7,22 @@ exports = module.exports = function (done) {
     Page.model.find({})
         .exec(function (err, pages) {
             var index = -1;
-            pages = pages.filter(p => !!p && p.image && p.image.secure_url && p.image.secure_url.toString().indexOf("/nmasuki/") > 0);
+            pages = pages.filter(p => !!p);
 
             (function fixNext(){
-                console.log(`Extracting client from order ${index + 1}/${pages.length}...`);
+                console.log(`Fixing page ${index + 2}/${pages.length}...`);
                 var page = pages[++index];                
                 if(page){
                     if (page.bannerImages){
-                        var bannerImages =  [], mobileBannerImages = [];
+                        var bannerImages =  [], mobileBannerImages = [], missed = {a:0,b:0};
                         page.bannerImages.forEach(image => {
                             cloudinary.v2.uploader.upload(image.secure_url, {public_id: "banners/" + page.name.cleanId()},
                             function (error, result) {
                                 if(error){
-                                    return fixNext(--index);
+                                    missed.a += 1;
+                                    console.error(error.message);
+                                    if(error.http_code != 404) index--;
+                                    return fixNext();
                                 }
 
                                 bannerImages.push(result);
@@ -32,15 +35,18 @@ exports = module.exports = function (done) {
                             });                
                         });
 
-                        page.bannerImages.forEach(image => {
+                        page.mobileBannerImages.forEach(image => {
                             cloudinary.v2.uploader.upload(image.secure_url, {public_id: "mobilebanners/" + page.name.cleanId()},
                             function (error, result) {
                                 if(error){
-                                    return fixNext(--index);
+                                    missed.b += 1;
+                                    console.error(error.message);                              
+                                    if(error.http_code != 404) index--;
+                                    return fixNext();
                                 }
 
-                                bannerImages.push(result);
-                                if(bannerImages.length >= page.bannerImages.length && 
+                                mobileBannerImages.push(result);
+                                if(missed.b + bannerImages.length >= page.bannerImages.length && 
                                     mobileBannerImages.length >= page.mobileBannerImages.length){
                                     page.bannerImages = bannerImages;
                                     page.mobileBannerImages = mobileBannerImages;
@@ -51,7 +57,7 @@ exports = module.exports = function (done) {
                     }
                         
                 } else {
-                    // done();
+                    //done();
                 }
             })();
             done();
