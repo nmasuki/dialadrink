@@ -167,9 +167,9 @@ module.exports = function () {
             context = this;
         }
 
-        delete option.height;
-        delete option.width;
-        delete option.crop;
+        delete options.height;
+        delete options.width;
+        delete options.crop;
 
         // safe guard to ensure context is never null
         context = context === null ? undefined : context;
