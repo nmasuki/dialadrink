@@ -21,6 +21,7 @@ exports = module.exports = function (done) {
                                 }
                                 ProductCategory.model.find({_id: category._id})
                                     .exec((err, p) => {
+                                        p = p[0];
                                         p.image = result;                                
                                         p.altImages = [result];
                                         p.save(err => {
