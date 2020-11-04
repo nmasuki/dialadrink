@@ -113,7 +113,7 @@ CartItem.schema.set('toObject', {
     transform: function (doc, ret, options) {
         var whitelist = ['cartId', 'date', 'pieces', 'state', 'product', 'image', 'quantity', 'price', 'offerPrice', 'currency', 'total'];
         whitelist.forEach(i => ret[i] = doc[i]);
-        if(doc.product._id)
+        if(doc && doc.product && doc.product._id)
             ret.productId = doc.product._id;
         return ret;
     }
