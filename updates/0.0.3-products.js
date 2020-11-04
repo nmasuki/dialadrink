@@ -163,7 +163,7 @@ function importProducts(_products, categories, subcategories, options, done) {
                                 product.save(err => {
                                     if (err)
                                         return console.log(err, product);
-                                    console.log("Added product " + product.name)
+                                    console.log("Added product " + product.name);
                                 });
                             });
                     return product;
