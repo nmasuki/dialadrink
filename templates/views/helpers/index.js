@@ -153,7 +153,7 @@ module.exports = function () {
     // Returns an src-string for a cloudinary image
 
     _helpers.cloudinaryUrl = function (context, options) {
-
+       
         if (typeof context == "string")
             return context;
 
@@ -166,6 +166,10 @@ module.exports = function () {
             // bind our default inherited scope into context
             context = this;
         }
+
+        delete option.height;
+        delete option.width;
+        delete option.crop;
 
         // safe guard to ensure context is never null
         context = context === null ? undefined : context;
