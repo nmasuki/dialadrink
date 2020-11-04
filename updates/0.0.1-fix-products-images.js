@@ -7,7 +7,7 @@ exports = module.exports = function (done) {
     Product.model.find({})
         .exec(function (err, products) {
             var index = -1;
-            products = products.filter(p => !!p);
+            products = products.filter(p => !!p && product.image && product.image.secure_url.indexOf("/nmasuki/") > 0);
 
             (function fixNext(){
                 console.log(`Extracting client from order ${index + 1}/${products.length}...`);
@@ -31,8 +31,9 @@ exports = module.exports = function (done) {
                                 });
                             });
                 } else {
-                    done();
+                    // done();
                 }
             })();
+            done();
         });
 };
