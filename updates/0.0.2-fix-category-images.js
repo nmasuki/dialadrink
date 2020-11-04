@@ -4,7 +4,7 @@ var ProductCategory = keystone.list('ProductCategory');
 
 exports = module.exports = function (done) {
     console.log("Extracting clients from categories...");
-    Product.model.find({})
+    ProductCategory.model.find({})
         .exec(function (err, categories) {
             var index = -1;
             categories = categories.filter(p => !!p && p.image && p.image.secure_url && p.image.secure_url.toString().indexOf("/nmasuki/") > 0);
