@@ -7,7 +7,7 @@ exports = module.exports = function (done) {
     Product.model.find({})
         .exec(function (err, products) {
             var index = -1;
-            products = products.filter(p => !!p && p.image && p.image.secure_url.indexOf("/nmasuki/") > 0);
+            products = products.filter(p => !!p && p.image && p.image.secure_url && p.image.secure_url.toString().indexOf("/nmasuki/") > 0);
 
             (function fixNext(){
                 console.log(`Extracting client from order ${index + 1}/${products.length}...`);
@@ -19,16 +19,20 @@ exports = module.exports = function (done) {
                                 if(error){
                                     return fixNext(--index);
                                 }
-                                product.image = result;                                
-                                product.altImages = [result];
-                                product.save(err => {
-                                    if (err){
-                                        console.log(err, product);
-                                        return fixNext(--index);
-                                    }
-                                    console.log("Fixed product image " + product.name);                                    
-                                    return fixNext();
-                                });
+                                Product.model.find({_id: product._id})
+                                    .exec((err, p) => {
+                                        p.image = result;                                
+                                        p.altImages = [result];
+                                        p.save(err => {
+                                            if (err){
+                                                console.log(err, product);
+                                                return fixNext(--index);
+                                            }
+                                            console.log("Fixed product image " + product.name);                                    
+                                            return fixNext();
+                                        });
+                                    });
+                                
                             });
                 } else {
                     // done();
