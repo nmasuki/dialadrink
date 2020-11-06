@@ -262,6 +262,9 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
         .sort({ index: 1 })
         .deepPopulate("parent.parent.parent")
         .exec((err, menus) => {
+            if(err || !menus)
+                return next(err || "Unknow error reading menus!");
+
             var menu = menus.orderBy(m => m.href.length).first();
 
             var breadcrumbs = [];
