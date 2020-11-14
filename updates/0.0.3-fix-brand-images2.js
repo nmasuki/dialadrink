@@ -16,7 +16,7 @@ exports = module.exports = function (done) {
                         cloudinary.v2.uploader.upload(brand.logo.secure_url, {public_id: "brands/" + brand.name.cleanId()},
                             function (error, result) {
                                 if(error)
-                                    return fixNext(--index);
+                                    return fixNext(index);
                                 
                                 ProductBrand.model.find({_id: brand._id})
                                     .exec((err, p) => {
