@@ -10,7 +10,7 @@ exports = module.exports = function (done) {
             products = products.filter(p => !!p && p.image && p.image.secure_url && p.image.secure_url.toString().indexOf("/nmasuki/") > 0);
 
             (function fixNext(){
-                console.log(`Extracting client from order ${index + 1}/${products.length}...`);
+                console.log(`Extracting product image ${index + 1}/${products.length}...`);
                 var product = products[++index];                
                 if(product){
                     if (product.image && product.image.secure_url)
