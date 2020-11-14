@@ -21,13 +21,12 @@ exports = module.exports = function (done) {
                                 if(error){
                                     missed.a += 1;
                                     console.error(error.message);
-                                    if(error.http_code != 404) index--;
-                                    return fixNext();
+                                    if(error.http_code != 404) return fixNext(--index);
                                 }
 
-                                bannerImages.push(result);
-                                if(bannerImages.length >= page.bannerImages.length && 
-                                    mobileBannerImages.length >= page.mobileBannerImages.length){
+                                if(result) bannerImages.push(result);
+                                if(missed.a + bannerImages.length >= page.bannerImages.length && 
+                                    missed.b + mobileBannerImages.length >= page.mobileBannerImages.length){
                                     page.bannerImages = bannerImages;
                                     page.mobileBannerImages = mobileBannerImages;
                                     return page.save(fixNext);
@@ -40,14 +39,13 @@ exports = module.exports = function (done) {
                             function (error, result) {
                                 if(error){
                                     missed.b += 1;
-                                    console.error(error.message);                              
-                                    if(error.http_code != 404) index--;
-                                    return fixNext();
+                                    console.error(error.message);
+                                    if(error.http_code != 404) return fixNext(--index);
                                 }
 
-                                mobileBannerImages.push(result);
-                                if(missed.b + bannerImages.length >= page.bannerImages.length && 
-                                    mobileBannerImages.length >= page.mobileBannerImages.length){
+                                if(result) mobileBannerImages.push(result);
+                                if(missed.a + bannerImages.length >= page.bannerImages.length && 
+                                    missed.b + mobileBannerImages.length >= page.mobileBannerImages.length){
                                     page.bannerImages = bannerImages;
                                     page.mobileBannerImages = mobileBannerImages;
                                     return page.save(fixNext);
