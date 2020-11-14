@@ -19,6 +19,7 @@ exports = module.exports = function (done) {
                         promises.push(new Promise((resolve) => {
                             var bannerImages =  [];
                             page.bannerImages.forEach((image, i) => {
+                                console.log("Uploading " + image.secure_url);
                                 cloudinary.v2.uploader.upload(image.secure_url, {public_id: "banners/" + page.name.cleanId()},
                                 function (error, result) {
                                     if(error){
@@ -39,6 +40,7 @@ exports = module.exports = function (done) {
                         promises.push(new Promise((resolve) => {
                             var mobileBannerImages =  [];
                             page.mobileBannerImages.forEach((image, j) => {
+                                console.log("Uploading " + image.secure_url);
                                 cloudinary.v2.uploader.upload(image.secure_url, {public_id: "mobilebanners/" + page.name.cleanId()},
                                 function (error, result) {
                                     if(error){
@@ -58,13 +60,14 @@ exports = module.exports = function (done) {
                         }));
                     
                         Promise.all(promises).then(() => { 
+                            console.log("Saving " + page.name);
                             page.save(fixNext);
                          });
                     }
                 } else {
-                    done();
+                    //done();
                 }
             })();
-            //done();
+            done();
         });
 };
