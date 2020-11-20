@@ -37,6 +37,7 @@ exports = module.exports = function (done) {
                                 });                
                             });
                         }));
+                        
                         promises.push(new Promise((resolve) => {
                             var mobileBannerImages =  [];
                             page.mobileBannerImages.forEach((image, j) => {
