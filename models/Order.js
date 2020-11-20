@@ -706,7 +706,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     deliveryDetails = deliveryDetails || {};
     var time = new Date().toISOString().split('T')[1].split(':')[0];
     if (deliveryDetails.email != process.env.DEVELOPER_EMAIL && (time >= 21 - 3 || time <= 5 - 3)) {
-        err = "Due to the national curfew in Kenya. We will not be taking any orders past 9PM. \r\nPlease stay at home to eradicate COVID-19!";
+        err = "Due to the national curfew in Kenya. We will not be taking any orders past 12:00 Midnight. \r\nPlease stay at home to eradicate COVID-19!";
         if(process.env.NODE_ENV == "production")
             return callback(err);
     }
