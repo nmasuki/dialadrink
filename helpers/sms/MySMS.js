@@ -8,8 +8,8 @@ function pickOneApiKey() {
     var firstOfTheMonth = (new Date()).toISOString().substr(0, 8) + "01";
 
     var monthLookUps = ls.getAll().filter(l => l.created_at >= firstOfTheMonth);
-    var keyIndex = new Date().getMonth() % 2 == 0 ? Math.ceil(monthLookUps.length / 10) : monthLookUps.length;
-
+    //var keyIndex = new Date().getMonth() % 2 == 0 ? Math.ceil(monthLookUps.length / 10) : monthLookUps.length;
+    var keyIndex = monthLookUps.length;
     return allKeys[keyIndex % allKeys.length];
 }
 
