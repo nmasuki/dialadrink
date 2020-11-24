@@ -6,7 +6,6 @@ var ls = new LocalStorage("lookups");
 function pickOneApiKey() {
     var allKeys = ['159eece6bd4f7fdc23916fd7778efa8c', '0c2315a3ad790d8d3b6b3a53ec8a4c75', '1845a28d63e1b10f9e73aa474d33d8fb', ];
     var firstOfTheMonth = (new Date()).toISOString().substr(0, 8) + "01";
-
     var monthLookUps = ls.getAll().filter(l => l.created_at >= firstOfTheMonth);
     //var keyIndex = new Date().getMonth() % 2 == 0 ? Math.ceil(monthLookUps.length / 10) : monthLookUps.length;
     var keyIndex = monthLookUps.length;

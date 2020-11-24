@@ -1,5 +1,4 @@
-var touch = false,
-    clickEv = 'click';
+var touch = false, clickEv = 'click';
 
 function getCookie(name) {
     var start = document.cookie.indexOf(name) + name.length + 1;
