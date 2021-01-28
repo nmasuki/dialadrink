@@ -37,12 +37,12 @@
             <div class="col-sm-4"></div>
             <div class="col-sm-4">
                 <h1 class="home_featured_title home-title page-title">
-                    {{#each h1s}}
-                        {{#ifeq @index 0 }}
-                        <span class="category-name">{{{this}}}</span>
+                    {{#each page.h1s}}
+                        {{#ifeq @index 0}}
+                            <span class="category-name">{{{this}}}</span>
                         {{/ifeq}}
                     {{else}}
-                        <span class="category-name">Popular Drinks</span>
+                        <span class="category-name">Popular Drinks.</span>
                     {{/each}}    
                         
                 </h1>
