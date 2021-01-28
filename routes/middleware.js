@@ -149,10 +149,10 @@ exports.initLocals = function (req, res, next) {
         res.locals.contactNumber = "+" + (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
 
         //Environment
-        //res.locals.env = keystone.get("env");
+        //res.locals.env = process.env.NODE_ENV;
 
         //To use uglified files in production
-        res.locals.dotmin = keystone.get("env") == "production" ? ".min" : "";
+        res.locals.dotmin = process.env.NODE_ENV == "production" ? ".min" : "";
 
         //Initiate Page details
         res.locals.page = {
@@ -168,7 +168,7 @@ exports.initLocals = function (req, res, next) {
         ]).then(function () {
             next();
             var ms = new Date().getTime() - istart.getTime();
-            if (keystone.get("env") == "development" || ms > 300)
+            if (process.env.NODE_ENV == "development" || ms > 300)
                 console.log("Initiated Locals in ", ms, "ms");
         });
     }
@@ -246,7 +246,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     var cachedPage = memCache ? memCache.get("__breadcrumbs__" + cleanId) : null;
 
     if (cachedPage) {
-        res.locals.breadcrumbs = (cachedPage || []).filter(b => b.label);
+        res.locals.breadcrumbs = (cachedPage || []).filter(b => b.label).distinctBy(b => b.label);
 
         if (typeof next == "function")
             next(err);

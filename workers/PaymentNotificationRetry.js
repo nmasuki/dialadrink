@@ -14,7 +14,7 @@ function getWork(next, done) {
         "payment.notificationSent": false
     };
 
-    if (keystone.get("env") == "development") {
+    if (process.env.NODE_ENV == "development") {
         //delete filter.orderDate;
         filter["delivery.phoneNumber"] = "0720805835";
     }
@@ -26,7 +26,7 @@ function getWork(next, done) {
             if (err)
                 return next(err)
 
-            if (keystone.get("env") == "development" && orders.length)
+            if (process.env.NODE_ENV == "development" && orders.length)
                 next(null, [orders[0]], done);
             else
                 next(null, orders, done);
