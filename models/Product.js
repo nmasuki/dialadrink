@@ -763,7 +763,7 @@ Product.getUIFilters = function (products, limit) {
                 p: p
             };
         }))
-        .groupBy(t => t.t));
+        .groupBy(t => t.t.cleanId()));
 
     var brandGroups = Object.values(products.filter(p => p.brand)
         .groupBy(p => p.brand._id));
