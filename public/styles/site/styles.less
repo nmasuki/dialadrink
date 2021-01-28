@@ -1240,12 +1240,14 @@ body .product-detail-content .quantity-wrapper .wrapper-title {
 }
 
 @media (max-width: 540px) {
-
-    .quantity-wp .wrapper-title,
-    body .modal-content .modal-body .quantity-wrapper .wrapper-title,
+    .quantity-wp .wrapper-title, body .modal-content .modal-body .quantity-wrapper .wrapper-title,
     body .product-detail-content .quantity-wrapper .wrapper-title {
         width: 100%;
         line-height: 30px
+    }
+
+    .desktop-only {
+        display: none;
     }
 }
 
@@ -1903,6 +1905,10 @@ body header.home1_theme_header .navigation_area ul.navigation_links>li.dropdown:
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {
+    .mobile-only {
+        display: none;
+    }
+
     body header.home1_theme_header .navigation_area ul.navigation_links>li.dropdown:not(.mega-menu)>.dropdown-menu li>.dropdown-menu {
         display: block !important;
         -ms-transform: scale(1, 0);
