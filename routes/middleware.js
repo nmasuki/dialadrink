@@ -44,7 +44,7 @@ function requestCache(duration, _key) {
 
 exports.globalCache = (req, res, next) => next(); //**/ requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
 
-exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
+exports.sessionCache = requestCache((process.env.CACHE_TIME || 10) * 60);
 
 /**
  Initialises the standard view locals
@@ -195,7 +195,7 @@ exports.initPageLocals = function (req, res, next) {
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
 
             if (memCache)
-                memCache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+                memCache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
@@ -233,7 +233,7 @@ exports.initBrandsLocals = function (req, res, next) {
             res.locals.groupedBrands = groups;
 
             if (memCache)
-                memCache.put("__popularbrands__", res.locals.groupedBrands, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+                memCache.put("__popularbrands__", res.locals.groupedBrands, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
         }
         if (typeof next == "function")
@@ -288,7 +288,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
                 }];
 
             if (memCache)
-                memCache.put("__breadcrumbs__" + cleanId, res.locals.breadcrumbs, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+                memCache.put("__breadcrumbs__" + cleanId, res.locals.breadcrumbs, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
@@ -326,7 +326,7 @@ exports.initTopMenuLocals = function (req, res, next) {
 
 
             if (memCache)
-                memCache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 30 * 60) * 60) * 1000);
+                memCache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
