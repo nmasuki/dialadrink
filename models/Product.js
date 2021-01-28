@@ -556,9 +556,32 @@ Product.schema.set('toJSON', {
 
 Product.register();
 
+Product.offerAndPopular = function(size, callback){
+    size = size || 8;
+    Product.findPublished({inStock: true, onOffer: true}).limit(size)
+        .exec(function(err, offers){
+            if (err || !offers)
+                return callback(err);
+
+            Product.findPublished({inStock: true})
+                .exec((err, popular) => {
+                    if (err || !offers)
+                        return callback(err);
+
+                    var data = { 
+                        popular: popular.filter(p => !offers.any(x => x.id == p.id)).slice(0, size), 
+                        offers: offers
+                    };
+
+                    callback(err, data);
+                });
+        });
+
+};
+
 Product.findPublished = function (filter, callback) {
     filter = Object.assign(filter || {}, { state: 'published'  });
-    var a = keystone.list('Product').model.find(filter)
+    var a = Product.model.find(filter)
         .sort({ popularity: -1 })
         .populate('brand')
         .populate('category')
@@ -727,7 +750,7 @@ Product.search = function (query, next, deepSearch) {
 
         } else
             next(err, products.orderByDescending(p => p.hitsPerWeek));
-    })
+    });
 };
 
 Product.getUIFilters = function (products, limit) {

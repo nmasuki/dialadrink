@@ -586,3 +586,7 @@ Number.prototype.pad = function pad(width, z) {
     var n = this + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join(z || '0') + n;
 };
+
+Promise.prototype.always = Promise.prototype.finally;
+Promise.prototype.done = Promise.prototype.then;
+Promise.prototype.fail = Promise.prototype.catch;

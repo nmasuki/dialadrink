@@ -32,7 +32,7 @@ function getWork(next, done) {
             if (err)
                 return next(err);
 
-            if (keystone.get("env") == "development" && notifications.length)
+            if (process.env.NODE_ENV == "development" && notifications.length)
                 next(null, [notifications[0]], done);
             else
                 next(null, notifications, done);

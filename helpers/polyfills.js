@@ -818,4 +818,6 @@ if (!Promise.any)
         });
     };
 
-
+Promise.prototype.always = Promise.prototype.finally;
+Promise.prototype.done = Promise.prototype.then;
+Promise.prototype.fail = Promise.prototype.catch;

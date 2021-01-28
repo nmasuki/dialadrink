@@ -806,7 +806,7 @@ Order.model.find().sort({ 'orderNumber': -1 })
         if (data[0] && data[0].orderNumber)
             autoId = data[0].orderNumber;
 
-        if (keystone.get("env") != "production")
+        if (process.env.NODE_ENV != "production")
             autoId -= 52;
 
     });

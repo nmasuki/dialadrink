@@ -169,7 +169,7 @@ var cartUtil = function () {
             });
         },
 
-        getCart: function () { return _cart; },
+        getCart: function () { return _cart || {}; },
 
         loadCharges: loadRegionData,
 

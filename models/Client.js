@@ -465,7 +465,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
     //Hack to make use of nodemailer..
     email.transport = require("../helpers/mailer");
 
-    if (keystone.get("env") == "development")
+    if (process.env.NODE_ENV == "development")
         subject = "(Testing) " + subject;
 
     var emailOptions = {
@@ -483,7 +483,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
 
     if (!copyAdmins) {
         if (!emailOptions.cc.length) {
-            if (keystone.get("env") == "production")
+            if (process.env.NODE_ENV == "production")
                 emailOptions.cc.push("simonkimari@gmail.com");
             else
                 emailOptions.cc.push(process.env.DEVELOPER_EMAIL);
@@ -521,7 +521,7 @@ Client.schema.methods.sendEmailNotification = function (subject, body, locals = 
                     });
                 else {
                     console.warn("No admin have the receivesOrders right!");
-                    if (keystone.get("env") == "production")
+                    if (process.env.NODE_ENV == "production")
                         emailOptions.cc.push("simonkimari@gmail.com");
                     else
                         emailOptions.cc.push(process.env.DEVELOPER_EMAIL);

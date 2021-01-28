@@ -17,7 +17,7 @@ function getWork(next) {
         }]
     };
 
-    if(false && process.env.NODE_ENV == "development"){
+    if(false && process.env.NODE_ENV != "production"){
         filter.$and.push({
             session: /(254720805835|254723688108)/
         });
