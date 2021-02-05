@@ -72,6 +72,7 @@ router.get("/:product", function (req, res) {
                 if (!Object.keys(res.locals.groupedBrands).length)
                     delete res.locals.groupedBrands;
 
+                product.tags = product.tags.distinctBy(t => t.cleanId());
                 product.findSimilar((err, similar) => {
                     if (similar) {
                         locals.similar = similar.slice(0, 6);
