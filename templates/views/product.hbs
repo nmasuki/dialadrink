@@ -1,9 +1,9 @@
 <link rel="preload" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 
 {{#with product}}
-    <div class="container" id="product-section"
-         data-product="{{_id}}"
-         itemscope itemtype="http://schema.org/Product">
+    <div class="container" id="product-section" 
+        data-product="{{_id}}" itemscope itemtype="http://schema.org/Product">
+        
         <div class="row">
             <div class="col-md-4">
                 <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit'}})">
@@ -31,13 +31,13 @@
                     {{/each}}
                 </div>
             </div>
-            <div class="col-md-6">
 
+            <div class="col-md-4">
                 <div class="row">
                     <div class="col-md-12">
                         <h1 style="margin: 0; color: black !important;" itemprop="name">{{{name}}}</h1>
                     </div>
-                </div><!-- end row-->
+                </div>
 
                 <div class="row">
                     <div class="col-md-5 bottom-rule">
@@ -70,37 +70,11 @@
                             </select>
                         </div>
                     {{else}}
-                        <div class="col-md-5">
+                        <div class="col-md-5" style="text-align: right;">
                             <h2 style="margin: 5px 0 0 0;">{{{quantity}}}</h1>
                         </div>
                     {{/ifgt}}
                 </div>
-
-                {{#if alcoholContent}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            Alcohol content <span class="monospaced label label-info">{{alcoholContent}}%</span>
-                        </div>
-                    </div>
-                {{/if}}
-
-                {{#if countryOfOrigin}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            Country Of Origin <span class="monospaced label label-info">{{countryOfOrigin}}</span>
-                        </div>
-                    </div>
-                {{/if}}
-                
-                {{#if brand.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            <p class="description">
-                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
-                            </p>
-                        </div>
-                    </div>
-                {{/if}}
                 
                 <div class="row">
                     <div class="col-md-4 text-left">
@@ -140,19 +114,6 @@
                 </div><!-- end row -->
                 
                 <div class="row">
-                    <div class="col-md-12">
-                        {{#each tags}}
-                            <span class="label label-primary">
-                                <a href="/{{{cleanId this}}}">{{{this}}}</a>
-                            </span>
-                        {{/each}}
-                        {{#if no}}
-                            <span class="monospaced">No.{{no}}</span>
-                        {{/if}}
-                    </div>
-                </div><!-- end row -->
-
-                <div class="row">
                     <div class="col-md-12 bottom-rule top-10">
                         {{#if ../page.canonical}}	
                             <!-- Facebook -->
@@ -165,11 +126,12 @@
                                 <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
                             </a>
                             
-                            <!-- Google+ -->
+                            <!-- Google+ 
                             <a href="https://plus.google.com/share?url={{../page.canonical}}" target="_blank">
                                 <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/google.png" alt="Google" />
                             </a>	
-                                                
+                            -->
+                                    
                             <!-- LinkedIn -->
                             <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{../page.canonical}}" target="_blank">
                                 <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
@@ -185,7 +147,55 @@
                     </div>
                 </div>
                 <!-- end row -->
+            </div>
+            <div class="col-md-4" style="padding-left: 20px !important;">
+                {{#if alcoholContent}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            Alcohol Content: <span class="monospaced label label-info">{{alcoholContent}}%</span>
+                        </div>
+                    </div>
+                {{/if}}
 
+                {{#if countryOfOrigin}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            Country of Origin: <span class="monospaced label label-info">{{countryOfOrigin}}</span>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                {{#if brand.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                            Brand: <a href="/{{cleanId brand.name}}"><span class="monospaced label label-info">{{brand.name}}</span></a>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                {{#if subCategory.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                            Sub Category: <a href="/{{cleanId subCategory.name}}"><span class="monospaced label label-info">{{subCategory.name}}</span></a>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                <br/>
+                <div class="row">
+                    <div class="col-md-12">
+                        {{#each tags}}
+                            <span class="label label-primary">
+                                <a href="/{{{cleanId this}}}">{{{this}}}</a>
+                            </span>
+                        {{/each}}
+                        {{#if no}}
+                            <span class="monospaced">No.{{no}}</span>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <br/>
                 <div class="row">
                     {{#if ../contactNumber}}
                         <div class="col-md-12 top-10">
@@ -196,8 +206,11 @@
                             </p>
                         </div>
                     {{/if}}
-                </div><!-- end row -->
+                </div>
             </div>
+        </div>
+
+        <div class="row">        
             <div class="col-md-12 more-details">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">

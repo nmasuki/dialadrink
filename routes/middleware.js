@@ -343,9 +343,8 @@ exports.flashMessages = function (req, res, next) {
         warning: req.flash('warning'),
         error: req.flash('error'),
     };
-    res.locals.messages = _.some(flashMessages, function (msgs) {
-        return msgs.length;
-    }) ? flashMessages : false;
+    
+    res.locals.messages = _.some(flashMessages, msgs =>  msgs.length) ? flashMessages : false;
 
     next();
 };
