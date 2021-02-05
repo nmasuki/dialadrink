@@ -147,18 +147,6 @@
                     </div>
                 </div>
                 <!-- end row -->
-
-                <div class="row">
-                    {{#if ../contactNumber}}
-                        <div class="col-md-12 top-10">
-                            <p>
-                                <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
-                                To order by telephone, please call
-                                <a href="tel:{{../contactNumber}}">{{../contactNumber}}</a>
-                            </p>
-                        </div>
-                    {{/if}}
-                </div><!-- end row -->
             </div>
             
             <div class="col-md-4" style="text-align: right;">
@@ -197,6 +185,18 @@
                             <span class="monospaced">No.{{no}}</span>
                         {{/if}}
                     </div>
+                </div>
+
+                <div class="row">
+                    {{#if ../contactNumber}}
+                        <div class="col-md-12 top-10">
+                            <p>
+                                <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+                                To order by telephone, please call
+                                <a href="tel:{{../contactNumber}}">{{../contactNumber}}</a>
+                            </p>
+                        </div>
+                    {{/if}}
                 </div>
             </div>
         </div>
