@@ -1,9 +1,9 @@
 <link rel="preload" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 
 {{#with product}}
-    <div class="container" id="product-section"
-         data-product="{{_id}}"
-         itemscope itemtype="http://schema.org/Product">
+    <div class="container" id="product-section" 
+        data-product="{{_id}}" itemscope itemtype="http://schema.org/Product">
+        
         <div class="row">
             <div class="col-md-4">
                 <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit'}})">
@@ -31,13 +31,13 @@
                     {{/each}}
                 </div>
             </div>
-            <div class="col-md-6">
 
+            <div class="col-md-4">
                 <div class="row">
                     <div class="col-md-12">
                         <h1 style="margin: 0; color: black !important;" itemprop="name">{{{name}}}</h1>
                     </div>
-                </div><!-- end row-->
+                </div>
 
                 <div class="row">
                     <div class="col-md-5 bottom-rule">
@@ -75,32 +75,6 @@
                         </div>
                     {{/ifgt}}
                 </div>
-
-                {{#if alcoholContent}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            Alcohol content <span class="monospaced label label-info">{{alcoholContent}}%</span>
-                        </div>
-                    </div>
-                {{/if}}
-
-                {{#if countryOfOrigin}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            Country Of Origin <span class="monospaced label label-info">{{countryOfOrigin}}</span>
-                        </div>
-                    </div>
-                {{/if}}
-                
-                {{#if brand.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            <p class="description">
-                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
-                            </p>
-                        </div>
-                    </div>
-                {{/if}}
                 
                 <div class="row">
                     <div class="col-md-4 text-left">
@@ -198,6 +172,37 @@
                     {{/if}}
                 </div><!-- end row -->
             </div>
+            
+            <div class="col-md-4">
+                {{#if alcoholContent}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            Alcohol content <span class="monospaced label label-info">{{alcoholContent}}%</span>
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if countryOfOrigin}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            Country Of Origin <span class="monospaced label label-info">{{countryOfOrigin}}</span>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                {{#if brand.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                            <p class="description">
+                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
+                            </p>
+                        </div>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+
+        <div class="row">        
             <div class="col-md-12 more-details">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
