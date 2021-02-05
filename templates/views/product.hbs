@@ -114,19 +114,6 @@
                 </div><!-- end row -->
                 
                 <div class="row">
-                    <div class="col-md-12">
-                        {{#each tags}}
-                            <span class="label label-primary">
-                                <a href="/{{{cleanId this}}}">{{{this}}}</a>
-                            </span>
-                        {{/each}}
-                        {{#if no}}
-                            <span class="monospaced">No.{{no}}</span>
-                        {{/if}}
-                    </div>
-                </div><!-- end row -->
-
-                <div class="row">
                     <div class="col-md-12 bottom-rule top-10">
                         {{#if ../page.canonical}}	
                             <!-- Facebook -->
@@ -139,11 +126,12 @@
                                 <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
                             </a>
                             
-                            <!-- Google+ -->
+                            <!-- Google+ 
                             <a href="https://plus.google.com/share?url={{../page.canonical}}" target="_blank">
                                 <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/google.png" alt="Google" />
                             </a>	
-                                                
+                            -->
+                                    
                             <!-- LinkedIn -->
                             <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{../page.canonical}}" target="_blank">
                                 <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
@@ -173,7 +161,7 @@
                 </div><!-- end row -->
             </div>
             
-            <div class="col-md-4">
+            <div class="col-md-4" style="text-align: right;">
                 {{#if alcoholContent}}
                     <div class="row">
                         <div class="col-md-12">
