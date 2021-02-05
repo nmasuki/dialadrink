@@ -165,7 +165,7 @@
                 {{#if alcoholContent}}
                     <div class="row">
                         <div class="col-md-12">
-                            Alcohol content <span class="monospaced label label-info">{{alcoholContent}}%</span>
+                            Alcohol content: <span class="monospaced label label-info">{{alcoholContent}}%</span>
                         </div>
                     </div>
                 {{/if}}
@@ -173,7 +173,7 @@
                 {{#if countryOfOrigin}}
                     <div class="row">
                         <div class="col-md-12">
-                            Country Of Origin <span class="monospaced label label-info">{{countryOfOrigin}}</span>
+                            Country Of Origin: <span class="monospaced label label-info">{{countryOfOrigin}}</span>
                         </div>
                     </div>
                 {{/if}}
@@ -181,12 +181,23 @@
                 {{#if brand.name}}
                     <div class="row" style="padding-bottom: 3px;">
                         <div class="col-md-12">
-                            <p class="description">
-                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
-                            </p>
+                            Brand: <a href="/{{cleanId brand.name}}"><span class="monospaced label label-info">{{brand.name}}</span></a>
                         </div>
                     </div>
                 {{/if}}
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        {{#each tags}}
+                            <span class="label label-primary">
+                                <a href="/{{{cleanId this}}}">{{{this}}}</a>
+                            </span>
+                        {{/each}}
+                        {{#if no}}
+                            <span class="monospaced">No.{{no}}</span>
+                        {{/if}}
+                    </div>
+                </div>
             </div>
         </div>
 
