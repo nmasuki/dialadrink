@@ -712,6 +712,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
             return callback(err);
     }
     
+    deliveryDetails.phoneNumber = deliveryDetails.phoneNumber.cleanPhoneNumber();
     var filter = {
         orderDate: {
             $gte: today
@@ -719,11 +720,11 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         $or: [
             {"delivery.clientIp": deliveryDetails.clientIp},
             {"delivery.email": deliveryDetails.email},
-            {"delivery.phoneNumber": deliveryDetails.phoneNumber},            
+            {"delivery.phoneNumber": deliveryDetails.phoneNumber}, 
+            {"delivery.locationMeta": deliveryDetails.locationMeta}           
         ]
     };
 
-    deliveryDetails.phoneNumber = deliveryDetails.phoneNumber.cleanPhoneNumber();
     var blacklisted = ["2540111993103"];
 
     Order.model.find(filter)
