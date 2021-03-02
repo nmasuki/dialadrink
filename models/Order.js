@@ -704,95 +704,104 @@ Order.register();
 
 Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     deliveryDetails = deliveryDetails || {};
+    var today = new Date(new Date().toISOString().substr(0, 10));    
     var time = new Date().toISOString().split('T')[1].split(':')[0];
-    if (deliveryDetails.email != process.env.DEVELOPER_EMAIL && (time >= 21 - 3 || time <= 5 - 3)) {
+    if (deliveryDetails.email != process.env.DEVELOPER_EMAIL && (time >= 24 - 3 || time <= 5 - 3)) {
         err = "Due to the national curfew in Kenya. We will not be taking any orders past 12:00 Midnight. \r\nPlease stay at home to eradicate COVID-19!";
         if(process.env.NODE_ENV == "production")
             return callback(err);
     }
-
-    promo = promo || {};
-
-    var chargesKeys = Object.keys(deliveryDetails).filter(k => ["charge", "commission"].any(c => k.toLowerCase().contains(c)));
-    var charges = chargesKeys.sum(k => deliveryDetails[k]);
-
-    var subtotal = cart.sum(function (c) {
-        var price = c.pieces * c.price;
-        if (c.offerPrice && c.price > c.offerPrice)
-            price = c.pieces * c.offerPrice;
-        return price;
-    });
-
-    var discount = Math.round(promo.discountType == "percent" ?
-        cart.sum(c => c.offerPrice && c.price > c.offerPrice ? 0 : c.pieces * c.price) * promo.discount / 100:
-        promo.discount || 0
-    );
-
-    var cartItems = cart.map(item => {
-        delete item._id;
-        return new CartItem.model(item);
-    });
-
-    var order = new Order.model({
-        cart: cartItems,
-        paymentMethod: deliveryDetails.paymentMethod == "Cash" ? "Cash on Delivery" : deliveryDetails.paymentMethod,
-        payment: {
-            method: deliveryDetails.paymentMethod,
-            subtotal: subtotal,
-            amount: subtotal + charges - discount
-        },
-        promo: promo,
-        clientIp: deliveryDetails.clientIp,
-        location: deliveryDetails.location,
-        delivery: deliveryDetails,
-    });
-
-    order.deliveryLocation = deliveryDetails.location || deliveryDetails.deliveryLocation;    
-    var c = { chargesName: [], chargesAmount: [] };
-    chargesKeys.forEach(k => {
-        try{
-            if(k && deliveryDetails[k]){
-                c.chargesName.push(k);
-                c.chargesAmount.push(deliveryDetails[k]);
+    
+    Order.model.find({orderDate: {$gte: today}, clientIp: deliveryDetails.clientIp})
+        .exec((err, data) => {
+            if(!err && data.length >= 5){
+                err = "We have detected suspicious activities from your location. Please call to complete your order!";
+                if(process.env.NODE_ENV == "production")
+                    return callback(err);
             }
-        } catch(e){
-            console.warn(e);
-        }
-    });
 
-    if(c.chargesName.length)
-        order.charges.chargesName = c.chargesName;
-    if(c.chargesAmount.length)
-        order.charges.chargesAmount = c.chargesAmount;
+            promo = promo || {};
+            var chargesKeys = Object.keys(deliveryDetails).filter(k => ["charge", "commission"].any(c => k.toLowerCase().contains(c)));
+            var charges = chargesKeys.sum(k => deliveryDetails[k]);
 
-    return Promise.all(cartItems.map(c => c.save())).then(function () {
-        return order.save((err) => {
-            if (err)
-                return console.warn(`Error while saving Order ${order.orderNumber}! ${err}`);
+            var subtotal = cart.sum(function (c) {
+                var price = c.pieces * c.price;
+                if (c.offerPrice && c.price > c.offerPrice)
+                    price = c.pieces * c.offerPrice;
+                return price;
+            });
 
-            order.cart = cartItems;
-            if (order.payment.method == "PesaPal" || order.payment.method == "CyberSource") {
-                var paymentUrl = [keystone.get('url'), 'payment', order.orderNumber].filter(p => p).map(p => p.toString().trim('/')).join('/');
-                pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
-                    order.payment.url = paymentUrl;
-                    if (!err)
-                        order.payment.shortUrl = shortUrl;
+            var discount = Math.round(promo.discountType == "percent" ?
+                cart.sum(c => c.offerPrice && c.price > c.offerPrice ? 0 : c.pieces * c.price) * promo.discount / 100:
+                promo.discount || 0
+            );
 
-                    order.save(() => {
+            var cartItems = cart.map(item => {
+                delete item._id;
+                return new CartItem.model(item);
+            });
+
+            var order = new Order.model({
+                cart: cartItems,
+                paymentMethod: deliveryDetails.paymentMethod == "Cash" ? "Cash on Delivery" : deliveryDetails.paymentMethod,
+                payment: {
+                    method: deliveryDetails.paymentMethod,
+                    subtotal: subtotal,
+                    amount: subtotal + charges - discount
+                },
+                promo: promo,
+                clientIp: deliveryDetails.clientIp,
+                location: deliveryDetails.location,
+                delivery: deliveryDetails,
+            });
+
+            order.deliveryLocation = deliveryDetails.location || deliveryDetails.deliveryLocation;    
+            var c = { chargesName: [], chargesAmount: [] };
+            chargesKeys.forEach(k => {
+                try{
+                    if(k && deliveryDetails[k]){
+                        c.chargesName.push(k);
+                        c.chargesAmount.push(deliveryDetails[k]);
+                    }
+                } catch(e){
+                    console.warn(e);
+                }
+            });
+
+            if(c.chargesName.length)
+                order.charges.chargesName = c.chargesName;
+            if(c.chargesAmount.length)
+                order.charges.chargesAmount = c.chargesAmount;
+
+            return Promise.all(cartItems.map(c => c.save())).then(function () {
+                return order.save((err) => {
+                    if (err)
+                        return console.warn(`Error while saving Order ${order.orderNumber}! ${err}`);
+
+                    order.cart = cartItems;
+                    if (order.payment.method == "PesaPal" || order.payment.method == "CyberSource") {
+                        var paymentUrl = [keystone.get('url'), 'payment', order.orderNumber].filter(p => p).map(p => p.toString().trim('/')).join('/');
+                        pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
+                            order.payment.url = paymentUrl;
+                            if (!err)
+                                order.payment.shortUrl = shortUrl;
+
+                            order.save(() => {
+                                order.placeOrder();
+                                if (typeof callback == "function")
+                                    callback(err, order);
+                            });
+                        });
+                    } else {
                         order.placeOrder();
                         if (typeof callback == "function")
-                            callback(err, order);
-                    });
-                });
-            } else {
-                order.placeOrder();
-                if (typeof callback == "function")
-                    callback(null, order);
-            }
+                            callback(null, order);
+                    }
 
-            return order;
+                    return order;
+                });
+            });
         });
-    });
 };
 
 //Some random number from which to start order order Ids
