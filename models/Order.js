@@ -727,10 +727,9 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         .exec((err, data) => {
             if(data) console.log("Orders today:" + data.length);
             if(err || data && data.length >= 5){
-                err = err || "We have detected suspicious activities from your location. Please call to complete your order!";
+                err = err || "<p style='color:#ff8100'>We have detected suspicious activities from your location. Please call to complete your order!</p>";
                 console.log(deliveryDetails.phoneNumber, err);
-                if(process.env.NODE_ENV == "production")
-                    return callback(err);
+                return callback(err);
             }
 
             promo = promo || {};
