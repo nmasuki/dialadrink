@@ -12,7 +12,8 @@ var CyberSourceStatusMap = {
 	"INVALID": "Cancelled",
 	"FAILED": "Cancelled",
 	"DECLINE": "Cancelled",
-	"ERROR": "Cancelled"
+	"ERROR": "Cancelled",
+	"CANCEL": "Cancelled"
 };
 var router = keystone.express.Router();
 
