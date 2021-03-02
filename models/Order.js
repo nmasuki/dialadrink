@@ -723,10 +723,12 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         ]
     };
 
+    var blacklisted = ["2540111993103"];
+
     Order.model.find(filter)
         .exec((err, data) => {
             if(data) console.log("Orders today:" + data.length);
-            if(err || data && data.length >= 5){
+            if(blacklisted.contains(deliveryDetails.phoneNumber) ||  err || data && data.length >= 5){
                 err = err || "<p style='color:#ff8100'>We have detected suspicious activities from your location. Please call to complete your order!</p>";
                 console.log(deliveryDetails.phoneNumber, err);
                 return callback(err);
