@@ -712,10 +712,23 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
             return callback(err);
     }
     
-    Order.model.find({orderDate: {$gte: today}, clientIp: deliveryDetails.clientIp})
+    var filter = {
+        orderDate: {
+            $gte: today
+        }, 
+        $or:{
+            "delivery.clientIp": deliveryDetails.clientIp,
+            "delivery.email": deliveryDetails.email,
+            "delivery.phoneNumber": deliveryDetails.phoneNumber,            
+        }
+    };
+
+    Order.model.find(filter)
         .exec((err, data) => {
+            if(data) console.log("Orders today:" + data.length);
             if(!err && data.length >= 5){
                 err = "We have detected suspicious activities from your location. Please call to complete your order!";
+                console.log(deliveryDetails.phoneNumber, err);
                 if(process.env.NODE_ENV == "production")
                     return callback(err);
             }
