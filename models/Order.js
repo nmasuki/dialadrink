@@ -727,7 +727,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
 
     Order.model.find(filter)
         .exec((err, data) => {
-            if(data) console.log("Orders today:" + data.length);
+            if(data) console.log(filter.$or.map(x => Object.values(x)[0]).join(','), "Orders today:", data.length);
             if(blacklisted.contains(deliveryDetails.phoneNumber) ||  err || data && data.length >= 5){
                 err = err || "<p style='color:#ff8100'>We have detected suspicious activities from your location. Please call to complete your order!</p>";
                 console.log(deliveryDetails.phoneNumber, err);
