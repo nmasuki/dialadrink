@@ -723,6 +723,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
         ]
     };
 
+    deliveryDetails.phoneNumber = deliveryDetails.phoneNumber.cleanPhoneNumber();
     var blacklisted = ["2540111993103"];
 
     Order.model.find(filter)
