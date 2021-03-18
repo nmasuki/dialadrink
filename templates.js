@@ -3070,7 +3070,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.altImages : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0, blockParams, depths),"inverse":container.program(4, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "                </div>\n            </div>\n\n            <div class=\"col-md-4\">\n                <div class=\"row\">\n                    <div class=\"col-md-12\">\n                        <h1 style=\"margin: 0; color: black !important;\" itemprop=\"name\">"
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</h1>\n                    </div>\n                </div>\n\n                <div class=\"row\">\n                    <div class=\"col-md-5 bottom-rule\">\n                        <h2 style=\"margin-top:5px\" itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                            <span itemprop=\"priceCurrency\">"
+    + "</h1>\n                    </div>\n                </div>\n\n                <div class=\"row\">\n                    <div class=\"col-md-5 bottom-rule\">\n                        <h2 style=\"margin-top:5px; white-space:nowrap;\" itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                            <span itemprop=\"priceCurrency\">"
     + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
     + "</span>\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.percentOffer : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0, blockParams, depths),"inverse":container.program(8, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
@@ -3182,21 +3182,25 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
 },"10":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1;
 
-  return "                        <div class=\"col-md-2\" style=\"padding-top: 4px;\">Option:</div>\n                        <div class=\"col-md-3\">\n                            <select id=\"change-quantity\" class=\"quantity\" style=\"width: 134px; height: 40px;\">\n"
+  return "                        <div class=\"col-md-2\" style=\"padding-top: 4px;\">Option:</div>\n                        <div class=\"col-md-3\" class=\"change-quantity\">                            \n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(11, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                            </select>\n                        </div>\n";
+    + "                        </div>\n";
 },"11":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "                                    <option data-offer=\""
+  return "                                <div data-offer=\""
     + alias4(((helper = (helper = helpers.offerPrice || (depth0 != null ? depth0.offerPrice : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"offerPrice","hash":{},"data":data}) : helper)))
-    + "\" value=\""
+    + "\" data-value=\""
     + alias4(((helper = (helper = helpers.price || (depth0 != null ? depth0.price : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"price","hash":{},"data":data}) : helper)))
-    + "\" "
+    + "\" class=\"option "
     + ((stack1 = (helpers.ifeq || (depth0 && depth0.ifeq) || alias2).call(alias1,(depths[1] != null ? depths[1].price : depths[1]),(depth0 != null ? depth0.price : depth0),{"name":"ifeq","hash":{},"fn":container.program(12, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ">\n                                        "
+    + "\">\n                                    "
+    + alias4(container.lambda((depths[1] != null ? depths[1].currency : depths[1]), depth0))
+    + " "
+    + alias4((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
+    + " "
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
-    + "\n                                    </option>\n";
+    + "\n                                </div>\n";
 },"12":function(container,depth0,helpers,partials,data) {
     return "selected";
 },"14":function(container,depth0,helpers,partials,data) {
