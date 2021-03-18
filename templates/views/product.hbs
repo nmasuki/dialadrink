@@ -1,4 +1,26 @@
 <link rel="preload" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+<style type='text/css'>
+.price-options {
+    background: lightblue;
+    width: 100%;
+    margin-top: 5px;
+    white-space: nowrap;
+    padding: 5px;
+    margin: 2px;
+    border: 1px solid;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    margin: 4px 0 0;
+    margin-top: 1px \9;
+    line-height: normal;
+    height: 20px;
+    width: 16px;
+}
+
+</style>
 
 {{#with product}}
     <div class="container" id="product-section" 
@@ -40,38 +62,50 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-5 bottom-rule">
-                        <h2 style="margin-top:5px; white-space:nowrap;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
-                            <span itemprop="priceCurrency">{{currency}}</span>
-                            {{#if percentOffer}}
-                                <span>
-                                    <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                        <span>{{formatNumber price}}</span>
+                    <div class="col-md-12 bottom-rule">
+                        {{#ifgt options.length 1}}
+                            <div class="change-quantity">  
+                                {{#each options}}
+                                    <label style="font-size: 24px;" class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
+                                        style="margin-top:5px; white-space:nowrap;" 
+                                        itemscope="itemscope" itemprop="offers" itemtype="http://schema.org/Offer">
+                                        <input type="radio" class="option" name="priceOption" value="{{quantity}}" {{#ifeq ../price price}}checked{{/ifeq}}/>
+                                        <span itemprop="priceCurrency">{{currency}}</span>
+                                        {{#ifgt price offerPrice}}
+                                            <span itemprop="price" content="{{offerPrice}}" class="product-price">
+                                                <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                                    <span>{{formatNumber price}}</span>
+                                                </span>
+                                                <span>
+                                                    {{formatNumber offerPrice}}
+                                                </span>
+                                            </span>
+                                        {{else}}
+                                            <span itemprop="price" content="{{price}}" class="product-price">{{formatNumber price}}</span>
+                                        {{/ifgt}}                                        
+                                        &nbsp;
+                                        <span itemprop="priceQuantity">{{quantity}}</span>                                        
+                                    </label>
+                                {{/each}}
+                            </div>
+                        {{else}}
+                            <h2 style="margin-top:5px; white-space:nowrap;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+                                <span itemprop="priceCurrency">{{currency}}</span>
+                                {{#if percentOffer}}
+                                    <span>
+                                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                            <span>{{formatNumber price}}</span>
+                                        </span>
+                                        <span itemprop="price" content="{{offerPrice}}" class="product-price" id="product-price">
+                                            {{formatNumber offerPrice}}
+                                        </span>
                                     </span>
-                                    <span itemprop="price" content="{{offerPrice}}" class="product-price" id="product-price">
-                                        {{formatNumber offerPrice}}
-                                    </span>
-                                </span>
-                            {{else}}
-                                <span itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
-                            {{/if}}
-                        </h2>
+                                {{else}}
+                                    <span itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
+                                {{/if}}
+                            </h2>
+                        {{/ifgt}}
                     </div>
-
-                    {{#ifgt options.length 1}}
-                        <div class="col-md-2" style="padding-top: 4px;">Option:</div>
-                        <div class="col-md-3" class="change-quantity">                            
-                            {{#each options}}
-                                <div data-offer="{{offerPrice}}" data-value="{{price}}" class="option {{#ifeq ../price price}}selected{{/ifeq}}">
-                                    {{../currency}} {{formatNumber price}} {{quantity}}
-                                </div>
-                            {{/each}}
-                        </div>
-                    {{else}}
-                        <div class="col-md-5" style="text-align: right;">
-                            <h2 style="margin: 5px 0 0 0;">{{{quantity}}}</h1>
-                        </div>
-                    {{/ifgt}}
                 </div>
                 
                 <div class="row">

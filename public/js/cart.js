@@ -566,7 +566,7 @@ $(function () {
         }
     });
 
-    $(document).on('click', '.change-quantity .option', function (e) {
+    $(document).on('change', '.price-options .option', function (e) {
         e.preventDefault();
 
         var quantityId = $(this).data('option');
@@ -577,7 +577,7 @@ $(function () {
         var price_ = $(this).data("value");
         $('#product-price').html(price_);
 
-        var opt = $(this).find(':selected').text().trim();
+        var opt = $(this).val();
         $(".add-to-cart").data("qty", opt);
     });
 
