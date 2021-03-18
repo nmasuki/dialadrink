@@ -28,11 +28,11 @@
                 <a href="{{productUrl href}}" style="font-size: 15px; color: black;">{{{name}}}</a>
             </div>            
 
-            <span>{{quantity}}</span><br>
-            <span itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+            <div itemscope itemprop="offers" itemtype="http://schema.org/Offer">
                 <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
                 <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
                 <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
+                <span itemprop="priceQuantity">{{quantity}}</span>   
                 <span itemprop="priceCurrency">{{currency}}</span>
                 {{#if percentOffer}}
                     <span>
@@ -43,31 +43,45 @@
                     </span>
                 {{else}}
                     <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
-                {{/if}}
-            </span>
+                {{/if}}             
+            </div>
+
             <br>
             <div class="dropdown">
                 {{#if inStock}}
-                    <image src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png" 
-                        alt="Add to Cart"
-                        class="add-to-cart" 
-                        data-qty="{{quantity}}" data-product="{{_id}}" 
-                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
-                        {{#ifgt options.length 1}}
-                            <span class="dropdown">
-                                <i class="fa fa-angle-down"></i>
-                            </span>
-                        {{/ifgt}}
-                    </image>
                     {{#ifgt options.length 1}}
+                        <image src="https://res.cloudinary.com/dyc0ieeyu/image/upload/v1616081598/buynow2_eluftf.png" 
+                            alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="{{_id}}" 
+                            style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
+                            {{#ifgt options.length 1}}
+                                <span class="dropdown" style="left: -39px;">
+                                    <i style="color: white;" class="fa fa-angle-down"></i>
+                                </span>
+                            {{/ifgt}}
+                        </image>                        
                         <div class="dropdown-content">
                             {{#each options }}
                                 <a href="#" class="add-to-cart"
                                     data-qty="{{quantity}}" data-product="{{../_id}}">
-                                    {{quantity}} - {{currency}} {{price}}
+                                    <span>{{quantity}}</span>
+                                    {{#ifgt price offerPrice}}
+                                        <span>
+                                            <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                                <span>{{formatNumber price}}</span>
+                                            </span>
+                                            <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                                        </span>
+                                    {{else}}
+                                        <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
+                                    {{/ifgt}}
                                 </a>
                             {{/each}}
                         </div>
+                    {{else}}
+                        <image src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png" 
+                            alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="{{_id}}" 
+                            style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
+                        </image>
                     {{/ifgt}}
                 {{else}}
                     <image src="https://res.cloudinary.com/nmasuki/image/upload/soldout.png"
