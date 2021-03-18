@@ -566,15 +566,15 @@ $(function () {
         }
     });
 
-    $(document).on('change', '#change-quantity', function (e) {
+    $(document).on('click', '.change-quantity .option', function (e) {
         e.preventDefault();
 
-        var quantityId = $(this).find(':selected').data('option');
+        var quantityId = $(this).data('option');
         console.log(quantityId);
 
         $('#product-data').attr('data-product', quantityId);
 
-        var price_ = $(this).val();
+        var price_ = $(this).data("value");
         $('#product-price').html(price_);
 
         var opt = $(this).find(':selected').text().trim();
