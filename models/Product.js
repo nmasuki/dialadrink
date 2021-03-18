@@ -683,7 +683,7 @@ Product.findByOption = function (filter, callback) {
 };
 
 Product.search = function (query, next, deepSearch) {
-    var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, "\\W");
+    var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, "\\W*");
     var keyStr = query.cleanId().trim().escapeRegExp();
 
     var nameRegex = new RegExp("(^|\\W)(" + nameStr + ")", "i");
