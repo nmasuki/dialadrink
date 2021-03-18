@@ -174,6 +174,7 @@ function search(req, res, next) {
             if (!Object.keys(res.locals.groupedBrands).length)
                 delete res.locals.groupedBrands;
 
+            product.tags = (product.tags || []).distinctBy(t => (t || "").cleanId());
             product.findSimilar((err, products) => {
                 if (products) {
                     locals.similar = products
