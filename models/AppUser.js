@@ -75,7 +75,7 @@ AppUser.schema.virtual('canAccessKeystone').get(function () {
 // authorization for http request
 AppUser.schema.virtual("httpAuth")
     .get(function () {
-        var str = [user.phoneNumber, user.password, new Date().getTime()].join(':')
+        var str = [this.phoneNumber, this.password, new Date().getTime()].join(':');
         return Buffer.from(str).toString('hex');
     });
 
