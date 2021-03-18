@@ -15,7 +15,7 @@ exports = module.exports = function (done) {
             p.tags.push("extras");
             p.save();
         });
-    });
+    }); 
 
     done();
 };
