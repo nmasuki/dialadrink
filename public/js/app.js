@@ -83,7 +83,6 @@ var app = {
 
 		Chartist.Line('#chartHours', dataSales, optionsSales, responsiveSales);
 
-
 		var data = {
 			labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 			series: [
@@ -229,8 +228,8 @@ var app = {
 					"visibility": "simplified"
 				}]
 			}]
+		};
 
-		}
 		var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
 		var marker = new google.maps.Marker({
@@ -289,9 +288,7 @@ var app = {
 			var footerHeight = this.$element.find('.modal-footer').outerHeight() || 0;
 			var maxHeight = contentHeight - (headerHeight + footerHeight);
 
-			this.$content.css({
-				'overflow': 'hidden'
-			});
+			this.$content.css({ 'overflow': 'hidden' });
 
 			this.$element
 				.find('.modal-body').css({
@@ -311,15 +308,10 @@ var app = {
 			}
 		});
 
-		modal.modal({
-			keyboard: false,
-			backdrop: 'static'
-		});
+		modal.modal({ keyboard: false, backdrop: 'static' });
 
 		timeout = timeout || 10000;
-		x = setTimeout(function () {
-			modal.modal("hide");
-		}, timeout, 'hide')
+		x = setTimeout(function () { modal.modal("hide"); }, timeout, 'hide');
 
 		return modal;
 	},
@@ -342,20 +334,18 @@ var app = {
 		if(option.buttons){
 			var footer = modal.find(".btn-primary").parent();
 			footer.html("");
-
-			for(var i in option.buttons){
+			Object.keys(option.buttons).forEach(function(i) {
 				if(option.buttons[i]){
 					var btn = $('<button class="btn">' + i + '</button>');
 					footer.append(btn);
 					
 					if(typeof option.buttons[i] == "function")
-						btn.on('click', function(){ 
+						btn.on('click', function() { 
 							if(typeof option.buttons[i] == "function" && option.buttons[i].apply(this, arguments))
 								modal.find(".btn-primary").hide();
 						});
 				}
-			}
-
+			});
 		} else {
 			if (typeof option.ok === "function")
 				modal.find(".btn-primary").on("click", function () {
