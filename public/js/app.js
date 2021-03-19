@@ -345,16 +345,18 @@ var app = {
 
 			for(var i in option.buttons){
 				if(option.buttons[i]){
-					var btn = $('<button class="btn" id="submitBtn">' + i + '</button>');
+					var btn = $('<button class="btn">' + i + '</button>');
 					footer.append(btn);
 					
 					if(typeof option.buttons[i] == "function")
-						btn.on('click', option.buttons[i]);
+						btn.on('click', function(){ 
+							if(typeof option.buttons[i] == "function" && option.buttons[i].apply(this, arguments))
+								modal.find(".btn-primary").hide();
+						});
 				}
 			}
 
 		} else {
-
 			if (typeof option.ok === "function")
 				modal.find(".btn-primary").on("click", function () {
 					option.ok.apply(this, arguments);
@@ -387,6 +389,8 @@ var app = {
 			keyboard: false,
 			backdrop: 'static'
 		});
+		
+		return modal;
 	},
 
 	showNotification: function (msg, from, align) {
