@@ -508,15 +508,15 @@ $(function () {
             .format(opt.quantity, opt.currency, opt.price, i == 0? 'checked': '');
         }).join("<br/>");
 
-        var quantityHtml = `<div class="product-qty">
-            <span class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 40px;padding: 3px 3px 3px 5px;color: black !important;">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-            </span>
-            <input value="1" class="pieces btn btn-default btn-lg btn-qty" style="background-color:white;width: 48px;height: 40px;padding: 5px 4px 4px 4px;color: black !important;">
-            <span class="pieces-minus btn btn-default btn-lg btn-qty" style="width: 40px;padding: 3px 3px 3px 5px;color: black !important;">
-                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-            </span>
-        </div>`;
+        var quantityHtml = '<div class="product-qty">' +
+            '<span class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 40px;padding: 3px 3px 3px 5px;color: black !important;">' +
+            '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>' +
+            '</span>' +
+            '<input value="1" class="pieces btn btn-default btn-lg btn-qty" style="background-color:white;width: 48px;height: 40px;padding: 5px 4px 4px 4px;color: black !important;">' +
+            '<span class="pieces-minus btn btn-default btn-lg btn-qty" style="width: 40px;padding: 3px 3px 3px 5px;color: black !important;">' +
+            '    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>' +
+            '</span>' +
+        '</div>';
 
         var html = $(`<div class='row price-options'>
                         <div class='col-md-2 col-sm-2'>{0}</div>
