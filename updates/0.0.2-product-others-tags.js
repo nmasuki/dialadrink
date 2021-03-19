@@ -11,7 +11,7 @@ exports = module.exports = function (done) {
             console.log(`Found ${products.length} products with tag '${tag}'`);
             products.forEach(p => {
                 p.tags = p.tags || [];
-                p.tags.push("Extras"); 
+                p.tags.push("Others");
                 p.save(err => {
                     if(err) return console.warn("Error!!", err);
                     console.log("Saved " + p.name);
