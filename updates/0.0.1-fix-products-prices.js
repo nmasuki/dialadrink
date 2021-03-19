@@ -10,7 +10,7 @@ exports = module.exports = function (done) {
 
             products.forEach(product => {
                 if(product){
-                    var options = product.options.filter(p => p.offerPrice == 0);
+                    var options = product.options.filter(p => p._id && p.offerPrice == 0);
                     if (options && options.length){
                         options.forEach(p => { p.offerPrice = null; });
                         product.save();
