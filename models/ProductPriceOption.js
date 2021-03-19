@@ -22,12 +22,22 @@ ProductPriceOption.add({
     optionText: {type: String, hidden: true}
 });
 
+ProductPriceOption.schema.virtual('percentOffer').get(function () {
+    if (this && !!this.offerPrice && this.price > this.offerPrice) {
+        var discount = this.price - this.offerPrice;
+        var percent = Math.round(100 * discount / cheapestOption.price);
+        return percent || null;
+    }
+
+    return null;
+});
+
 ProductPriceOption.relationship({ref: 'Product', path: 'product', refPath: 'priceOptions'});
 ProductPriceOption.relationship({ref: 'ProductOption', path: 'priceOptions', refPath: 'priceOptions'});
 
 ProductPriceOption.schema.virtual('label').get(function () {
     return `${this.optionText || ''} (${this.currency || 'KES'} ${this.price || ''})`;
-})
+});
 
 ProductPriceOption.schema.pre('save', function (next) {
     var ppo = this;
@@ -58,8 +68,7 @@ ProductPriceOption.schema.pre('save', function (next) {
                 thisOption.optionText = ppo.optionText;
 
                 product.save();
-
-                next(err);
+                next();
             });
     }
 
@@ -75,7 +84,7 @@ ProductPriceOption.schema.pre('save', function (next) {
 
                 ppo.optionText = option.quantity;
                 updateProduct(next);
-            })
+            });
     } else if (ppo.optionText) {
         var filter = {"$or": [{quantity: ppo.optionText.trim()}, {"key": ppo.optionText.cleanId()}]};
         keystone.list("ProductOption").model.findOne(filter)
@@ -87,7 +96,7 @@ ProductPriceOption.schema.pre('save', function (next) {
                 ppo.optionText = option.quantity;
                 ppo.option = option;
                 updateProduct(next);
-            })
+            });
     } else {
         next();
     }
