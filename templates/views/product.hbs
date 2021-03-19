@@ -68,7 +68,7 @@ input[type="radio"], input[type="checkbox"] {
                                     <label style="font-size: 24px;" class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
                                         style="margin-top:5px; white-space:nowrap;" 
                                         itemscope="itemscope" itemprop="offers" itemtype="http://schema.org/Offer">
-                                        <input type="radio" class="option" name="priceOption" {{#ifeq ../price price}}checked{{/ifeq}}
+                                        <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" {{#ifeq ../price price}}checked{{/ifeq}}
                                             value="{{quantity}}" data-value="{{price}}" data-option="{{../id}}|{{quantity}}"/>
                                         <span itemprop="priceCurrency">{{currency}}</span>
                                         {{#ifgt price offerPrice}}
