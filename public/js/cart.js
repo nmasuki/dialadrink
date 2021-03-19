@@ -501,7 +501,7 @@ $(function () {
         var product = JSON.parse($("#json" + id).text());
         console.log(product);
 
-        var productHtml = "<a href='{1}'><img src='{0}' style='width: 100%'/></a>"
+        var productHtml = "<a href='{1}'><img src='{0}' style='width: 100%; max-width: 90px;'/></a>"
             .format(product.image.secure_url, product.href);
         var optionsHtml = product.options.map(function(opt, i) {
              return "<label><input type='radio' class='option' name='priceOption' value='{0}' {3}/> {0} - {1} {2}</label>"
