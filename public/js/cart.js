@@ -518,11 +518,11 @@ $(function () {
             '</span>' +
         '</div>';
 
-        var html = $(`<div class='row price-options'>
-                        <div class='col-md-2 col-sm-2'>{0}</div>
-                        <div class='col-md-6 col-sm-6'>{1}</div>
-                        <div class='col-md-4 col-sm-4'>{2}</div>
-                    </div>`
+        var html = $('<div class="row price-options">' +
+                        '<div class="col-md-2 col-sm-2">{0}</div>' +
+                        '<div class="col-md-6 col-sm-6">{1}</div>' +
+                        '<div class="col-md-4 col-sm-4">{2}</div>' +
+                    '</div>'
                     .format(productHtml, optionsHtml, quantityHtml, product.name));
 
         var modal;
