@@ -503,8 +503,10 @@ $(function () {
 
         var productHtml = "<a href='{1}'><img src='{0}' style='width: 100%'/></a>"
             .format(product.image.secure_url, product.href);
-        var optionsHtml = product.options.map((opt, i) => "<label><input type='radio' class='option' name='priceOption' value='{0}' {3}/> {0} - {1} {2}</label>"
-            .format(opt.quantity, opt.currency, opt.price, i == 0? 'checked': '')).join("<br/>");
+        var optionsHtml = product.options.map(function(opt, i) {
+             return "<label><input type='radio' class='option' name='priceOption' value='{0}' {3}/> {0} - {1} {2}</label>"
+            .format(opt.quantity, opt.currency, opt.price, i == 0? 'checked': '');
+        }).join("<br/>");
 
         var quantityHtml = `<div class="product-qty">
             <span class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 40px;padding: 3px 3px 3px 5px;color: black !important;">
