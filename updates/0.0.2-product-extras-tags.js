@@ -8,7 +8,6 @@ exports = module.exports = function (done) {
     tags.forEach(tag => {
         Product.search(tag, (err, products) => {
             if(err) return console.warn("Error!!", err);
-                    
             console.log(`Found ${products.length} products with tag '${tag}'`);
             products.forEach(p => {
                 p.tags.push("extras"); 
