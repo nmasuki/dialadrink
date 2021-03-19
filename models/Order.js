@@ -719,7 +719,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
             $gte: today
         }, 
         $or: [
-            {"delivery.clientIp": deliveryDetails.clientIp},
+            //{"delivery.clientIp": deliveryDetails.clientIp},
             {"delivery.email": deliveryDetails.email},
             {"delivery.phoneNumber": deliveryDetails.phoneNumber}, 
             {"delivery.locationMeta": deliveryDetails.locationMeta}           
