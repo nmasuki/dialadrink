@@ -719,10 +719,10 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
             $gte: today
         }, 
         $or: [
-            //{"delivery.clientIp": deliveryDetails.clientIp},
-            {"delivery.email": deliveryDetails.email || '1234'},
-            {"delivery.phoneNumber": deliveryDetails.phoneNumber || '1234'}, 
-            {"delivery.locationMeta": deliveryDetails.locationMeta || '1234'}           
+            {"delivery.clientIp": deliveryDetails.clientIp || '<<blank>>'},
+            {"delivery.email": deliveryDetails.email || '<<blank>>'},
+            {"delivery.phoneNumber": deliveryDetails.phoneNumber || '<<blank>>'}, 
+            {"delivery.locationMeta": deliveryDetails.locationMeta || '<<blank>>'}           
         ]
     };
 
@@ -730,8 +730,8 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
 
     Order.model.find(filter)
         .exec((err, data) => {
-            if(data) console.log(filter.$or.map(x => Object.values(x)[0]).join(','), "Orders today:", data.length);
-            if(blacklisted.contains(deliveryDetails.phoneNumber) ||  err || data && data.length >= 10){
+            if(data) console.log(filter.$or.map(x => Object.values(x)[0]).join(','), `Orders today: ${data.length}, '${today}'`);
+            if(blacklisted.contains(deliveryDetails.phoneNumber) ||  err || data && data.length > 5){
                 err = err || "<p style='color:#ff8100'>We have detected suspicious activities from your location. Please call to complete your order!</p>";
                 console.log(deliveryDetails.phoneNumber, err);
                 return callback(err);
