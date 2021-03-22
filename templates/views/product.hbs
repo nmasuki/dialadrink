@@ -71,7 +71,7 @@ input[type="radio"], input[type="checkbox"] {
                                         <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" {{#ifeq ../price price}}checked{{/ifeq}}
                                             value="{{quantity}}" data-value="{{price}}" data-option="{{../id}}|{{quantity}}"/>
                                         <span itemprop="priceCurrency">{{currency}}</span>
-                                        {{#ifgt price offerPrice}}
+                                        {{#if percentOffer}}
                                             <span itemprop="price" content="{{offerPrice}}" class="product-price">
                                                 <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                                     <span>{{formatNumber price}}</span>
@@ -82,7 +82,7 @@ input[type="radio"], input[type="checkbox"] {
                                             </span>
                                         {{else}}
                                             <span itemprop="price" content="{{price}}" class="product-price">{{formatNumber price}}</span>
-                                        {{/ifgt}}                                        
+                                        {{/if}}                                        
                                         &nbsp;
                                         <span itemprop="priceQuantity">{{quantity}}</span>                                        
                                     </label>

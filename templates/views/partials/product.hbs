@@ -64,7 +64,7 @@
                                 <a href="#" class="add-to-cart"
                                     data-qty="{{quantity}}" data-product="{{../_id}}">
                                     <span>{{quantity}}</span>
-                                    {{#ifgt price offerPrice}}
+                                    {{#if percentOffer}}
                                         <span>
                                             <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                                 <span>{{formatNumber price}}</span>
@@ -73,7 +73,7 @@
                                         </span>
                                     {{else}}
                                         <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
-                                    {{/ifgt}}
+                                    {{/if}}
                                 </a>
                             {{/each}}
                         </div>
