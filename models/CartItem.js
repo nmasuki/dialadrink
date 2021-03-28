@@ -64,7 +64,7 @@ CartItem.schema.virtual("priceOption").get(function () {
     var item = this;
 
     if (item.product){
-        priceOption = item.product.options.find(o => o.quantity === item.quantity) || item.product.cheapestOption;    
+        priceOption = item.product.options.find(o => o.quantity === item.quantity) || item.product.defaultOption;    
     
         if(priceOption){
             this.price = priceOption.price;

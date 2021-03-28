@@ -16,12 +16,14 @@ module.exports = function MoveSMS(sender) {
 
     var _balance = 0;
     self.balance = function balance(next) {
+        if(_balance instanceof Promise)
+            return _balance;
         if(_balance)
             return Promise.resolve(_balance);
 
-        setTimeout(function(){ _balance = 0; }, 10000);
+        setTimeout(function(){ _balance = 0; }, 5000);
 
-        return new Promise((resolve, reject) => {
+        return (_balance = new Promise((resolve, reject) => {
             var url = apiUrl.format('balance');
             console.log("Getting SMS balance..");
 
@@ -46,7 +48,7 @@ module.exports = function MoveSMS(sender) {
                         next(error);
                 }
             });
-        });
+        }));
     };
    
     self.sendSMS = function compose(to, message, next) {
@@ -110,7 +112,6 @@ module.exports = function MoveSMS(sender) {
         }).catch(function (error) {
             return console.error("Can't send SMS!", error);
         });
-
     };
 
     self.schedule = function schedule(date, to, message, next) {

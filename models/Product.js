@@ -169,8 +169,8 @@ Product.schema.virtual('options').get(function () {
     })).distinctBy(op => op.quantity);
 });
 
-Product.schema.virtual('cheapestOption').get(function () {
-    return this.options.orderBy(o => o.price).first();
+Product.schema.virtual('defaultOption').get(function () {
+    return this.options.orderBy(o => o.price).last();
 });
 
 Product.schema.virtual('averageRatings').get(function () {
@@ -199,30 +199,30 @@ Product.schema.virtual("ratingCount").get(function () {
 });
 
 Product.schema.virtual('quantity').get(function () {
-    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption ? cheapestOption.quantity : null;
+    var defaultOption = this.defaultOption || this.priceOptions.first() || {};
+    return defaultOption ? defaultOption.quantity : null;
 });
 
 Product.schema.virtual('currency').get(function () {
-    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return (cheapestOption ? cheapestOption.currency || "KES" : "KES").replace('Ksh', "KES");
+    var defaultOption = this.defaultOption || this.priceOptions.first() || {};
+    return (defaultOption ? defaultOption.currency || "KES" : "KES").replace('Ksh', "KES");
 });
 
 Product.schema.virtual('price').get(function () {
-    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption ? cheapestOption.price : null;
+    var defaultOption = this.defaultOption || this.priceOptions.first() || {};
+    return defaultOption ? defaultOption.price : null;
 });
 
 Product.schema.virtual('offerPrice').get(function () {
-    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    return cheapestOption && cheapestOption.offerPrice > 0? cheapestOption.offerPrice : null;
+    var defaultOption = this.defaultOption || this.priceOptions.first() || {};
+    return defaultOption && defaultOption.offerPrice > 0? defaultOption.offerPrice : null;
 });
 
 Product.schema.virtual('percentOffer').get(function () {
-    var cheapestOption = this.cheapestOption || this.priceOptions.first() || {};
-    if (cheapestOption && !!cheapestOption.offerPrice && cheapestOption.price > cheapestOption.offerPrice) {
-        var discount = cheapestOption.price - cheapestOption.offerPrice;
-        var percent = Math.round(100 * discount / cheapestOption.price);
+    var defaultOption = this.defaultOption || this.priceOptions.first() || {};
+    if (defaultOption && !!defaultOption.offerPrice && defaultOption.price > defaultOption.offerPrice) {
+        var discount = defaultOption.price - defaultOption.offerPrice;
+        var percent = Math.round(100 * discount / defaultOption.price);
         return percent || null;
     }
 
@@ -419,7 +419,7 @@ Product.schema.methods.toAppObject = function () {
         currency: d.currency,
     });
 
-    ["__v", 'options', 'cheapestOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
+    ["__v", 'options', 'defaultOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
         delete obj[i];
     });
 
@@ -431,7 +431,7 @@ Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', function (next) {
     this.modifiedDate = new Date();
-    var cheapestOption = this.cheapestOption || this.priceOptions.first();
+    var defaultOption = this.defaultOption || this.priceOptions.first();
 
     if (this.alcoholContent) {
         if (this.alcoholContent > 100)
@@ -440,10 +440,10 @@ Product.schema.pre('save', function (next) {
             this.alcoholContent = 0;
     }
 
-    if (cheapestOption) {
-        this.price = cheapestOption.price;
-        this.offerPrice = cheapestOption.offerPrice;
-        this.quantity = cheapestOption.quantity;
+    if (defaultOption) {
+        this.price = defaultOption.price;
+        this.offerPrice = defaultOption.offerPrice;
+        this.quantity = defaultOption.quantity;
     }
 
     if (this.youtubeUrl)
@@ -537,7 +537,7 @@ Product.schema.set('toObject', {
             'href', 'name', 'priceOptions', 'onOffer', 'inStock',
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
-            'subCategory', 'brand', 'ratings', 'popularityRatio', 'options', 'cheapestOption',
+            'subCategory', 'brand', 'ratings', 'popularityRatio', 'options', 'defaultOption',
             'quantity', 'currency', 'price', 'offerPrice',
             'averageRatings', 'ratingCount', 'tags',
             'priceValidUntil', 'percentOffer'
