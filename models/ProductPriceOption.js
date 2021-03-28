@@ -18,6 +18,8 @@ ProductPriceOption.add({
     currency: {type: String},
     price: {type: Types.Number},
     offerPrice: {type: Types.Number},
+    
+	inStock: { type: Types.Boolean },
 
     optionText: {type: String, hidden: true}
 });
