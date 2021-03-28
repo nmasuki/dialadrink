@@ -13,8 +13,7 @@ var ProductOption = new keystone.List('ProductOption', {
 
 ProductOption.add({
 	quantity: {type: String, initial: true, required: true},
-	description: {type: Types.Html, wysiwyg: true, height: 150},
-	inStock: { type: Types.Boolean }
+	description: {type: Types.Html, wysiwyg: true, height: 150}
 });
 
 ProductOption.relationship({ref: 'ProductPriceOption', path: 'option', refPath: 'option'});
