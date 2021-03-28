@@ -74,7 +74,7 @@ function search(req, res, next) {
                         //locals.page.meta = cat.description || locals.page.meta || meta;
                     }
                 } else if (subCategories.length == 1) {
-                    var subCat = categories[0].subCategory;
+                    var subCat = categories[0] && categories[0].subCategory;
                     if (subCat && subCat.name) {
                         locals.page.h1 += " " + subCat.name.trim().toProperCase();
                         //locals.page.title = subCat.pageTitle;
