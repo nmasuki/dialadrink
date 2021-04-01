@@ -13,17 +13,17 @@ module.exports = function MoveSMS(sender) {
     
     var self = BaseSMS.call(this);
     var _sendSMS = self.sendSMS;
+    var _smsBalance = 0;
 
-    var _balance = 0;
     self.balance = function balance(next) {
-        if(_balance instanceof Promise)
-            return _balance;
-        if(_balance)
-            return Promise.resolve(_balance);
+        if(_smsBalance instanceof Promise)
+            return _smsBalance;
+        if(_smsBalance)
+            return Promise.resolve(_smsBalance);
 
-        setTimeout(function(){ _balance = 0; }, 5000);
+        setTimeout(function(){ _smsBalance = 0; }, 10000);
 
-        return (_balance = new Promise((resolve, reject) => {
+        return (_smsBalance = new Promise((resolve, reject) => {
             var url = apiUrl.format('balance');
             console.log("Getting SMS balance..");
 
@@ -33,12 +33,12 @@ module.exports = function MoveSMS(sender) {
                 requestCert: true,
                 agent: false,
                 success: function (response) {
-                    _balance = parseFloat(/[\d]+/.exec(response).pop() || "0");
-                    console.log("SMS balance:", _balance);
-                    resolve(_balance);
+                    _smsBalance = parseFloat(/[\d]+/.exec(response).pop() || "0");
+                    console.log("SMS balance:", _smsBalance);
+                    resolve(_smsBalance);
 
                     if (typeof next == "function")
-                        next(null, _balance);
+                        next(null, _smsBalance);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error getting SMS balance!", error);
@@ -51,6 +51,7 @@ module.exports = function MoveSMS(sender) {
         }));
     };
    
+    var sendPromise = null;
     self.sendSMS = function compose(to, message, next) {
         var url = apiUrl.format('compose') + `&sender=${sender}`;
 
@@ -81,7 +82,7 @@ module.exports = function MoveSMS(sender) {
                 if (validNos.length < numbers.length)
                     console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
 
-                return new Promise((resolve, reject) => {
+                var sendFxn = ((resolve, reject) => {
                     console.log("Sending SMS request..");
                     najax.post({
                         url: url,
@@ -96,10 +97,10 @@ module.exports = function MoveSMS(sender) {
                         agent: false,
                     }).then(function (response) {
                         console.log("SMS request sent. Http response:", response);                    
-                        resolve(--balance);
+                        resolve(--_smsBalance);
 
                         if (typeof next == "function")
-                            next(null, balance);
+                            next(null, _smsBalance);
                     }).fail(function (error) {
                         console.error("Http error:", error);
                         reject(error);
@@ -108,6 +109,8 @@ module.exports = function MoveSMS(sender) {
                             next(error);
                     });
                 });
+
+                return sendPromise? sendPromise.then(() => new Promise(sendFxn)): (sendPromise = new Promise(sendFxn)) ;
             });
         }).catch(function (error) {
             return console.error("Can't send SMS!", error);
