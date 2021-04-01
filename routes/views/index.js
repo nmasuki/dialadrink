@@ -200,7 +200,7 @@ function search(req, res, next) {
     }
 
     if(req.params.query == "[object%20Object]")
-        delete req.params.query
+        delete req.params.query;
 
     if (req.params.query) {
         if (req.params.query.toLowerCase() == "giftpacks") {
