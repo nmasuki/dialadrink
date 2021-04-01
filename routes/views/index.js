@@ -200,7 +200,7 @@ function search(req, res, next) {
     }
 
     if(req.params.query == "[object%20Object]" || req.params.query == "[object Object]")
-        delete req.params.query;
+        req.params.query = "indec.html";
 
     if (req.params.query) {
         if (req.params.query.toLowerCase() == "giftpacks") {
