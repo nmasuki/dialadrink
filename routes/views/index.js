@@ -199,7 +199,7 @@ function search(req, res, next) {
             next(err);
     }
 
-    if(req.params.query == "[object%20Object]")
+    if(req.params.query == "[object%20Object]" || req.params.query == "[object Object]")
         delete req.params.query;
 
     if (req.params.query) {
