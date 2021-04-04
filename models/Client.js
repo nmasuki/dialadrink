@@ -680,7 +680,7 @@ Client.schema.methods.updateOrderStats = function (next) {
 
                 orders = orders.filter(x => x);
                 if (client.orderCount && client.orderCount == orders.length)
-                    if (typeof next == "function") next();                
+                    if (typeof next == "function") return next();                
 
                 client.orderCount = orders.length;
                 client.orderValue = orders.sum(order => order && order.total);
@@ -688,9 +688,9 @@ Client.schema.methods.updateOrderStats = function (next) {
                 client.avgOrderValue = orders.avg(order => order && order.total);
 
                 console.log("Saving client details!", 
-                    "Client Name:", client.name, 
-                    "Order Count:", client.orderCount, 
-                    "Order Value:", client.orderValue,
+                    "Client Name:", client.name + ",", 
+                    "Order Count:", client.orderCount + ",", 
+                    "Order Value:", client.orderValue + ",",
                     "Avg Order Value:", client.avgOrderValue);
                 if(typeof next == "function") 
                     next();
