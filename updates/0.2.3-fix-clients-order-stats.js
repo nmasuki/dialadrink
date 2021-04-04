@@ -13,10 +13,9 @@ exports = module.exports = function (done) {
                 var client = clients[++index];
                 if(client)
                     client.save(updateClient);   
-                else
-                    done();                                     
+                //else done();                                     
             })();
 
-            //done();
+            done();
         });
 };
