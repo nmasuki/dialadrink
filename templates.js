@@ -1449,10 +1449,11 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + alias3(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + "\" style=\"display: inline-block;\">"
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</a>\n"
-    + ((stack1 = helpers.unless.call(alias1,(data && data.last),{"name":"unless","hash":{},"fn":container.program(68, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+    + "</a>\n                                "
+    + ((stack1 = helpers.unless.call(alias1,(data && data.last),{"name":"unless","hash":{},"fn":container.program(68, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\n";
 },"68":function(container,depth0,helpers,partials,data) {
-    return "                                <span style=\"color: #F44336\"> | </span>\n";
+    return "<span style=\"color: #F44336\"> | </span>";
 },"70":function(container,depth0,helpers,partials,data) {
     return "\n";
 },"72":function(container,depth0,helpers,partials,data) {
@@ -3189,7 +3190,7 @@ this["templates"]["views"]["product"]["hbs"]["templates/views/product.hbs"] = Ha
     + "\"\n   ],\n  \"description\": \""
     + ((stack1 = (helpers.truncate || (depth0 && depth0.truncate) || alias2).call(alias1,(helpers.cleanHtml || (depth0 && depth0.cleanHtml) || alias2).call(alias1,(depth0 != null ? depth0.description : depth0),{"name":"cleanHtml","hash":{},"data":data}),500," ",{"name":"truncate","hash":{},"data":data})) != null ? stack1 : "")
     + "\",\n  \"brand\": {\n    \"@type\": \"Thing\",\n    \"name\": \""
-    + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1), depth0)) != null ? stack1 : "")
+    + ((stack1 = (helpers.cleanHtml || (depth0 && depth0.cleanHtml) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.brand : depth0)) != null ? stack1.name : stack1),{"name":"cleanHtml","hash":{},"data":data})) != null ? stack1 : "")
     + "\"\n  },\n  \"aggregateRating\": {\n    \"@type\": \"AggregateRating\",\n    \"bestRating\": \"5\",\n    \"ratingValue\": \""
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.averageRatings : depth0),{"name":"if","hash":{},"fn":container.program(71, data, 0, blockParams, depths),"inverse":container.program(73, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\",\n    \"ratingCount\": \""
