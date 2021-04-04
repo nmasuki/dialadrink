@@ -391,7 +391,7 @@ module.exports = function () {
     }
 
     _helpers.cleanHtml = function(str){
-        return (str || "").replace(/<(?:.|\n)*?>/gm, '').replaceAll("\"", "\\\"");
+        return (str || "").replace(/<(?:.|\n)*?>/gm, '').replace(/"/gm, "\\\"");
     };
 
     // Direct url link to a specific brand
