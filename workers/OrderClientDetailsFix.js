@@ -32,8 +32,7 @@ function doWork(err, orders, next) {
 
     if (orders && orders.length) {
         if(orders.length)
-            console.log(orders.length + " client orders to send..");
-        
+            console.log(orders.length + " client orders to send..");        
         
         var index = -1;
         (function updateClient(){
@@ -43,7 +42,7 @@ function doWork(err, orders, next) {
             if(order){
                 order.updateClient(() => {
                     order.save();
-                    order.client.save().then(updateClient);
+                    order.client.save(updateClient);
                 });                    
             } else {
                 next();

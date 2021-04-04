@@ -34,8 +34,10 @@ Client.add({
     houseNumber: { type: String },
     clientIps: { type: Types.TextArray, noedit: true },
 
-    orderCount: { type: Number, noedit: true },
-    orderValue: { type: Number, noedit: true },
+    orderCount: { type: Number, index: true, noedit: true },
+    orderValue: { type: Number, index: true, noedit: true },
+    avgOrderValue: { type: Number, index: true, noedit: true },
+    lastOrderDate: {type: Types.Datetime, index: true, noedit: true },
 
     sessions: {
         type: Types.TextArray,
@@ -87,11 +89,7 @@ Client.add({
         noedit: true
     },
 
-    lastOrderDate: {
-        type: Types.Datetime,
-        index: true,
-        noedit: true
-    },
+    lastOrderDate: {type: Types.Datetime, index: true, noedit: true },
     deliveryLocationMeta: { type: String },
     metaDataJSON: { type: String }
 });
@@ -639,7 +637,6 @@ Client.schema.pre('save', function (next) {
     var client = this;
     if (client.modifiedDate.addSeconds(10) > new Date()){
         var error = new Error("Client saved less than 10 sec ago. Should skip save but....");
-        //console.error(error);
         return next(error.message);
     }
 
@@ -652,7 +649,7 @@ Client.schema.pre('save', function (next) {
         client.gender = client.guessGender(client.name).getGender();
     }
 
-    next();
+    client.updateOrderStats(next);
 });
 
 Client.schema.methods.updateOrderStats = function (next) {
@@ -661,9 +658,7 @@ Client.schema.methods.updateOrderStats = function (next) {
     if (client.phoneNumber)
         client.phoneNumber = client.phoneNumber.cleanPhoneNumber();
 
-    var findOption = {
-        "$or": []
-    };
+    var findOption = { "$or": [] };
     if (client.phoneNumber)
         findOption.$or.push({
             "delivery.phoneNumber": new RegExp(client.phoneNumber.substr(3))
@@ -684,16 +679,19 @@ Client.schema.methods.updateOrderStats = function (next) {
                     return typeof next == "function" && next(err);
 
                 orders = orders.filter(x => x);
-                if ( client.orderCount && client.orderCount == orders.length){
-                    if (typeof next == "function") next();
-                }
+                if (client.orderCount && client.orderCount == orders.length)
+                    if (typeof next == "function") next();                
 
                 client.orderCount = orders.length;
                 client.orderValue = orders.sum(order => order && order.total);
                 client.lastOrderDate = orders.max(order => order && order.orderDate);
                 client.avgOrderValue = orders.avg(order => order && order.total);
 
-                console.log("Saving client details!", client.name, client.orderCount, client.orderValue);
+                console.log("Saving client details!", 
+                    "Client Name:", client.name, 
+                    "Order Count:", client.orderCount, 
+                    "Order Value:", client.orderValue,
+                    "Avg Order Value:", client.avgOrderValue);
                 if(typeof next == "function") 
                     next();
                 else

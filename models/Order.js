@@ -221,7 +221,7 @@ Order.schema.pre('save', function (next) {
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
 
-    this.updateClient(next);
+    next();
 });
 
 
@@ -289,7 +289,7 @@ Order.schema.methods.updateClient = function (next) {
     var order = this;
     
     /***************/
-    if (order.client && order.client.modifiedDate && order.client.modifiedDate.addSeconds(60) > new Date()) {
+    if (order.client && order.client.modifiedDate && order.client.modifiedDate.addSeconds(10) > new Date()) {
         if (typeof next == "function")
             return next();
     }
@@ -299,8 +299,7 @@ Order.schema.methods.updateClient = function (next) {
 
     if (delivery) {
         var findOption = { "$or": [] };
-        var phoneNumber = (delivery.phoneNumber || "").trim()
-            .replace(/^[^\d]+|[^\d]+$/, "").trim();
+        var phoneNumber = (delivery.phoneNumber || "").trim().replace(/^[^\d]+|[^\d]+$/, "").trim();
 
         if (phoneNumber) {
             findOption.$or.push({
@@ -313,9 +312,7 @@ Order.schema.methods.updateClient = function (next) {
 
             var cleanNumber = phoneNumber.cleanPhoneNumber();
             if(cleanNumber != phoneNumber)
-                findOption.$or.push({
-                    "phoneNumber": new RegExp(cleanNumber)
-                });
+                findOption.$or.push({ "phoneNumber": new RegExp(cleanNumber) });
 
             delivery.phoneNumber = phoneNumber.cleanPhoneNumber();
         } else {
