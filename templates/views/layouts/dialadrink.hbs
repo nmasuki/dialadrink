@@ -376,9 +376,7 @@
                             <div style="float: left; min-width: 80px"><b style="">{{@key}}</b>:</div> 
                             {{#each this}}
                                 <a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a>
-                                {{#unless @last}}
-                                <span style="color: #F44336"> | </span>
-                                {{/unless}}
+                                {{#unless @last}}<span style="color: #F44336"> | </span>{{/unless}}
                             {{/each}}
                         </div>
                     {{/each}}
