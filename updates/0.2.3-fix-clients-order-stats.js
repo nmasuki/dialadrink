@@ -12,9 +12,11 @@ exports = module.exports = function (done) {
                 console.log(`Extracting client from order ${index + 1}/${clients.length}`);
                 var client = clients[++index];
                 if(client)
-                    client.save(updateClient);                                        
+                    client.save(updateClient);   
+                else
+                    done();                                     
             })();
 
-            done();
+            //done();
         });
 };
