@@ -105,7 +105,6 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 
 		if(notifications && notifications.length){
 			notifications.filter(n => n.status == 'pending').forEach(n => {
-
 				n.scheduleDate = broudcast.scheduleDate;
 				n.broudcast = broudcast;
 				n.type = broudcast.type;
@@ -140,6 +139,9 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 					return next(err);
 				
 				if(clients && clients.length){
+					//So as not to overwhelm the clients with notifications, send at most once every 5 days
+					var notifyDateThreashold = new Date().addDays(broudcast.type == "push"? -2: -5);
+					clients = clients.filter(c => c.lastNotificationDate == null || c.lastNotificationDate < notifyDateThreashold);
 
 					//
 					if(broudcast.type == "sms"){
@@ -161,7 +163,10 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 										message: broudcast.msg
 									});
 
-									n.save();
+									n.save(() =>{
+										c.lastNotificationDate = n.scheduleDate;
+										c.save();
+									});
 								}
 							});
 						}))
@@ -169,10 +174,6 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 						.catch(err => next(err));
 					}
 
-					//So as not to overwhelm the clients with notifications, send at most once every 5 days
-					var notifyDateThreashold = new Date().addDays(-5);
-					clients = clients.filter(c => c.lastNotificationDate == null || c.lastNotificationDate < notifyDateThreashold);
-					
 					//Pick top matches
 					clients = clients.slice(0, targetCount || 2);
 
@@ -187,7 +188,10 @@ ClientNotificationBroudcast.schema.pre('save', function (next) {
 							message: broudcast.msg
 						});
 
-						n.save();
+						n.save(() =>{
+							c.lastNotificationDate = n.scheduleDate;
+							c.save();
+						});
 					});
 				}
 
