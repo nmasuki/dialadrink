@@ -477,6 +477,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
                 return Promise.reject(`Error while getting cart Items on order ${order.orderNumber || order._id}!!`);
         }
 
+        order.client = (order.client || that.client);            
         var promise = Promise.resolve();
 
         //Send SMS Notification to vender
@@ -577,11 +578,11 @@ Order.schema.methods.sendOrderNotification = function (next) {
     else{
         return Order.model.findOne({ _id: that._id })
             .deepPopulate('cart.product.priceOptions.option')
-            .populate('client')
             .exec((err, order) => {
                 if (err)
                     return Promise.reject(err);
-                    
+                
+                order.client = order.client || that.client;
                 return sendOrderNotification(order);            
             });
     }
@@ -726,11 +727,12 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     };
 
     var blacklisted = ["2540111993103"];
+    var suspiciousOrderCount = process.env.NODE_ENV == "production"? 5: 10;
 
     Order.model.find(filter)
         .exec((err, data) => {
             if(data) console.log(filter.$or.map(x => Object.values(x)[0]).join(','), `Orders today: ${data.length}, '${today}'`);
-            if(blacklisted.contains(deliveryDetails.phoneNumber) ||  err || data && data.length > 5){
+            if(blacklisted.contains(deliveryDetails.phoneNumber) ||  err || data && data.length > suspiciousOrderCount){
                 err = err || "<p style='color:#ff8100'>We have detected suspicious activities from your location. Please call to complete your order!</p>";
                 console.log(deliveryDetails.phoneNumber, err);
                 return callback(err);
