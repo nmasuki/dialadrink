@@ -4,7 +4,7 @@ require('daemon').daemon(null, [], {
 
 var async = require('async');
 var fs = require('fs');
-var keystone = require('keystone');
+var keystone = require('../app-init');
 var AppWorker = keystone.list('AppWorker');
 var isFirstPass = true;
 
