@@ -55,8 +55,7 @@ router.get("/", function(req, res){
     //console.log(JSON.stringify(filter));
 
     Order.model.find(filter)
-        .deepPopulate('cart.product.priceOptions.option')
-        .populate('client')
+        .deepPopulate('client,cart.product.priceOptions.option')
         .sort({ orderDate: -1 })
         .skip(skip)
         .limit(pageSize)
@@ -91,8 +90,7 @@ router.get("/:orderNo", function (req, res) {
         filter.$or.push({ _id: req.params.orderNo });
 
     Order.model.findOne(filter)
-        .deepPopulate('cart.product.priceOptions.option')
-        .populate('client')
+        .deepPopulate('client,cart.product.priceOptions.option')
         .exec((err, order) => {
             
             if (err){
@@ -205,8 +203,7 @@ router.post("/cancel/:orderNo", function(req, res){
         filter.$or.push({ _id: orderNumber });
 
     Order.model.findOne(filter)
-        .deepPopulate('cart.product.priceOptions.option')
-        .populate('client')
+        .deepPopulate('client,cart.product.priceOptions.option')
         .exec((err, order) => {
 
             if (err)

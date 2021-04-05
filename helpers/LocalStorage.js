@@ -272,13 +272,14 @@ function LocalStorage(entityName) {
             updates.push({ _id: id, _rev: entity._rev });
         }
 
-        if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i))
-            Object.keys(entity).map(k => entity[k]).forEach(setEntiry);
-        else
-            setEntiry(entity);
-
-        saveAll(entityName, all);
         return new Promise((resolve, reject) => {
+            if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i))
+                Object.keys(entity).map(k => entity[k]).forEach(setEntiry);
+            else
+                setEntiry(entity);
+
+            saveAll(entityName, all);
+
             if (updates.length)
                 return resolve({ updates, errors });
             if (errors.length)

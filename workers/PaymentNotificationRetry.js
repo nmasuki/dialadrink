@@ -20,8 +20,7 @@ function getWork(next, done) {
     }
 
     Order.model.find(filter)
-        .deepPopulate('cart.product.priceOptions.option')
-        .populate('client')
+        .deepPopulate('client,cart.product.priceOptions.option')
         .exec(function (err, orders) {
             if (err)
                 return next(err)

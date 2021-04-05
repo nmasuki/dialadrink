@@ -69,13 +69,13 @@ function start() {
 			if (err)
 				return console.warn(err);
       
-      if (workers) {
+      		if (workers) {
 				var activeWorkers = workers.filter(m => {
-          var active = m.worker.isActive && m.worker.nextRun <= new Date().getTime();
-          return active;
-        });
-          
-        if (isFirstPass)
+					var active = m.worker.isActive && m.worker.nextRun <= new Date().getTime();
+					return active;
+				});
+			
+				if (isFirstPass)
 					console.log("Loaded " + workers.filter(m => m.worker.isActive).length + "/" + workers.length + " active workers..");
 
 				isFirstPass = false;
@@ -84,9 +84,17 @@ function start() {
 						if (m && m.run) {
 							console.log(`Running worker: '${m.name}'`);
 
-							m.run();
-							m.worker.lastRun = new Date();
-							m.worker.save();
+							var run = m.run();
+							if(run instanceof Promise)
+								run.then(() => {
+									m.worker.lastRun = new Date();
+									m.worker.save();
+								});
+							else
+								setTimeout(() => {
+									m.worker.lastRun = new Date();
+									m.worker.save();
+								}, 1);							
 						} else {
 							console.error(`worker: '${m.name}' not properly configured!`);
 						}
