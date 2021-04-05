@@ -45,11 +45,9 @@ function doWork(err, sales, next) {
         return console.warn(err);
 
     if (sales && sales.length) {
-        if(sales.length)
-            console.log(sales.length + " new online sales..");        
-        
+        console.log(sales.length + " new online sales..");
         return Sale.save(sales).then(next);
     }
     
-       return Promise.resolve().then(next);
+    return Promise.resolve().then(next);
 }

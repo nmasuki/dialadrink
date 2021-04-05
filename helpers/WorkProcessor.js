@@ -5,16 +5,18 @@ function WorkProcessor(getWork, doWork) {
 
     self.run = function () {
         return new Promise((resolve, reject) => {  
-            var processWork = () => getWork(function () {
-                var promise = doWork.apply(this, arguments);
-                if (!promise || (promise.costructor && promise.costructor.name != 'Promise'))
-                    promise = Promise.resolve(promise || 0);
-                
-                promise.finally(() => {
-                    if(self.lockFile) lockFile.unlock(self.lockFile);
-                    resolve(promise);
+            var processWork = function() {
+                return getWork(function () {
+                    var promise = doWork.apply(this, arguments);
+                    if (!promise || (promise.costructor && promise.costructor.name != 'Promise'))
+                        promise = Promise.resolve(promise || 0);
+                    
+                    promise.finally(() => {
+                        if(self.lockFile) lockFile.unlock(self.lockFile);
+                        resolve(promise);
+                    });
                 });
-            });
+            };
             
             if (!self.lockFile)
                 processWork();
