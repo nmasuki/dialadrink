@@ -578,7 +578,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
         return Promise.resolve(sendOrderNotification(that));
     else{
         return Order.model.findOne({ _id: that._id })
-            .deepPopulate('cart.product.priceOptions.option')
+            .deepPopulate('client,cart.product.priceOptions.option')
             .exec((err, order) => {
                 if (err)
                     return Promise.reject(err);

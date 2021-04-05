@@ -30,38 +30,42 @@ function loadWorkers(next) {
 					worker.lockFile = './locks/' + f.replace(/\.js$/, ".lock");
 					return worker;
 				});
+				
+			var filter = { name: { "$in": modules.map(m => m.name) }};			
+			if (isFirstPass)
+				console.log("Loaded AppWorkers: '" + filter.name.$in.join(',') + "'");
 
-			AppWorker.model.find({
-				name: {
-					"$in": modules.map(m => m.name)
-				}
-			})
-			.exec((err, workers) => {
-				if (err)
-					console.error(err);
+			AppWorker.model
+				.find(filter)
+				.exec((err, workers) => {
+					if (err)
+						console.error(err);
 
-				modules = modules.map(m => {
-						var worker = workers.find(w => m.name == w.name);
+					modules = modules.map(m => {
+							var worker = workers.find(w => m.name == w.name);
 
-						if (!worker) {
-							m.runInterval = 60 * 1000;
-							worker = new AppWorker.model(m);
-							worker.isActive = true;
-							worker.save();
-						}
+							if (!worker) {
+								m.runInterval = 60 * 1000;
+								worker = new AppWorker.model(m);
+								worker.isActive = true;
+								worker.save();
+							}
 
-						m.worker = worker;
-						return m;
-					});
+							m.worker = worker;
+							return m;
+						});
 
-				next(null, modules);
-			});
+					next(null, modules);
+				});
 
 		});
 	});
 }
 
 function start() {
+	if(process.env.ENABLE_BACKGROUNDWORKER <= 0) 
+		return console.log("env.ENABLE_BACKGROUNDWORKER flag set to: " + process.env.ENABLE_BACKGROUNDWORKER);
+
 	if (process.env.ENABLE_BACKGROUNDWORKER > 0) {
 		console.log("Start workers for background processes..");
 		// Load workers
@@ -71,8 +75,7 @@ function start() {
       
       		if (workers) {
 				var activeWorkers = workers.filter(m => {
-					var active = m.worker.isActive && m.worker.nextRun <= new Date().getTime();
-					return active;
+					return m.worker.isActive && m.worker.nextRun <= new Date().getTime();
 				});
 			
 				if (isFirstPass)
@@ -102,7 +105,6 @@ function start() {
 
 				//Make next pass after a short delay
 				setTimeout(() => loadWorkers(makePass), process.env.WORK_DELAY || 60000);
-
 			} else {
 				console.log("No workers found. Exiting workes..");
 			}
@@ -110,6 +112,4 @@ function start() {
 	}
 }
 
-module.exports = {
-	start: start
-};
+module.exports = { start: start };

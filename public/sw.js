@@ -13,9 +13,7 @@ self.addEventListener("push", function(e) {
     self.registration.showNotification(data.title, {
         body: data.body || 'Dial a Drink Notification',
         icon: data.icon || 'https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png',
-        buttons: data.buttons || [
-            {action: '/', title: 'Continue Shopping'}
-        ]
+        buttons: data.buttons || [{action: '/', title: 'Continue Shopping'}]
     });
 });
 
