@@ -13,7 +13,7 @@ function getWork(next, done) {
     };
 
     Order.model.find(filter)
-        .populate('client')
+        .deepPopulate('client,cart.product.priceOptions.option')
         .sort({orderDate: -1})
         .exec(function (err, orders) {            
             if(err)

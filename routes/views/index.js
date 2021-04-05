@@ -237,8 +237,7 @@ router.get("/payment/:orderNo", function (req, res) {
     Order.model.findOne({
             orderNumber: req.params.orderNo
         })
-        .deepPopulate('cart.product.priceOptions.option')
-        .populate('client')
+        .deepPopulate('client,cart.product.priceOptions.option')
         .exec((err, order) => {
             if (!order)
                 return res.status(404).render('errors/404');

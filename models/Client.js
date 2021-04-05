@@ -672,8 +672,7 @@ Client.schema.methods.updateOrderStats = function (next) {
     if (findOption.$or.length) {
         keystone.list("Order").model.find(findOption)
             .sort({ orderDate: -1 })
-            .deepPopulate('cart.product.priceOptions.option')
-            .populate('client')
+            .deepPopulate('client,cart.product.priceOptions.option')
             .exec((err, orders) => {
                 if (err)
                     return typeof next == "function" && next(err);

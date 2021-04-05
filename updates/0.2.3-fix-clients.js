@@ -5,7 +5,7 @@ var Order = keystone.list('Order');
 exports = module.exports = function (done) {
     console.log("Extracting clients from orders");
     Order.model.find({orderDate:{ $gt: new Date('2019-01-01') }})
-        .populate('client')
+        .deepPopulate('client,cart.product.priceOptions.option')
         .sort({orderDate: -1})
         .exec(function (err, orders) {
             var index = -1;

@@ -361,16 +361,17 @@ Order.schema.methods.updateClient = function (next) {
                                 return console.error("Error saving client!!", err);
 
                             order.client = client;
-                            order.save();
-
-                            if (typeof next == "function")
-                                next(null, client);
+                            order.save(function(){
+                                if (typeof next == "function")
+                                    next(null, client);
+                            });                            
                         });                        
                     }else{
                         order.client = client;
-
-                        if (typeof next == "function")
-                            next(null, client);
+                        order.save(function(){
+                            if (typeof next == "function")
+                                next(null, client);
+                        });
                     }
                 });
         else if (typeof next == "function")

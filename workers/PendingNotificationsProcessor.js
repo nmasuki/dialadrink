@@ -26,8 +26,7 @@ function getWork(next, done) {
 
     ClientNotification.model
         .find(filter).sort(sort)
-        .populate('client')
-        .populate('broudcast')
+        .deepPopulate('client,broudcast')
         .exec((err, notifications) => {
             if (err)
                 return next(err);

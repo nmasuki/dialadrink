@@ -32,8 +32,7 @@ router.post("/ipn", function (req, res) {
 	payment.save();
 
 	Order.model.findOne({ orderNumber: payment.referenceId })
-		.deepPopulate('cart.product.priceOptions.option')
-		.populate('client')
+		.deepPopulate('client,cart.product.priceOptions.option')
 		.exec((err, order) => {
 			if (err || !order) {
 				console.log("Error while reading Order id: %s", payment.referenceId, err);
@@ -76,8 +75,7 @@ router.get("/pay/:orderNo", function (req, res){
 	var view = new keystone.View(req, res);
 	
 	Order.model.findOne({ orderNumber: req.params.orderNo })
-		.deepPopulate('cart.product.priceOptions.option')
-		.populate('client')
+		.deepPopulate('client,cart.product.priceOptions.option')
 		.exec((err, order) => {
 			
 			if (!order)
