@@ -364,57 +364,59 @@ Order.schema.methods.updateClient = function (next) {
                             order.save();
 
                             if (typeof next == "function")
-                                next();
+                                next(null, client);
                         });                        
                     }else{
                         order.client = client;
 
                         if (typeof next == "function")
-                            next();
+                            next(null, client);
                     }
                 });
         else if (typeof next == "function")
-            next();
+            next(new Error("No email address or phoneNumer provided!!"));
     } else {
         if (typeof next == "function")
-            next();
+            next(new Error("No email order deliver details provided!!"));
     }
 };
 
 Order.schema.methods.placeOrder = function (next) {
     var order = this;
     console.log("Placing order " + order.orderNumber + "!");
-    return order.sendOrderNotification().then((data) => {
-        console.log("Updating order state='placed'!", data.orderNumber);
-
-        //Update order state
-        order.state = 'placed';
-        order.save((err) => {
-            if (err)
-                return console.warn(err);
-            
-            console.log("Order updated!");
-            if(order.client && (!order.client.lastOrderDate || order.client.lastOrderDate < order.orderDate)){
-                order.client.lastOrderDate = order.orderDate;
-                order.client.save();
-            }
-        });
-
-        if (typeof next == "function")
-            next(err, data);
-
-        //popularity goes up +100
-        order.cart.forEach(c => {
-            if(c.isNew) c.save();
-            keystone.list("Product").findOnePublished({ _id: c.product._id || c.product }, (err, product) => {
-                if (product)
-                    product.addPopularity(100);
+    return order.updateClient(function(err, client){
+        if(client) order.client = client;
+        return order.sendOrderNotification().then((data) => {
+            console.log("Updating order state='placed'!", data.orderNumber);    
+            //Update order state
+            order.state = 'placed';
+            order.save((err) => {
+                if (err)
+                    return console.warn(err);
+                
+                console.log("Order updated!");
+                if(order.client && (!order.client.lastOrderDate || order.client.lastOrderDate < order.orderDate)){
+                    order.client.lastOrderDate = order.orderDate;
+                    order.client.save();
+                }
             });
+    
+            if (typeof next == "function")
+                next(err, data);
+    
+            //popularity goes up +100
+            order.cart.forEach(c => {
+                if(c.isNew) c.save();
+                keystone.list("Product").findOnePublished({ _id: c.product._id || c.product }, (err, product) => {
+                    if (product)
+                        product.addPopularity(100);
+                });
+            });
+        }).catch(err => {
+            if (typeof next == "function")
+                next(err, data);
         });
-    }).catch(err => {
-        if (typeof next == "function")
-            next(err, data);
-    });
+    });    
 };
 
 Order.schema.methods.sendPaymentNotification = function (next) {
@@ -570,7 +572,7 @@ Order.schema.methods.sendOrderNotification = function (next) {
         });
     };
 
-    if (that.cart.every(c => c.product && c.product.name))
+    if (that.client && that.client._id && that.cart.every(c => c.product && c.product.name))
         return Promise.resolve(sendOrderNotification(that));
     else{
         return Order.model.findOne({ _id: that._id })
@@ -788,6 +790,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
                 order.charges.chargesAmount = c.chargesAmount;
 
             return Promise.all(cartItems.map(c => c.save())).then(function () {
+
                 return order.save((err) => {
                     if (err)
                         return console.warn(`Error while saving Order ${order.orderNumber}! ${err}`);
