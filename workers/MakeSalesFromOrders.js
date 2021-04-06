@@ -7,9 +7,7 @@ var self = module.exports = new WorkProcessor(getWork, doWork);
 
 function getWork(next, done) {
     var filter = {
-        orderDate:{ 
-            $gt: new Date(self.worker.lastRun || '2021-04-04')
-        }
+        orderDate: { $gt: new Date(self.worker.lastRun || '2021-04-04') }
     };
 
     Order.model.find(filter)
@@ -33,8 +31,6 @@ function getWork(next, done) {
 
             if(sales.length)
                 console.log("Generating " + sales.length + " new online sale records as from " + filter.orderDate.$gt.toISOString());
-            else
-                console.log("No sales online sale record to generate as from " + filter.orderDate.$gt.toISOString());
 
             next(null, sales, done);
         });

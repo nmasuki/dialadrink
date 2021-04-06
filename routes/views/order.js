@@ -3,8 +3,7 @@ var Order = keystone.list("Order");
 var router = keystone.express.Router();
 
 router.get("/:orderNo", function (req, res) {
-    var view = new keystone.View(req, res);
-    Order.model.findOne({orderNumber: req.params.orderNo})
+   Order.model.findOne({orderNumber: req.params.orderNo})
         .deepPopulate('client,cart.product.priceOptions.option')
         .exec((err, order) => {
             if (!order)

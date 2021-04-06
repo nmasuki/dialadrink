@@ -1,10 +1,64 @@
 var WebSocket = require('ws');
 var ls = require('../helpers/LocalStorage').getInstance('ws-messages');
-var CONFIG = require('../../data/wsconfig');
+var CONFIG = require('../../data/wsconfig').getConfigs();
 
 // WebSocket Server    
-var wss = global.wss || (global.wss = new WebSocket.Server(CONFIG.WebSocketServer));
+var wss;
 
+try{
+    wss = global.wss || (global.wss = new WebSocket.Server(CONFIG.WebSocketServer));
+        
+    // Broadcast to all.
+    wss.broadcast = function broadcast(payload) {
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN)
+                return new Promise((resolve, reject) => {
+                    client.send(JSON.stringify(payload), function (err) {
+                        if (err)
+                            return reject(err);
+
+                        resolve(payload.data);
+                    });
+                });
+
+            return Promise.resolve();
+        });
+    };
+
+    wss.on("error", function(error){
+        var ws = new WebSocket("ws://localhost:" + error.port);
+        wss.clients = [ws];
+        wss.user = {appPermissions :["sms"]};
+    });
+
+    wss.on('connection', function connection(ws, req) {    
+        ws.clientIp = ((req.headers['x-forwarded-for'] || '').split(',')[0] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress || '').trim(':f');
+
+        console.log("WSS:", "Client connected! ", ws.clientIp);
+        ws.on('pong', function heartbeat() { this.isAlive = true; });
+
+        ws.on('message', function incoming(message) {
+            if (typeof wss.processIncoming == "function")
+                wss.processIncoming.call(this, message);
+            processIncoming.call(this, message);
+        });
+    });
+
+    var interval = setInterval(function ping() {
+        wss.clients.forEach(function each(ws) {
+            if (ws.isAlive === false)
+                return ws.terminate();
+
+            ws.isAlive = false;
+            ws.ping(function noop() {});
+        });
+    }, 30000);
+
+} catch(e){
+    console.log("Error creating WebSocketServer!!!", e);
+}
 
 function isJSONString(text){
     if (typeof text == "string" && /^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
@@ -82,6 +136,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 
             return Promise.reject(errMsg);
         }   
+
         errMsg = (err || "Unknown Error") + "! " +
             `Retrying in ${attempts * CONFIG.RetryWait / 1000.0} seconds. ` +
             `Attempt ${attempts} of ${CONFIG.RetryCount}`;
@@ -117,9 +172,8 @@ function sendWSMessage(dest, msg, msgid, attempts) {
                 payload.activities.push({created_at: new Date().toISOString(), status:payload.status,  error: err});
                 ls.save(payload);
 
-                if(payload.status == "RETRYABLE_FAILURE")
-                    return retrySendWSMessage(err).then(fulfill).catch(reject);
-            }else{
+                return retrySendWSMessage(err).then(fulfill).catch(reject);
+            } else {
                 payload.status = "SUCCESS";
                 payload.activities.push({created_at: new Date().toISOString(), status:payload.status});
                 ls.save(payload);                
@@ -134,46 +188,6 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED' || d.status == 'RETRYABLE_FAILURE');
 if(pendingMsgs.length)
     pendingMsgs.forEach(d => d.data && sendWSMessage(d.data.dest, d.data.text, d.data.msgid, d.attempts).catch(console.error));
-
-// Broadcast to all.
-wss.broadcast = function broadcast(payload) {
-    wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN)
-            return new Promise((fulfill, reject) => {
-                client.send(JSON.stringify(payload), function (err) {
-                    if (err)
-                        reject(err);
-                    else
-                        fulfill(payload.data);
-                });
-            });
-    });
-};
-
-wss.on('connection', function connection(ws, req) {    
-    ws.clientIp = ((req.headers['x-forwarded-for'] || '').split(',')[0] ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress || '').trim(':f');
-
-    console.log("WSS:", "Client connected! ", ws.clientIp);
-    ws.on('pong', function heartbeat() { this.isAlive = true; });
-
-    ws.on('message', function incoming(message) {
-        if (typeof wss.processIncoming == "function")
-            wss.processIncoming.call(this, message);
-        processIncoming.call(this, message);
-    });
-});
-
-var interval = setInterval(function ping() {
-    wss.clients.forEach(function each(ws) {
-        if (ws.isAlive === false)
-            return ws.terminate();
-
-        ws.isAlive = false;
-        ws.ping(function noop() {});
-    });
-}, 30000);
 
 module.exports = {
     server: wss,

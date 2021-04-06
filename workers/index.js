@@ -33,7 +33,7 @@ function loadWorkers(next) {
 				
 			var filter = { name: { "$in": modules.map(m => m.name) }};			
 			if (isFirstPass)
-				console.log("Loaded AppWorkers: '" + filter.name.$in.join(',') + "'");
+				console.log("Loaded AppWorkers: " + filter.name.$in.join(', '));
 
 			AppWorker.model
 				.find(filter)
