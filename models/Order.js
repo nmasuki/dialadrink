@@ -391,16 +391,7 @@ Order.schema.methods.placeOrder = function (next) {
             console.log("Updating order state='placed'!", data.orderNumber);    
             //Update order state
             order.state = 'placed';
-            order.save((err) => {
-                if (err)
-                    return console.warn(err);
-                
-                console.log("Order updated!");
-                if(order.client && (!order.client.lastOrderDate || order.client.lastOrderDate < order.orderDate)){
-                    order.client.lastOrderDate = order.orderDate;
-                    order.client.save();
-                }
-            });
+            order.save();
     
             if (typeof next == "function")
                 next(err, data);
@@ -576,16 +567,17 @@ Order.schema.methods.sendOrderNotification = function (next) {
 
     if (that.client && that.client._id && that.cart.every(c => c.product && c.product.name))
         return Promise.resolve(sendOrderNotification(that));
-    else{
-        return Order.model.findOne({ _id: that._id })
-            .deepPopulate('client,cart.product.priceOptions.option')
-            .exec((err, order) => {
-                if (err)
-                    return Promise.reject(err);
-                
-                order.client = order.client || that.client;
-                return sendOrderNotification(order);            
-            });
+    else {
+        return that.save(() => {
+            return Order.model.findOne({ _id: that._id })
+                .deepPopulate('client,cart.product.priceOptions.option')
+                .exec((err, order) => {
+                    if (err)
+                        return Promise.reject(err);
+                        
+                    return sendOrderNotification(order);            
+                });
+        });        
     }
 };
 
@@ -793,7 +785,6 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
                 order.charges.chargesAmount = c.chargesAmount;
 
             return Promise.all(cartItems.map(c => c.save())).then(function () {
-
                 return order.save((err) => {
                     if (err)
                         return console.warn(`Error while saving Order ${order.orderNumber}! ${err}`);
@@ -803,19 +794,19 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
                         var paymentUrl = [keystone.get('url'), 'payment', order.orderNumber].filter(p => p).map(p => p.toString().trim('/')).join('/');
                         pesapalHelper.shoternUrl(paymentUrl, function (err, shortUrl) {
                             order.payment.url = paymentUrl;
-                            if (!err)
+                            if (!err && shortUrl)
                                 order.payment.shortUrl = shortUrl;
 
-                            order.save(() => {
-                                order.placeOrder();
+                            order.placeOrder(() => {
                                 if (typeof callback == "function")
                                     callback(err, order);
                             });
                         });
                     } else {
-                        order.placeOrder();
-                        if (typeof callback == "function")
-                            callback(null, order);
+                        order.placeOrder(() => {
+                            if (typeof callback == "function")
+                                callback(err, order);
+                        });
                     }
 
                     return order;
