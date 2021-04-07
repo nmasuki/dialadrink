@@ -21,8 +21,8 @@ function getWork(next, done) {
                 return {
                     _id: "online-" + o._id,
                     dateOfSale: o.orderDate,
-                    client: o.client,
-                    products: o.cart.map(c => c.product),
+                    client: o.client.toAppObject(),
+                    products: o.cart.map(c => c.product.toAppObject()),
                     salePrice: o.total,
                     description: "Online sale",
                     paymentMethod: o.paymentMethod
