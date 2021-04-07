@@ -20,8 +20,8 @@ function getAppPaymentMethod(method){
 
 module.exports = function (done) {
 	var sales = Sale.getAll().map(sale => {
-		if(sale.products && sale.products.length){
-			sale.productIds = sale.products.map(p => p._id);
+		if(sale.products && sale.products.some(p => p)){
+			sale.productIds = sale.products.filter(p => p).map(p => p._id).concat(sale.productIds || []);
 			sale.products = null;
 		}
 
