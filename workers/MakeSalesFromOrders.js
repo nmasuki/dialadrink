@@ -6,6 +6,7 @@ var WorkProcessor = require('../helpers/WorkProcessor');
 var self = module.exports = new WorkProcessor(getWork, doWork);
 
 function getAppPaymentMethod(method){
+    method = method || "";
     //Cash,MPESA,PesaPal,COOP,Swipe On Delivery,Credit
     var mapping = {
         "Cash": ["Cash", "Cash on Delivery"],
@@ -15,7 +16,7 @@ function getAppPaymentMethod(method){
     };
 
     for(var i in mapping){
-        var match = mapping[i].find(x => x.toLowerCase() == method);
+        var match = mapping[i].find(x => x.toLowerCase() == method.toLowerCase());
         if(match)
             return i;
     }
@@ -42,7 +43,7 @@ function getWork(next, done) {
                     clientId: o.client._id,
                     productIds: o.cart.map(c => c.product._id),
                     salePrice: o.total,
-                    description: "Online sale",
+                    mode: "Online",
                     paymentMethod: getAppPaymentMethod(o.paymentMethod)
                 };
             });

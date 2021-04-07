@@ -1,6 +1,7 @@
 var Sale = require('../helpers/LocalStorage').getInstance("sale");
 
 function getAppPaymentMethod(method){
+	method = method || "";
     //Cash,MPESA,PesaPal,COOP,Swipe On Delivery,Credit
     var mapping = {
         "Cash": ["Cash", "Cash on Delivery"],
@@ -10,7 +11,7 @@ function getAppPaymentMethod(method){
     };
 
     for(var i in mapping){
-        var match = mapping[i].find(x => x.toLowerCase() == method);
+        var match = mapping[i].find(x => x.toLowerCase() == method.toLowerCase());
         if(match)
             return i;
     }
