@@ -31,6 +31,9 @@ module.exports = function (done) {
 		}
 
 		sale.paymentMethod = getAppPaymentMethod(sale.paymentMethod);
+		if(sale.description)
+			sale.mode = "Online";
+			
 		return sale;
 	});
 
