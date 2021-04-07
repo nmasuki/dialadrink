@@ -5,6 +5,24 @@ var Sale = require('../helpers/LocalStorage').getInstance("sale");
 var WorkProcessor = require('../helpers/WorkProcessor');
 var self = module.exports = new WorkProcessor(getWork, doWork);
 
+function getAppPaymentMethod(method){
+    //Cash,MPESA,PesaPal,COOP,Swipe On Delivery,Credit
+    var mapping = {
+        "Cash": ["Cash", "Cash on Delivery"],
+        "MPESA": ["MPESA", "MPESA on Delivery"],
+        "PesaPal": ["PesaPal"],
+        "COOP":["CyberSource"],
+    };
+
+    for(var i in mapping){
+        var match = mapping[i].find(x => x.toLowerCase() == method);
+        if(match)
+            return i;
+    }
+
+    return method;
+}
+
 function getWork(next, done) {
     var filter = {
         orderDate: { $gt: new Date(self.worker.lastRun || '2021-04-04') }
@@ -25,7 +43,7 @@ function getWork(next, done) {
                     productIds: o.cart.map(c => c.product._id),
                     salePrice: o.total,
                     description: "Online sale",
-                    paymentMethod: o.paymentMethod
+                    paymentMethod: getAppPaymentMethod(o.paymentMethod)
                 };
             });
 
