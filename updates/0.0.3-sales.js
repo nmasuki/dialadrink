@@ -20,12 +20,12 @@ function getAppPaymentMethod(method){
 
 module.exports = function (done) {
 	var sales = Sale.getAll().map(sale => {
-		if(sale.products){
+		if(sale.products && sale.products.length){
 			sale.productIds = sale.products.map(p => p._id);
 			sale.products = null;
 		}
 
-		if(sale.client){
+		if(sale.client && sale.client._id){
 			sale.clientId = sale.client._id;
 			sale.client = null;
 		}

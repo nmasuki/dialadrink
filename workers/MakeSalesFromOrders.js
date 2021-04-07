@@ -20,7 +20,7 @@ function getAppPaymentMethod(method){
             return i;
     }
 
-    return method;
+    return method.split(' ')[0];
 }
 
 function getWork(next, done) {
