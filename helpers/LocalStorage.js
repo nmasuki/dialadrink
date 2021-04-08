@@ -132,6 +132,8 @@ function mongoFilterToFunction(filter){
     };
 }
 
+String.prototype.toMongoToFn = function(){ return mongoFilterToFunction(this); };
+
 function getAll(entityName) {
     var all = {};
     
@@ -207,9 +209,7 @@ function LocalStorage(entityName) {
     self.saveAll = function (entity) { return self.save(entity); };
 
     self.save = function (entity) {
-        var all = getAll(entityName),
-            updates = [],
-            errors = [];
+        var all = getAll(entityName), updates = [], errors = [];
 
         function setEntiry(entity) {
             var id = entity._id || entity.id || entity.Id || entity.public_id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
@@ -322,4 +322,3 @@ function LocalStorage(entityName) {
 
 LocalStorage.getInstance = (e => new LocalStorage(e));
 module.exports = LocalStorage;
-

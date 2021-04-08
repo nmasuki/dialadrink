@@ -40,8 +40,8 @@ function getWork(next, done) {
                 return {
                     _id: "online-" + o._id,
                     dateOfSale: o.orderDate,
-                    clientId: o.client._id,
-                    productIds: o.cart.map(c => c.product._id),
+                    clientId: o.client.id,
+                    productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',').map(x=> c.product.id)),
                     salePrice: o.total,
                     mode: "Online",
                     paymentMethod: getAppPaymentMethod(o.paymentMethod)
@@ -61,7 +61,13 @@ function doWork(err, sales, next) {
 
     if (sales && sales.length) {
         console.log(sales.length + " new online sales..");
-        return Sale.save(sales).then(next);
+        return Sale.save(sales)
+            .then(res => {
+                if(res.updates && res.updates.length){
+                    //Send
+                }
+            })
+            .then(next);
     }
     
     return Promise.resolve().then(next);
