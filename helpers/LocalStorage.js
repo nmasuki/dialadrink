@@ -212,7 +212,12 @@ function LocalStorage(entityName) {
 
         function setEntiry(entity) {
             var id = entity._id || entity.id || entity.Id || entity.public_id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
-            entity._rev = entity._rev || entity.__v;            
+            entity._rev = entity._rev || entity.__v;      
+            
+            if(id.startsWith("temp:")){
+                id = id.split(":")[1] || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
+                delete entity._rev;
+            }
 
             var curRev = parseInt((all[id] && all[id]._rev || "0").toString().split('-')[0]);
             var docRev = parseFloat((entity._rev || "0").toString().split('-')[0]);

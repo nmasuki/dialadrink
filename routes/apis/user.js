@@ -106,9 +106,9 @@ router.post("/", function (req, res) {
 	}
 });
 
-router.get("/sms/:mobile", function (req, res) {
+router.post("/sms/:mobile", function (req, res) {
 	var mobile = (req.params.mobile || "").cleanPhoneNumber();
-	var msg = (req.query.msg || "").trim();
+	var msg = (req.body.msg || "");
 
 	if (!msg)
 		return res.send({
@@ -116,8 +116,15 @@ router.get("/sms/:mobile", function (req, res) {
 			message: "No message defined!"
 		});
 
+	if (!mobile)
+		return res.send({
+			response: "error",
+			message: "No phone number defined!"
+		});
+
 	var _sms = new(require('../../helpers/sms/MySMS'))();
-	_sms.sendSMS(mobile, msg).then(data => res.send({ response: "success", data: data }));
+	_sms.sendSMS(mobile, msg)
+		.then(data => res.send({ response: "success", data: data }));
 });
 
 router.get("/check/:mobile", function (req, res) {
