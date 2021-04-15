@@ -245,23 +245,23 @@ var app = {
 		timer = timer || 1500;
 		var that = this;
 
-		if (that.$toastInstance) {
-			clearTimeout(that.$toastInstance);
-			that.$toastContainer.find(".showToastCon").html(msg);
-			that.$toastInstance = setTimeout(function () {
-				that.$toastContainer.remove();
-				that.$toastInstance = false;
+		if (that.$i) {
+			clearTimeout(that.$i);
+			that.$c.find(".showToastCon").html(msg);
+			that.$i = setTimeout(function () {
+				that.$c.remove();
+				that.$i = false;
 			}, timer);
 		} else {
-			that.$toastContainer = $('<div class="showToast"><div class="showToastInner"><div class="showToastTips fieldTipBounceIn"><div class="showToastCon">' + msg + '</div></div></div></div>');
-			that.$toastContainer.appendTo($("body"));
-			that.$toastInstance = setTimeout(function () {
-				that.$toastContainer.remove();
-				that.$toastInstance = false;
+			that.$c = $('<div class="showToast"><div class="showToastInner"><div class="showToastTips fieldTipBounceIn"><div class="showToastCon">' + msg + '</div></div></div></div>');
+			that.$c.appendTo($("body"));
+			that.$i = setTimeout(function () {
+				that.$c.remove();
+				that.$i = false;
 			}, timer);
 		}
 
-		that.$toastContainer.find(".showToastCon").css("background-color", color || "black");
+		that.$c.find(".showToastCon").css("background-color", color || "black");
 	},
 
 	showLoading: function (msg, timeout) {

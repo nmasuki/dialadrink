@@ -11,11 +11,11 @@ var tabletRE = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|c
 function isMobile (opts) {
   if (!opts) opts = {}
   var ua = opts.ua || opts;
-  if (!ua && typeof navigator !== 'undefined') ua = navigator.userAgent
+  if (!ua && typeof navigator !== 'undefined') ua = navigator.userAgent;
   if (ua && ua.headers && typeof ua.headers['user-agent'] === 'string') {
-    ua = ua.headers['user-agent']
+    ua = ua.headers['user-agent'];
   }
-  if (typeof ua !== 'string') return false
-
-  return opts.tablet ? tabletRE.test(ua) : mobileRE.test(ua)
+  
+  if (typeof ua !== 'string') return false;
+  return opts.tablet ? tabletRE.test(ua) : mobileRE.test(ua);
 }
