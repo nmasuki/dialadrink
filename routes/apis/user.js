@@ -106,7 +106,7 @@ router.post("/", function (req, res) {
 	}
 });
 
-router.get("/testsms/:mobile", function (req, res) {
+router.get("/sms/:mobile", function (req, res) {
 	var mobile = (req.params.mobile || "").cleanPhoneNumber();
 	var msg = (req.query.msg || "").trim();
 

@@ -188,7 +188,6 @@ var saveAll = function (entityName, all) {
                     saveAll(entityName, all).then(resolve).catch(reject); 
                 }, 100);
             }
-
             
             fs.writeFile(filePath, JSON.stringify(all, null, 2), function (err) {
                 console.log("Saved to file", filePath, "Releasing lock", lockFilePath);

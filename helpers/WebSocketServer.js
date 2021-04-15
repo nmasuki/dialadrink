@@ -28,7 +28,7 @@ try{
     wss.on("error", function(error){
         var ws = new WebSocket("ws://localhost:" + error.port);
         wss.clients = [ws];
-        wss.user = {appPermissions :["sms"]};
+        wss.user = {appPermissions :["sms"]};    
     });
 
     wss.on('connection', function connection(ws, req) {    
@@ -81,6 +81,9 @@ function processIncoming(message) {
                     break;
                 case 'number':
                     this.phone = obj.data;
+                    break;
+                case 'send_message':
+                    sendWSMessage(obj.phone, obj.msg);
                     break;
                 case 'message_status':
                     console.log("WSS:", "Message Status:" + obj.status, obj.msgid);
