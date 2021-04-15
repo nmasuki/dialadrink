@@ -41,6 +41,7 @@ function getWork(next, done) {
                     _id: "sale-" + o._id,
                     dateOfSale: o.orderDate,
                     clientId: o.client.id,
+                    location: [o.delivery.address, o.delivery.building, o.delivery.houseNumber].filter(x => !!x).join(", "),
                     productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',').map(x=> c.product.id)),
                     salePrice: o.total,
                     mode: "Online",
