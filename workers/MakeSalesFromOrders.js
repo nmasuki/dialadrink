@@ -38,7 +38,7 @@ function getWork(next, done) {
 
             var sales = orders.map(o => {
                 return {
-                    _id: "online-" + o._id,
+                    _id: "sale-" + o._id,
                     dateOfSale: o.orderDate,
                     clientId: o.client.id,
                     productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',').map(x=> c.product.id)),
