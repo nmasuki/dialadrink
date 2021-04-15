@@ -31,7 +31,8 @@ router.get("/", function (req, res) {
                 .slice(start, start + pageSize)
                 .selectMany(d => {
                     return d.options.map(o => {
-                        var obj = Object.assign(d.toAppObject(), o);
+                        var obj = Object.assign({}, d.toAppObject(), o);
+                        obj._id = [obj._id, o.quantity].join("-");
                         obj.price = obj.price || 0;
                         obj.offerPrice = obj.offerPrice || 0;
                         return obj;
