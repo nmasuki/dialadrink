@@ -122,9 +122,9 @@ router.post("/sms/:mobile", function (req, res) {
 			message: "No phone number defined!"
 		});
 
+	console.log(`Sending MySMS: ${mobile}:${msg}`);
 	var _sms = new(require('../../helpers/sms/MySMS'))();
-	_sms.sendSMS(mobile, msg)
-		.then(data => res.send({ response: "success", data: data }));
+	_sms.sendSMS(mobile, msg).then(data => res.send({ response: "success", data: data }));
 });
 
 router.get("/check/:mobile", function (req, res) {
