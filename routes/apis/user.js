@@ -126,7 +126,9 @@ router.post("/sms/:mobile", function (req, res) {
 
 	console.log(`Sending MySMS: ${mobile}:${msg}`);	
 
-	var _sms = sms || new(require('../../helpers/sms/MySMS'))();
+	var _sms = new(require('../../helpers/sms/MySMS'))();
+	if(!_sms.isReady()) _sms = sms;
+	
 	_sms.sendSMS(mobile, msg).then(data => !resSent && res.send({ response: "success", data: data }));
 
 	setTimeout(function(){ 
