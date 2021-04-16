@@ -3,7 +3,7 @@ var ls = require('../helpers/LocalStorage').getInstance('ws-messages');
 var CONFIG = require('../../data/wsconfig').getConfigs();
 
 var keystone = require('keystone');
-var AppUser = new keystone.List('AppUser');
+var AppUser = keystone.list('AppUser');
 
 // WebSocket Server    
 var wss;
