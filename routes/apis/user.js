@@ -122,17 +122,15 @@ router.post("/sms/:mobile", function (req, res) {
 			message: "No phone number defined!"
 		});
 
-	console.log(`Sending MySMS: ${mobile}:${msg}`);
-	
+	console.log(`Sending MySMS: ${mobile}:${msg}`);	
 	//var _sms = new(require('../../helpers/sms/MySMS'))();
 	var resSent = false;
 	sms.sendSMS(mobile, msg).then(data => !resSent && res.send({ response: "success", data: data }));
-
 	setTimeout(function(){
 		if(resSent) return;
 		resSent = true;
-		res.send({ response: "queued", data: data });
-	}, 1000);
+		res.send({ response: "success", data: "queued" });
+	}, 2000);
 });
 
 router.get("/check/:mobile", function (req, res) {
