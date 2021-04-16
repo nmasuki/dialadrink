@@ -22,7 +22,7 @@ function getAppPaymentMethod(method){
 
 module.exports = function (done) {
 	var filter = {
-        orderDate: { $gt: new Date('2021-04-01') }
+        orderDate: { $gt: new Date('2021-01-01') }
     };
 
     Order.model.find(filter)
