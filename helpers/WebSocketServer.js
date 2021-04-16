@@ -82,7 +82,7 @@ function processIncoming(message) {
 
                     keystone.list('AppUser').findOne({phoneNumber: this.phone})
                         .then(user => {
-                            console.log("WSS: Found user:",user.phoneNumber , user.firstName, user.lastName);
+                            console.log("WSS: Found user:", user);
                             this.user = user;
                         });
 
