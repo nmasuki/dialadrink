@@ -46,7 +46,8 @@ function getWork(next, done) {
                     paymentMethod: getAppPaymentMethod(o.paymentMethod) ,              
                     location: [o.delivery.address, o.delivery.building, o.delivery.houseNumber]
                         .filter(x => !!x)
-                        .distinctBy(x => x.toLowerCase().trim()).join(", "),
+                        .distinctBy(x => x.toLowerCase().trim().replace(/[\W]+/, ""))
+                        .join(", "),
                     productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',')
                         .map(x => c.product && c.product.id)).filter(x => !!x),
                 };

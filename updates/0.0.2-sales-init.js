@@ -40,7 +40,10 @@ module.exports = function (done) {
                     clientId: o.client.id,
                     dateOfSale: o.orderDate,
                     paymentMethod: getAppPaymentMethod(o.paymentMethod) ,              
-                    location: [o.delivery.address, o.delivery.building, o.delivery.houseNumber].filter(x => !!x).join(", "),
+                    location: [o.delivery.address, o.delivery.building, o.delivery.houseNumber]
+                        .filter(x => !!x)
+                        .distinctBy(x => x.toLowerCase().trim().replace(/[\W]+/, ""))
+                        .join(", "),
                     productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',')
                                       .map(x => c.product && c.product.id)).filter(x => !!x),
                 };
