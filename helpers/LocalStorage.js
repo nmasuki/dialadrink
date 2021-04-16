@@ -215,7 +215,7 @@ function LocalStorage(entityName) {
             entity._rev = entity._rev || entity.__v;      
             
             if(id.startsWith("temp:")){
-                id = id.split(":")[1] || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
+                entity._id = id = id.split(":")[1] || (entityName.toLowerCase() + "-" + uuidv4());
                 delete entity._rev;
             }
 
