@@ -45,7 +45,8 @@ function getWork(next, done) {
                     dateOfSale: o.orderDate,
                     paymentMethod: getAppPaymentMethod(o.paymentMethod) ,              
                     location: [o.delivery.address, o.delivery.building, o.delivery.houseNumber].filter(x => !!x).join(", "),
-                    productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',').map(x => c.product.id))
+                    productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',')
+                                      .map(x => c.product && c.product.id)).filter(x => !!x),
                 };
             });
 
