@@ -14,8 +14,7 @@ function getAppPaymentMethod(method){
 
     for(var i in mapping){
         var match = mapping[i].find(x => x.toLowerCase() == method.toLowerCase());
-        if(match)
-            return i;
+        if(match) return i;
     }
 
     return method.split(' ')[0];
@@ -39,7 +38,7 @@ module.exports = function (done) {
                     dateOfSale: o.orderDate,
                     clientId: o.client.id,
                     location: [o.delivery.address, o.delivery.building, o.delivery.houseNumber].filter(x => !!x).join(", "),
-                    productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',').map(x => c.product.id + "-" + c.quantity)),
+                    productIds: o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',').map(x => c.product.id)),
                     salePrice: o.total,
                     mode: "Online",
                     paymentMethod: getAppPaymentMethod(o.paymentMethod)
