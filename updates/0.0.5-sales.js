@@ -1,3 +1,5 @@
+var keystone = require('keystone');
+var Order = keystone.list('Order');
 var Sale = require('../helpers/LocalStorage').getInstance("sale");
 
 function getAppPaymentMethod(method){
