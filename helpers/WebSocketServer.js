@@ -82,10 +82,9 @@ function processIncoming(message) {
                     this.phone = auth[0];
                     this.pwd = auth[1];
 
-                    AppUser
-                        .findOne({phoneNumber: this.phone})
+                    AppUser.findOne({phoneNumber: this.phone})
                         .then(user => {
-                            console.log("WSS: Found user:",user.phoneNumber , user.firstName, user.lastName)
+                            console.log("WSS: Found user:",user.phoneNumber , user.firstName, user.lastName);
                             this.user = user;
                         });
 
