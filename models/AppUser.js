@@ -223,8 +223,7 @@ AppUser.find = function(filter){
                 
                 resolve(finalUsers.distinctBy(u => (u.phoneNumber || "").cleanPhoneNumber()));
             });
-        });
-        
+        });        
     });    
 };
 
