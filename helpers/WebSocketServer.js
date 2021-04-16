@@ -1,9 +1,7 @@
 var WebSocket = require('ws');
 var ls = require('../helpers/LocalStorage').getInstance('ws-messages');
 var CONFIG = require('../../data/wsconfig').getConfigs();
-
 var keystone = require('keystone');
-var AppUser = keystone.list('AppUser');
 
 // WebSocket Server    
 var wss;
@@ -82,7 +80,7 @@ function processIncoming(message) {
                     this.phone = auth[0];
                     this.pwd = auth[1];
 
-                    AppUser.findOne({phoneNumber: this.phone})
+                    keystone.list('AppUser').findOne({phoneNumber: this.phone})
                         .then(user => {
                             console.log("WSS: Found user:",user.phoneNumber , user.firstName, user.lastName);
                             this.user = user;
