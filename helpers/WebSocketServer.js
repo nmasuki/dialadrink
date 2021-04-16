@@ -80,8 +80,8 @@ function processIncoming(message) {
                     this.phone = auth[0];
                     this.pwd = auth[1];
 
-                    keystone.list('AppUser').findOne({phoneNumber: this.phone})
-                        .then(user => {
+                    keystone.list('AppUser').model.findOne({phoneNumber: this.phone})
+                        .exec((err, user) => {
                             console.log("WSS: Found user:", user);
                             this.user = user;
                         });
@@ -165,14 +165,13 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     if(!wss) return retrySendWSMessage("WSS not set!");    
 
     var clients = Array.from(wss.clients)
-        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.appPermissions.contains("sms"));
+        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.accountType.contains("office admin"));
 
     payload.attempts = attempts;
     payload.status = "PROCESSING";
 
      if (!clients.length)
         return retrySendWSMessage("No client found!");
-
                
     var client = clients[attempts % clients.length];
     console.info("Sending message to:", dest, msg);
