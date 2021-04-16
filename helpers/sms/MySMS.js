@@ -96,6 +96,8 @@ function BaseSMS() {
         });
     };
 
+    self.isReady = wss.isReady;
+    
     return self;
 }
 
