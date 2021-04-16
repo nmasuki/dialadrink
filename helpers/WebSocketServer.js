@@ -82,8 +82,19 @@ function processIncoming(message) {
 
                     keystone.list('AppUser').model.findOne({phoneNumber: this.phone})
                         .exec((err, user) => {
-                            console.log("WSS: Found user:", user);
+                            console.log("WSS: Found user:", user.name.first, user.name.last);
                             this.user = user;
+
+                            var clients = Array.from(wss.clients);
+                            var activeClients = clients.filter(c => c.readyState === WebSocket.OPEN);
+                            var authorizedClients = activeClients.filter(c => c.user && c.user.accountType.contains("office admin"));
+
+                            console.log(
+                                "WSS: Clients: " + clients.length,
+                                "Active:", activeClients.length,
+                                "Authorized:", authorizedClients.length
+                            );
+
                         });
 
                     break;
