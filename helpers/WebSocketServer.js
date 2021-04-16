@@ -208,6 +208,11 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     });
 }
 
+function isSendReady(){
+    var clients = Array.from(wss.clients)
+        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.accountType.contains("office admin"));
+    return clients.length;
+}
 //Retry sending pending msgs
 var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED' || d.status == 'RETRYABLE_FAILURE');
 if(pendingMsgs.length)
@@ -215,5 +220,6 @@ if(pendingMsgs.length)
 
 module.exports = {
     server: wss,
-    sendSMS: sendWSMessage
+    sendSMS: sendWSMessage,
+    isReady: isSendReady
 };
