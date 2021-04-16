@@ -515,14 +515,13 @@ Order.schema.methods.sendOrderNotification = function (next) {
                             var url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.GOOGLE_API_KEY1}`;
                             najax.get({
                                 url: url,
-                                success: function (json) {
-                                    console.log(`reverse geocode ${location.lat},${location.lng}.`, json);
-
+                                success: function (json) {                                    
                                     if(json){
                                         var address = JSON.parse(json).results[0];
                                         if(address)
                                             order.delivery.address = address.formatted_address;
                                             
+                                        console.log(`reverse geocode ${location.lat},${location.lng}.`, address);
                                         return resolve(address);
                                     }
 
