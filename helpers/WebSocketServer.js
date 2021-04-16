@@ -38,7 +38,11 @@ try{
             req.socket.remoteAddress || '').trim(':f');
 
         console.log("WSS:", "Client connected! ", ws.clientIp);
-        ws.on('pong', function heartbeat() { this.isAlive = true; });
+        
+        ws.on('pong', function heartbeat() { 
+            this.isAlive = true; 
+            this.lastPing = new Date();
+         });
 
         ws.on('message', function incoming(message) {
             if (typeof wss.processIncoming == "function")
@@ -94,7 +98,6 @@ function processIncoming(message) {
                                 "Active:", activeClients.length,
                                 "Authorized:", authorizedClients.length
                             );
-
                         });
 
                     break;
