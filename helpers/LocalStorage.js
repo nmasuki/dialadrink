@@ -22,25 +22,6 @@ function uuidv4() {
     });
 }
 
-function tryDateParse(str){
-    try {
-        return new Date(str).toISOString();
-    }catch(e){
-        return undefined;
-    }
-}
-
-function tryParse(str){
-    if(!str) return null;
-
-    try{
-        return JSON.parse(str);
-    }catch(e){
-        console.error("Error parsing json.", str, e);
-        return null;
-    }
-}
-
 function mongoFilterToFunction(filter){
     if(typeof filter == "string"){
         var regex = new RegExp("(" + filter.escapeRegExp() + ")", "ig");
@@ -145,7 +126,7 @@ function getAll(entityName) {
                 jsonStr.contains("{")? jsonStr.indexOf("{"): 0
             );
 
-            all = tryParse(jsonStr.substr(startIndex)) || {};
+            all = JSON.tryParse(jsonStr.substr(startIndex)) || {};
             if (all.data && all.response)
                 all = all.data;
             
@@ -162,8 +143,10 @@ function getAll(entityName) {
             for(var i in all){
                 if(all.hasOwnProperty(i)){
                     for(var j in all[i])
-                        if (all[i].hasOwnProperty(j) && /^date|date$/i.test(j.toString()))
-                            all[i][j] = tryDateParse(all[i][j]); 
+                        if (all[i].hasOwnProperty(j) && /^date|date$/i.test(j.toString())){
+                            var parseDate = Date.tryParse(all[i][j]);
+                            all[i][j] = parseDate? parseDate.toISOString(): undefined; 
+                        }
                 }
             }
         } 
