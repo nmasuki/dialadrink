@@ -126,12 +126,12 @@ function processIncoming(message) {
                     sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                     break;
                 case 'message_status':
-                    console.log("WSS:", "Message Status:" + obj.status, obj.msgid || "");
                     if(!obj.msgid){
                         sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                         break;
                     }
-                        
+                    
+                    console.log("WSS:", "Message Status:" + obj.status, obj.msgid || "");
                     var data = ls.get(obj.msgid);
                     
                     if(data){
@@ -174,9 +174,11 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     payload.attempts = attempts;
     ls.save(payload);
 
-    if(payload.status == "SUCCESS" || payload.status == "SENDING_SUCCESS") 
+    var noSendStatus = ["SUCCESS", "SUBMITTED_SUCCESS", "SENDING_SUCCESS"]
+    if(noSendStatus.contains(payload.status))
         return Promise.resolve(payload.data); 
     
+    //console.log(`WSS: Sending msg to: ${dest}, id:${msgid}`);    
     var retrySendWSMessage = function (err) {
         var errMsg;
         if (attempts > CONFIG.RetryCount) {
@@ -215,7 +217,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
         return retrySendWSMessage("No client found!");
                
     var client = clients[attempts % clients.length];
-    console.info("WSS: Sending message to:", dest, msg);
+    console.info(`WSS: Sending message using ${client.user.fullName}'s phone. to: ${dest}, msg: ${msg}`);
 
     return new Promise((fulfill, reject) => {
         client.send(JSON.stringify(payload), function (err) {
