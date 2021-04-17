@@ -59,7 +59,7 @@ try{
 
             var clients = Array.from(wss.clients);
             var activeClients = clients.filter(c => c.readyState === WebSocket.OPEN);
-            var authorizedClients = activeClients.filter(c => c.user && c.user.accountType.contains("office admin"));
+            var authorizedClients = activeClients.filter(c => c.user && c.user.accountType && c.user.accountType.contains("office admin"));
 
             console.log(
                 "WSS: Clients: " + clients.length,
@@ -109,7 +109,7 @@ function processIncoming(message) {
 
                             var clients = Array.from(wss.clients);
                             var activeClients = clients.filter(c => c.readyState === WebSocket.OPEN);
-                            var authorizedClients = activeClients.filter(c => c.user && c.user.accountType.contains("office admin"));
+                            var authorizedClients = activeClients.filter(c => c.user && c.user.accountType && c.user.accountType.contains("office admin"));
 
                             console.log(
                                 "WSS: Clients: " + clients.length,
@@ -126,7 +126,7 @@ function processIncoming(message) {
                     sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                     break;
                 case 'message_status':
-                    console.log("WSS:", "Message Status:" + obj.status, obj.msgid);
+                    console.log("WSS:", "Message Status:" + obj.status, obj.msgid || "");
                     if(!obj.msgid){
                         sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                         break;
@@ -205,7 +205,8 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     if(!wss) return retrySendWSMessage("WSS not set!");    
 
     var clients = Array.from(wss.clients)
-        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.accountType && c.user.accountType.contains("office admin"));
+        .filter(c => c.readyState === WebSocket.OPEN)
+        .filter(c => c.user && c.user.accountType && c.user.accountType.contains("office admin"));
 
     payload.attempts = attempts;
     payload.status = "PROCESSING";
@@ -214,7 +215,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
         return retrySendWSMessage("No client found!");
                
     var client = clients[attempts % clients.length];
-    console.info("Sending message to:", dest, msg);
+    console.info("WSS: Sending message to:", dest, msg);
 
     return new Promise((fulfill, reject) => {
         client.send(JSON.stringify(payload), function (err) {
@@ -236,9 +237,12 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
 
 function isSendReady(){
     var clients = Array.from(wss.clients)
-        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.accountType.contains("office admin"));
+        .filter(c => c.readyState === WebSocket.OPEN)
+        .filter(c => c.user && c.user.accountType && c.user.accountType.contains("office admin"));
+
     return clients.length;
 }
+
 //Retry sending pending msgs
 var pendingMsgs = ls.getAll().filter(d => d.status == 'INITIALIZED' || d.status == 'RETRYABLE_FAILURE');
 if(pendingMsgs.length)
