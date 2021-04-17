@@ -54,7 +54,7 @@ try{
             console.log(
                 "WSS: Client disconnected ip:", 
                 reasonCode, description,
-                ws.clientIp, ws.user?.name?.first, ws.user?.name?.last
+                ws.clientIp, ws.user.name.first, ws.user.name.last
             );
 
             var clients = Array.from(wss.clients);
@@ -109,7 +109,7 @@ function processIncoming(message) {
 
                             var clients = Array.from(wss.clients);
                             var activeClients = clients.filter(c => c.readyState === WebSocket.OPEN);
-                            var authorizedClients = activeClients.filter(c => c.user && c.user?.accountType?.contains("office admin"));
+                            var authorizedClients = activeClients.filter(c => c.user && c.user.accountType.contains("office admin"));
 
                             console.log(
                                 "WSS: Clients: " + clients.length,
