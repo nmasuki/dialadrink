@@ -55,7 +55,7 @@ function getClientByReq(req, res, next){
 
                                 if (!client) {
                                     client = new Client.model(order.delivery);
-                                    client.save(err => next(client));
+                                    client.update(err => next(client));
                                 }else
                                     next(client);
                             });
@@ -176,7 +176,7 @@ router.post("/", function (req, res) {
             client.copyAppObject(req.body);     
         }
 
-        client.save(err => {
+        client.update(err => {
             if(err)
                 return res.send({
                     response: "error",

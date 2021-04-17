@@ -571,7 +571,7 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
     }
 
     return new Promise((resolve, reject) => {
-        client.save(err => {
+        client.update(err => {
             if(err){
                 console.error(err);
                 return reject(err);
@@ -652,6 +652,11 @@ Client.schema.pre('save', function (next) {
     client.updateOrderStats(next);
 });
 
+Client.schema.methods.update = function(){
+    if(!this.debounceSave) this.debounceSave = this.save.debounce(10); 
+    return this.debounceSave.apply(this, arguments);
+};
+
 Client.schema.methods.updateOrderStats = function (next) {
     var client = this;
     
@@ -694,7 +699,7 @@ Client.schema.methods.updateOrderStats = function (next) {
                 if(typeof next == "function") 
                     next();
                 else
-                    client.save();
+                    client.update();
             });
     } else {
         console.error("This should never be hit!! Client has no phoneNumber or email.");

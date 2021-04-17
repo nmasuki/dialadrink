@@ -98,7 +98,7 @@ router.post("/", function (req, res) {
 		json.message = "Profile updated successfully";
 		json.data = client.toAppObject();
 
-		client.save();
+		client.update();
 		res.send(json);
 	} else {
 		console.log("Could not find user. params:", req.body);
@@ -271,7 +271,7 @@ router.post("/signup", function (req, res) {
 					gender: client.gender
 				});
 
-				client.save();
+				client.update();
 
 				json.response = "success";
 				json.message = "Added Successfully";
@@ -403,7 +403,7 @@ router.post("/login", function (req, res) {
 
 				if (!client.tempPassword.used && password == client.tempPassword.pwd) {
 					client.tempPassword.used = true;
-					client.save();
+					client.update();
 				}
 			} else {
 				json.message = "Username/Password do not match!!";
