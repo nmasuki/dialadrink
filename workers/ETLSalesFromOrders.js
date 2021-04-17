@@ -48,7 +48,7 @@ function getWork(next, done) {
                     mode: "Online",
                     salePrice: o.total,
                     _id: "sale-" + o._id,
-                    clientId: o.client.id,
+                    clientId: o.client && o.client.id || o.client,
                     dateOfSale: o.orderDate,             
                     location: location,
                     productIds: producIds,
