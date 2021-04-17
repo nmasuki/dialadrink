@@ -123,7 +123,7 @@ Order.add({
         },
         state: {
             type: String,
-            //options: 'Pending, Submited, Cancelled, Paid',
+            //options: 'Pending, SUBMITTED, Cancelled, Paid',
             default: 'Pending',
             noedit: true,
             index: true
