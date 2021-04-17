@@ -174,7 +174,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     payload.attempts = attempts;
     ls.save(payload);
 
-    var noSendStatus = ["SUCCESS", "SUBMITED_PENDING_DELIVERY", "SENDING_SUCCESS"]
+    var noSendStatus = ["SUCCESS", "SUBMITTED_PENDING_DELIVERY", "SENDING_SUCCESS"];
     if(noSendStatus.contains(payload.status))
         return Promise.resolve(payload.data); 
     
@@ -227,7 +227,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
 
                 return retrySendWSMessage(err).then(fulfill).catch(reject);
             } else {
-                payload.status = "SUBMITED_PENDING_DELIVERY";
+                payload.status = "SUBMITTED_PENDING_DELIVERY";
                 payload.activities.push({created_at: new Date().toISOString(), status:payload.status});
                 ls.save(payload);                
             }
