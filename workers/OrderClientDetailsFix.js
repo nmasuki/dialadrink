@@ -42,7 +42,7 @@ function doWork(err, orders, next) {
             if(order){
                 order.updateClient(() => {
                     order.save();
-                    order.client.save(updateClient);
+                    order.client.update(updateClient);
                 });                    
             } else {
                 next();

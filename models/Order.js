@@ -356,7 +356,7 @@ Order.schema.methods.updateClient = function (next) {
                     }
 
                     if(saveClient){
-                        client.save((err) => {
+                        client.update((err) => {
                             if(err)
                                 return console.error("Error saving client!!", err);
 

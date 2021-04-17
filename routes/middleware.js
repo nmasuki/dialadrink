@@ -420,7 +420,7 @@ var setAppUser = function (req, res, user) {
                 }
 
                 if (tosave)
-                    client.save();
+                    client.update();
 
                 return resolve(client);
             });

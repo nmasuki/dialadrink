@@ -10,7 +10,7 @@ exports = module.exports = function (done) {
                 var guessedGender = client.guessGender(client.name);
                 if (guessedGender) {
                     client.gender = guessedGender.getGender();
-                    client.save();
+                    client.update();
                 }
             }
         });
