@@ -52,9 +52,9 @@ try{
 
         ws.on('close', function(reasonCode, description) {
             console.log(
-                "WSS: Client disconnected ip:", 
-                reasonCode, description,
-                ws.clientIp, ws.user.name.first, ws.user.name.last
+                "WSS: Client disconnected ip:",
+                ws.clientIp, ws.user.fullName,
+                "ReasonCode:", reasonCode, description
             );
 
             var clients = Array.from(wss.clients);
@@ -133,7 +133,7 @@ function processIncoming(message) {
                     
                     console.log("WSS:", "Message Status:" + obj.status, obj.msgid || "");
                     var data = getOrCreatePayload(obj.msgid, obj.phone, obj.msg, 0, obj.status);
-                    
+
                     if(data){
                         data.statusLog = data.statusLog || [];
                         data.status = obj.status;
