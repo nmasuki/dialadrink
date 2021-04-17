@@ -132,7 +132,7 @@ function processIncoming(message) {
                     }
                     
                     console.log("WSS:", "Message Status:" + obj.status, obj.msgid || "");
-                    var data = ls.get(obj.msgid);
+                    var data = getOrCreatePayload(obj.msgid, obj.phone, obj.msg, 0, obj.status);
                     
                     if(data){
                         data.statusLog = data.statusLog || [];
@@ -150,10 +150,10 @@ function processIncoming(message) {
     }
 }
 
-function sendWSMessage(dest, msg, msgid, attempts, status) {
+function getOrCreatePayload(msgid, dest, msg, attempts, status){
     attempts = (attempts || 0) + 1;
     msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
-        
+     
     var payload = ls.get(msgid) || {
         _id: msgid,
         cmd: 'message',
@@ -170,8 +170,18 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
         }
     };
 
-    payload.activities = payload.activities || [{created_at: new Date().toISOString(), status:payload.status}];
     payload.attempts = attempts;
+    payload.status = status || payload.status;
+    payload.activities = payload.activities || [{created_at: new Date().toISOString(), status:payload.status}];
+    
+    return payload;
+}
+
+function sendWSMessage(dest, msg, msgid, attempts, status) {
+    attempts = (attempts || 0) + 1;
+    msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
+        
+    var payload = getOrCreatePayload(msgid, dest, msg, attempts, status);
     ls.save(payload);
 
     var noSendStatus = ["SUCCESS", "SUBMITTED_PENDING_DELIVERY", "SENDING_SUCCESS"];
