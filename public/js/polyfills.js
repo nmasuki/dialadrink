@@ -510,7 +510,7 @@ if (!Array.prototype.flatten)
 		return this.reduce(function (a, b) {
 			return a.concat(typeof map === "function" ? map(b) : b);
 		}, []);
-	}
+	};
 
 //
 if (!Math.sequence)
@@ -519,14 +519,31 @@ if (!Math.sequence)
 		min = min || 0;
 		var N = [];
 
-		if (typeof fxn == "function")
-			for (var i = min; i <= max; i++) N.push(fxn(i));
-		else
-			for (var i = min; i <= max; i++) N.push(i);
+		for (var i = (min || 0); i <= (max || 100); i++)
+			N.push(typeof fxn == "function" ? fxn(i) : i);
 
 		return N;
-	}
+	};
 
+JSON.tryParse = function tryParse(str){
+	if(!str) return null;
+
+	try{
+		return JSON.parse(str);
+	}catch(e){
+		console.error("Error parsing json.", str, e);
+		return null;
+	}
+};
+
+Date.tryParse = function tryParseDate(str){
+	try {
+		return new Date(str);
+	}catch(e){
+		return undefined;
+	}
+};
+	
 Date.isLeapYear = function (year) {
 	return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
 };

@@ -658,6 +658,34 @@ if (!Math.sequence)
         return N;
     };
 
+JSON.isValidString = function isJSONString(text){
+    if (typeof text == "string" && /^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
+JSON.tryParse = function tryParse(str){
+    if(!str) return null;
+    if(!JSON.isValidString(str)) return null;
+
+    try{
+        return JSON.parse(str);
+    }catch(e){
+        console.error("Error parsing json.", str, e);
+        return null;
+    }
+};
+
+Date.tryParse = function tryParseDate(str){
+    try {
+        return new Date(str);
+    }catch(e){
+        return undefined;
+    }
+};
+
 Date.isLeapYear = function (year) {
     return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
 };
@@ -801,6 +829,7 @@ if (!Promise.prototype.finally)
             err => Promise.resolve(onFinally()).then(() => console.warn(err))
         );
     };
+
 if (!Promise.any)
     Promise.any = function (promises) {
         return new Promise(function (resolve, reject) {
