@@ -90,6 +90,12 @@ AppUser.schema.virtual("lastName")
         return this.name.last;
     });
 
+// authorization for http request
+AppUser.schema.virtual("fullName")
+    .get(function () {
+        return [this.name.first, this.name.last].filter(x => x).join(' ');
+    });
+
 
 AppUser.schema.set('toObject', {
     transform: function (doc, ret, options) {

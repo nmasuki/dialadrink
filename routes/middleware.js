@@ -368,7 +368,7 @@ var setAppUser = function (req, res, user) {
     if (!user) 
         return Promise.reject("No matching user found!").catch(console.error);
     else if(user.accountStatus && user.accountStatus != "Active" && (!res.locals.app || res.locals.app != "com.dialadrinkkenya"))
-        return Promise.reject(`Account in ${user.accountStatus} status!`).catch(console.error);
+        return Promise.reject(`User ${user.fullName} in ${user.accountStatus} status!`).catch(console.error);
     
     if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
         return new Promise((resolve, reject) => {
