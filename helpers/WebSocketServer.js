@@ -123,10 +123,15 @@ function processIncoming(message) {
                     this.phone = obj.data;
                     break;
                 case 'send_message':
-                    sendWSMessage(obj.phone, obj.msg);
+                    sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                     break;
                 case 'message_status':
                     console.log("WSS:", "Message Status:" + obj.status, obj.msgid);
+                    if(!obj.msgid){
+                        sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
+                        break;
+                    }
+                        
                     var data = ls.get(obj.msgid);
                     
                     if(data){
@@ -145,14 +150,14 @@ function processIncoming(message) {
     }
 }
 
-function sendWSMessage(dest, msg, msgid, attempts) {
+function sendWSMessage(dest, msg, msgid, attempts, status) {
     attempts = (attempts || 0) + 1;
     msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
         
     var payload = ls.get(msgid) || {
         _id: msgid,
         cmd: 'message',
-        status: "INITIALIZED",
+        status: status || "INITIALIZED",
         activities: [],
         attempts: attempts,
         data: {
@@ -167,7 +172,10 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 
     payload.activities = payload.activities || [{created_at: new Date().toISOString(), status:payload.status}];
     payload.attempts = attempts;
-    ls.save(payload); 
+    ls.save(payload);
+
+    if(payload.status == "SUCCESS" || payload.status == "SENDING_SUCCESS") 
+        return Promise.resolve(payload.data); 
     
     var retrySendWSMessage = function (err) {
         var errMsg;
@@ -197,7 +205,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
     if(!wss) return retrySendWSMessage("WSS not set!");    
 
     var clients = Array.from(wss.clients)
-        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.accountType.contains("office admin"));
+        .filter(c => c.readyState === WebSocket.OPEN && c.user && c.user.accountType && c.user.accountType.contains("office admin"));
 
     payload.attempts = attempts;
     payload.status = "PROCESSING";
@@ -216,7 +224,7 @@ function sendWSMessage(dest, msg, msgid, attempts) {
 
                 return retrySendWSMessage(err).then(fulfill).catch(reject);
             } else {
-                payload.status = "SUCCESS";
+                payload.status = "SUBMITTED_SUCCESS";
                 payload.activities.push({created_at: new Date().toISOString(), status:payload.status});
                 ls.save(payload);                
             }
