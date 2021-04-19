@@ -80,7 +80,7 @@ try{
     }, 30000);
 
 } catch(e){
-    console.log("Error creating WebSocketServer!!!", e);
+    console.log("WSS: Error creating WebSocketServer!!!", e);
 }
 
 function isJSONString(text){
@@ -131,7 +131,7 @@ function processIncoming(message) {
                         break;
                     }
                     
-                    console.log("WSS:", "Message Status:" + obj.status, obj.msgid || "");
+                    console.log("WSS: Message Status:" + obj.status, obj.msgid || "");
                     var data = getOrCreatePayload(obj.msgid, obj.phone, obj.msg, 0, obj.status);
 
                     if(data){

@@ -193,7 +193,7 @@ function LocalStorage(entityName) {
     self.save = function (entity) {
         var all = getAll(entityName), updates = [], errors = [];
 
-        function setEntiry(entity) {
+        var setEntiry = function (entity) {
             var id = entity._id || entity.id || entity.Id || entity.public_id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
             entity._rev = entity._rev || entity.__v;      
             
@@ -257,7 +257,7 @@ function LocalStorage(entityName) {
             }
 
             updates.push({ _id: id, _rev: entity._rev });
-        }
+        }.debounce(10);
 
         return new Promise((resolve, reject) => {
             if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i))
