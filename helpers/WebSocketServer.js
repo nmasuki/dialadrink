@@ -126,12 +126,12 @@ function processIncoming(message) {
                     sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                     break;
                 case 'message_status':
+                    console.log("WSS: Message Status:" + obj.status, obj.msgid || "");
                     if(!obj.msgid){
                         sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                         break;
                     }
                     
-                    console.log("WSS: Message Status:" + obj.status, obj.msgid || "");
                     var data = getOrCreatePayload(obj.msgid, obj.phone, obj.msg, 0, obj.status);
 
                     if(data){
@@ -181,6 +181,11 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     attempts = (attempts || 0) + 1;
     msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
         
+    if(!dest || !msg) {
+        console.log("WSS: Can't send message. Empty destination or message!");
+        return Promise.resolve();
+    }
+
     var payload = getOrCreatePayload(msgid, dest, msg, attempts, status);
     ls.save(payload);
 
@@ -188,7 +193,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     if(noSendStatus.contains(payload.status))
         return Promise.resolve(payload.data); 
     
-    //console.log(`WSS: Sending msg to: ${dest}, id:${msgid}`);    
+    console.log(`WSS: Sending msg to: ${dest}, id:${msgid}, status:${payload.status}, msg:${msg}!`);    
     var retrySendWSMessage = function (err) {
         var errMsg;
         if (attempts > CONFIG.RetryCount) {
@@ -214,7 +219,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
         });
     };
 
-    if(!wss) return retrySendWSMessage("WSS not set!");    
+    if(!wss) return retrySendWSMessage("WSS not set!");
 
     var clients = Array.from(wss.clients)
         .filter(c => c.readyState === WebSocket.OPEN)
