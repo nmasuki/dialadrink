@@ -123,15 +123,17 @@ function processIncoming(message) {
                     this.phone = obj.data;
                     break;
                 case 'send_message':
+                    console.log("WSS: Sending Message:" + obj.status, obj.msgid || "", obj.msg);                    
                     sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                     break;
-                case 'message_status':
-                    console.log("WSS: Message Status:" + obj.status, obj.msgid || "");
+                case 'message_status':                    
                     if(!obj.msgid){
+                        console.log("WSS: Sending Message:" + obj.status, obj.msgid || "", obj.msg);                    
                         sendWSMessage(obj.phone, obj.msg, obj.msgid, 0, obj.status);
                         break;
                     }
                     
+                    console.log("WSS: Updating Message Status:" + obj.status, obj.msgid || "");
                     var data = getOrCreatePayload(obj.msgid, obj.phone, obj.msg, 0, obj.status);
 
                     if(data){
@@ -190,9 +192,11 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     ls.save(payload);
 
     var noSendStatus = ["SUCCESS", "SUBMITTED_PENDING_DELIVERY", "SENDING_SUCCESS"];
-    if(noSendStatus.contains(payload.status))
+    if(noSendStatus.contains(payload.status)){
+        console.log("WSS: Can't sent SMS, Message Status=" + payload.status);
         return Promise.resolve(payload.data); 
-    
+    }
+
     console.log(`WSS: Sending msg to: ${dest}, id:${msgid}, status:${payload.status}, msg:${msg}!`);    
     var retrySendWSMessage = function (err) {
         var errMsg;
