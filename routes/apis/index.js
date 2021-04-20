@@ -75,6 +75,7 @@ router.post("/:entity", function (req, res, next) {
         errors: []
     };
         
+    console.log(`Saving ${req.params.entity}..`);
     ls.save(entity).then(updates => {
         json.response = "success";
         json._ids = updates.map(n => n._id);

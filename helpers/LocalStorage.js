@@ -257,16 +257,19 @@ function LocalStorage(entityName) {
             }
 
             updates.push({ _id: id, _rev: entity._rev });
-        }.debounce(10);
+        }
 
         return new Promise((resolve, reject) => {
-            if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i))
-                Object.keys(entity).map(k => entity[k]).forEach(setEntiry);
-            else
+            if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i)){
+                var list = Object.keys(entity).map(k => entity[k]);
+                list.forEach(setEntiry);
+                console.log(`Saving ${list.length} items..`);
+            } else{
                 setEntiry(entity);
+                console.log(`Saving..`);
+            }
 
             saveAll(entityName, all);
-
             if (updates.length)
                 return resolve({ updates, errors });
             if (errors.length)
