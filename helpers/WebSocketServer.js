@@ -184,7 +184,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     msgid = msgid || Array(32).join('x').split('x').map(x => String.fromCharCode(Math.ceil(65 + Math.random() * 25))).join('');
         
     if(!dest || !msg) {
-        console.log("WSS: Can't send message. Empty destination or message!");
+        console.log("WSS: Can't send message. Empty destination/message!");
         return Promise.resolve();
     }
 
