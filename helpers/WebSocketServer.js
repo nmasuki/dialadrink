@@ -174,7 +174,8 @@ function getOrCreatePayload(msgid, dest, msg, attempts, status){
 
     payload.attempts = attempts;
     payload.status = status || payload.status;
-    payload.activities = payload.activities || [{created_at: new Date().toISOString(), status:payload.status}];
+    payload.activities = payload.activities || [];
+    payload.activities.push({created_at: new Date().toISOString(), status:payload.status});
     
     return payload;
 }
