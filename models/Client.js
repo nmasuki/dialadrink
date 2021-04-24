@@ -147,7 +147,7 @@ Client.schema.virtual("deliveryLocation")
 Client.schema.virtual("imageUrl")
     .get(function () {
         var client = this;
-        var gender = tclienthis.gender || client.guessGender(client.name).getGender() || "M";        
+        var gender = client.gender || client.guessGender(client.name).getGender() || "M";        
         
         var imagePlaceHolder = gender[0].toUpperCase() == "F"?
             "https://res.cloudinary.com/nmasuki/image/upload/w_200,c_fill,ar_1:1,g_auto,r_max/v1599750746/female-placeholder.jpg":
