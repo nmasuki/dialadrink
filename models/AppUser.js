@@ -221,7 +221,7 @@ AppUser.schema.methods.getSessions = function (next, sessions) {
     });
 };
 
-AppUser.schema.methods.sendNotification = function (title, body, icon, data, sessions) {
+AppUser.schema.methods.sendNotification = function (title, body, data, icon, sessions) {
     var client = this;
     return client.getSessions((err, sessions) => {
         if (err || !sessions)
@@ -259,12 +259,10 @@ AppUser.schema.methods.sendNotification = function (title, body, icon, data, ses
                 var payload = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
                     to: token,
                     //collapse_key: 'your_collapse_key',
-
                     notification: {
                         title: title.format(client),
                         body: body.format(client).replace(/<(?:.|\n)*?>/gm, '')
                     },
-
                     data: data
                 };
 
