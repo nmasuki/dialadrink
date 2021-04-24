@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var Order = keystone.list('Order');
+var AppUser = keystone.list('AppUser');
 var Sale = require('../helpers/LocalStorage').getInstance("sale");
 
 var WorkProcessor = require('../helpers/WorkProcessor');
@@ -72,7 +73,20 @@ function doWork(err, sales, next) {
         return Sale.save(sales)
             .then(res => {
                 if(res.updates && res.updates.length){
-                    //TODO Send notification to office manager
+                    var title = "New online sale(s)..";
+                    var msg = `You have ${res.updates.length} new sales recorder online.`;
+                    var data = {
+                        data: res.updates,
+                        buttons: ["Assign Rider"]
+                    };
+
+                    AppUser.find({accountType: "office admin"})
+                        .then(users => {
+                            users.forEach(u => {
+                                var _u = new AppUser.model(u);
+                                _u.sendNotification(title, msg, null, data, u.sessions);
+                            });
+                        });
                 }
             })
             .then(next);

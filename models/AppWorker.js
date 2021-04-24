@@ -1,5 +1,15 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
+var intervalMap = {
+    'every 10 seconds': 10 * 1000,
+    'every minute': 60 * 1000,
+    'hourly': 60 * 60 * 1000,
+    'daily': 24 * 60 * 60 * 1000,
+    'weekly': 7 * 24 * 60 * 60 * 1000,
+    'monthly': 30 * 24 * 60 * 60 * 1000,
+    'every 3 months': 3 * 30 * 24 * 60 * 60 * 1000,
+    'yearly': 365.25 * 24 * 60 * 60 * 1000
+};
 
 /**
  * AppWorker Model
@@ -34,11 +44,15 @@ AppWorker.add({
     },
     runRequency: {
         type: Types.Select,
-        options: 'every minute, hourly, daily, weekly, monthly, yearly',
+        options: Object.keys(intervalMap).join(", "),
         default: 'hourly',
         index: true
     },
     sequence: { type: String },
+    sessions: {
+        type: Types.TextArray,
+        noedit: true
+    },
     isActive: {
         type: Boolean
     },
@@ -47,15 +61,6 @@ AppWorker.add({
         noedit: true
     }
 });
-
-var intervalMap = {
-    'every minute': 60 * 1000,
-    'hourly': 60 * 60 * 1000,
-    'daily': 24 * 60 * 60 * 1000,
-    'weekly': 7 * 24 * 60 * 60 * 1000,
-    'monthly': 30 * 24 * 60 * 60 * 1000,
-    'yearly': 365.25 * 24 * 60 * 60 * 1000
-};
 
 AppWorker.schema.virtual("runInterval")
     .get(function () {

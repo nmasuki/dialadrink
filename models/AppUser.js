@@ -187,6 +187,122 @@ AppUser.schema.methods.sendNewAccountSMS = function (options) {
     return sms.sendSMS(user.phoneNumber, msg + "\r\n" + (otpToken || process.env.APP_ID || ""));
 };
 
+AppUser.schema.methods.getSessions = function (next, sessions) {
+    const db = keystone.mongoose.connection;
+    var filter = {
+        _id: {
+            "$in": sessions || this.sessions || []
+        }
+    };
+
+    var opt = keystone.get("session options");
+    return new Promise((resolve, reject) => {
+        db.collection('app_sessions')
+            .find(filter).toArray((err, sessions) => {
+                if (err)
+                    reject(err);
+
+                if (sessions)
+                    sessions = sessions.map(s => {
+                        var sess = JSON.parse(s.session || "{}");
+
+                        sess._id = s._id;
+                        if (opt && opt.cookie)
+                            sess.startDate = s.expires.addSeconds(opt.cookie.maxAge / 1000);
+
+                        return sess;
+                    });
+
+                if (!err)
+                    resolve(sessions);
+                if (typeof next == "function")
+                    next(err, sessions);
+            });
+    });
+};
+
+AppUser.schema.methods.sendNotification = function (title, body, icon, data, sessions) {
+    var client = this;
+    return client.getSessions((err, sessions) => {
+        if (err || !sessions)
+            return Promise.reject("Error getting sessions!");
+
+        if (data && data.sessionId)
+            sessions = sessions.filter(s => (s.webpush || s.fcm) && s._id == data.sessionId);
+
+        var webpushTokens = sessions.map(s => s.webpush).filter(t => !!t && t.endpoint);
+        var fcmTokens = sessions.map(s => s.fcm).filter(t => !!t);
+
+        if (webpushTokens.length || fcmTokens.length) {
+            console.log(`Sending notifications to ${client.name}`);
+
+            //Send WebPush
+            var promises = webpushTokens.map(subscription => {
+                var payload = {
+                    title: title.format(client),
+                    body: body.format(client).replace(/<(?:.|\n)*?>/gm, ''),
+                    buttons: data && data.buttons,
+                    icon: icon,
+                    data: data
+                };
+
+                return webpush.sendNotification(subscription, JSON.stringify(payload))
+                    .then(res => {
+                        console.log(`Notification sent to ${client.name}`, payload.title, payload.body);
+                        client.lastNotificationDate = new Date();
+                        return client;
+                    });
+            });
+
+            //Send FCM Push
+            promises = promises.concat(fcmTokens.map(token => {
+                var payload = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+                    to: token,
+                    //collapse_key: 'your_collapse_key',
+
+                    notification: {
+                        title: title.format(client),
+                        body: body.format(client).replace(/<(?:.|\n)*?>/gm, '')
+                    },
+
+                    data: data
+                };
+
+                return new Promise((resolve, reject) => fcm.send(payload, function (err, response) {
+                    if (err) {
+                        console.error("Error sendin FCM!", err);
+                        reject(err);
+                    } else {
+                        console.log("FCM successfully sent with response: ", response);
+                        client.lastNotificationDate = new Date();
+
+                        resolve(client);
+                    }
+                }));
+            }));
+
+            console.log(`Sessions: ${sessions.length}, WebTokens:${webpushTokens.length}, FCMTokens:${fcmTokens.length}`);
+            return Promise.any(promises)
+                .then(c => {
+                    if(c && typeof c.save == "function")
+                        c.save();
+                    else if (c && c[0] && typeof c[0].save == "function")
+                        c[0].save();
+                    else
+                        console.log(c);
+                })
+                .catch(console.error);
+                
+        } else {
+            //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
+            //if (client.lastNotificationDate < new Date().addDays(-30))
+            //    return client.sendSMSNotification("DIALADRINK:Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience!".format(client));
+            
+            return Promise.resolve(`User ${client.name} has no push token associeted!`).then(console.warn);
+        }
+    }, sessions);
+};
+
 var ls = require("../helpers/LocalStorage").getInstance("appuser");
 
 AppUser.find = function(filter){
@@ -284,7 +400,6 @@ AppUser.save = function(user){
                     else {
                         user._id = u._id.toString();
                         ls.save(user); 
-
                         resolve(u);
                     }
                 });

@@ -98,4 +98,29 @@ router.post("/", function (req, res, next) {
 
 });
 
+
+router.post("/fcm", function (req, res) {
+	var json = {
+		response: "success",
+		message: 'Token updated successfuly!'
+	};
+
+	var client = res.locals.appUser;
+	console.log(`${client && client.name || 'New user'} FCM registration!`);
+
+	if (req.session.fcm == req.body.regId) {
+		json.message = "Same FCM token! No update required";
+		console.log(json.message);
+		return res.status(304).send(json);
+	}
+
+	req.session.fcm = req.body.regId;
+	return res.status(201).send(json);
+});
+
+router.get('/fcm', function (req, res, next) {
+	res.send(req.session.fcm || {});
+});
+
+
 module.exports = router;
