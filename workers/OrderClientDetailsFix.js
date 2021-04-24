@@ -36,10 +36,9 @@ function doWork(err, orders, next) {
         
         var index = -1;
         (function updateClient(){
-            var order = orders[++index];
-            console.log(`Extracting client from order ${index + 1}/${orders.length}.. order._id: ${order.id}, ${order.orderNumber}, Client: ${order.delivery.phoneNumber}`)
-            
+            var order = orders[++index];            
             if(order){
+                console.log(`Extracting client from order ${index + 1}/${orders.length}.. order._id: ${order.id}, ${order.orderNumber}, Client: ${order.delivery.phoneNumber}`)
                 order.updateClient(() => {
                     order.save();
                     order.client.update(updateClient);
