@@ -445,11 +445,18 @@ router.post("/fcm", function (req, res) {
 	}
 
 	req.session.fcm = req.body.regId;
+
+	if(res.locals.appUser)
+		setTimeout(() => {
+			var title = "FCM received!!", body = json.message;
+			res.locals.appUser(title, body);
+		}, 5000);
 	return res.status(201).send(json);
 });
 
 router.get('/fcm', function (req, res, next) {
 	res.send(req.session.fcm || {});
+
 });
 
 module.exports = router;
