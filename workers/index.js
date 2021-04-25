@@ -66,8 +66,9 @@ function start() {
 	if(process.env.ENABLE_BACKGROUNDWORKER <= 0) 
 		return console.log("env.ENABLE_BACKGROUNDWORKER flag set to: " + process.env.ENABLE_BACKGROUNDWORKER);
 
-	if (process.env.ENABLE_BACKGROUNDWORKER > 0) {
-		console.log("Start workers for background processes..");
+		if(process.env.ENV == "development")
+			console.log("Start workers for background processes..");
+			
 		// Load workers
 		loadWorkers(function makePass(err, workers) {
 			if (err)
@@ -109,7 +110,7 @@ function start() {
 				console.log("No workers found. Exiting workes..");
 			}
 		});
-	}
+
 }
 
 module.exports = { start: start };
