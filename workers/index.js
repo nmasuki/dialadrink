@@ -65,9 +65,8 @@ function loadWorkers(next) {
 function start() {
 	if(process.env.ENABLE_BACKGROUNDWORKER <= 0) 
 		return console.log("env.ENABLE_BACKGROUNDWORKER flag set to: " + process.env.ENABLE_BACKGROUNDWORKER);
-
-		if(process.env.ENV == "development")
-			console.log("Start workers for background processes..");
+	
+		console.log("Start workers for background processes..");
 			
 		// Load workers
 		loadWorkers(function makePass(err, workers) {
@@ -86,7 +85,8 @@ function start() {
 				if (activeWorkers.length)
 					async.each(activeWorkers, m => {
 						if (m && m.run) {
-							console.log(`Running worker: '${m.name}'`);
+							if(process.env.ENV != "production")
+								console.log(`Running worker: '${m.name}'`);
 
 							var run = m.run();
 							if(run instanceof Promise)
@@ -105,7 +105,7 @@ function start() {
 					});
 
 				//Make next pass after a short delay
-				setTimeout(() => loadWorkers(makePass), process.env.WORK_DELAY || 60000);
+				setTimeout(() => loadWorkers(makePass), process.env.WORK_DELAY || 5000);
 			} else {
 				console.log("No workers found. Exiting workes..");
 			}
