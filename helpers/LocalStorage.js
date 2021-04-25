@@ -194,10 +194,10 @@ function LocalStorage(entityName) {
         var all = getAll(entityName), updates = [], errors = [];
 
         var setEntiry = function (entity) {
-            var id = entity._id || entity.id || entity.Id || entity.public_id || (entity._id = entityName.toLowerCase() + "-" + uuidv4());
+            var id = (entity._id || entity.id || entity.Id || entity.public_id || (entity._id = entityName.toLowerCase() + "-" + uuidv4())).toString();
             entity._rev = entity._rev || entity.__v;      
             
-            if(id.startsWith("temp:")){
+            if(id && id.startsWith("temp:")){
                 entity._id = id = id.split(":")[1] || (entityName.toLowerCase() + "-" + uuidv4());
                 delete entity._rev;
             }
