@@ -65,9 +65,8 @@ function loadWorkers(next) {
 function start() {
 	if(process.env.ENABLE_BACKGROUNDWORKER <= 0) 
 		return console.log("env.ENABLE_BACKGROUNDWORKER flag set to: " + process.env.ENABLE_BACKGROUNDWORKER);
-	
-		console.log("Start workers for background processes..");
-			
+		
+		console.log("Starting workers for background processes..");			
 		// Load workers
 		loadWorkers(function makePass(err, workers) {
 			if (err)
@@ -85,7 +84,7 @@ function start() {
 				if (activeWorkers.length)
 					async.each(activeWorkers, m => {
 						if (m && m.run) {
-							if(process.env.ENV != "production")
+							if(process.env.NODE_ENV != "production")
 								console.log(`Running worker: '${m.name}'`);
 
 							var run = m.run();
@@ -98,7 +97,7 @@ function start() {
 								setTimeout(() => {
 									m.worker.lastRun = new Date();
 									m.worker.save();
-								}, 1);							
+								}, 100);							
 						} else {
 							console.error(`worker: '${m.name}' not properly configured!`);
 						}
