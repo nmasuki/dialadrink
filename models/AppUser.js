@@ -273,7 +273,6 @@ AppUser.schema.methods.sendNotification = function (title, body, data, icon, ses
                     } else {
                         console.log("FCM successfully sent with response: ", response);
                         client.lastNotificationDate = new Date();
-
                         resolve(client);
                     }
                 }));
