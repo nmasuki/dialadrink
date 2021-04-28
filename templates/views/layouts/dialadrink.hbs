@@ -271,7 +271,17 @@
 <main class="main-content" role="main" style="min-height: 400px">
     <section class="collection-heading">
         <div class="collection-heading-wrapper">
-            <div class="container" style="padding-bottom: 0">
+            <div class="container" style="padding-bottom: 0">   
+                {{#if isMobile}}
+                    <div class="row scroll-x">
+                        {{#each navLinks}}                            
+                            <a href="{{{href}}}">
+                                <span class="orb">{{{label}}}</span>
+                            </a>
+                        {{/each}}
+                    </div>
+                {{/if}}            
+
                 {{#if page.bannerImages }}
                     <div class="row owl-carousel offset-0" data-items="1" data-autoplay="true">
                         {{#if isMobile}}
