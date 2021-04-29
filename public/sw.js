@@ -1,4 +1,4 @@
-var CACHE_VERSION = 110;
+var CACHE_VERSION = 112;
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
 function getCacheName(destination, inc) {
@@ -28,9 +28,6 @@ self.addEventListener('notificationclick', function (event) {
 }, false);
 
 workbox.precaching.precacheAndRoute([{
-        url: "/",
-        revision: getCacheName("doc")
-    }, {
         url: "/assets/fonts/digital-7.ttf",
         revision: getCacheName("fonts")
     }, {
@@ -69,14 +66,10 @@ workbox.precaching.precacheAndRoute([{
     }, {
         url: "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
         revision: getCacheName("style")
-    },
-    /*{
-        url: "https://cdn.okhi.io/prod/web/v4/okhi.min.js",
-        revision: getCacheName("script")
-    },*/
+    }
 ], {
     "cacheId": "dialadinkkenya",
-    "directoryIndex": "/",
+    "directoryIndex": "/index.html",
     "cleanUrls": false
 });
 
