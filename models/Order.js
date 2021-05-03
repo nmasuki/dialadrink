@@ -410,7 +410,7 @@ Order.schema.methods.placeOrder = function (next) {
             }
         }).catch(err => {
             if (typeof next == "function")
-                next(err, data);
+                next(err, order);
         });
     });    
 };
