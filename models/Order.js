@@ -388,22 +388,26 @@ Order.schema.methods.placeOrder = function (next) {
     return order.updateClient(function(err, client){
         if(client) order.client = client;
         return order.sendOrderNotification().then((data) => {
-            console.log("Updating order state='placed'!", data.orderNumber);    
+            console.log("Updating order state='placed'!", order.orderNumber);    
             //Update order state
             order.state = 'placed';
             order.save();
     
             if (typeof next == "function")
-                next(err, data);
+                next(err, order);
     
-            //popularity goes up +100
-            order.cart.forEach(c => {
-                if(c.isNew) c.save();
-                keystone.list("Product").findOnePublished({ _id: c.product._id || c.product }, (err, product) => {
-                    if (product)
-                        product.addPopularity(100);
+            try{
+                //popularity goes up +100
+                order.cart.forEach(c => {
+                    if(c.isNew) c.save();
+                    keystone.list("Product").findOnePublished({ _id: c.product._id || c.product }, (err, product) => {
+                        if (product)
+                            product.addPopularity(100);
+                    });
                 });
-            });
+            }catch(e){
+                console.log(e);
+            }
         }).catch(err => {
             if (typeof next == "function")
                 next(err, data);
