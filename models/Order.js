@@ -701,21 +701,19 @@ Order.register();
 Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     deliveryDetails = deliveryDetails || {};
     var today = new Date(new Date().toISOString().substr(0, 10));    
-    var time = new Date().toISOString().split('T')[1].split(':')[0];
     
-    /*
+    /**
+    var time = new Date().toISOString().split('T')[1].split(':')[0];
     if (deliveryDetails.email != process.env.DEVELOPER_EMAIL && (time >= 24 - 3 || time <= 5 - 3)) {
         err = "Due to the national curfew in Kenya. We will not be taking any orders past 12:00 Midnight. \r\nPlease stay at home to eradicate COVID-19!";
         if(process.env.NODE_ENV == "production")
             return callback(err);
     }
-    */
+    /***/
        
     deliveryDetails.phoneNumber = deliveryDetails.phoneNumber.cleanPhoneNumber();
     var filter = {
-        orderDate: {
-            $gte: today
-        }, 
+        orderDate: { $gte: today }, 
         $or: [
             {"delivery.clientIp": deliveryDetails.clientIp || '<<blank>>'},
             {"delivery.email": deliveryDetails.email || '<<blank>>'},
@@ -725,7 +723,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     };
 
     var blacklisted = ["2540111993103"];
-    var suspiciousOrderCount = process.env.NODE_ENV == "production"? 5: 10;
+    var suspiciousOrderCount = process.env.NODE_ENV == "production"? 6: 10;
 
     Order.model.find(filter)
         .exec((err, data) => {
