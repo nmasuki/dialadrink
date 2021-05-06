@@ -286,8 +286,9 @@ AppUser.schema.methods.sendNotification = function (title, body, data, icon, ses
                         return c.save();
                     else if (c && c[0] && typeof c[0].save == "function")
                         return c[0].save();
-                    else
-                        console.log(c);
+                    else if(c)
+                        console.log(c);                    
+                    return c;
                 });
                 
         } else {
