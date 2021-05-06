@@ -295,7 +295,7 @@ AppUser.schema.methods.sendNotification = function (title, body, data, icon, ses
             //if (client.lastNotificationDate < new Date().addDays(-30))
             //    return client.sendSMSNotification("DIALADRINK:Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience!".format(client));
             
-            return Promise.resolve(`User ${client.name} has no push token associeted!`).then(console.warn);
+            return Promise.resolve(`User ${client.name.first} ${client.name.last} has no push token associeted!`).then(console.warn);
         }
     }, sessions);
 };
