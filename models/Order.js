@@ -723,15 +723,18 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
     };
 
     var blacklisted = ["2540111993103"];
+    var whilelisted = ["254720805835"]
     var suspiciousOrderCount = process.env.NODE_ENV == "production"? 6: 10;
 
     Order.model.find(filter)
         .exec((err, data) => {
-            if(data) console.log(filter.$or.map(x => Object.values(x)[0]).join(','), `Orders today: ${data.length}, '${today}'`);
-            if(blacklisted.contains(deliveryDetails.phoneNumber) ||  err || data && data.length > suspiciousOrderCount){
-                err = err || "<p style='color:#ff8100'>We have detected suspicious activities from your location. Please call to complete your order!</p>";
-                console.log(deliveryDetails.phoneNumber, err);
-                return callback(err);
+            if (!whilelisted.contains(deliveryDetails.phoneNumber)) {
+                if (data) console.log(filter.$or.map(x => Object.values(x)[0]).join(','), `Orders today: ${data.length}, '${today}'`);
+                if (blacklisted.contains(deliveryDetails.phoneNumber) || err || data && data.length > suspiciousOrderCount) {
+                    err = err || "<p style='color:#ff8100'>We have detected suspicious activities from your location. Please call to complete your order!</p>";
+                    console.log(deliveryDetails.phoneNumber, err);
+                    return callback(err);
+                }
             }
 
             promo = promo || {};
