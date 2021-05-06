@@ -782,10 +782,20 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
                 }
             });
 
-            if(c.chargesName.length)
-                order.charges.chargesName = c.chargesName;
-            if(c.chargesAmount.length)
-                order.charges.chargesAmount = c.chargesAmount;
+            try {
+                if (c.chargesName.length)
+                    order.charges.chargesName = c.chargesName;
+            } catch (e) {
+                console.warn("Error!" + e);
+            }
+
+            try {
+                if (c.chargesAmount.length)
+                    order.charges.chargesAmount = c.chargesAmount;
+            } catch (e) {
+                console.warn("Error!" + e);
+            }
+            
 
             return Promise.all(cartItems.map(c => c.save())).then(function () {
                 return order.save((err) => {
