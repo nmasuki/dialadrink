@@ -189,7 +189,7 @@
                     <div class="main-header-inner">
                         <div class="nav-top">
 
-                            <div class="nav-search">
+                            <div class="nav-search" style="{{#if isMobile}}margin-top: 53px;{{/if}}">
                                 <form class="search" action="#">
                                     <input type="hidden" name="type" value="product"/>
                                     <input type="image" {{#if isMobile}}data-mobile="true"{{/if}} src="{{#if isMobile}}/assets/icon-voice-search.svg{{else}}/assets/icon-search.png{{/if}}" alt="Go" id="search">
