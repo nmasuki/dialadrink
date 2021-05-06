@@ -234,7 +234,7 @@ AppUser.schema.methods.sendNotification = function (title, body, data, icon, ses
         var fcmTokens = sessions.map(s => s.fcm).filter(t => !!t);
 
         if (webpushTokens.length || fcmTokens.length) {
-            console.log(`Sending notifications to ${client.name}`);
+            console.log(`Sending notifications to ${client.name.first} ${client.name.last}`);
 
             //Send WebPush
             var promises = webpushTokens.map(subscription => {
@@ -280,15 +280,15 @@ AppUser.schema.methods.sendNotification = function (title, body, data, icon, ses
 
             console.log(`Sessions: ${sessions.length}, WebTokens:${webpushTokens.length}, FCMTokens:${fcmTokens.length}`);
             return Promise.any(promises)
+                .catch(console.error)
                 .then(c => {
                     if(c && typeof c.save == "function")
-                        c.save();
+                        return c.save();
                     else if (c && c[0] && typeof c[0].save == "function")
-                        c[0].save();
+                        return c[0].save();
                     else
                         console.log(c);
-                })
-                .catch(console.error);
+                });
                 
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
