@@ -25,7 +25,7 @@ self.addEventListener('notificationclick', function (e) {
     e.waitUntil(clients.matchAll({ type: 'window' }).then(function(clientsArr) {
         var action = e.action || e.notification.data.action || "/";
         // If a Window tab matching the targeted URL already exists, focus that;
-        const hadWindowToFocus = clientsArr.some(c => c.url === action ? (c.focus(), true) : false);
+        var hadWindowToFocus = clientsArr.some(c => c.url === action ? (c.focus(), true) : false);
         // Otherwise, open a new tab to the applicable URL and focus it.
         if (!hadWindowToFocus){
             if (!action.startsWith("/") && !action.startsWith("http")) 
