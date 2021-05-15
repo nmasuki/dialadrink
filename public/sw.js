@@ -1,4 +1,4 @@
-var CACHE_VERSION = 112;
+var CACHE_VERSION = 114;
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
 function getCacheName(destination, inc) {
@@ -7,24 +7,35 @@ function getCacheName(destination, inc) {
 }
 
 self.addEventListener("push", function(e) {
-    var data = e.data.json();
-    console.log("Push received...");
+    var data = Object.assign({
+        body: 'Dial a Drink Notification',
+        icon: 'https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png',
+        buttons: [{action: '/', title: 'Continue Shopping'}]
+    }, e.data.json());
 
-    self.registration.showNotification(data.title, {
-        body: data.body || 'Dial a Drink Notification',
-        icon: data.icon || 'https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png',
-        buttons: data.buttons || [{action: '/', title: 'Continue Shopping'}]
-    });
+    console.log("Push received...");
+    self.registration.showNotification(data.title, data);
 });
 
-self.addEventListener('notificationclick', function (event) {
-    console.log(event.notification.data);
-    event.notification.close();
+self.addEventListener('notificationclick', function (e) {
+    console.log(e.notification.data);
+    e.notification.close();
 
-    if (event.action.startsWith("/") || event.action.startsWith("http")) 
-        clients.openWindow(event.action);
-    else
-        clients.openWindow("/");
+    // Get all the Window clients
+    e.waitUntil(clients.matchAll({ type: 'window' }).then(function(clientsArr) {
+        var action = e.action || e.notification.data.action || "/";
+        // If a Window tab matching the targeted URL already exists, focus that;
+        const hadWindowToFocus = clientsArr.some(c => c.url === action ? (c.focus(), true) : false);
+        // Otherwise, open a new tab to the applicable URL and focus it.
+        if (!hadWindowToFocus){
+            if (!action.startsWith("/") && !action.startsWith("http")) 
+                action = "/index.html";
+            
+            clients.openWindow(action).then(function(c){ return c ? c.focus() : null; });
+        }
+    }));
+
+   
 }, false);
 
 workbox.precaching.precacheAndRoute([{
