@@ -85,12 +85,10 @@ router.get("/banners", function (req, res) {
 });
 
 router.get("/locations", function (req, res) {
-    Location.model.find({
-            show: true
-        })
+    Location.model.find({ show: true })
         .exec((err, locations) => {
             if (err)
-                return res.send({
+                return res.send({ 
                     response: "error",
                     message: "Unexpected error while reading locations! " + err
                 });
