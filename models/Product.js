@@ -160,7 +160,12 @@ Product.schema.virtual("keyWords").get(function () {
 });
 
 Product.schema.virtual('stockOptions').get(function(){
-    return this.options.filter(op => op.inStock);
+    var options = this.priceOptions.filter(op => op.inStock);
+
+    if(options.length <= 0)
+        options = this.priceOptions.splice(0, 1);
+
+    return options;
 });
 
 Product.schema.virtual('options').get(function () {
@@ -168,11 +173,7 @@ Product.schema.virtual('options').get(function () {
     if(this.priceOptions.every(p => p.inStock != product.inStock))
         this.priceOptions.forEach(p => p.inStock = product.inStock);
 
-    var options = this.priceOptions.filter(op => op.inStock);
-    if(options.length)
-        options = this.priceOptions.splice(0, 1);
-
-    return options.map(op => ({
+    return this.priceOptions.map(op => ({
         _id: op._id,
         quantity: (op.option || {}).quantity,
         currency: (op.currency || "KES").toUpperCase().replace('KSH', "KES"),
@@ -443,6 +444,10 @@ Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
 keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', function (next) {
+    var product = this;
+    if(this.priceOptions.every(p => p.inStock != product.inStock))
+        this.priceOptions.forEach(p => p.inStock = product.inStock);
+
     this.modifiedDate = new Date();
     var defaultOption = this.defaultOption || this.priceOptions.first();
 
