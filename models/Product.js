@@ -159,13 +159,26 @@ Product.schema.virtual("keyWords").get(function () {
     return keyWords.filter(s => s && s.length > 2);
 });
 
+Product.schema.virtual('stockOptions').get(function(){
+    return this.options.filter(op => op.inStock);
+});
+
 Product.schema.virtual('options').get(function () {
-    return this.priceOptions.map(op => ({
+    var product = this;
+    if(this.priceOptions.all(p => p.inStock != product.inStock))
+        this.priceOptions.forEach(p => p.inStock = product.inStock);
+
+    var options = this.priceOptions.filter(op => op.inStock);
+    if(options.length)
+        options = this.priceOptions.splice(0, 1);
+
+    return options.map(op => ({
         _id: op._id,
         quantity: (op.option || {}).quantity,
-        currency: (op.currency || "KES").replace('Ksh', "KES"),
+        currency: (op.currency || "KES").toUpperCase().replace('KSH', "KES"),
         offerPrice: op.offerPrice || 0,
         price: op.price || 0,
+        inStock: op.inStock
     })).distinctBy(op => op.quantity);
 });
 

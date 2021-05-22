@@ -65,10 +65,11 @@ input[type="radio"], input[type="checkbox"] {
                         {{#ifgt options.length 1}}
                             <div class="change-quantity">  
                                 {{#each options}}
-                                    <label style="font-size: 24px;" class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
+                                    <label style="font-size: 24px;{{#unless inStock}}text-decoration: line-through;{{/unless}}" class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
                                         style="margin-top:5px; white-space:nowrap;" 
                                         itemscope="itemscope" itemprop="offers" itemtype="http://schema.org/Offer">
-                                        <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" {{#ifeq ../price price}}checked{{/ifeq}}
+                                        <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" 
+                                            {{#if inStock}}{{#ifeq ../price price}}checked{{/ifeq}}{{else}}disabled{{/if}}
                                             value="{{quantity}}" data-value="{{price}}" data-option="{{../id}}|{{quantity}}"/>
                                         <span itemprop="priceCurrency">{{currency}}</span>
                                         {{#if percentOffer}}
