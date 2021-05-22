@@ -27,7 +27,7 @@ ProductPriceOption.add({
 ProductPriceOption.schema.virtual('percentOffer').get(function () {
     if (this && !!this.offerPrice && this.price > this.offerPrice) {
         var discount = this.price - this.offerPrice;
-        var percent = Math.round(100 * discount / defaultOption.price);
+        var percent = Math.round(100 * discount / this.price);
         return percent || null;
     }
 

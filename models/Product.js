@@ -160,10 +160,10 @@ Product.schema.virtual("keyWords").get(function () {
 });
 
 Product.schema.virtual('stockOptions').get(function(){
-    var options = this.priceOptions.filter(op => op.inStock);
+    var options = this.options.filter(op => op.inStock);
 
     if(options.length <= 0)
-        options = this.priceOptions.splice(0, 1);
+        options = this.options.splice(0, 1);
 
     return options;
 });
