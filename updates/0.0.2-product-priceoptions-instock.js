@@ -12,8 +12,10 @@ exports = module.exports = function (done) {
         .exec((err, products) => {
             products.forEach(product => {
                 if(product.priceOptions.every(p => p.inStock != product.inStock)){
-                    product.priceOptions.forEach(p => p.inStock = product.inStock);
-                    product.save();
+                    product.priceOptions.forEach(p => {
+                        p.inStock = product.inStock;
+                        p.save();
+                    });
                 }
             });
 
