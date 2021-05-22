@@ -184,7 +184,7 @@ Product.schema.virtual('options').get(function () {
 });
 
 Product.schema.virtual('defaultOption').get(function () {
-    return this.options.orderBy(o => o.price).last();
+    return this.stockOptions.orderBy(o => o.price).last();
 });
 
 Product.schema.virtual('averageRatings').get(function () {
