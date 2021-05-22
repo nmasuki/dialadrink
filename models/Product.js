@@ -165,7 +165,7 @@ Product.schema.virtual('stockOptions').get(function(){
 
 Product.schema.virtual('options').get(function () {
     var product = this;
-    if(this.priceOptions.all(p => p.inStock != product.inStock))
+    if(this.priceOptions.every(p => p.inStock != product.inStock))
         this.priceOptions.forEach(p => p.inStock = product.inStock);
 
     var options = this.priceOptions.filter(op => op.inStock);
