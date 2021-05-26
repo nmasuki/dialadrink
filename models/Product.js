@@ -27,6 +27,10 @@ Product.add({
         type: String
     },
 
+    howToOpen: {
+        type: String
+    },
+
     priceOptions: {
         type: Types.Relationship,
         ref: 'ProductPriceOption',

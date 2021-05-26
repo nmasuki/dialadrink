@@ -60,7 +60,7 @@ module.exports = function MoveSMS(sender) {
             
             if (balance < 0)
                 return console.error("MoveSMS balance is low. Please topup.");
-
+                
             if (process.env.NODE_ENV != "production") {
                 err = "Ignoring SMS notification for non-prod environment!";
                 console.warn(err + "\r\n------SMS------\r\n" + to + ":\r\n" + message + "\r\n------");                
