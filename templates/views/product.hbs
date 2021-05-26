@@ -6,9 +6,10 @@
     white-space: nowrap;
     padding: 5px;
     margin: 2px;
-    border: 1px solid;
+    border: 1px solid black;
     border-radius: 5px;
     cursor: pointer;
+    color: black;
 }
 
 input[type="radio"], input[type="checkbox"] {
@@ -201,7 +202,7 @@ input[type="radio"], input[type="checkbox"] {
                 {{#if howToOpen}}
                     <div class="row">
                         <div class="col-md-12">
-                            How to open <span class="monospaced label label-info">{{{howToOpen}}}</span>
+                            How to open: <span class="monospaced label label-info">{{{howToOpen}}}</span>
                         </div>
                     </div>
                 {{/if}}
