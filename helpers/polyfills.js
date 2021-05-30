@@ -236,13 +236,20 @@ var limit = function (func, wait, debounce) {
 
             var throttler = function () {
                 timeout = null;
-                var ret = func.apply(context, args);
+                var ret;
+                
+                try {
+                    ret = func.apply(context, args);
+                } catch(e){
+                    console.error("Error calling debounce on function!", e);
+                }
+
                 if(ret instanceof Promise)
                     ret.catch(console.error);
 
                 promises.forEach(p => p.my_resolve(ret));
-                if(promises.length > 1)
-                    console.log(debounce? "Debounced": "Throttled", func.name, promises.length, "times");
+                if (promises.length > 1)
+                    console.log(debounce ? "Debounced" : "Throttled ", func.name + " " + promises.length + " times");
 
                 promises.length = 0;
             };
