@@ -190,7 +190,7 @@ function search(req, res, next) {
                 product.addPopularity(1);
 
                 product.findRelated((err, related) => {
-                    locals.related = related.slice(0, 6);
+                    locals.related = related.filter(r => locals.similar.every(s => s.id != r.id)).slice(0, 6);
                     view.render('product');
                 });
 

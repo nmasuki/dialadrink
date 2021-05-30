@@ -310,64 +310,7 @@ Product.schema.methods.findSimilar = function (callback) {
 };
 
 Product.schema.methods.findRelated = function (callback) {
-    //Get Cart Items
-    var product = this;
-
-    return keystone.list("CartItem").model.find({ product: product._id })
-        .exec((err, cartItems) => {
-            var cartIds = cartItems.map(c => c._id);
-            return keystone.list("Order").model.find({ cart: { $in: cartIds }})
-                .deepPopulate("cart.product.category")
-                .exec((err, orders) => {
-                    if (err)
-                        return console.log(err, orders);
-
-                    var productCounts = {};
-                    var categoryCounts = {};
-
-                    orders.forEach(order => {
-                        order.cart.forEach(item => {
-                            if (!item || !item.product) return;
-
-                            var id = (item.product._id || item.product).toString();
-                            categoryCounts[id] = (categoryCounts[id] = categoryCounts[id] || 0) + 1;
-                            if (id != product.id)
-                                productCounts[id] = (productCounts[id] = productCounts[id] || 0) + 1;
-
-                        });
-                    });
-
-                    var relatedProdIds = Object.keys(productCounts).concat(product.relatedProducts.map(p => (p._id || p).toString()));
-                    
-                    //Get products that where ordered together
-                    return Product.findPublished({ _id: { $in: relatedProdIds }})
-                        .exec((err, related) => {
-                            if (err){
-                                if (typeof callback == "function")
-                                    return callback(err, related);
-                                return;
-                            }
-
-                            related = related.orderByDescending(p => p.hitsPerWeek)
-                                .orderByDescending(p => {
-                                    var score = productCounts[p.id] + (categoryCounts[p.id] || 0) * 0.5;
-
-                                    if (product.category && p.category && product.category.key == p.category.key)
-                                        score *= 0.5;
-                                    else if (p.category && p.category.key == "extras")
-                                        score *= 1.75;
-
-                                    return score;
-                                });
-
-                            if (typeof callback == "function")
-                                callback(null, related);
-
-                            return related;
-                        });
-                });
-        });
-
+    return Product.findRelated(callback, [this.id || this._id]);
 };
 
 var saveDebounce = function(){ return this.save(); }.debounce();
@@ -577,6 +520,80 @@ Product.schema.set('toJSON', {
 });
 
 Product.register();
+
+Product.findRelated = function (callback, products) {
+    //Get Cart Items
+    var productIds = Array.isArray(products)?
+        products.map(p => (p.id || p._id || p || "").toString()):
+        [products || ""];
+
+    return keystone.list("CartItem").model.find({ product: {$in: productIds}})
+        .exec((err, cartItems) => {
+            var cartIds = cartItems.map(c => c._id);
+            return keystone.list("Order").model.find({ cart: { $in: cartIds }})
+                .deepPopulate("cart.product.category,cart.product.relatedProducts")
+                .exec((err, orders) => {
+                    if (err)
+                        return console.log(err, orders);
+
+                    var productCounts = {};
+                    var categoryCounts = {};
+                    var products = [];
+
+                    orders.forEach(order => {
+                        order.cart.forEach(item => {
+                            if (!item || !item.product) return;
+                            function incrementCounts(p){
+                                var id = (p._id || p).toString();
+                                var catId = ((p.category && p.category._id || p.category) || "").toString();
+                                
+                                if(catId)
+                                    categoryCounts[catId] = (categoryCounts[catId] = categoryCounts[catId] || 0) + 1;
+                                
+                                if (!productIds.contains(id))
+                                    productCounts[id] = (productCounts[id] = productCounts[id] || 0) + 1;
+                                else
+                                    products.push(p);
+                            }
+
+                            incrementCounts(item.product);                            
+                            if(item.product.relatedProducts)
+                                item.product.relatedProducts.forEach(incrementCounts);                            
+                        });
+                    });
+
+                    var relatedProdIds = Object.keys(productCounts);                    
+                    //Get products that where ordered together
+                    return Product.findPublished({ _id: { $in: relatedProdIds }})
+                        .exec((err, related) => {
+                            if (err){
+                                if (typeof callback == "function")
+                                    return callback(err, related);
+                                return;
+                            }
+
+                            related = related.orderByDescending(p => p.hitsPerWeek)
+                                .orderByDescending(p => {
+                                    var id = (p._id || p).toString();
+                                    var catId = ((p.category && p.category._id || p.category) || "").toString();
+                                
+                                    var score = productCounts[id] + (categoryCounts[catId] || 0) * 0.2;
+                                    if (products.some(product => product.category && p.category && product.category.key == p.category.key))
+                                        score *= 0.3;
+                                    else if (p.category && p.category.key == "extras")
+                                        score *= 2.5;
+
+                                    return score;
+                                });
+
+                            if (typeof callback == "function")
+                                callback(null, related);
+
+                            return related;
+                        });
+                });
+        });
+};
 
 Product.offerAndPopular = function(size, callback){
     size = size || 8;
