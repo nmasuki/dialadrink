@@ -581,7 +581,7 @@ Product.findRelated = function (callback, products) {
                                     if (products.some(product => product.category && p.category && product.category.key == p.category.key))
                                         score *= 0.3;
                                     else if (p.category && p.category.key == "extras")
-                                        score *= 2.5;
+                                        score *= 3.5;
 
                                     return score;
                                 });

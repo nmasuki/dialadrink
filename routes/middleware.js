@@ -72,13 +72,13 @@ exports.initLocals = function (req, res, next) {
 
     //Geolocation
     if(req.headers.geolocation){
-        var regex = /geo:(-?\d+\.?\d*),(-?\d+\.?\d*);cgen=gps/i
+        var regex = /geo:(-?\d+\.?\d*),(-?\d+\.?\d*);cgen=gps/i;
         var split = regex.exec(req.headers.geolocation);
         
         res.locals.appGeolocation = {
             lat: split[1],
             lng: split[2]
-        }
+        };
 
         console.log("Geolocation:", res.locals.appGeolocation);
     } 
