@@ -581,8 +581,8 @@ Product.findRelated = function (callback, products) {
                                     var extraTags = ["extra", "extras", "other", "others"];
                                     if (products.some(product => product.category && p.category && product.category.key == p.category.key))
                                         score *= 0.3;
-                                    else if ((p.category && extraTags.some(t=> p.category.key == t)) || (p.tags || []).some(t => extraTags.contains(t)))
-                                        score *= 2.5;
+                                    else if ((p.category && extraTags.some(t=> p.category.key == t)) || (p.tags || []).some(t => extraTags.contains(t.toLowerCase())))
+                                        score *= 1.5;
 
                                     return score;
                                 });
