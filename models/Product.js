@@ -578,7 +578,8 @@ Product.findRelated = function (callback, products) {
                                     var catId = ((p.category && p.category._id || p.category) || "").toString();
                                 
                                     var score = productCounts[id] + (categoryCounts[catId] || 0) * 0.2;
-                                    var extraTags = ["extra", "extras", "other", "others"];
+                                    var extraTags = ["extras", "extra", "soft-drinks", "cigars-and-ciggarrettes", "other", "others"];
+                                    
                                     if (products.some(product => product.category && p.category && product.category.key == p.category.key))
                                         score *= 0.3;
                                     else if ((p.category && extraTags.some(t=> p.category.key == t)) || (p.tags || []).some(t => extraTags.contains(t.toLowerCase())))
