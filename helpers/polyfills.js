@@ -241,7 +241,7 @@ var limit = function (func, wait, debounce) {
                 try {
                     ret = func.apply(context, args);
                 } catch(e){
-                    console.error("Error calling debounce on function!", e);
+                    console.warn("Error calling debounce on function!", e);
                 }
 
                 if(ret instanceof Promise)
