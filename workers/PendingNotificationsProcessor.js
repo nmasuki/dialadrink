@@ -1,8 +1,6 @@
 var keystone = require('keystone');
 var ClientNotification = keystone.list('ClientNotification');
-
 var WorkProcessor = require('../helpers/WorkProcessor');
-var self = module.exports = new WorkProcessor(getWork, doWork);
 
 function getWork(next, done) {
     var filter = {
@@ -32,10 +30,10 @@ function getWork(next, done) {
             if (err)
                 return next(err);
 
-            if (process.env.NODE_ENV == "development" && notifications.length)
-                next(null, [notifications[0]], done);
-            else
-                next(null, notifications, done);
+            //if (process.env.NODE_ENV == "development" && notifications.length)
+            //    return next(null, [notifications[0]], done);
+
+            return next(null, notifications, done);
         });
 }
 
@@ -47,54 +45,60 @@ function doWork(err, notifications, next) {
         notifications = notifications.filter(n => n.client);
         if(notifications.length)
             console.log(notifications.length + " client notifications to send..");
-        
-        return Promise.all(notifications.map(n => {
-                var markNotification = function(status){
-                    return function () {
-                        n.status = status;
-                        n.save();
-                    };
+
+        var i = 0;
+        return new Promise(function popWork(resolve) {
+            console.log("popWork", i);
+
+            var n = notifications[i++];
+            if(!n) return resolve();
+            
+            if (n.message.body)
+                n.message.body = n.message.body.format(n.client);
+            if (n.message.title)
+                n.message.title = n.message.title.format(n.client);
+
+            var promise;
+            if (n.type == "sms")
+                promise = n.client.sendSMSNotification(n.message.body, n);
+
+            if (n.type == "email")
+                promise = n.client.sendEmailNotification(n.message.title, n.message.body, n);
+
+            if (n.type == "push")
+                promise = n.client.sendNotification(n.message.title, n.message.body, n.message.icon, n);
+
+            var markNotification = function(status){
+                return function () {
+                    n.status = status;
+                    n.save();
+                    console.log("popWork", i, status);
+                    return popWork(resolve);
                 };
+            };
+    
+            if(promise)                
+                promise.then(markNotification('sent')).catch(markNotification('rejected'));
+            else
+                promise = markNotification('rejected');
+            
+            return promise;
+        }).finally(function () {
+            var grouped = notifications.groupBy(n => n.broudcast && (n.broudcast._id || n.broudcast) || '');
 
-                if (n.message.body)
-                    n.message.body = n.message.body.format(n.client);
-                if (n.message.title)
-                    n.message.title = n.message.title.format(n.client);
-
-                if (n.type == "sms")
-                    return n.client.sendSMSNotification(n.message.body, n)
-                        .then(markNotification('sent'))
-                        .catch(markNotification('rejected'));
-
-                if (n.type == "email")
-                    return n.client.sendEmailNotification(n.message.title, n.message.body, n)
-                        .then(markNotification('sent'))
-                        .catch(markNotification('rejected'));
-
-                if (n.type == "push")
-                    return n.client.sendNotification(n.message.title, n.message.body, n.message.icon, n)
-                        .then(markNotification('sent'))
-                        .catch(markNotification('rejected'));
-
-                return Promise.resolve().then(markNotification('rejected'));
-            }))
-            .catch(console.warn)
-            .finally(function () {
-                var grouped = notifications.groupBy(n => n.broudcast && (n.broudcast._id || n.broudcast) || '');
-
-                Object.values(grouped).forEach(g => {
-                    if (!g.find(n => n.status != 'sent')) {
-                        var b = g[0].broudcast;
-                        if(b){
-                            b.status = 'sent';
-                            b.save();
-                        }
+            Object.values(grouped).forEach(g => {
+                if (!g.find(n => n.status != 'sent')) {
+                    var b = g[0].broudcast;
+                    if(b){
+                        b.status = 'sent';
+                        b.save();
                     }
-                });
-
-                if (typeof next == "function")
-                    next();
+                }
             });
+
+            if (typeof next == "function")
+                next();
+        });
 
     } else {
         if (typeof next == "function")
@@ -103,3 +107,5 @@ function doWork(err, notifications, next) {
         return Promise.resolve();
     }
 }
+
+module.exports = new WorkProcessor(getWork, doWork);

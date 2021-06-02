@@ -52,69 +52,67 @@ module.exports = function MoveSMS(sender) {
     };
    
     var sendPromise = null;
-    self.sendSMS = function compose(to, message, next) {
+    self.sendSMS = async function compose(to, message, next) {
         var url = apiUrl.format('compose') + `&sender=${sender}`;
 
-        return self.balance().then(function (balance) {
-            var err = "";
-            
-            if (balance < 0)
-                return console.error("MoveSMS balance is low. Please topup.");
-                
-            if (process.env.NODE_ENV != "production") {
-                err = "Ignoring SMS notification for non-prod environment!";
-                console.warn(err + "\r\n------SMS------\r\n" + to + ":\r\n" + message + "\r\n------");                
-                return _sendSMS.call(this, to, message, next);
-            }
+        var balance = await self.balance();
+        if (balance < 0)
+            return console.error("MoveSMS balance is low. Please topup.");
+        
+        if (process.env.NODE_ENV != "production") {
+            var err = "Ignoring SMS notification for non-prod environment!";
+            console.warn(err + "\r\n------SMS------\r\n" + to + ":\r\n" + message + "\r\n------");                
+            return await _sendSMS.call(this, to, message, next);
+        }
 
-            var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
-            return Promise.all(numbers.map(n => self.validateNumber(n))).then(values => {
-                var validNos = numbers.filter((n, i) => values[i].valid);
+        var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
+        var values = await Promise.all(numbers.map(n => self.validateNumber(n)));
+        var validNos = numbers.filter((n, i) => values[i].valid);
 
-                if (!validNos.length) {
-                    var err = "Ignoring SMS notification for invalid numbers! " + numbers.join();
-                    if (typeof next == "function")
-                        next(err);
+        if (!validNos.length) {
+            var err = "Ignoring SMS notification for invalid numbers! " + numbers.join();
+            if (typeof next == "function")
+                next(err);
+            if(err)
+                console.error(err);
+        }
 
-                    return Promise.reject(err);
-                }
+        if (validNos.length < numbers.length)
+            console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
 
-                if (validNos.length < numbers.length)
-                    console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
+        var sendFxn = ((resolve, reject) => {
+            console.log("Sending SMS request..");
+            najax.post({
+                url: url,
+                data: {
+                    to: validNos.join(','),
+                    message: message.replace(/\s{2,}/g, " "),
+                    msgtype: 5,
+                    dlr: 0
+                },
+                rejectUnauthorized: false,
+                requestCert: true,
+                agent: false,
+            }).then(function (response) {
+                console.log("SMS request sent. Http response:", response);                    
+                resolve(--_smsBalance);
 
-                var sendFxn = ((resolve, reject) => {
-                    console.log("Sending SMS request..");
-                    najax.post({
-                        url: url,
-                        data: {
-                            to: validNos.join(','),
-                            message: message.replace(/\s{2,}/g, " "),
-                            msgtype: 5,
-                            dlr: 0
-                        },
-                        rejectUnauthorized: false,
-                        requestCert: true,
-                        agent: false,
-                    }).then(function (response) {
-                        console.log("SMS request sent. Http response:", response);                    
-                        resolve(--_smsBalance);
+                if (typeof next == "function")
+                    next(null, _smsBalance);
+            }).fail(function (error) {
+                console.error("Http error:", error);
+                reject(error);
 
-                        if (typeof next == "function")
-                            next(null, _smsBalance);
-                    }).fail(function (error) {
-                        console.error("Http error:", error);
-                        reject(error);
-
-                        if (typeof next == "function")
-                            next(error);
-                    });
-                });
-
-                return sendPromise? sendPromise.then(() => new Promise(sendFxn)): (sendPromise = new Promise(sendFxn)) ;
+                if (typeof next == "function")
+                    next(error);
             });
-        }).catch(function (error) {
-            return console.error("Can't send SMS!", error);
         });
+
+        if(sendPromise)
+            sendPromise.then(() => new Promise(sendFxn));
+        else 
+            sendPromise = new Promise(sendFxn);
+
     };
 
     self.schedule = function schedule(date, to, message, next) {

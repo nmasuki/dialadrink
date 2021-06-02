@@ -233,9 +233,13 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     payload.attempts = attempts;
     payload.status = "PROCESSING";
 
-     if (!clients.length)
+    if (!clients.length){
+        if (process.env.NODE_ENV != "production")
+            return Promise.reject("NON production environment. returning reject!");
+        
         return retrySendWSMessage("No client found!");
-               
+    }
+
     var client = clients[attempts % clients.length];
     console.info(`WSS: Sending message using ${client.user.fullName}'s phone. to: ${dest}, msg: ${msg}`);
 

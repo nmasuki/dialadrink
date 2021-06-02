@@ -125,7 +125,7 @@
         <div class="main-header-wrapper">
             <div  class="visible-xs" style="height: 50px">
                 <div class="mobile-top-navigation visible-xs" style="position: fixed;">
-                    <button id="showLeftPush" class="visible-xs"><i class="fa fa-bars fa-2x"></i></button>
+                    <button id="showLeftPush" class="visible-xs" style="display: none !important;"><i class="fa fa-bars fa-2x"></i></button>
                     <ul class="list-inline">
                         <li style="visibility: hidden;" class="is-mobile-login">
                             <div class="btn-group">
@@ -138,8 +138,8 @@
                         <li class="is-mobile-currency currency_group">
                             <div class="currencies-switcher">
                                 <div>
-                                    <a href="tel:{{contactNumber}}">
-                                        <span style="color: white">{{contactNumber}}</span>
+                                    <a href="/">
+                                        <span style="color: white">{{appTitle}}</span>
                                     </a>
                                 </div>
                             </div>
@@ -147,7 +147,7 @@
 
                         <li style="float: right" class="is-mobile-cart">
                             <a href="/cart" title="Shopping Cart">
-                                <div class="num-items-in-cart">
+                                <div class="num-items-in-cart" style="display: none;">
                                     <i  style="color: white" class="fa fa-shopping-cart"></i>
                                     <span class="icon">
                                         <span  style="color: white" class="number cart-total-pieces">{{cartItemCount this}}</span>

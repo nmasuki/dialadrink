@@ -33,7 +33,7 @@ function loadWorkers(next) {
 				
 			var filter = { name: { "$in": modules.map(m => m.name) }};			
 			if (isFirstPass)
-				console.log("Loaded AppWorkers: " + filter.name.$in.join(', '));
+				console.log("Loaded AppWorkers:\n " + filter.name.$in.join(', '));
 
 			AppWorker.model
 				.find(filter)
@@ -42,18 +42,18 @@ function loadWorkers(next) {
 						console.error(err);
 
 					modules = modules.map(m => {
-							var worker = workers.find(w => m.name == w.name);
+						var worker = workers.find(w => m.name == w.name);
+						
+						if (!worker) {
+							m.runInterval = 60 * 1000;
+							worker = new AppWorker.model(m);
+							worker.isActive = true;
+							worker.save();
+						}
 
-							if (!worker) {
-								m.runInterval = 60 * 1000;
-								worker = new AppWorker.model(m);
-								worker.isActive = true;
-								worker.save();
-							}
-
-							m.worker = worker;
-							return m;
-						});
+						m.worker = worker;
+						return m;
+					});
 
 					next(null, modules);
 				});
@@ -73,9 +73,7 @@ function start() {
 				return console.warn(err);
       
       		if (workers) {
-				var activeWorkers = workers.filter(m => {
-					return m.worker.isActive && m.worker.nextRun <= new Date().getTime();
-				});
+				var activeWorkers = workers.filter(m => m.worker.isActive && m.worker.nextRun <= new Date().getTime());
 			
 				if (isFirstPass)
 					console.log("Loaded " + workers.filter(m => m.worker.isActive).length + "/" + workers.length + " active workers..");
