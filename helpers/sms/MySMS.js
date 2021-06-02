@@ -3,12 +3,12 @@ var wss = require('../WebSocketServer');
 var LocalStorage = require('../LocalStorage');
 var ls = new LocalStorage("lookups");
 
+var lookupCount = 0;
 function pickOneApiKey() {
     var allKeys = ['159eece6bd4f7fdc23916fd7778efa8c', '0c2315a3ad790d8d3b6b3a53ec8a4c75', '1845a28d63e1b10f9e73aa474d33d8fb', ];
     var firstOfTheMonth = (new Date()).toISOString().substr(0, 8) + "01";
     var monthLookUps = ls.getAll().filter(l => l.created_at >= firstOfTheMonth);
-    //var keyIndex = new Date().getMonth() % 2 == 0 ? Math.ceil(monthLookUps.length / 10) : monthLookUps.length;
-    var keyIndex = monthLookUps.length;
+    var keyIndex = (lookupCount++) + monthLookUps.length;
     return allKeys[keyIndex % allKeys.length];
 }
 
@@ -17,35 +17,37 @@ function BaseSMS() {
 
     self.balance = function(){ return Promise.resolve(10); };
 
-    self.sendSMS = function(to, message, next){
+    self.sendSMS = async function(to, message, next){
         var numbers = (Array.isArray(to) ? to : [to]).map(t => t.cleanPhoneNumber());
-        return Promise.all(numbers.map(n => self.validateNumber(n))).then(values => {
-            var validNos = numbers.filter((n, i) => values[i].valid);
+        var values = await Promise.all(numbers.map(n => self.validateNumber(n)));
+        var validNos = numbers.filter((n, i) => values[i].valid);
+        
+        if (!validNos.length) {
+            var err = "Ignoring SMS notification for invalid numbers! " + numbers.join();
+            if (typeof next == "function")
+                next(err);
 
-            if (!validNos.length) {
-                var err = "Ignoring SMS notification for invalid numbers! " + numbers.join();
-                if (typeof next == "function")
-                    next(err);
+            if(err)
+                console.error(err);
 
-                return Promise.reject(err);
-            }
+            return;
+        }
 
-            if (validNos.length < numbers.length)
-                console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
+        if (validNos.length < numbers.length)
+            console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
 
-            return wss.sendSMS(validNos, message.replace(/\s{2,}/g, " ")).then(a => {
-                if (typeof next == "function")
-                    next(null, a);
-                    
-                return a;
-            }).catch(err => {
-                if (typeof next == "function")
-                    next(err);
-                else
-                    console.error(err);
-            });
-        });
-    };
+        try {
+            var response = await wss.sendSMS(validNos, message.replace(/\s{2,}/g, " "));
+            if (typeof next == "function")
+                next(null, response);
+            return response;
+        }catch(err){
+            if (typeof next == "function")
+                next(err);
+            else
+                console.error(err);
+        }
+    }
 
     self.validateNumber = function (number) {
         return new Promise((resolve, reject) => {
@@ -54,8 +56,8 @@ function BaseSMS() {
             if (numberLookup && !numberLookup.error && numberLookup.created_at && new Date(numberLookup.created_at) > new Date().addDays(-120))
                 return resolve(numberLookup);
 
-            var lookUpKey = pickOneApiKey();
-            console.log("Number lookup:", number, lookUpKey);
+            var lookUpKey = pickOneApiKey();            
+            console.log("Number lookup:", lookupCount, number, lookUpKey);
 
             najax.get({
                 url: `http://apilayer.net/api/validate`,
@@ -79,6 +81,8 @@ function BaseSMS() {
                     }
                     
                     ls.save(res);
+                    lookupCount--;
+
                     if (res.error) {
                         console.error("Error while validating", res.error.info);
                         resolve({ valid: true });
