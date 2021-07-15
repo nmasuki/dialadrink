@@ -217,7 +217,7 @@ Order.add({
 });
 
 Order.schema.pre('save', function (next) {
-    if(this.payment.amount <= 0) return next("Amount can't be less than zero:" + this.amount);
+    if(!this.cart && this.cart.length <= 0) return next("no cart items!");
 
     this.orderAmount = this.payment.amount;
     this.modifiedDate = Date.now();
