@@ -217,6 +217,9 @@ Order.add({
 });
 
 Order.schema.pre('save', function (next) {
+    if(!this.cart && this.cart.length <= 0) return next("no cart items!");
+
+    this.orderAmount = this.payment.amount;
     this.modifiedDate = Date.now();
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
