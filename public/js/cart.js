@@ -175,7 +175,7 @@ var cartUtil = function () {
 
         loadCharges: loadRegionData,
 
-        getCharges: function(){
+        getCharges: function getCharges(){
             var charges = {};
             var categories = Object.values(self.getCart())
                 .map(function(c) { return c.product && c.product.category && c.product.category.key;})
@@ -189,6 +189,7 @@ var cartUtil = function () {
                     charges.deliveryCharges = Math.max(charges.deliveryCharges, window.regionData.deliveryCharges);
             } else if(categories.length == 1 && ["others", "extras", "extra"].indexOf(categories[0])) {
                 charges.deliveryCharges = 210;
+                loadRegionData().then(getCharges)
             }            
 
             //Transaction Charges
