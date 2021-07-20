@@ -33,8 +33,14 @@ module.exports = function MoveSMS(sender) {
                 requestCert: true,
                 agent: false,
                 success: function (response) {
-                    _smsBalance = parseFloat(/[\d]+/.exec(response).pop() || "0");
-                    console.log("SMS balance:", _smsBalance);
+                    var numbers = /[\d]+/.exec(response);
+                    _smsBalance = parseFloat(numbers.pop() || "0");
+
+                    if(_smsBalance)
+                        console.log("SMS balance:", _smsBalance);
+                    else
+                        console.error("SMS balance:", _smsBalance);
+
                     resolve(_smsBalance);
 
                     if (typeof next == "function")
