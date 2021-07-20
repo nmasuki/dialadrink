@@ -62,7 +62,8 @@ var cartUtil = function () {
 
         if (!location)
             location = window.addressData && window.addressData.location;
-
+        var deliveryDistance = Math.round(10 * distanceFromNai(location))/10;
+        
         var inBounds = function(location, bounds) {
             var eastBound = location.lng < bounds.northeast.lng;
             var westBound = location.lng > bounds.southwest.lng;
@@ -84,15 +85,13 @@ var cartUtil = function () {
             .filter(function (l) { return l.href != "drinks-delivery-kenya"; })
             .orderByDescending(function(l) { return 0.01 * distanceFromNai(l.location) + area(l.viewport); });
 
-        var deliveryDistance = Math.round(10 * distanceFromNai(location))/10;
         window.regionData = Object.assign({
             deliveryDistance: deliveryDistance,
-            freeDeliveryThreashold: 0,
-            deliveryCharges: 0
+            freeDeliveryThreashold: 1000,
+            deliveryCharges: deliveryDistance * 200
         }, matches.last() || {});
 
-        self.updateView();
-        console.log(deliveryDistance, window.regionData);
+        self.updateView();        
         return $.Deferred().resolve(window.regionData.deliveryCharges);
     }
 
@@ -176,21 +175,19 @@ var cartUtil = function () {
         loadCharges: loadRegionData,
 
         getCharges: function getCharges(){
+            if(!window.regionData)
+                return loadRegionData().then(getCharges);
+
             var charges = {};
             var categories = Object.values(self.getCart())
                 .map(function(c) { return c.product && c.product.category && c.product.category.key;})
                 .distinct();
                 
             //Delivery charges
-            if (window.regionData && window.regionData.freeDeliveryThreashold) {
-                if(categories.length == 1 && ["others", "extras", "extra"].indexOf(categories[0]) >= 0)
-                    charges.deliveryCharges = 200;
-                if (self.totalCost() < window.regionData.freeDeliveryThreashold)
-                    charges.deliveryCharges = Math.max(charges.deliveryCharges, window.regionData.deliveryCharges);
-            } else if(categories.length == 1 && ["others", "extras", "extra"].indexOf(categories[0])) {
-                charges.deliveryCharges = 210;
-                loadRegionData().then(getCharges)
-            }            
+            if(categories.length == 1 && ["others", "extras", "extra"].indexOf(categories[0]) >= 0)
+                charges.deliveryCharges = Math.max(200, charges.deliveryCharges);
+            if (self.totalCost() < window.regionData.freeDeliveryThreashold)
+                charges.deliveryCharges = Math.max(200, window.regionData.deliveryCharges);  
 
             //Transaction Charges
             var paymentMode = $("[name=paymentMethod]:checked").val();
