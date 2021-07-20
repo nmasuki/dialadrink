@@ -186,8 +186,9 @@ var cartUtil = function () {
             //Delivery charges
             if(categories.length == 1 && ["others", "extras", "extra"].indexOf(categories[0]) >= 0)
                 charges.deliveryCharges = Math.max(200, charges.deliveryCharges);
+                
             if (self.totalCost() < window.regionData.freeDeliveryThreashold)
-                charges.deliveryCharges = Math.max(200, window.regionData.deliveryCharges);  
+                charges.deliveryCharges = window.regionData.deliveryCharges;  
 
             //Transaction Charges
             var paymentMode = $("[name=paymentMethod]:checked").val();
