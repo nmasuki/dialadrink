@@ -49,11 +49,13 @@ var cartUtil = function () {
                 if(res.response == "success"){
                     self.locations = res.data;
                     var cbd = self.locations.find(function(l){ return l.name == "CBD"; });
+                    
                     if(cbd){
                         if (!window.addressData) 
                             window.addressData = Object.assign({freeDeliveryThreashold: 500}, cbd);
                         locationNai = cbd.location;
                     }
+
                     return loadRegionData(location);
                 }
             });
@@ -181,23 +183,17 @@ var cartUtil = function () {
                 
             //Delivery charges
             if (window.regionData && window.regionData.freeDeliveryThreashold) {
-                if (self.totalCost() < window.regionData.freeDeliveryThreashold || (categories.length == 1 && categories[0] == "extras"))
-                    charges.deliveryCharges = window.regionData.deliveryCharges;  
-                else { 
-                    if(categories.length == 1 && categories[0] == "extras") {
-                        charges.deliveryCharges = 200;
-                    }    
-                }        
-            } else { 
-                if(categories.length == 1 && categories[0] == "extras") {
-                    charges.deliveryCharges = 210;
-                }    
-            }
+                if(categories.length == 1 && ["others", "extras", "extra"].indexOf(categories[0]) >= 0)
+                    charges.deliveryCharges = 200;
+                if (self.totalCost() < window.regionData.freeDeliveryThreashold)
+                    charges.deliveryCharges = Math.max(charges.deliveryCharges, window.regionData.deliveryCharges);
+            } else if(categories.length == 1 && ["others", "extras", "extra"].indexOf(categories[0])) {
+                charges.deliveryCharges = 210;
+            }            
 
             //Transaction Charges
             var paymentMode = $("[name=paymentMethod]:checked").val();
-            if (paymentMode) {
-                
+            if (paymentMode) {                
                 var mapping = {
                     "Swipe on Delivery": "2.5%",
                     //"CyberSource": "2.5%",
