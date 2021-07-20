@@ -118,7 +118,6 @@ module.exports = function MoveSMS(sender) {
             sendPromise.then(() => new Promise(sendFxn));
         else 
             sendPromise = new Promise(sendFxn);
-
     };
 
     self.schedule = function schedule(date, to, message, next) {
