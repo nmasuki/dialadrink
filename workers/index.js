@@ -18,7 +18,7 @@ function loadWorkers(next) {
 
 		files.filter(f => f.endsWith('.lock')).forEach(f => {
 			if (fs.existsSync(__dirname + "/../locks/" + f))
-				fs.unlink(__dirname + "/../locks/" + f);
+				fs.unlink(__dirname + "/../locks/" + f, () => {});
 		});
 
 		fs.readdir(__dirname, (err, files) => {
