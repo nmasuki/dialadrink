@@ -74,7 +74,7 @@ function doWork(err, notifications, next) {
                     n.status = status;
                     return n.save().then(() => {
                         console.log("sending", (i - 1) + "/" + notifications.length, status);
-                        return Promise.timeout(500).then(() => sending(resolve));
+                        return Promise.timeout(200).then(() => sending(resolve));
                     })
                 };
             };
