@@ -609,9 +609,9 @@ if (!Promise.prototype.finally)
     Promise.prototype.finally = function (onFinally) {
         return this.then(
             /* onFulfilled */
-            res => Promise.resolve(onFinally()).then(() => res),
+            function(res){ return Promise.resolve(onFinally()).then(function(){ return res}) },
             /* onRejected */
-            err => Promise.resolve(onFinally()).then(() => console.warn(err))
+            function(err){ return Promise.resolve(onFinally()).then(function(){ return err}) }
         );
     };
 
@@ -635,7 +635,7 @@ if (!Promise.any)
 if(!Promise.timeout)
     Promise.timeout = function(timeout){
         var args = Array.from(arguments).splice(1);
-        return new Promise(resolve => setTimeout(() => resolve(args), timeout));
+        return new Promise(function(resolve){ setTimeout(function(){ return resolve(args); }, timeout)});
     };
 
 Promise.prototype.always = Promise.prototype.finally;
