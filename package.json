@@ -14,7 +14,7 @@
     "connect-mongo": "^2.0.3",
     "crawler": "^1.2.1",
     "daemon": "^1.1.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "express-handlebars": "3.1.0",
     "express-handlebars-precompiler": "0.0.6",
     "express-minify": "^1.0.0",

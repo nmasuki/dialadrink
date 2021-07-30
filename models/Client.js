@@ -109,6 +109,30 @@ Client.schema.virtual("isAppRegistered").get(function () {
     return !!this.password;
 });
 
+Client.schema.virtual("favouriteDrink")
+    .get(async function () {
+        var drinks = await this.getFavouriteDrinks(1);
+        if(drinks && drinks.length)
+            return drink[0].name;
+
+        return "your favourite drink";
+    });
+
+Client.schema.virtual("favouriteBrand")
+    .get(async function () {
+        var drinks = await this.getFavouriteDrinks(100);
+        var brands = drinks.groupBy(d => d.brand && d.brand.name || "");
+        delete brands[""];
+
+        var favourite = Object.values(brands).orderByDescending(g => g.length)[0][0];
+
+
+        if(favourite)
+            return favourite.name;
+            
+        return "your favourite brand";
+    });
+
 Client.schema.virtual("name")
     .get(function () {
         var name = ((this.firstName || '').trim() + ' ' + (this.lastName || '').trim());
@@ -208,7 +232,6 @@ Client.schema.virtual("imageUrl")
         }
 });
 
-
 Client.schema.virtual("httpAuth")
     .get(function () {
         var client = this;
@@ -304,6 +327,7 @@ Client.schema.methods.getSessions = function (next) {
             "$in": this.sessions
         }
     };
+
     var opt = keystone.get("session options");
     return new Promise((resolve, reject) => {
         db.collection('app_sessions')
@@ -657,7 +681,7 @@ Client.schema.methods.update = function(){
     return this.debounceSave.apply(this, arguments);
 };
 
-Client.schema.methods.updateOrderStats = function (next) {
+Client.schema.methods.getOrders = function(){
     var client = this;
     
     if (client.phoneNumber)
@@ -675,36 +699,62 @@ Client.schema.methods.updateOrderStats = function (next) {
         });
 
     if (findOption.$or.length) {
-        keystone.list("Order").model.find(findOption)
-            .sort({ orderDate: -1 })
-            .deepPopulate('client,cart.product.priceOptions.option')
-            .exec((err, orders) => {
-                if (err)
-                    return typeof next == "function" && next(err);
+        return new Promise(resolve => {
+            keystone.list("Order").model.find(findOption)
+                .sort({ orderDate: -1 })
+                .deepPopulate('client,cart.product.priceOptions.option')
+                .exec((err, orders) => {
+                    if (err)
+                        return resolve(null);
 
-                orders = orders.filter(x => x);
-                if (client.orderCount && client.orderCount == orders.length)
-                    if (typeof next == "function") return next();                
-
-                client.orderCount = orders.length;
-                client.orderValue = orders.sum(order => order && order.total) || 0;
-                client.avgOrderValue = orders.avg(order => order && order.total) || 0;
-                client.lastOrderDate = orders.max(order => order && order.orderDate);
-
-                console.log("Saving client details!", 
-                    "Client Name:", (client.name || client.phoneNumber) + ",", 
-                    "Order Count:", client.orderCount + ",", 
-                    "Order Value:", client.orderValue + ",",
-                    "Avg Order Value:", client.avgOrderValue);
-                if(typeof next == "function") 
-                    next();
-                else
-                    client.update();
-            });
-    } else {
-        console.error("This should never be hit!! Client has no phoneNumber or email.");
-        if (typeof next == "function") next();
+                    orders = orders.filter(x => x);
+                    resolve(orders);
+                });
+        });
     }
+
+    return Promise.resolve(null);
+}
+
+Client.schema.methods.getFavouriteDrinks = async function(count, filter){
+    count = count || 10;
+    filter = filter || (() => true);
+
+    var orders = await client.getOrders();
+    if(!orders) return;
+
+    var drinks = orders.selectMany(o => o.cart && o.cart.map(c => c.product) || []);
+    var grouped = Object.values(drinks.groupBy(d => d._id.toString()))
+        .orderByDescending(g => g.length);
+
+    var favourites = grouped.filter(filter).splice(0, count).map(g => g[0]);
+
+    return favourites;
+}
+
+Client.schema.methods.updateOrderStats = async function (next) {
+    var client = this;
+
+    var orders = await client.getOrders();
+    if(!orders) return typeof next == "function"? next(): null;
+
+    if (client.orderCount && client.orderCount == orders.length)
+        if (typeof next == "function") return next();                
+
+    client.orderCount = orders.length;
+    client.orderValue = orders.sum(order => order && order.total) || 0;
+    client.avgOrderValue = orders.avg(order => order && order.total) || 0;
+    client.lastOrderDate = orders.max(order => order && order.orderDate);
+
+    console.log("Saving client details!", 
+        "Client Name:", (client.name || client.phoneNumber) + ",", 
+        "Order Count:", client.orderCount + ",", 
+        "Order Value:", client.orderValue + ",",
+        "Avg Order Value:", client.avgOrderValue);
+    if(typeof next == "function") 
+        next();
+    else
+        client.update();
 };
 
 Client.register();

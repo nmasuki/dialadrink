@@ -19,6 +19,7 @@ Location.add({
 	href: { type: String, initial: true },
 	city: { type: String },
 	show: { type: Boolean },
+
 	description: { type: Types.Html, wysiwyg: true, height: 250 },
 	deliveryCharges: {type: Types.Number, default:300 },
 	modifiedDate: { type: Date, default: Date.now, noedit: true },
@@ -27,6 +28,7 @@ Location.add({
 		lat: { type: Types.Number, noedit: true},
 		lng: { type: Types.Number, noedit: true },
 	},
+
 	location_type: { type: String, noedit: true },
 	viewport: {
 		northeast:{
@@ -43,10 +45,12 @@ Location.add({
 Location.schema.pre('save', function (next) {
 	var $this = this;
 	this.href = this.href || this.name.cleanId().trim();
+	this.city = this.city || 'Nairobi, Kenya';
+
 	/**/
 	if (!this.modifiedDate || this.modifiedDate < new Date().addDays(-10)) {
 		var url = `https://maps.googleapis.com/maps/api/geocode/json` +
-			`?address=${this.name} ${this.city || 'Nairobi, Kenya'}` +
+			`?address=${this.name} ${this.city}` +
 			`&key=${process.env.GOOGLE_API_KEY1}`;
 
 		najax.get({
@@ -61,7 +65,9 @@ Location.schema.pre('save', function (next) {
 								$this[i] = geometry[i];
 					}
 				}
-				next();
+
+				this.modifiedDate = new Date();
+    			next();
 			},
 			error: function () {
 				next();
