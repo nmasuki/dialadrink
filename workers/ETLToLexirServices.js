@@ -10,17 +10,17 @@ mongoose.connect('mongodb://localhost:27017/lexir', {
   useCreateIndex: false,
 });
 
-const ServiceMap = mongoose.model('Service', new Schema({}, { strict: false }))
+const ServiceMap = mongoose.model('Service', new mongoose.Schema({}, { strict: false }))
 
 var services = [{
         name: 'Sales Services',
         title: 'Alcohol sales service',
-        modifiedDate: new Date('2019-12-31')
+        modifiedDate: new Date('2020-01-02')
     },
     {
         name: 'Delivery Services',
         title: 'Alcohol delivery service',
-        modifiedDate: new Date('2019-12-31')
+        modifiedDate: new Date('2020-01-02')
     }];
 
 function getWork(next, done) {
@@ -28,12 +28,12 @@ function getWork(next, done) {
         modifiedDate: { $gt: new Date(self.worker.lastRun || '2020-01-01') }
     };
 
-    var vowels = "AEIOUYWH";
-    var mapping = services.filter(i => i.modifiedDate > filter.modifiedDate).map(p => {
+    var vowels = "AEIOUY";
+    var mapping = services.filter(i => i.modifiedDate > filter.modifiedDate.$gt).map(p => {
         var map = {            
             name: p.name, //:{ type: String, required: true },
             title: p.name, //:{ type: String, required: true },
-            abr: p.name.toUpperCase().split('').filter(c => vowels.indexOf(c) < 0).splice(0,3).join('')
+            abr: p.name.toUpperCase().split('').filter(c => (c||'').trim() && vowels.indexOf(c) < 0).splice(0, 5).join('')
         };
 
         return map;

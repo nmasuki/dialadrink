@@ -13,7 +13,7 @@ mongoose.connect('mongodb://localhost:27017/lexir', {
 });
 
 
-const ProductMap = mongoose.model('Product', new Schema({}, { strict: false }))
+const ProductMap = mongoose.model('Product', new mongoose.Schema({}, { strict: false }))
 
 function getWork(next, done) {
     var filter = {
@@ -28,6 +28,7 @@ function getWork(next, done) {
 
             var mapping = products.map(p => {
                 var map = {
+                    _id: p._id,
                     name: p.name, //:{ type: String, required: true },
                     url: p.href, //:{ type: String, required: true, unique: true },
                     image: p.image.secure_url, //:{ type: String },
@@ -36,7 +37,7 @@ function getWork(next, done) {
                     description: p.description, //:{ type: String },
                     discount: 0, //:{ type: Number, default: 0 },
                     imageName: p.image.public_id, //:{ type: String },
-                    otherImages: p.altImages.map(a => a.image.secure_url), //[{ name: String }],
+                    otherImages: p.altImages.map(a => a.secure_url), //[{ name: String }],
                     outlets: [], //[ { type: ObjectId, ref: 'Outlet' } ],
                     promoted: null, //:{ type: Boolean, default: false },
                     lastPromotion: null, //:{ type: Date },
@@ -48,10 +49,10 @@ function getWork(next, done) {
                       }
                     ]*/
                     mainCategory: "Alcohol", //:{ type: String, required: true },
-                    category: p.category.name, //:{ type: String, required: true },
-                    subcategory: p.subCategory.name, //:{ type: String },
+                    category: p.category && p.category.name || null, //:{ type: String, required: true },
+                    subcategory: p.subCategory && p.subCategory.name || null, //:{ type: String },
                     specificCategory: null, //:{ type: String },
-                    subcategories: [p.subCategory.name],
+                    subcategories: [p.subCategory && p.subCategory.name].filter(x => x),
                     company: null, //:{ type: ObjectId, ref: 'Business', required: true },
                     listingName: null, //:{ type: String },
                     brand: null, //:{ type: String },
