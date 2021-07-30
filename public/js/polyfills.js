@@ -459,7 +459,7 @@ if (!Array.prototype.groupBy)
 //
 if (!Array.prototype.group)
 	Array.prototype.group = function (compare) {
-		var groups = this.groupBy();
+		var groups = this.groupBy(compare);
 		return Object.keys(groups).map(function(k){return groups[k]});
 	};
 

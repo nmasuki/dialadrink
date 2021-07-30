@@ -24,6 +24,7 @@ function getWork(next, done) {
 
     ClientNotification.model
         .find(filter).sort(sort)
+        .limit(100)
         .populate('client')
         .populate('broudcast')
         .exec((err, notifications) => {
@@ -73,7 +74,7 @@ function doWork(err, notifications, next) {
                     n.status = status;
                     return n.save().then(() => {
                         console.log("sending", (i - 1) + "/" + notifications.length, status);
-                        return Promise.timeout(100).then(() => sending(resolve));
+                        return Promise.timeout(500).then(() => sending(resolve));
                     })
                 };
             };
