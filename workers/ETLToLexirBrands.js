@@ -12,7 +12,7 @@ mongoose.connect('mongodb://localhost:27017/lexir', {
   useCreateIndex: false,
 });
 
-const BrandMap = mongoose.model('Brand', new Schema({}, { strict: false }))
+const BrandMap = mongoose.model('Brand', new mongoose.Schema({}, { strict: false }))
 
 function getWork(next, done) {
     var filter = {
@@ -24,19 +24,19 @@ function getWork(next, done) {
             if(err)
                 return console.error("Error reading brands!", err || "Unknown");
 
-            var vowels = "AEIOUYWH";
+            var vowels = "AEIOUY";
             var mapping = brands.map(p => {
-                var map = {                    
-                    name: p.name, //:{ type: String, required: true },
+                var map = {         
+                    _id: p._id,           
+                    name: p.name,
                     title: p.pageTitle,
                     models: [],
-                    description: p.description, //:{ type: String },
-                    abr: p.name.toUpperCase().split('').filter(c => vowels.indexOf(c) < 0).splice(0,3).join('')
+                    description: p.description,
+                    abr: p.name.toUpperCase().split('').filter(c => (c||'').trim() && vowels.indexOf(c) < 0).splice(0, 5).join('')
                 };
 
                 return map;
-            })
-
+            });
 
             if(mapping.length)
                 console.log("ETLing " + mapping.length + " brands " + filter.modifiedDate.$gt.toISOString());

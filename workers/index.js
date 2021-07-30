@@ -13,15 +13,16 @@ function loadWorkers(next) {
 		console.log("Loading AppWorkers from:", __dirname);
 
 	fs.readdir(__dirname + "/../locks", (err, files) => {
-		if (err)
-			return console.warn(err);
-
-		files.filter(f => f.endsWith('.lock')).forEach(f => {
-			if (fs.existsSync(__dirname + "/../locks/" + f))
-				fs.unlink(__dirname + "/../locks/" + f, () => {});
-		});
+		if(files && files.length)
+			files.filter(f => f.endsWith('.lock')).forEach(f => {
+				if (fs.existsSync(__dirname + "/../locks/" + f))
+					fs.unlink(__dirname + "/../locks/" + f, () => {});
+			});
 
 		fs.readdir(__dirname, (err, files) => {
+			if (err)
+				return console.warn(err);
+		
 			var modules = files
 				.filter(f => f.endsWith('.js') && !f.endsWith('index.js'))
 				.map(f => {
@@ -45,7 +46,7 @@ function loadWorkers(next) {
 						var worker = workers.find(w => m.name == w.name);
 						
 						if (!worker) {
-							m.runInterval = 60 * 1000;
+							m.runInterval = 60 * 60 * 1000;
 							worker = new AppWorker.model(m);
 							worker.isActive = true;
 							worker.save();

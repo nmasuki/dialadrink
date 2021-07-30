@@ -604,6 +604,40 @@ Number.prototype.pad = function pad(width, z) {
     return n.length >= width ? n : new Array(width - n.length + 1).join(z || '0') + n;
 };
 
+// Add `finally()` to `Promise.prototype`
+if (!Promise.prototype.finally)
+    Promise.prototype.finally = function (onFinally) {
+        return this.then(
+            /* onFulfilled */
+            res => Promise.resolve(onFinally()).then(() => res),
+            /* onRejected */
+            err => Promise.resolve(onFinally()).then(() => console.warn(err))
+        );
+    };
+
+if (!Promise.any)
+    Promise.any = function (promises) {
+        return new Promise(function (resolve, reject) {
+            var count = promises.length, resolved = false;
+            promises.forEach(function (p) {
+                Promise.resolve(p).then(function (value) {
+                    count--;
+                    resolved = true;
+                    resolve(value);
+                }, function () {
+                    if (--count === 0 && !resolved)
+                        reject("No promises resolved successfully.");
+                });
+            });
+        });
+    };
+    
+if(!Promise.timeout)
+    Promise.timeout = function(timeout){
+        var args = Array.from(arguments).splice(1);
+        return new Promise(resolve => setTimeout(() => resolve(args), timeout));
+    };
+
 Promise.prototype.always = Promise.prototype.finally;
 Promise.prototype.done = Promise.prototype.then;
 Promise.prototype.fail = Promise.prototype.catch;

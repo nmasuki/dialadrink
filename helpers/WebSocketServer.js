@@ -235,7 +235,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
 
     if (!clients.length){
         if (process.env.NODE_ENV != "production")
-            return Promise.reject("NON production environment. returning reject!");
+            return Promise.reject("NON production environment. no retry!");
         
         return retrySendWSMessage("No client found!");
     }

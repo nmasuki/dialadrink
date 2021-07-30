@@ -12,7 +12,7 @@ mongoose.connect('mongodb://localhost:27017/lexir', {
   useCreateIndex: false,
 });
 
-const LocationMap = mongoose.model('Location', new Schema({}, { strict: false }))
+const LocationMap = mongoose.model('Location', new mongoose.Schema({}, { strict: false }))
 
 function getWork(next, done) {
     var filter = {
@@ -24,9 +24,10 @@ function getWork(next, done) {
             if(err)
                 return console.error("Error reading locations!", err || "Unknown");
 
-            var vowels = "AEIOUYWH";
+            var vowels = "AEIOUY";
             var mapping = locations.map(p => {
                 var map = {       
+                    _id: p._id,
                     name : p.name, //{ type :String, required :true },
                     geo : {lng :p.location.lng, lat :p.location.lat },
                     county: 'Kenya', //{type :String, default :"" },
@@ -34,7 +35,7 @@ function getWork(next, done) {
                     isCity : false, //{ type :Boolean, default :false},
                     isLocation : true, //{ type :Boolean, default :true },
                     isCounty : false, //{ type :Boolean, default :false }
-                    abr: p.name.toUpperCase().split('').filter(c => vowels.indexOf(c) < 0).splice(0,3).join('')
+                    abr: p.name.toUpperCase().split('').filter(c => (c||'').trim() && vowels.indexOf(c) < 0).splice(0, 5).join('')
                 };
 
                 return map;

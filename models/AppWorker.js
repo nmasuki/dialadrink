@@ -3,12 +3,13 @@ var Types = keystone.Field.Types;
 var intervalMap = {
     'every 10 seconds': 10 * 1000,
     'every minute': 60 * 1000,
+    'every 30 minutes': 30 * 60 * 1000,
     'hourly': 60 * 60 * 1000,
     'daily': 24 * 60 * 60 * 1000,
     'weekly': 7 * 24 * 60 * 60 * 1000,
     'monthly': 30 * 24 * 60 * 60 * 1000,
     'every 3 months': 3 * 30 * 24 * 60 * 60 * 1000,
-    'yearly': 365.25 * 24 * 60 * 60 * 1000
+    'every year': 365.25 * 24 * 60 * 60 * 1000
 };
 
 /**

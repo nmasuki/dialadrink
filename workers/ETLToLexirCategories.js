@@ -12,7 +12,7 @@ mongoose.connect('mongodb://localhost:27017/lexir', {
   useCreateIndex: false,
 });
 
-const CategoryMap = mongoose.model('ProductCategory', new Schema({}, { strict: false }))
+const CategoryMap = mongoose.model('ProductCategory', new mongoose.Schema({}, { strict: false }))
 
 function getWork(next, done) {
     var filter = {
@@ -24,16 +24,17 @@ function getWork(next, done) {
             if(err)
                 return console.error("Error reading categories!", err || "Unknown");
 
-            var vowels = "AEIOUYWH";
+            var vowels = "AEIOUY";
             var mapping = categories.map(p => {
-                var map = {            
+                var map = {         
+                    _id: p._id,   
                     url: p.key,
-                    image: p.logo.secure_url,  //:{ type: String, required: true },                  
-                    name: p.name, //:{ type: String, required: true },
+                    image: p.image && p.image.secure_url || '',  //:{ type: String, required: true },                  
+                    name: p.name,
                     title: p.pageTitle, //:{ type: String, required: true },
                     models: [],
                     metaDescription: p.description, //:{ type: String },
-                    abr: p.name.toUpperCase().split('').filter(c => vowels.indexOf(c) < 0).splice(0,3).join('')
+                    abr: (p.pageTitle + p.name).toUpperCase().split('').filter(c => (c||'').trim() && vowels.indexOf(c) < 0).splice(0, 5).join('')
                 };
 
                 return map;
