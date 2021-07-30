@@ -49,11 +49,11 @@ function doWork(err, notifications, next) {
 
         var i = 0;
         return new Promise(function sending(resolve) {
-            console.log("sending", i + "/" + notifications.length);
-
+            
             var n = notifications[i++];
             if(!n) return resolve();
             
+            console.log(`sending ${n.type} to ${n.client.name}`, i + "/" + notifications.length);
             if (n.message.body)
                 n.message.body = n.message.body.format(n.client);
             if (n.message.title)
