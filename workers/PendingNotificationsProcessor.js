@@ -24,7 +24,7 @@ function getWork(next, done) {
 
     ClientNotification.model
         .find(filter).sort(sort)
-        .limit(100)
+        .limit(500)
         .populate('client')
         .populate('broudcast')
         .exec((err, notifications) => {
