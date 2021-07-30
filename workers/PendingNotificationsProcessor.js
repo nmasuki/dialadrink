@@ -24,6 +24,7 @@ function getWork(next, done) {
 
     ClientNotification.model
         .find(filter).sort(sort)
+        .limit(100) //Limit to 100 per cycle
         .populate('client')
         .populate('broudcast')
         .exec((err, notifications) => {
@@ -71,9 +72,10 @@ function doWork(err, notifications, next) {
             var markNotification = function(status){
                 return function () {
                     n.status = status;
-                    n.save();
-                    console.log("popWork", i, status);
-                    return popWork(resolve);
+                    return n.save().then(() => {
+                        console.log("popWork", i, status);
+                        return popWork(resolve);
+                    })
                 };
             };
     
