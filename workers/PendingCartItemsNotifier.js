@@ -86,9 +86,7 @@ function doWork(err, sessions, next) {
     var body = "Hi {firstName}. You have some items waiting in your cart.";
 
     sessions.forEach(s => {
-        Client.model.find({
-            sessions: { $elemMatch: { $eq: s._id } }
-        }).exec((err, clients) => {
+        Client.model.find({ sessions: { $elemMatch: { $eq: s._id } } }).exec((err, clients) => {
             if (err || !clients || clients.length == 0){
                 console.warn(err || "Got no client from session:", s._id);
                 clients = [
@@ -111,7 +109,7 @@ function doWork(err, sessions, next) {
                             return console.log(`Skipping cart notification to '${c.name}'. Send once every 7 days. last sent on ${lastNotificationDate.toISOString()}`);
 
                         var pending = notifications.filter(n => n.status == "pending");
-                        if(pending && pending.length)
+                        if(pending && pending.length && c.name != 'Guest')
                             return console.log(`Skipping cart notification to '${c.name}'. User has ${pending.length} pending notifications.`);
 
                         var date = new Date().toISOString();
