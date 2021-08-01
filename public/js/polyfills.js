@@ -299,7 +299,7 @@ String.prototype.trim = function (charlist) {
 if (!String.prototype.any)
 	String.prototype.contains = String.prototype.any = function (search) {
 		if (typeof search == "function")
-			return this.map(search).any(true);
+			return this.find(search) != isNull;
 		else if (search)
 			return this.indexOf(search) >= 0;
 		else
