@@ -1,6 +1,4 @@
-require('daemon').daemon(null, [], {
-	cwd: __dirname
-});
+require('daemon').daemon(null, [], { cwd: __dirname });
 
 var async = require('async');
 var fs = require('fs');
@@ -86,19 +84,18 @@ function start() {
 							if(process.env.NODE_ENV != "production")
 								console.log(`Running worker: '${m.name}'`);
 
+							var saveWorker = (() => {
+								m.worker.lastRun = new Date();
+								return m.worker.save();
+							});
 							var run = m.run();
+							
 							if(run instanceof Promise)
-								run.then(() => {
-									m.worker.lastRun = new Date();
-									m.worker.save();
-								});
+								run.then(saveWorker);
 							else
-								setTimeout(() => {
-									m.worker.lastRun = new Date();
-									m.worker.save();
-								}, 100);							
+								setTimeout(saveWorker, 100);							
 						} else {
-							console.error(`worker: '${m.name}' not properly configured!`);
+							console.error(`Worker: '${m.name}' not properly configured!`);
 						}
 					});
 
@@ -108,7 +105,6 @@ function start() {
 				console.log("No workers found. Exiting workes..");
 			}
 		});
-
 }
 
 module.exports = { start: start };
