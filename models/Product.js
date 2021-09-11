@@ -42,6 +42,9 @@ Product.add({
     onOffer: {
         type: Types.Boolean
     },
+    isPopular: {
+        type: Types.Boolean
+    },
     inStock: {
         type: Types.Boolean
     },
