@@ -26,7 +26,7 @@ function getWork(next, done) {
                 return console.error("Error reading products!", err || "Unknown");
 
 
-            var mapping = products.filter(p => p.defaultOption).map(p => {
+            var mapping = products.map(p => {
                 var map = {
                     _id: p._id,
                     name: p.name, //:{ type: String, required: true },
