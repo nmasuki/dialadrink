@@ -39,18 +39,10 @@ Product.add({
         noedit: true,
     },
 
-    onOffer: {
-        type: Types.Boolean
-    },
-    isPopular: {
-        type: Types.Boolean
-    },
-    inStock: {
-        type: Types.Boolean
-    },
-    isGiftPack: {
-        type: Types.Boolean
-    }, 
+    onOffer: { type: Types.Boolean },
+    isPopular: { type: Types.Boolean },
+    inStock: { type: Types.Boolean  },
+    isGiftPack: { type: Types.Boolean  }, 
     
     reorderLevel: {
         type: Types.Number, default: 10
@@ -626,7 +618,7 @@ Product.offerAndPopular = function(size, callback){
 Product.findPublished = function (filter, callback) {
     filter = Object.assign(filter || {}, { state: 'published'  });
     var a = Product.model.find(filter)
-        .sort({ popularity: -1 })
+        .sort({ isPopular: 1, popularity: -1 })
         .populate('brand')
         .populate('category')
         .populate('ratings')
