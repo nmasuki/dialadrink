@@ -1,3 +1,3 @@
 var workers = require('./workers');
-console.log("Initializing keystone for " + process.env.NODE_ENV + " environment...");
+console.log("Initializing workers for " + (process.env.NODE_ENV || "developer") + " environment...");
 workers.start();

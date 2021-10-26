@@ -22,10 +22,9 @@ function index(req, res) {
     // Load Products
     view.on('init', function (next) {
         keystone.list('Product').offerAndPopular(homeGroupSize, (err, data) => {
-            locals.popular = data.popular;
-            locals.offers = data.offers;
+            locals = Object.assign(locals, data || {});
 
-            var products = data.offers.concat(data.popular);            
+            var products = data.products;            
             var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
             if (brands.length == 1) locals.brand = brands.first();
 

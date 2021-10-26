@@ -610,19 +610,24 @@ Product.offerAndPopular = function(size, callback){
                             if (err || !offers)
                                 return callback(err);
                             
+                            if(brandFocus.length == 0)
+                                brandFocus = popular.filter(p => !p.isPopular).slice(0, 3);
+
                             var excludePopular =  offers.concat(brandFocus);
 
                             popular = popular.filter(p => !excludePopular.any(x => x.id == p.id));
                             var explicitPopular = popular.filter(p => p.isPopular);
                             var ratingPopular = popular.filter(p => !p.isPopular)
         
-                            console.log(`Popular: ${popular.length}, Offers: ${offers.length}, ${brandFocus.length}..`);
-                            
+                            console.log(`Popular: ${popular.length}, Offers: ${offers.length}, BrandFocus: ${brandFocus.length}..`);
+
                             var data = { 
                                 popular: explicitPopular.concat(ratingPopular).slice(0, size), 
+                                offers: offers.slice(0, size),
                                 brandFocus: brandFocus.slice(0, size),
-                                offers: offers.slice(0, size)
                             };
+
+                            data.products = data.pupular.concat(data.offers).concat(data.brandFocus);
         
                             callback(err, data);
                         });
