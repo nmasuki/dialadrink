@@ -612,11 +612,15 @@ Product.offerAndPopular = function(size, callback){
                     if (err || !offers)
                         return callback(err);
 
+	            popular = popular.filter(p => !offers.any(x => x.id == p.id));
+                    var explicitPopular = popular.filter(p => p.isPopular);
+                    var ratingPopular = popular.filter(p => !p.isPopular)
+
                     var data = { 
-                        popular: popular.filter(p => !offers.any(x => x.id == p.id)).slice(0, size), 
+                        popular: explicitPopular.concat(ratingPopular).slice(0, size), 
                         offers: offers
                     };
-
+                    
                     callback(err, data);
                 });
         });

@@ -25,7 +25,12 @@
                 style="margin: auto"/>
 
             <div itemprop="name" class="drinks-name">
-                <a href="{{productUrl href}}" style="font-size: 15px; color: black;">{{{name}}}</a>
+                <a href="{{productUrl href}}" style="font-size: 15px; color: black;">
+                    {{truncate name 25}}
+                    {{#ifgt alcoholContent 0}}
+                    (ABV {{{alcoholContent}}}%)
+                    {{/ifgt}}
+                </a>
             </div>            
 
             <div itemscope itemprop="offers" itemtype="http://schema.org/Offer">
