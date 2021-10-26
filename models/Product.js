@@ -41,7 +41,7 @@ Product.add({
 
     onOffer: { type: Types.Boolean },
     isPopular: { type: Types.Boolean },
-    isBrandForcus: { type: Types.Boolean },
+    isBrandFocus: { type: Types.Boolean },
     inStock: { type: Types.Boolean  },
     isGiftPack: { type: Types.Boolean  }, 
     
@@ -600,17 +600,17 @@ Product.offerAndPopular = function(size, callback){
             if (err || !offers)
                 return callback(err);
 
-            Product.findPublished({inStock: true, isBrandForcus: true}).limit(size)
-                .exec((err, brandForcus) => {
-                    if (err || !brandForcus)
+            Product.findPublished({inStock: true, isBrandFocus: true, onOffer: false}).limit(size)
+                .exec((err, brandFocus) => {
+                    if (err)
                         return callback(err);
 
-                    Product.findPublished({inStock: true})
+                    Product.findPublished({inStock: true, isBrandFocus: false, onOffer: false})
                         .exec((err, popular) => {
                             if (err || !offers)
                                 return callback(err);
                             
-                            var excludePopular =  offers.concat(brandForcus);
+                            var excludePopular =  offers.concat(brandFocus);
 
                             popular = popular.filter(p => !excludePopular.any(x => x.id == p.id));
                             var explicitPopular = popular.filter(p => p.isPopular);
@@ -618,7 +618,7 @@ Product.offerAndPopular = function(size, callback){
         
                             var data = { 
                                 popular: explicitPopular.concat(ratingPopular).slice(0, size), 
-                                brandForcus: brandForcus,
+                                brandFocus: brandFocus,
                                 offers: offers
                             };
         
