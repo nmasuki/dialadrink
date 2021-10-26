@@ -41,6 +41,7 @@ Product.add({
 
     onOffer: { type: Types.Boolean },
     isPopular: { type: Types.Boolean },
+    isBrandForcus: { type: Types.Boolean },
     inStock: { type: Types.Boolean  },
     isGiftPack: { type: Types.Boolean  }, 
     
@@ -397,7 +398,7 @@ Product.schema.pre('save', function (next) {
         if (this.alcoholContent > 100)
             this.alcoholContent = 100;
         else if (this.alcoholContent < 0)
-            this.alcoholContent = 0;
+            this.alcoholContent = 0.00;
     }
 
     if (defaultOption) {
@@ -599,11 +600,12 @@ Product.offerAndPopular = function(size, callback){
             if (err || !offers)
                 return callback(err);
 
-            Product.findPublished({inStock: true})
-                .exec((err, popular) => {
-                    if (err || !offers)
+            Product.findPublished({inStock: true, isBrandForcus: true}).limit(size)
+                .exec((err, brandForcus) => {
+                    if (err || !brandForcus)
                         return callback(err);
 
+<<<<<<< HEAD
 	            popular = popular.filter(p => !offers.any(x => x.id == p.id));
                     var explicitPopular = popular.filter(p => p.isPopular);
                     var ratingPopular = popular.filter(p => !p.isPopular)
@@ -614,6 +616,27 @@ Product.offerAndPopular = function(size, callback){
                     };
                     
                     callback(err, data);
+=======
+                        Product.findPublished({inStock: true})
+                            .exec((err, popular) => {
+                                if (err || !offers)
+                                    return callback(err);
+                                
+                                var excludePopular =  offers.concat(brandForcus);
+
+                                popular = popular.filter(p => !excludePopular.any(x => x.id == p.id));
+                                var explicitPopular = popular.filter(p => p.isPopular);
+                                var ratingPopular = popular.filter(p => !p.isPopular)
+            
+                                var data = { 
+                                    popular: explicitPopular.concat(ratingPopular).slice(0, size), 
+                                    brandForcus: brandForcus,
+                                    offers: offers
+                                };
+            
+                                callback(err, data);
+                            });
+>>>>>>> 197c7e5158e2adb787ae54de160faafd93b05985
                 });
         });
 

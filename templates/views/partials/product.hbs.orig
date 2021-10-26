@@ -1,0 +1,107 @@
+{{#if percentOffer}}
+    <a href="{{productUrl href}}" aria-label="{{{percentOffer}}}% off on {{{name}}}" style="position: absolute; display :block; color: black;">
+        <div class="product-promo">
+            <span>
+                {{{percentOffer}}}%
+            </span>
+        </div>
+    </a>
+{{/if}}
+
+<div class="featured-image" style="text-align :center;" aria-label="Access product {{{name}}}" id="product{{_id}}">
+    <div class="product-hover-blind"></div>
+    
+    <a class="product-hover" href="{{productUrl href}}">
+        <img src="https://res.cloudinary.com/nmasuki/image/upload/v1561049835/icons/magnify.png">
+    </a>   
+
+    <div class="item-name" style="text-align:center; justify-content :center; color: black">
+        <a href="{{productUrl href}}" style="display :block; color: black;">
+            <img src="{{cloudinaryUrl image width=100 height=100 crop='fill'}}" 
+                data-src="{{cloudinaryUrl image width=250 height=250 crop='fill'}}" 
+                title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
+                itemprop="image" alt="{{{name}}}"
+                class="img-responsive" 
+                style="margin: auto"/>
+
+            <div itemprop="name" class="drinks-name">
+                <a href="{{productUrl href}}" style="font-size: 15px; color: black;">
+<<<<<<< HEAD
+                    {{truncate name 25}}
+                    {{#ifgt alcoholContent 0}}
+                    (ABV {{{alcoholContent}}}%)
+=======
+                    {{truncate name  25}}
+                    {{#ifgt alcoholContent}}
+                    (Abv {{{alcoholContent}}}%)
+>>>>>>> 197c7e5158e2adb787ae54de160faafd93b05985
+                    {{/ifgt}}
+                </a>
+            </div>            
+
+            <div itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+                <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
+                <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
+                <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
+                <span itemprop="priceQuantity">{{quantity}}</span>   
+                <span itemprop="priceCurrency">{{currency}}</span>
+                {{#if percentOffer}}
+                    <span>
+                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                            <span>{{formatNumber price}}</span>
+                        </span>
+                        <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                    </span>
+                {{else}}
+                    <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
+                {{/if}}             
+            </div>
+
+            <br>
+            <div class="dropdown">
+                {{#if inStock}}
+                    {{#ifgt stockOptions.length 1}}
+                        <image src="https://res.cloudinary.com/dyc0ieeyu/image/upload/v1616081598/buynow2_eluftf.png" 
+                            alt="Add to Cart" class="add-to-cart-2" data-qty="{{quantity}}" data-product="{{_id}}" 
+                            style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
+                            {{#ifgt options.length 1}}
+                                <span class="dropdown" style="left: -39px;">
+                                    <i style="color: white;" class="fa fa-angle-down"></i>
+                                </span>
+                            {{/ifgt}}
+                        </image>                        
+                        <div class="dropdown-content">
+                            {{#each stockOptions}}
+                                <a href="#" class="add-to-cart"
+                                    data-qty="{{quantity}}" data-product="{{../_id}}">
+                                    <span>{{quantity}}</span>
+                                    {{#if percentOffer}}
+                                        <span>
+                                            <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                                <span>{{formatNumber price}}</span>
+                                            </span>
+                                            <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                                        </span>
+                                    {{else}}
+                                        <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
+                                    {{/if}}
+                                </a>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <image src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png" 
+                            alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="{{_id}}" 
+                            style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
+                        </image>
+                    {{/ifgt}}
+                {{else}}
+                    <image src="https://res.cloudinary.com/nmasuki/image/upload/soldout.png"
+                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: text;"
+                        alt="Sold out!"/>
+                {{/if}}
+            </div>
+        </a>
+    </div>
+</div>
+
+<script class="json" id="json{{_id}}" type="application/ld+json">{{{json this}}}</script>
