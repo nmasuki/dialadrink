@@ -627,8 +627,7 @@ Product.offerAndPopular = function(size, callback){
                                 brandFocus: brandFocus.slice(0, size),
                             };
 
-                            data.products = data.pupular.concat(data.offers).concat(data.brandFocus);
-        
+                            data.products = data.popular.concat(data.offers).concat(data.brandFocus);        
                             callback(err, data);
                         });
                 });
