@@ -605,18 +605,6 @@ Product.offerAndPopular = function(size, callback){
                     if (err || !brandForcus)
                         return callback(err);
 
-<<<<<<< HEAD
-	            popular = popular.filter(p => !offers.any(x => x.id == p.id));
-                    var explicitPopular = popular.filter(p => p.isPopular);
-                    var ratingPopular = popular.filter(p => !p.isPopular)
-
-                    var data = { 
-                        popular: explicitPopular.concat(ratingPopular).slice(0, size), 
-                        offers: offers
-                    };
-                    
-                    callback(err, data);
-=======
                         Product.findPublished({inStock: true})
                             .exec((err, popular) => {
                                 if (err || !offers)
@@ -636,7 +624,6 @@ Product.offerAndPopular = function(size, callback){
             
                                 callback(err, data);
                             });
->>>>>>> 197c7e5158e2adb787ae54de160faafd93b05985
                 });
         });
 
