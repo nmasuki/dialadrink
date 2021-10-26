@@ -41,6 +41,7 @@ Product.add({
 
     onOffer: { type: Types.Boolean },
     isPopular: { type: Types.Boolean },
+    isBrandForcus: { type: Types.Boolean },
     inStock: { type: Types.Boolean  },
     isGiftPack: { type: Types.Boolean  }, 
     
@@ -397,7 +398,7 @@ Product.schema.pre('save', function (next) {
         if (this.alcoholContent > 100)
             this.alcoholContent = 100;
         else if (this.alcoholContent < 0)
-            this.alcoholContent = 0;
+            this.alcoholContent = 0.00;
     }
 
     if (defaultOption) {
@@ -599,17 +600,30 @@ Product.offerAndPopular = function(size, callback){
             if (err || !offers)
                 return callback(err);
 
-            Product.findPublished({inStock: true})
-                .exec((err, popular) => {
-                    if (err || !offers)
+            Product.findPublished({inStock: true, isBrandForcus: true}).limit(size)
+                .exec((err, brandForcus) => {
+                    if (err || !brandForcus)
                         return callback(err);
 
-                    var data = { 
-                        popular: popular.filter(p => !offers.any(x => x.id == p.id)).slice(0, size), 
-                        offers: offers
-                    };
+                        Product.findPublished({inStock: true})
+                            .exec((err, popular) => {
+                                if (err || !offers)
+                                    return callback(err);
+                                
+                                var excludePopular =  offers.concat(brandForcus);
 
-                    callback(err, data);
+                                popular = popular.filter(p => !excludePopular.any(x => x.id == p.id));
+                                var explicitPopular = popular.filter(p => p.isPopular);
+                                var ratingPopular = popular.filter(p => !p.isPopular)
+            
+                                var data = { 
+                                    popular: explicitPopular.concat(ratingPopular).slice(0, size), 
+                                    brandForcus: brandForcus,
+                                    offers: offers
+                                };
+            
+                                callback(err, data);
+                            });
                 });
         });
 

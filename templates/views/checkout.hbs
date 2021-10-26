@@ -337,23 +337,29 @@
 </div>
 
 {{#if OkHiKey}}
+<!--script src="https://sandbox-api.okhi.io/v5/okweb?clientKey={{{OkHiKey}}}&branchId=cbd&callback=initOkHi" async defer></script-->
 <script src="https://cdn.okhi.io/{{{OkHiEnv}}}/web/v4/okhi.min.js"> </script>
+<!--script src="https://cdn.okhi.io/{{{OkHiEnv}}}/web/v5/okhi.min.js"> </script-->
 <script type="text/javascript"> 
-    var okhi = new OkHi({ apiKey: '{{{OkHiKey}}}' });
-    var okhiStyle = {
-        base: {
-            logo: '{{{appLogo}}}',
-            name: '{{{appTitle}}}',
-            color: '#2f93a3'
+    var initOkHi = function(){
+        var okhi = new OkHi({ apiKey: '{{{OkHiKey}}}' });
+        var okhiStyle = {
+            base: {
+                logo: '{{{appLogo}}}',
+                name: '{{{appTitle}}}',
+                color: '#2f93a3'
+            }
+        };
+        
+        {{#if userData.user}}
+        window.addressData = {
+            user: {{{json  userData.user}}},
+            location: {{{json userData.location}}}
         }
+        {{/if}}
     };
-    
-    {{#if userData.user}}
-    window.addressData = {
-        user: {{{json  userData.user}}},
-        location: {{{json userData.location}}}
-    }
-    {{/if}}
+
+    if(typeof OkHi == "function") initOkHi();
 </script>
 <script src="/js/okhi.script{{dotmin}}.js"></script>
 {{/if}}
@@ -393,9 +399,7 @@
         $("form.needs-validation").replaceWith(iframe);
         setTimeout(function(){
             var modal = app.showLoading("<span id='msgSpan'>Loading payment options! Please wait..</span>", 60000);
-            iframe.get(0).onload = function(){ 
-                modal && modal.modal("hide"); 
-            }
+            iframe.get(0).onload = function(){ modal && modal.modal("hide"); }
         }, 500)
 {{/if}}
         
@@ -433,7 +437,8 @@
                 $('body,html').animate({scrollTop: 0}, 800, 'swing');
 
                 var data = Object.assign({ 
-                    saveInfo: $("#saveInfo").is(":checked") }, 
+                        saveInfo: $("#saveInfo").is(":checked") 
+                    }, 
                     app.cartUtil.getCharges(), 
                     window.addressData || {}
                 );
@@ -453,7 +458,7 @@
                             //    return window.location = res.redirect;
 
                             modal.find("span.loading-msg").text("Loading payment options! Please wait..")
-                            var iframe = $("<iframe src='" + res.redirect + "'/>");
+                            var iframe = $("<iframe src=\"" + res.redirect + "\"/>");
                             
                             iframe.css({
                                 border: "none",
