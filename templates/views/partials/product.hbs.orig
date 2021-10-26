@@ -26,12 +26,19 @@
 
             <div itemprop="name" class="drinks-name">
                 <a href="{{productUrl href}}" style="font-size: 15px; color: black;">
+<<<<<<< HEAD
                     {{truncate name 25}}
                     {{#ifgt alcoholContent 0}}
                     (ABV {{{alcoholContent}}}%)
+=======
+                    {{truncate name  25}}
+                    {{#ifgt alcoholContent}}
+                    (Abv {{{alcoholContent}}}%)
+>>>>>>> 197c7e5158e2adb787ae54de160faafd93b05985
                     {{/ifgt}}
                 </a>
             </div>            
+
             <div itemscope itemprop="offers" itemtype="http://schema.org/Offer">
                 <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
                 <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>

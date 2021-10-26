@@ -41,7 +41,10 @@ Product.add({
 
     onOffer: { type: Types.Boolean },
     isPopular: { type: Types.Boolean },
+<<<<<<< HEAD
+=======
     isBrandForcus: { type: Types.Boolean },
+>>>>>>> 197c7e5158e2adb787ae54de160faafd93b05985
     inStock: { type: Types.Boolean  },
     isGiftPack: { type: Types.Boolean  }, 
     
