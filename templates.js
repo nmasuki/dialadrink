@@ -991,33 +991,37 @@ this["templates"]["views"]["checkout"]["hbs"]["templates/views/checkout.hbs"] = 
 },"34":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function";
 
-  return "<script src=\"https://cdn.okhi.io/"
-    + ((stack1 = ((helper = (helper = helpers.OkHiEnv || (depth0 != null ? depth0.OkHiEnv : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"OkHiEnv","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "/web/v4/okhi.min.js\"> </script>\n<script type=\"text/javascript\"> \n    var okhi = new OkHi({ apiKey: '"
+  return "<!--script src=\"https://sandbox-api.okhi.io/v5/okweb?clientKey="
     + ((stack1 = ((helper = (helper = helpers.OkHiKey || (depth0 != null ? depth0.OkHiKey : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"OkHiKey","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "' });\n    var okhiStyle = {\n        base: {\n            logo: '"
+    + "&branchId=cbd&callback=initOkHi\" async defer></script-->\n<script src=\"https://cdn.okhi.io/"
+    + ((stack1 = ((helper = (helper = helpers.OkHiEnv || (depth0 != null ? depth0.OkHiEnv : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"OkHiEnv","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "/web/v4/okhi.min.js\"> </script>\n<!--script src=\"https://cdn.okhi.io/"
+    + ((stack1 = ((helper = (helper = helpers.OkHiEnv || (depth0 != null ? depth0.OkHiEnv : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"OkHiEnv","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "/web/v5/okhi.min.js\"> </script-->\n<script type=\"text/javascript\"> \n    var initOkHi = function(){\n        var okhi = new OkHi({ apiKey: '"
+    + ((stack1 = ((helper = (helper = helpers.OkHiKey || (depth0 != null ? depth0.OkHiKey : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"OkHiKey","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "' });\n        var okhiStyle = {\n            base: {\n                logo: '"
     + ((stack1 = ((helper = (helper = helpers.appLogo || (depth0 != null ? depth0.appLogo : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"appLogo","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "',\n            name: '"
+    + "',\n                name: '"
     + ((stack1 = ((helper = (helper = helpers.appTitle || (depth0 != null ? depth0.appTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"appTitle","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "',\n            color: '#2f93a3'\n        }\n    };\n    \n"
+    + "',\n                color: '#2f93a3'\n            }\n        };\n        \n"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.userData : depth0)) != null ? stack1.user : stack1),{"name":"if","hash":{},"fn":container.program(35, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "</script>\n<script src=\"/js/okhi.script"
+    + "    };\n\n    if(typeof OkHi == \"function\") initOkHi();\n</script>\n<script src=\"/js/okhi.script"
     + container.escapeExpression(((helper = (helper = helpers.dotmin || (depth0 != null ? depth0.dotmin : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dotmin","hash":{},"data":data}) : helper)))
     + ".js\"></script>\n";
 },"35":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing;
 
-  return "    window.addressData = {\n        user: "
+  return "        window.addressData = {\n            user: "
     + ((stack1 = (helpers.json || (depth0 && depth0.json) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.userData : depth0)) != null ? stack1.user : stack1),{"name":"json","hash":{},"data":data})) != null ? stack1 : "")
-    + ",\n        location: "
+    + ",\n            location: "
     + ((stack1 = (helpers.json || (depth0 && depth0.json) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.userData : depth0)) != null ? stack1.location : stack1),{"name":"json","hash":{},"data":data})) != null ? stack1 : "")
-    + "\n    }\n";
+    + "\n        }\n";
 },"37":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "        var iframe = $(\"<iframe style='min-height: 670px' src='"
     + container.escapeExpression(((helper = (helper = helpers.orderUrl || (depth0 != null ? depth0.orderUrl : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"orderUrl","hash":{},"data":data}) : helper)))
-    + "'/>\");        \n        iframe.css({\n            border: \"none\",\n            width:  '100%',\n            height: ($(\"form.needs-validation\").height()) + 'px'\n        });\n\n        $(\"form.needs-validation\").replaceWith(iframe);\n        setTimeout(function(){\n            var modal = app.showLoading(\"<span id='msgSpan'>Loading payment options! Please wait..</span>\", 60000);\n            iframe.get(0).onload = function(){ \n                modal && modal.modal(\"hide\"); \n            }\n        }, 500)\n";
+    + "'/>\");        \n        iframe.css({\n            border: \"none\",\n            width:  '100%',\n            height: ($(\"form.needs-validation\").height()) + 'px'\n        });\n\n        $(\"form.needs-validation\").replaceWith(iframe);\n        setTimeout(function(){\n            var modal = app.showLoading(\"<span id='msgSpan'>Loading payment options! Please wait..</span>\", 60000);\n            iframe.get(0).onload = function(){ modal && modal.modal(\"hide\"); }\n        }, 500)\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.lambda, alias3=container.escapeExpression;
 
@@ -1057,7 +1061,7 @@ this["templates"]["views"]["checkout"]["hbs"]["templates/views/checkout.hbs"] = 
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.OkHiKey : depth0),{"name":"if","hash":{},"fn":container.program(34, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n<script type=\"text/javascript\">           \n    $(document).ready(function () {   \n        window.minifiedMenu = true;\n        if (addaffix) addaffix();\n\n        if(window.addressData)\n            app.cartUtil.loadCharges(window.addressData.location);\n\n        window.addEventListener('message', function(event) {\n            console.log(\"Message:\", arguments);\n\n            // IMPORTANT: check the origin of the data! \n            if (event.origin.startsWith('https://dialadrinkkenya.com')) { \n                // The data was sent from your site.\n                // Data sent with postMessage is stored in event.data:\n                console.log(event.data); \n            } else {\n                // The data was NOT sent from your site! \n                // Be careful! Do not use it. This else branch is\n                // here just for clarity, you usually shouldn't need it.\n                return; \n            } \n        });\n\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.orderUrl : depth0),{"name":"if","hash":{},"fn":container.program(37, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "        \n        if($('#lets-okhi').length){\n            $(\"#addressInputs\").find(\"[required]\").removeAttr(\"required\")         \n        }else{\n            $('#lets-okhi').hide();\n            $(\"#addressInputs\").attr(\"required\", \"true\").show();        \n        }\n\n        $(document).on(\"click\", \".billing-address button[type='submit']\", function (e) {\n            e.preventDefault();\n            var form = $(this).parents(\"form\");\n            var array = form.serializeArray();\n            $(\".alert-danger\").hide();\n\n            var address = window.addressData || {};\n            if($(\"[name=address]\").val())\n                address.address = $(\"[name=address]\").val();\n            if($(\"[name=building]\").val())\n                address.building = $(\"[name=building]\").val();\n            if($(\"[name=houseNumber]\").val())\n                address.houseNumber = $(\"[name=houseNumber]\").val();\n\n            if(!form[0].checkValidity()) {\n                $(\".alert-danger\").find(\".msg-text\").html(\"<strong>Input Error!</strong> Invalid input found! Please review your info above.\")\n                $(\".alert-danger\").slideDown();\n            } else if(!Object.values(address).find(x => !!x)){\n                $(\".alert-danger\").find(\".msg-text\").html(\"<strong>Input Error!</strong> Invalid address. Please review your delivery address.\")\n                $(\".alert-danger\").slideDown();\n            } else {\n                var that = $(this);\n\n                that.attr(\"disabled\", true);\n                $('body,html').animate({scrollTop: 0}, 800, 'swing');\n\n                var data = Object.assign({ \n                    saveInfo: $(\"#saveInfo\").is(\":checked\") }, \n                    app.cartUtil.getCharges(), \n                    window.addressData || {}\n                );\n                array.forEach(function (a) { data[a.name] = a.value; });\n\n                var modal = app.showLoading(\"<span id='msgSpan'>Processing your order! Please wait..</span>\", 60000);\n\n                $.ajax({\n                    url: form.attr(\"action\"),\n                    data: JSON.stringify(data),\n                    contentType: \"application/json; charset=utf-8\",\n                    dataType: \"json\",\n                    type: \"POST\",\n                    success: function (res) {\n                        if(res.redirect) {\n                            //if(!/https?:\\/\\//.test(res.redirect))\n                            //    return window.location = res.redirect;\n\n                            modal.find(\"span.loading-msg\").text(\"Loading payment options! Please wait..\")\n                            var iframe = $(\"<iframe src='\" + res.redirect + \"'/>\");\n                            \n                            iframe.css({\n                                border: \"none\",\n                                width:  '100%',\n                                height: (form.height()) + 'px'\n                            });\n\n                            form.replaceWith(iframe);                            \n                            $(\".float-right-icon\").hide();\n                            iframe.get(0).onload = function(){\n                                 modal.modal(\"hide\");\n                                 $('html, body').animate({ scrollTop: iframe.offset().top - $(\".nav-logo\").offset().top }, 1000);\n\n                                 try{\n                                     var doc = this.document || this.contentDocument || this.contentWindow.document;\n                                     //back to our site\n                                     iframe.hide();\n                                     return window.location = \"/\";\n                                 }catch(e){\n                                     console.error(e);                                     \n                                 }\n                            }\n                        } else {\n                            app.showModal({\n                                msg: res.msg,\n                                ok: function (e) {\n                                    window.location = \"/\";\n                                },\n                                close: function (e) {\n                                    window.location = \"/\";\n                                }\n                            });\n                        }\n                        \n                    },\n                    error: function (xhr, status, error) {\n                        app.hideModal();\n                        var responseText = xhr.responseText || \"Unknown error on '\" + that.text() + \"'\";\n\n                        $(\".alert-danger\").find(\".msg-text\").html(\"<strong>{0}!</strong> {1}. Please try again later..\".format(error, responseText));\n                        $(\".alert-danger\").slideDown();\n\n                        $(that).attr(\"disabled\", false).removeAttr(\"disabled\");\n                    }\n                });\n\n            }\n        });\n        \n        $(document).on(\"click\", \".promo-redeem button\", function (e) {\n            e.preventDefault();\n            if ($(\"#promocode\").val()) {\n                $.get('/checkout/validatepromo/' + $(\"#promocode\").val())\n                        .then(function (data) {\n                            if (data.state) {\n                                app.cartUtil.updateView(null, data.promo);\n                                app.showNotification(data.msg)\n                            } else {\n                                app.showModal({ title: \"\", msg: data.msg })\n                            }\n                        });\n            }\n        })\n\n        var elements = document.getElementsByTagName(\"INPUT\");\n        for (var i = 0; i < elements.length; i++) {\n            elements[i].oninvalid = function (e) {\n                e.target.setCustomValidity(\"\");\n                if($( e.target).is(\":visible\")){\n                     if (!e.target.validity.valid) {\n                        var errMessage = $(e.target).siblings(\".invalid-feedback\").text().trim() || \"This field cannot be left blank!\"\n                        e.target.setCustomValidity(errMessage);\n                    }\n                }else{\n                    console.log($( e.target).attr(\"name\") + \" is not visible!\");\n                    e.target.validity.valid = true;\n                }\n            };\n        }\n    })\n</script>\n";
+    + "        \n        if($('#lets-okhi').length){\n            $(\"#addressInputs\").find(\"[required]\").removeAttr(\"required\")         \n        }else{\n            $('#lets-okhi').hide();\n            $(\"#addressInputs\").attr(\"required\", \"true\").show();        \n        }\n\n        $(document).on(\"click\", \".billing-address button[type='submit']\", function (e) {\n            e.preventDefault();\n            var form = $(this).parents(\"form\");\n            var array = form.serializeArray();\n            $(\".alert-danger\").hide();\n\n            var address = window.addressData || {};\n            if($(\"[name=address]\").val())\n                address.address = $(\"[name=address]\").val();\n            if($(\"[name=building]\").val())\n                address.building = $(\"[name=building]\").val();\n            if($(\"[name=houseNumber]\").val())\n                address.houseNumber = $(\"[name=houseNumber]\").val();\n\n            if(!form[0].checkValidity()) {\n                $(\".alert-danger\").find(\".msg-text\").html(\"<strong>Input Error!</strong> Invalid input found! Please review your info above.\")\n                $(\".alert-danger\").slideDown();\n            } else if(!Object.values(address).find(x => !!x)){\n                $(\".alert-danger\").find(\".msg-text\").html(\"<strong>Input Error!</strong> Invalid address. Please review your delivery address.\")\n                $(\".alert-danger\").slideDown();\n            } else {\n                var that = $(this);\n\n                that.attr(\"disabled\", true);\n                $('body,html').animate({scrollTop: 0}, 800, 'swing');\n\n                var data = Object.assign({ \n                        saveInfo: $(\"#saveInfo\").is(\":checked\") \n                    }, \n                    app.cartUtil.getCharges(), \n                    window.addressData || {}\n                );\n                array.forEach(function (a) { data[a.name] = a.value; });\n\n                var modal = app.showLoading(\"<span id='msgSpan'>Processing your order! Please wait..</span>\", 60000);\n\n                $.ajax({\n                    url: form.attr(\"action\"),\n                    data: JSON.stringify(data),\n                    contentType: \"application/json; charset=utf-8\",\n                    dataType: \"json\",\n                    type: \"POST\",\n                    success: function (res) {\n                        if(res.redirect) {\n                            //if(!/https?:\\/\\//.test(res.redirect))\n                            //    return window.location = res.redirect;\n\n                            modal.find(\"span.loading-msg\").text(\"Loading payment options! Please wait..\")\n                            var iframe = $(\"<iframe src=\\\"\" + res.redirect + \"\\\"/>\");\n                            \n                            iframe.css({\n                                border: \"none\",\n                                width:  '100%',\n                                height: (form.height()) + 'px'\n                            });\n\n                            form.replaceWith(iframe);                            \n                            $(\".float-right-icon\").hide();\n                            iframe.get(0).onload = function(){\n                                 modal.modal(\"hide\");\n                                 $('html, body').animate({ scrollTop: iframe.offset().top - $(\".nav-logo\").offset().top }, 1000);\n\n                                 try{\n                                     var doc = this.document || this.contentDocument || this.contentWindow.document;\n                                     //back to our site\n                                     iframe.hide();\n                                     return window.location = \"/\";\n                                 }catch(e){\n                                     console.error(e);                                     \n                                 }\n                            }\n                        } else {\n                            app.showModal({\n                                msg: res.msg,\n                                ok: function (e) {\n                                    window.location = \"/\";\n                                },\n                                close: function (e) {\n                                    window.location = \"/\";\n                                }\n                            });\n                        }\n                        \n                    },\n                    error: function (xhr, status, error) {\n                        app.hideModal();\n                        var responseText = xhr.responseText || \"Unknown error on '\" + that.text() + \"'\";\n\n                        $(\".alert-danger\").find(\".msg-text\").html(\"<strong>{0}!</strong> {1}. Please try again later..\".format(error, responseText));\n                        $(\".alert-danger\").slideDown();\n\n                        $(that).attr(\"disabled\", false).removeAttr(\"disabled\");\n                    }\n                });\n\n            }\n        });\n        \n        $(document).on(\"click\", \".promo-redeem button\", function (e) {\n            e.preventDefault();\n            if ($(\"#promocode\").val()) {\n                $.get('/checkout/validatepromo/' + $(\"#promocode\").val())\n                        .then(function (data) {\n                            if (data.state) {\n                                app.cartUtil.updateView(null, data.promo);\n                                app.showNotification(data.msg)\n                            } else {\n                                app.showModal({ title: \"\", msg: data.msg })\n                            }\n                        });\n            }\n        })\n\n        var elements = document.getElementsByTagName(\"INPUT\");\n        for (var i = 0; i < elements.length; i++) {\n            elements[i].oninvalid = function (e) {\n                e.target.setCustomValidity(\"\");\n                if($( e.target).is(\":visible\")){\n                     if (!e.target.validity.valid) {\n                        var errMessage = $(e.target).siblings(\".invalid-feedback\").text().trim() || \"This field cannot be left blank!\"\n                        e.target.setCustomValidity(errMessage);\n                    }\n                }else{\n                    console.log($( e.target).attr(\"name\") + \" is not visible!\");\n                    e.target.validity.valid = true;\n                }\n            };\n        }\n    })\n</script>\n";
 },"useData":true});
 
 this["templates"]["views"]["contact"]["hbs"]["templates/views/contact.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -2176,10 +2180,16 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + ((stack1 = ((helper = (helper = helpers.percentOffer || (depth0 != null ? depth0.percentOffer : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"percentOffer","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "%\n            </span>\n        </div>\n    </a>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    return "InStock";
+    var stack1, helper;
+
+  return "                    (ABV "
+    + ((stack1 = ((helper = (helper = helpers.alcoholContent || (depth0 != null ? depth0.alcoholContent : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"alcoholContent","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "%)\n";
 },"5":function(container,depth0,helpers,partials,data) {
-    return "OutOfStock";
+    return "InStock";
 },"7":function(container,depth0,helpers,partials,data) {
+    return "OutOfStock";
+},"9":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "                    <span>\n                        <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                            <span>"
@@ -2189,7 +2199,7 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + "\">"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n                    </span>\n";
-},"9":function(container,depth0,helpers,partials,data) {
+},"11":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "                    <span itemprop=\"price\" content=\""
@@ -2197,11 +2207,11 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + "\">"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
-},"11":function(container,depth0,helpers,partials,data,blockParams,depths) {
+},"13":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1;
 
-  return ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.stockOptions : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(12, data, 0, blockParams, depths),"inverse":container.program(20, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "");
-},"12":function(container,depth0,helpers,partials,data,blockParams,depths) {
+  return ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.stockOptions : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(14, data, 0, blockParams, depths),"inverse":container.program(22, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "");
+},"14":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "                        <image src=\"https://res.cloudinary.com/dyc0ieeyu/image/upload/v1616081598/buynow2_eluftf.png\" \n                            alt=\"Add to Cart\" class=\"add-to-cart-2\" data-qty=\""
@@ -2209,13 +2219,13 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + "\" data-product=\""
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
     + "\" \n                            style=\"font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;\">\n"
-    + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.options : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.options : depth0)) != null ? stack1.length : stack1),1,{"name":"ifgt","hash":{},"fn":container.program(15, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                        </image>                        \n                        <div class=\"dropdown-content\">\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.stockOptions : depth0),{"name":"each","hash":{},"fn":container.program(15, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.stockOptions : depth0),{"name":"each","hash":{},"fn":container.program(17, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                        </div>\n";
-},"13":function(container,depth0,helpers,partials,data) {
+},"15":function(container,depth0,helpers,partials,data) {
     return "                                <span class=\"dropdown\" style=\"left: -39px;\">\n                                    <i style=\"color: white;\" class=\"fa fa-angle-down\"></i>\n                                </span>\n";
-},"15":function(container,depth0,helpers,partials,data,blockParams,depths) {
+},"17":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "                                <a href=\"#\" class=\"add-to-cart\"\n                                    data-qty=\""
@@ -2225,9 +2235,9 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + "\">\n                                    <span>"
     + alias4(((helper = (helper = helpers.quantity || (depth0 != null ? depth0.quantity : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"quantity","hash":{},"data":data}) : helper)))
     + "</span>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.percentOffer : depth0),{"name":"if","hash":{},"fn":container.program(16, data, 0, blockParams, depths),"inverse":container.program(18, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.percentOffer : depth0),{"name":"if","hash":{},"fn":container.program(18, data, 0, blockParams, depths),"inverse":container.program(20, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "                                </a>\n";
-},"16":function(container,depth0,helpers,partials,data) {
+},"18":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "                                        <span>\n                                            <span style=\"font-size: 0.8em; text-decoration: line-through; color: orangered\">\n                                                <span>"
@@ -2237,7 +2247,7 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + "\">"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.offerPrice : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n                                        </span>\n";
-},"18":function(container,depth0,helpers,partials,data) {
+},"20":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3=container.escapeExpression;
 
   return "                                        <span itemprop=\"price\" content=\""
@@ -2245,7 +2255,7 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + "\">"
     + alias3((helpers.formatNumber || (depth0 && depth0.formatNumber) || alias2).call(alias1,(depth0 != null ? depth0.price : depth0),{"name":"formatNumber","hash":{},"data":data}))
     + "</span>\n";
-},"20":function(container,depth0,helpers,partials,data) {
+},"22":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "                        <image src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png\" \n                            alt=\"Add to Cart\" class=\"add-to-cart\" data-qty=\""
@@ -2253,7 +2263,7 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + "\" data-product=\""
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
     + "\" \n                            style=\"font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;\">\n                        </image>\n";
-},"22":function(container,depth0,helpers,partials,data) {
+},"24":function(container,depth0,helpers,partials,data) {
     return "                    <image src=\"https://res.cloudinary.com/nmasuki/image/upload/soldout.png\"\n                        style=\"font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: text;\"\n                        alt=\"Sold out!\"/>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
@@ -2279,10 +2289,12 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\"\n                class=\"img-responsive\" \n                style=\"margin: auto\"/>\n\n            <div itemprop=\"name\" class=\"drinks-name\">\n                <a href=\""
     + alias4((helpers.productUrl || (depth0 && depth0.productUrl) || alias2).call(alias1,(depth0 != null ? depth0.href : depth0),{"name":"productUrl","hash":{},"data":data}))
-    + "\" style=\"font-size: 15px; color: black;\">"
-    + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</a>\n            </div>            \n\n            <div itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                <meta itemprop=\"availability\" content=\"http://schema.org/"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0, blockParams, depths),"inverse":container.program(5, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + "\" style=\"font-size: 15px; color: black;\">\n                    "
+    + alias4((helpers.truncate || (depth0 && depth0.truncate) || alias2).call(alias1,(depth0 != null ? depth0.name : depth0),25,{"name":"truncate","hash":{},"data":data}))
+    + "\n"
+    + ((stack1 = (helpers.ifgt || (depth0 && depth0.ifgt) || alias2).call(alias1,(depth0 != null ? depth0.alcoholContent : depth0),0,{"name":"ifgt","hash":{},"fn":container.program(3, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                </a>\n            </div>            \n            <div itemscope itemprop=\"offers\" itemtype=\"http://schema.org/Offer\">\n                <meta itemprop=\"availability\" content=\"http://schema.org/"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0, blockParams, depths),"inverse":container.program(7, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "\"/>\n                <meta itemprop=\"url\" content=\""
     + ((stack1 = ((helper = (helper = helpers.appUrl || (depth0 != null ? depth0.appUrl : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"appUrl","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + alias4((helpers.productUrl || (depth0 && depth0.productUrl) || alias2).call(alias1,(depth0 != null ? depth0.href : depth0),{"name":"productUrl","hash":{},"data":data}))
@@ -2293,9 +2305,9 @@ this["templates"]["views"]["partials"]["product"]["hbs"]["templates/views/partia
     + "</span>   \n                <span itemprop=\"priceCurrency\">"
     + alias4(((helper = (helper = helpers.currency || (depth0 != null ? depth0.currency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"currency","hash":{},"data":data}) : helper)))
     + "</span>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.percentOffer : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0, blockParams, depths),"inverse":container.program(9, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.percentOffer : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0, blockParams, depths),"inverse":container.program(11, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "            </div>\n\n            <br>\n            <div class=\"dropdown\">\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0, blockParams, depths),"inverse":container.program(22, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inStock : depth0),{"name":"if","hash":{},"fn":container.program(13, data, 0, blockParams, depths),"inverse":container.program(24, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + "            </div>\n        </a>\n    </div>\n</div>\n\n<script class=\"json\" id=\"json"
     + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
     + "\" type=\"application/ld+json\">"
@@ -3559,7 +3571,9 @@ this["templates"]["views"]["products"]["hbs"]["templates/views/products.hbs"] = 
     + ((stack1 = helpers.each.call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1s : stack1),{"name":"each","hash":{},"fn":container.program(6, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
     + "                        \n                </h1>\n            </div>\n            <div class=\"col-sm-4\"></div>\n        </div>\n        \n        <div class=\"row products-grid\">\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.popular : depth0),{"name":"each","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "        </div>\n    </div>\n";
+    + "        </div>\n\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.brandForcus : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    </div>\n";
 },"4":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -3581,20 +3595,32 @@ this["templates"]["views"]["products"]["hbs"]["templates/views/products.hbs"] = 
 },"11":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.products : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.program(15, data, 0),"data":data})) != null ? stack1 : "");
+  return "            <div class=\"row\">\n                <div class=\"col-sm-4\"></div>\n                <div class=\"col-sm-4\">\n                    <h1 class=\"home_featured_title home-title page-title\">\n                        <span class=\"category-name\">Brand Forcus.</span>   \n                    </h1>\n                </div>\n                <div class=\"col-sm-4\"></div>\n            </div>\n            \n            <div class=\"row products-grid\">\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.brandForcus : depth0),{"name":"each","hash":{},"fn":container.program(12, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "            </div>\n";
 },"12":function(container,depth0,helpers,partials,data) {
     var stack1;
 
+  return "                    <div class=\"col-md-3 col-lg-3 col-sm-12 single\" \n                        itemscope itemtype=\"http://schema.org/Product\"\n                        style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;\">                \n"
+    + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"                        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "                    </div>\n";
+},"14":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.products : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.program(18, data, 0),"data":data})) != null ? stack1 : "");
+},"15":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
   return "        <div class=\"container\">\n            <div class=\"row products-grid\">\n"
-    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.products : depth0),{"name":"each","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.products : depth0),{"name":"each","hash":{},"fn":container.program(16, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </div>\n        </div>\n";
-},"13":function(container,depth0,helpers,partials,data) {
+},"16":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                    <div class=\"col-md-3 col-lg-3 col-sm-12 single\" \n                        itemscope itemtype=\"http://schema.org/Product\"\n                        style=\"box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;\">\n                        \n"
     + ((stack1 = container.invokePartial(partials.product,depth0,{"name":"product","data":data,"indent":"                        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "                    </div>\n";
-},"15":function(container,depth0,helpers,partials,data) {
+},"18":function(container,depth0,helpers,partials,data) {
     return "        <div class=\"container\">\n            <div class=\"row\">\n                <div class=\"col-md-12 text-center\">\n                    <h2 style=\"font-size: 18px;\">No results found!</h2>\n                    <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png\"/>\n                    <br/>\n                    <a href=\"/\">Back to Today's Offers</a>\n                </div>\n            </div>    \n        </div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
@@ -3602,7 +3628,7 @@ this["templates"]["views"]["products"]["hbs"]["templates/views/products.hbs"] = 
   return "<style>\n    .featured-image img.img-responsive {\n        min-height: 250px;\n        max-height: 250px;\n    }\n</style>\n<div class=\"container\">\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.brand : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "</div>\n\n"
-    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.offers : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(11, data, 0),"data":data})) != null ? stack1 : "");
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.offers : depth0)) != null ? stack1.length : stack1),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(14, data, 0),"data":data})) != null ? stack1 : "");
 },"usePartial":true,"useData":true});
 
 this["templates"]["views"]["productsXml"]["hbs"]["templates/views/productsXml.hbs"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
