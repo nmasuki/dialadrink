@@ -605,25 +605,25 @@ Product.offerAndPopular = function(size, callback){
                     if (err || !brandForcus)
                         return callback(err);
 
-                        Product.findPublished({inStock: true})
-                            .exec((err, popular) => {
-                                if (err || !offers)
-                                    return callback(err);
-                                
-                                var excludePopular =  offers.concat(brandForcus);
+                    Product.findPublished({inStock: true})
+                        .exec((err, popular) => {
+                            if (err || !offers)
+                                return callback(err);
+                            
+                            var excludePopular =  offers.concat(brandForcus);
 
-                                popular = popular.filter(p => !excludePopular.any(x => x.id == p.id));
-                                var explicitPopular = popular.filter(p => p.isPopular);
-                                var ratingPopular = popular.filter(p => !p.isPopular)
-            
-                                var data = { 
-                                    popular: explicitPopular.concat(ratingPopular).slice(0, size), 
-                                    brandForcus: brandForcus,
-                                    offers: offers
-                                };
-            
-                                callback(err, data);
-                            });
+                            popular = popular.filter(p => !excludePopular.any(x => x.id == p.id));
+                            var explicitPopular = popular.filter(p => p.isPopular);
+                            var ratingPopular = popular.filter(p => !p.isPopular)
+        
+                            var data = { 
+                                popular: explicitPopular.concat(ratingPopular).slice(0, size), 
+                                brandForcus: brandForcus,
+                                offers: offers
+                            };
+        
+                            callback(err, data);
+                        });
                 });
         });
 
