@@ -616,6 +616,8 @@ Product.offerAndPopular = function(size, callback){
                             var explicitPopular = popular.filter(p => p.isPopular);
                             var ratingPopular = popular.filter(p => !p.isPopular)
         
+                            console.log(`Popular: ${popular.length}, Offers: ${offers.length}, ${brandFocus.length}..`);
+                            
                             var data = { 
                                 popular: explicitPopular.concat(ratingPopular).slice(0, size), 
                                 brandFocus: brandFocus.slice(0, size),
