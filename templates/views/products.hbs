@@ -60,27 +60,25 @@
             {{/each}}
         </div>
 
-        {{#if brandForcus}}
-            <div class="row">
-                <div class="col-sm-4"></div>
-                <div class="col-sm-4">
-                    <h1 class="home_featured_title home-title page-title">
-                        <span class="category-name">Brand Forcus.</span>   
-                    </h1>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <h1 class="home_featured_title home-title page-title">
+                    <span class="category-name">Brand Forcus.</span>   
+                </h1>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+        
+        <div class="row products-grid">
+            {{#each brandForcus}}
+                <div class="col-md-3 col-lg-3 col-sm-12 single" 
+                    itemscope itemtype="http://schema.org/Product"
+                    style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                    {{>product}}
                 </div>
-                <div class="col-sm-4"></div>
-            </div>
-            
-            <div class="row products-grid">
-                {{#each brandForcus}}
-                    <div class="col-md-3 col-lg-3 col-sm-12 single" 
-                        itemscope itemtype="http://schema.org/Product"
-                        style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
-                        {{>product}}
-                    </div>
-                {{/each}}
-            </div>
-        {{/if}}
+            {{/each}}
+        </div>
     </div>
 {{else}}
     {{#if products.length}}
