@@ -14,7 +14,7 @@ exports.create = {
 		'phoneNumber': '254720805835',
 		'email': 'nmasuki@gmail.com',
 		'username': 'nmasuki',
-		'password': 'admin',
+		'password': 'admin@Nel007',
 		'accountType': "system admin",
 		'accountStatus': 'Active',
 		'receivesOrders': false

@@ -22,7 +22,7 @@ function loadWorkers(next) {
 				return console.warn(err);
 		
 			var modules = files
-				.filter(f => f.endsWith('.js') && !f.endsWith('index.js'))
+				.filter(f => f != 'null' && f.endsWith('.js') && !f.endsWith('index.js'))
 				.map(f => {
 					var worker = require(__dirname + '/' + f);
 					worker.name = f.replace(/\.js$/, "");

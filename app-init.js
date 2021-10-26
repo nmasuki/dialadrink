@@ -1,21 +1,22 @@
 // Simulate config options from your production environment by
 // customising the .env file in your project's root folder.
 require('dotenv').config();
+require('./helpers/polyfills');
 
 // Require keystone
 var keystone = require('keystone');
-require('./helpers/polyfills');
-
 global.Handlebars = require('handlebars');
+var {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
+
 var handlebars = require('express-handlebars').create({
-	handlebars: global.Handlebars,
+	handlebars: allowInsecurePrototypeAccess(global.Handlebars),
 	defaultLayout: 'dialadrink',
 	partialsDir: 'templates/views/partials',
 	layoutsDir: 'templates/views/layouts',
 	helpers: new require('./templates/views/helpers')(),
 	precompiled: require('./templates'),
 	extname: '.hbs',
-	allowedProtoProperties: true ,
+	allowProtoProperties: true,
 	cache: true
 });
 
