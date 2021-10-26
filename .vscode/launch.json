@@ -8,7 +8,7 @@
             "protocol": "inspector",
             "request": "launch",
             "name": "Dial a Drink Kenya",
-            "program": "${workspaceFolder}\\app.js",
+            "program": "${workspaceFolder}/app.js",
             "sourceMaps": false
         },   
         {
@@ -16,7 +16,7 @@
             "protocol": "inspector",
             "request": "launch",
             "name": "Dial a Drink Kenya - Workers",
-            "program": "${workspaceFolder}\\app-workers.js",
+            "program": "${workspaceFolder}/app-workers.js",
             "sourceMaps": false
         }
     ]
