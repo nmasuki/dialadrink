@@ -595,17 +595,17 @@ Product.findRelated = function (callback, products) {
 
 Product.offerAndPopular = function(size, callback){
     size = size || 8;
-    Product.findPublished({inStock: true, onOffer: true}).limit(size)
+    Product.findPublished({inStock: true, onOffer: true})
         .exec(function(err, offers){
             if (err || !offers)
                 return callback(err);
 
-            Product.findPublished({inStock: true, isBrandFocus: true, onOffer: false}).limit(size)
+            Product.findPublished({inStock: true, isBrandFocus: true, onOffer: false})
                 .exec((err, brandFocus) => {
                     if (err)
                         return callback(err);
 
-                    Product.findPublished({inStock: true, isBrandFocus: false, onOffer: false})
+                    Product.findPublished({inStock: true})
                         .exec((err, popular) => {
                             if (err || !offers)
                                 return callback(err);
@@ -618,8 +618,8 @@ Product.offerAndPopular = function(size, callback){
         
                             var data = { 
                                 popular: explicitPopular.concat(ratingPopular).slice(0, size), 
-                                brandFocus: brandFocus,
-                                offers: offers
+                                brandFocus: brandFocus.slice(0, size),
+                                offers: offers.slice(0, size)
                             };
         
                             callback(err, data);
