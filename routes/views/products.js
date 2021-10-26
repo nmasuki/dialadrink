@@ -17,9 +17,11 @@ function index(req, res) {
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 
+    var homeGroupSize = process.env.HOME_GROUP_SIZE || 12;
+
     // Load Products
     view.on('init', function (next) {
-        keystone.list('Product').offerAndPopular(8, (err, data) => {
+        keystone.list('Product').offerAndPopular(homeGroupSize, (err, data) => {
             locals.popular = data.popular;
             locals.offers = data.offers;
 
