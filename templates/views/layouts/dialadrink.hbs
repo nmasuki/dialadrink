@@ -374,7 +374,17 @@
 
             {{#if page.content}}
                 <div class="container content">
-                    {{{page.content}}}
+                    {{#if page.breafContent}}
+                        <div id="breafContent">
+                            {{{page.breafContent}}}
+                            <div>
+                                <a href="javascript:void(0)" onclick="showMore('#breafContent', '#fullContent')">More...</a>
+                            </div>
+                        </div>
+                        <div id="fullContent" style="display:none;">{{{page.content}}}</div>
+                    {{else}}
+                        {{{page.content}}}
+                    {{/if}}                    
                 </div>
             {{/if}}
 
@@ -421,6 +431,12 @@
                         $(".inst-checkout").css({left: left});
                 });
             {{/if}}
+            
+            function showMore(breaf, detailed){
+                $(breaf).slideUp();
+                $(detailed).slideDown();
+            }
+
             </script>
             
         </div>
