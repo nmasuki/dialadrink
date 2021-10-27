@@ -378,10 +378,16 @@
                         <div id="breafContent">
                             {{{page.breafContent}}}
                             <div>
-                                <a href="javascript:void(0)" onclick="showMore('#breafContent', '#fullContent')">More...</a>
+                                <a href="javascript:void(0)" onclick="showMore('#breafContent', '#fullContent')">Show more...</a>
                             </div>
                         </div>
-                        <div id="fullContent" style="display:none;">{{{page.content}}}</div>
+                        
+                        <div id="fullContent" style="display:none;">
+                            {{{page.content}}}
+                            <div>
+                                <a href="javascript:void(0)" onclick="showLess('#breafContent', '#fullContent')">Show less...</a>
+                            </div>
+                        </div>
                     {{else}}
                         {{{page.content}}}
                     {{/if}}                    
@@ -435,6 +441,12 @@
             function showMore(breaf, detailed){
                 $(breaf).slideUp();
                 $(detailed).slideDown();
+                return false;
+            }
+
+            function showLess(breaf, detailed){
+                $(breaf).slideDown();
+                $(detailed).slideUp();
                 return false;
             }
 
