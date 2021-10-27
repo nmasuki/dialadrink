@@ -49,16 +49,16 @@
                     <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
                 {{/if}}             
             </div>
-
             <br>
-            <div class="dropdown">
+            
+            <div class="dropdown zindex999">
                 {{#if inStock}}
                     {{#ifgt stockOptions.length 1}}
                         <image src="https://res.cloudinary.com/dyc0ieeyu/image/upload/v1616081598/buynow2_eluftf.png" 
                             alt="Add to Cart" class="add-to-cart-2" data-qty="{{quantity}}" data-product="{{_id}}" 
                             style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
                             {{#ifgt options.length 1}}
-                                <span class="dropdown" style="left: -39px;">
+                                <span class="dropdown zindex999" style="left: -39px;">
                                     <i style="color: white;" class="fa fa-angle-down"></i>
                                 </span>
                             {{/ifgt}}
