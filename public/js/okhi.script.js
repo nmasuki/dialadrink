@@ -75,9 +75,6 @@ $(document).ready(function(){
             if (window.locationCard){
                 window.locationCard.user = user;
             } else {
-                
-
-
                 var element = document.getElementById("lets-okhi-card");
                 window.locationCard = new okhi.LocationCard({
                     element: element, // required
