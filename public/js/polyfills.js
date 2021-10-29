@@ -332,6 +332,26 @@ if (!String.prototype.cleanId)
 		return this.toLowerCase().replace(/\W+/g, " ").trim().replace(/\W+/g, "-");
 	};
 
+if (!String.prototype.sanitizePhoneNumber)
+    String.prototype.cleanPhoneNumber = String.prototype.sanitizePhoneNumber = function sanitizePhoneNumber(countryCode) {
+        var phone = (this || "").replace(/[\W]+/g, "");
+        countryCode = countryCode || String.countryCode || "254";
+
+        if (!phone)
+            return "";
+
+        if (phone.startsWith("+"))
+            phone = phone.replace("^+", "");
+
+        if (phone.length < 11)
+            phone = phone.trim().replace(/^0/, countryCode);
+
+        if (/^7/.test(phone))
+            phone = phone.trim().replace(/^7/, countryCode + "7");
+
+        return phone;
+    };
+
 if (!String.prototype.escapeRegExp)
 	String.prototype.escapeRegExp = function escapeRegExp() {
 		return (this || "").replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");

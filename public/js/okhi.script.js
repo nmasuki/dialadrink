@@ -59,9 +59,9 @@ $(document).ready(function () {
         };
 
         user = user || {
+            phone: "+" + $("#phoneNumber").val().cleanPhoneNumber(), // required
             firstName: $("#firstName").val(), // optional
             lastName: $("#lastName").val(), // optional
-            phone: $("#phoneNumber").val(), // required
         };
 
         if (!user.firstName) delete user.firstName;
@@ -130,7 +130,7 @@ $(document).ready(function () {
         };
 
         user = user || {
-            phone: $("#phoneNumber").val(),
+            phone: "+" + $("#phoneNumber").val().cleanPhoneNumber(),
             firstName: $("#firstName").val(),
             lastName: $("#lastName").val(),
         };
