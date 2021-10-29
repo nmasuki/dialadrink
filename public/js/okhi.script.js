@@ -45,7 +45,14 @@ $(document).ready(function () {
         var handleOnError = function (data) {
             clearTimeout(errorTimeOut);
             window.addressData = null;
-            console.warn("Error Implimentation not done!", arguments);
+
+            if(data.code == "invalid_phone"){
+                $(".alert-danger").find(".msg-text").html("<strong>" + data.message + "</strong>");
+                $(".alert-danger").slideDown();
+                return;
+            }
+
+            console.warn("Error Implimentation not done!", data);
 
             $('#lets-okhi').animate({ width: 'toggle' }, 350);
             $("#lets-okhi-card").hide();
@@ -141,7 +148,7 @@ $(document).ready(function () {
             }, 5000);
 
             var locationManager = new okhi.OkHiLocationManager({
-                user: user,
+                user: new window.okhi.OkHiUser(user),
                 config: okhiConfig,
                 style: okhiStyle,
                 mode: okhi.OkHiLocationManagerLaunchMode.select_location
@@ -159,9 +166,6 @@ $(document).ready(function () {
             $(".alert-danger").slideDown();
         }
     };
-
-    if ($("#phoneNumber").val())
-        loadLocationCard();
 
     $(document).on("change", "#phoneNumber", function (e) {
         loadLocationCard({
