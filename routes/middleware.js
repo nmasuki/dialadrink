@@ -87,10 +87,22 @@ exports.initLocals = function (req, res, next) {
     res.locals.vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
 
     //OKHi Env
-    res.locals.OkHiEnv = process.env.OKHI_ENV;
+    res.locals.OkHiEnv = process.env.NODE_ENV == "production"? "" :"sandbox-";
     
     //OKHi Key
-    res.locals.OkHiKey = res.locals.OkHiEnv == "prod" ? process.env.OKHI_KEY : process.env.OKHI_DEV_KEY;
+    res.locals.OkHiServerKey = process.env.NODE_ENV == "production" 
+            ? process.env.OKHI_SERVER_KEY 
+            : process.env.OKHI_DEV_SERVER_KEY;
+
+    //OKHi Client Key
+    res.locals.OkHiClientKey = process.env.NODE_ENV == "production" 
+            ? process.env.OKHI_CLIENT_KEY 
+            : process.env.OKHI_DEV_CLIENT_KEY;
+
+    //OKHi Branch
+    res.locals.OkHiBranch = process.env.NODE_ENV == "production" 
+            ? process.env.OKHI_BRANCH 
+            : process.env.OKHI_DEV_BRANCH;
 
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
