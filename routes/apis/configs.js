@@ -32,8 +32,8 @@ router.get('/', function (req, res) {
             title: "OkHiEnv",
             value: res.locals.OkHiEnv
         }, {
-            title: "OkHiKey",
-            value: res.locals.OkHiKey
+            title: "OkHiClientKey",
+            value: res.locals.OkHiClientKey
         }]
     };
 
