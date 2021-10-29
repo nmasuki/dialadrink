@@ -70,7 +70,7 @@ $(document).ready(function () {
         if (user.phone && user.phone.length >= 10) {
             errorTimeOut = setTimeout(function () {
                 if (window.addressData) return;
-                if ($('#lets-okhi iframe').length) return;
+                if ($('#lets-okhi-card').html()) return;
 
                 $('#lets-okhi').hide();
                 $("#lets-okhi-card").parent().hide();
@@ -82,13 +82,13 @@ $(document).ready(function () {
 
             window.addressData = null;
             if (window.locationCard) {
-                window.locationCard.user = user;
+                window.locationCard.user = new window.okhi.OkHiUser(user);
             } else {
                 var element = document.getElementById("lets-okhi-card");
                 window.locationCard = new window.okhi.OkHiLocationCard(
                     {
                         user: new window.okhi.OkHiUser(user),
-                        style: okhiStyle // optional 
+                        style: okhiStyle
                     },
                     element,
                     function (error, data) {
@@ -137,8 +137,8 @@ $(document).ready(function () {
 
         if (user.phone && user.firstName && user.lastName) {
             errorTimeOut = setTimeout(function () {
-                window.addressData = null;
-                if ($('#lets-okhi iframe').length) return;
+                //window.addressData = null;
+                if ($('##lets-okhi-card').html()) return;
 
                 loadLocationCard(user);
             }, 5000);

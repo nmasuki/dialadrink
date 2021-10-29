@@ -375,7 +375,7 @@
 
             if(window.loadLocationCard) 
                 return window.loadLocationCard();
-                
+
             setTimeout(initOkHi, 200);
         };
     </script>
@@ -391,14 +391,18 @@
             app.cartUtil.loadCharges(window.addressData.location);
 
         window.addEventListener('message', function (event) {
-            console.log("Message:", arguments);
-
             // IMPORTANT: check the origin of the data! 
             if (event.origin.startsWith('https://dialadrinkkenya.com')) {
                 // The data was sent from your site.
                 // Data sent with postMessage is stored in event.data:
                 console.log(event.data);
+            } else if (event.origin.endsWith("sandbox-card-v5.okhi.io")){
+                var data = JSON.parse(event.data);
+                console.log("Message:", data);            
+                //if (data.message)
+                //    $(".alert-danger").find(".msg-text").html("<p>" + data.message + "!!</p>");            
             } else {
+                console.log("Message:", event);            
                 // The data was NOT sent from your site! 
                 // Be careful! Do not use it. This else branch is
                 // here just for clarity, you usually shouldn't need it.
