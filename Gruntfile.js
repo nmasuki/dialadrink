@@ -117,6 +117,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'uglify', 'concat',
-        'purifycss', 'cssmin', 'css_clean', 'handlebars'
+        'purifycss', 'cssmin', 
+        'css_clean', 'handlebars'
     ]);
 }

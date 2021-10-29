@@ -14,7 +14,8 @@
         border-left: none;
     }
 
-    form.promo-redeem button, form.needs-validation button {
+    form.promo-redeem button,
+    form.needs-validation button {
         border: 1px solid lightgray;
         color: white;
     }
@@ -39,7 +40,6 @@
     .invalid-feedback {
         display: none;
     }
-
 </style>
 <div class="container">
     <div class="row">
@@ -47,99 +47,103 @@
             <h4 class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted">{{#if orderUrl}}Order Items{{else}}Your cart{{/if}}</span>
                 {{#if cartItems.length}}
-                    <span class="badge badge-secondary badge-pill">{{cartItemCount this}}</span>
+                <span class="badge badge-secondary badge-pill">{{cartItemCount this}}</span>
                 {{/if}}
             </h4>
             <ul class="list-group mb-3">
                 {{#if cartItems.length}}
-                    {{#each cartItems}}
-                        <li data-cartid="{{_id}}"
-                            class="list-group-item d-flex justify-content-between lh-condensed row">
-                            <div class="col-md-4">
-                                <img class="cart-image" src="{{cloudinaryUrl image crop='fit' height=52}}" style="width: 52px; height: 52px">
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="my-0"><a href="/{{product.href}}">{{product.name}}
-                                    &nbsp;{{quantity}}</a>
-                                </h6>
-                                <small class="text-muted">{{truncate description 50}}</small>
-                                <small class="text-muted">
-                                    <span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
-                                    @<span class="cart-currency">KES</span>
-                                    <stan class="cart-cost">{{price}}</stan>
-                                </small>
-                                <div class="right">
-							<span class="text-muted">
-								<span class="cart-currency">KES</span> 
-								<stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
-							</span>
-                                </div>
-                            </div>
-                            <!--<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>-->
-                        </li>
-                    {{/each}}
-
-                    <li class="transaction-charges list-group-item d-flex justify-content-between lh-condensed row" style="display: none;">
-                        <div class="text-info">
-                            <h6 class="my-0">Transaction Charges</h6>
+                {{#each cartItems}}
+                <li data-cartid="{{_id}}" class="list-group-item d-flex justify-content-between lh-condensed row">
+                    <div class="col-md-4">
+                        <img class="cart-image" src="{{cloudinaryUrl image crop='fit' height=52}}"
+                            style="width: 52px; height: 52px">
+                    </div>
+                    <div class="col-md-8">
+                        <h6 class="my-0"><a href="/{{product.href}}">{{product.name}}
+                                &nbsp;{{quantity}}</a>
+                        </h6>
+                        <small class="text-muted">{{truncate description 50}}</small>
+                        <small class="text-muted">
+                            <span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
+                            @<span class="cart-currency">KES</span>
+                            <stan class="cart-cost">{{price}}</stan>
+                        </small>
+                        <div class="right">
+                            <span class="text-muted">
+                                <span class="cart-currency">KES</span>
+                                <stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
+                            </span>
                         </div>
-                        <span class="cart-currency">KES</span> 
-                        <span class="text-info cart-amount">100.00</span>
-                    </li>
+                    </div>
+                    <!--<a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>-->
+                </li>
+                {{/each}}
 
-                    <li class="delivery-charges list-group-item d-flex justify-content-between lh-condensed row" style="display: none;">
-                        <div class="text-info">
-                            <h6 class="my-0">Delivery Charges</h6>
-                        </div>
-                        <span class="cart-currency">KES</span> 
-                        <span class="text-info cart-amount">50.00</span>
-                    </li>
-                    
-                    <li {{#unless promocode}}style="display: none;"{{/unless}}
-                        class="promo-code-wrapper list-group-item d-flex justify-content-between bg-light">
-                        <div class="text-success">
-                            <h6 class="my-0">Promo code</h6>
-                            <small class="promo-code">{{promocode.code}}</small>
-                        </div>
-                        <span class="cart-currency">KES</span>
-                        (<span class="text-success promo-code-amount">{{formatNumber promocode.amount}}</span>)
-                    </li>
+                <li class="transaction-charges list-group-item d-flex justify-content-between lh-condensed row"
+                    style="display: none;">
+                    <div class="text-info">
+                        <h6 class="my-0">Transaction Charges</h6>
+                    </div>
+                    <span class="cart-currency">KES</span>
+                    <span class="text-info cart-amount">100.00</span>
+                </li>
 
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Total (<span class="cart-currency">KES</span>)</span>
-                        <strong class="cart-total-2">
-                            {{formatNumber (sumEvals cartItems 'c=>c.pieces*c.price')}}
-                        </strong>
-                    </li>
+                <li class="delivery-charges list-group-item d-flex justify-content-between lh-condensed row"
+                    style="display: none;">
+                    <div class="text-info">
+                        <h6 class="my-0">Delivery Charges</h6>
+                    </div>
+                    <span class="cart-currency">KES</span>
+                    <span class="text-info cart-amount">50.00</span>
+                </li>
+
+                <li {{#unless promocode}}style="display: none;" {{/unless}}
+                    class="promo-code-wrapper list-group-item d-flex justify-content-between bg-light">
+                    <div class="text-success">
+                        <h6 class="my-0">Promo code</h6>
+                        <small class="promo-code">{{promocode.code}}</small>
+                    </div>
+                    <span class="cart-currency">KES</span>
+                    (<span class="text-success promo-code-amount">{{formatNumber promocode.amount}}</span>)
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (<span class="cart-currency">KES</span>)</span>
+                    <strong class="cart-total-2">
+                        {{formatNumber (sumEvals cartItems 'c=>c.pieces*c.price')}}
+                    </strong>
+                </li>
                 {{else}}
-                    <li class="list-group-item d-flex justify-content-between">
-                        <div class="loading cart-loading">
-                            <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart.png" alt="Empty!" style="height: 50px;"> You have no items in
-                            your cart!!
-                        </div>
-                        <a href="/">Continue shopping.</a>
-                        <p style="font-size: 13px">
-                            You can proceed to filling in and saving your delivery details for future references.
-                        </p>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <div class="loading cart-loading">
+                        <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart.png" alt="Empty!"
+                            style="height: 50px;"> You have no items in
+                        your cart!!
+                    </div>
+                    <a href="/">Continue shopping.</a>
+                    <p style="font-size: 13px">
+                        You can proceed to filling in and saving your delivery details for future references.
+                    </p>
+                </li>
                 {{/if}}
             </ul>
 
             {{#if cartItems.length}}
-                <form class="card promo-redeem">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-8 col-sm-8" style="width: 74%; float: left;">
-                                    <input id="promocode" type="text" class="form-control" placeholder="Promo code" style="/* width: 100%; */float: left;">
-                                </div>
-                                <div class="col-md-4 col-sm-4" style="width: 21%; float: left; color: white;">
-                                    <button type="submit" class="btn btn-secondary" style="margin-top: 0;">Redeem</button>
-                                </div>
-                            </div>                            
+            <form class="card promo-redeem">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-8" style="width: 74%; float: left;">
+                                <input id="promocode" type="text" class="form-control" placeholder="Promo code"
+                                    style="/* width: 100%; */float: left;">
+                            </div>
+                            <div class="col-md-4 col-sm-4" style="width: 21%; float: left; color: white;">
+                                <button type="submit" class="btn btn-secondary" style="margin-top: 0;">Redeem</button>
+                            </div>
                         </div>
                     </div>
-                </form>
+                </div>
+            </form>
             {{/if}}
         </div>
 
@@ -184,27 +188,28 @@
                         </div>
                     </div>
 
-                    {{#if OkHiKey}}  
+                    {{#if OkHiClientKey}}
+                    <div class="row">
+                        <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
+                            <img
+                                src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" />
+                            Location lookup
+                        </button>
+                        <br>
                         <div class="row">
-                            <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
-                                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" /> Location lookup
-                            </button>
-                            <br>
-                            <div class="row">
-                                <label for="email">Location details</label>
-                                <div id="lets-okhi-card"></div>
-                            </div>
+                            <label for="email">Location details</label>
+                            <div id="lets-okhi-card"></div>
                         </div>
-                    {{/if}} 
+                    </div>
+                    {{/if}}
 
-                    <div class="row" id="addressInputs" style="{{#if OkHiKey}}display:none;{{/if}}">                        
+                    <div class="row" id="addressInputs" style="{{#if OkHiClientKey}}display:none;{{/if}}">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="address">Location</label>
                                 <input type="text" class="form-control" name="address" id="address"
-                                    value="{{userData.address}}"
-                                    placeholder="1234 Kileleshwa" required/>
-                                
+                                    value="{{userData.address}}" placeholder="1234 Kileleshwa" required />
+
                                 <div class="invalid-feedback">
                                     Please enter your shipping address.
                                 </div>
@@ -222,7 +227,7 @@
                                 <input type="text" class="form-control" name="houseNumber" id="houseNumber"
                                     placeholder="House Number" value="{{userData.houseNumber}}">
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     {{!--
                     <div class="custom-control custom-checkbox">
@@ -235,7 +240,8 @@
 
                     <div class="alert alert-danger fade in alert-dismissible" style="display: none; margin-top:5px">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-                        <span class="msg-text"><strong>Danger!</strong> This alert box indicates a dangerous or potentially negative action.</span>
+                        <span class="msg-text"><strong>Danger!</strong> This alert box indicates a dangerous or
+                            potentially negative action.</span>
                     </div>
 
                     {{#if cartItems.length}}
@@ -244,46 +250,56 @@
 
                     <div class="d-block my-3">
                         <div class="custom-control custom-radio">
-                            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" value="Cash" checked>
+                            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input"
+                                value="Cash" checked>
                             <label class="custom-control-label" for="credit">Cash on Delivery</label>
                         </div>
-                        
-                        <div class="custom-control custom-radio">
-                            <input id="mpesaOnDelivery" name="paymentMethod" type="radio" class="custom-control-input" value="MPESA on delivery">
-                            <label class="custom-control-label" for="mpesaOnDelivery">MPESA on Delivery</label>
-                        </div>  
 
                         <div class="custom-control custom-radio">
-                            <input id="swipeOnDelivery" name="paymentMethod" type="radio" class="custom-control-input" value="Swipe on Delivery">
-                            <label class="custom-control-label" for="swipeOnDelivery">Swipe on Delivery<small>(+2.5% processing fee)</small></label>
+                            <input id="mpesaOnDelivery" name="paymentMethod" type="radio" class="custom-control-input"
+                                value="MPESA on delivery">
+                            <label class="custom-control-label" for="mpesaOnDelivery">MPESA on Delivery</label>
+                        </div>
+
+                        <div class="custom-control custom-radio">
+                            <input id="swipeOnDelivery" name="paymentMethod" type="radio" class="custom-control-input"
+                                value="Swipe on Delivery">
+                            <label class="custom-control-label" for="swipeOnDelivery">Swipe on Delivery<small>(+2.5%
+                                    processing fee)</small></label>
                         </div>
 
                         {{#if enableCyberSource}}
-                            <div class="custom-control custom-radio">
-                                <input id="cyberSource" name="paymentMethod" type="radio" class="custom-control-input" value="CyberSource">
-                                <label class="custom-control-label" for="cyberSource">Pay online</label>
-                            </div>
+                        <div class="custom-control custom-radio">
+                            <input id="cyberSource" name="paymentMethod" type="radio" class="custom-control-input"
+                                value="CyberSource">
+                            <label class="custom-control-label" for="cyberSource">Pay online</label>
+                        </div>
                         {{/if}}
 
                         {{#if enablePesaPal}}
-                            <div class="custom-control custom-radio">
-                                <input id="pesaPal" name="paymentMethod" type="radio" class="custom-control-input" value="PesaPal">
-                                <label class="custom-control-label" for="pesaPal">Pay online <small>(+3% processing fee)</small></label>
-                            </div>
+                        <div class="custom-control custom-radio">
+                            <input id="pesaPal" name="paymentMethod" type="radio" class="custom-control-input"
+                                value="PesaPal">
+                            <label class="custom-control-label" for="pesaPal">Pay online <small>(+3% processing
+                                    fee)</small></label>
+                        </div>
                         {{/if}}
-                        
+
                         {{#if enableMPesa}}
-                            <div class="custom-control custom-radio">
-                                <input id="mpesa" name="paymentMethod" type="radio" class="custom-control-input" value="MPesa">
-                                <label class="custom-control-label" for="mpesa">M-PESA <small>(+2% processing fee)</small></label>
-                            </div>
+                        <div class="custom-control custom-radio">
+                            <input id="mpesa" name="paymentMethod" type="radio" class="custom-control-input"
+                                value="MPesa">
+                            <label class="custom-control-label" for="mpesa">M-PESA <small>(+2% processing
+                                    fee)</small></label>
+                        </div>
                         {{/if}}
                     </div>
                     {{/if}}
 
                     <hr class="mb-4">
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" checked {{#unless cartItems.length}}disabled{{/unless}} class="custom-control-input" id="saveInfo" name="saveInfo">
+                        <input type="checkbox" checked {{#unless cartItems.length}}disabled{{/unless}}
+                            class="custom-control-input" id="saveInfo" name="saveInfo">
                         <label class="custom-control-label" for="saveInfo">Save this information for next time</label>
                     </div>
 
@@ -325,10 +341,10 @@
 
                     <hr class="mb-4">
 
-                    <div class="row">                          
+                    <div class="row">
                         <button class="btn btn-primary btn-lg" id="submitBtn" type="submit">
                             {{#if cartItems.length}}Place your Order{{else}}Save details{{/if}}
-                        </button>  
+                        </button>
                     </div>
                 </form>
             </div>
@@ -336,78 +352,80 @@
     </div>
 </div>
 
-{{#if OkHiKey}}
-<!--script src="https://sandbox-api.okhi.io/v5/okweb?clientKey={{{OkHiKey}}}&branchId=cbd&callback=initOkHi" async defer></script-->
-<script src="https://cdn.okhi.io/{{{OkHiEnv}}}/web/v4/okhi.min.js"> </script>
-<!--script src="https://cdn.okhi.io/{{{OkHiEnv}}}/web/v5/okhi.min.js"> </script-->
-<script type="text/javascript"> 
-    var initOkHi = function(){
-        var okhi = new OkHi({ apiKey: '{{{OkHiKey}}}' });
-        var okhiStyle = {
-            base: {
+{{#if OkHiClientKey}}
+    <script src="https://{{{OkHiEnv}}}api.okhi.io/v5/okweb?clientKey={{{OkHiClientKey}}}&branchId={{{OkHiBranch}}}&callback=initOkHi" async defer></script>
+    <script type="text/javascript">
+        var initOkHi = function () {
+            window.okhiConfig = new window.okhi.OkHiConfig({
+                streetView: true,
+            });
+
+            window.okhiStyle = new okhi.OkHiStyle({
                 logo: '{{{appLogo}}}',
                 name: '{{{appTitle}}}',
                 color: '#2f93a3'
-            }
-        };
-        
-        {{#if userData.user}}
-        window.addressData = {
-            user: {{{json  userData.user}}},
-            location: {{{json userData.location}}}
-        }
-        {{/if}}
-    };
+            });
 
-    if(typeof OkHi == "function") initOkHi();
-</script>
-<script src="/js/okhi.script{{dotmin}}.js"></script>
+            {{#if userData.user }}
+                window.addressData = {
+                    user: {{{json  userData.user}}},
+                    location: {{{json userData.location}}}
+                }
+            {{/if}}
+
+            if(window.loadLocationCard) 
+                return window.loadLocationCard();
+                
+            setTimeout(initOkHi, 200);
+        };
+    </script>
+    <script src="/js/okhi.script{{dotmin}}.js"></script>
 {{/if}}
 
-<script type="text/javascript">           
-    $(document).ready(function () {   
+<script type="text/javascript">
+    $(document).ready(function () {
         window.minifiedMenu = true;
         if (addaffix) addaffix();
 
-        if(window.addressData)
+        if (window.addressData)
             app.cartUtil.loadCharges(window.addressData.location);
 
-        window.addEventListener('message', function(event) {
+        window.addEventListener('message', function (event) {
             console.log("Message:", arguments);
 
             // IMPORTANT: check the origin of the data! 
-            if (event.origin.startsWith('https://dialadrinkkenya.com')) { 
+            if (event.origin.startsWith('https://dialadrinkkenya.com')) {
                 // The data was sent from your site.
                 // Data sent with postMessage is stored in event.data:
-                console.log(event.data); 
+                console.log(event.data);
             } else {
                 // The data was NOT sent from your site! 
                 // Be careful! Do not use it. This else branch is
                 // here just for clarity, you usually shouldn't need it.
-                return; 
-            } 
+                return;
+            }
         });
 
-{{#if orderUrl}}
-        var iframe = $("<iframe style='min-height: 670px' src='{{orderUrl}}'/>");        
-        iframe.css({
-            border: "none",
-            width:  '100%',
-            height: ($("form.needs-validation").height()) + 'px'
-        });
+        {{#if orderUrl }}
+            var iframe = $("<iframe style='min-height: 670px' src='{{orderUrl}}'/>");
+            iframe.css({
+                border: "none",
+                width: '100%',
+                height: ($("form.needs-validation").height()) + 'px'
+            });
 
-        $("form.needs-validation").replaceWith(iframe);
-        setTimeout(function(){
-            var modal = app.showLoading("<span id='msgSpan'>Loading payment options! Please wait..</span>", 60000);
-            iframe.get(0).onload = function(){ modal && modal.modal("hide"); }
-        }, 500)
-{{/if}}
-        
-        if($('#lets-okhi').length){
-            $("#addressInputs").find("[required]").removeAttr("required")         
-        }else{
+            $("form.needs-validation").replaceWith(iframe);
+            setTimeout(function () {
+                var modal = app.showLoading("<span id='msgSpan'>Loading payment options! Please wait..</span>", 60000);
+                iframe.get(0).onload = function () { modal && modal.modal("hide"); }
+            }, 500)
+        {{/if}}
+
+        if ($('#lets-okhi').length) {
+            $("#addressInputs").find("[required]").removeAttr("required")
+        } else {
             $('#lets-okhi').hide();
-            $("#addressInputs").attr("required", "true").show();        
+            $("#addressInputs").attr("required", "true").show();
         }
 
         $(document).on("click", ".billing-address button[type='submit']", function (e) {
@@ -417,29 +435,29 @@
             $(".alert-danger").hide();
 
             var address = window.addressData || {};
-            if($("[name=address]").val())
+            if ($("[name=address]").val())
                 address.address = $("[name=address]").val();
-            if($("[name=building]").val())
+            if ($("[name=building]").val())
                 address.building = $("[name=building]").val();
-            if($("[name=houseNumber]").val())
+            if ($("[name=houseNumber]").val())
                 address.houseNumber = $("[name=houseNumber]").val();
 
-            if(!form[0].checkValidity()) {
+            if (!form[0].checkValidity()) {
                 $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid input found! Please review your info above.")
                 $(".alert-danger").slideDown();
-            } else if(!Object.values(address).find(x => !!x)){
+            } else if (!Object.values(address).find(x => !!x)) {
                 $(".alert-danger").find(".msg-text").html("<strong>Input Error!</strong> Invalid address. Please review your delivery address.")
                 $(".alert-danger").slideDown();
             } else {
                 var that = $(this);
 
                 that.attr("disabled", true);
-                $('body,html').animate({scrollTop: 0}, 800, 'swing');
+                $('body,html').animate({ scrollTop: 0 }, 800, 'swing');
 
-                var data = Object.assign({ 
-                        saveInfo: $("#saveInfo").is(":checked") 
-                    }, 
-                    app.cartUtil.getCharges(), 
+                var data = Object.assign({
+                    saveInfo: $("#saveInfo").is(":checked")
+                },
+                    app.cartUtil.getCharges(),
                     window.addressData || {}
                 );
                 array.forEach(function (a) { data[a.name] = a.value; });
@@ -453,33 +471,33 @@
                     dataType: "json",
                     type: "POST",
                     success: function (res) {
-                        if(res.redirect) {
+                        if (res.redirect) {
                             //if(!/https?:\/\//.test(res.redirect))
                             //    return window.location = res.redirect;
 
                             modal.find("span.loading-msg").text("Loading payment options! Please wait..")
                             var iframe = $("<iframe src=\"" + res.redirect + "\"/>");
-                            
+
                             iframe.css({
                                 border: "none",
-                                width:  '100%',
+                                width: '100%',
                                 height: (form.height()) + 'px'
                             });
 
-                            form.replaceWith(iframe);                            
+                            form.replaceWith(iframe);
                             $(".float-right-icon").hide();
-                            iframe.get(0).onload = function(){
-                                 modal.modal("hide");
-                                 $('html, body').animate({ scrollTop: iframe.offset().top - $(".nav-logo").offset().top }, 1000);
+                            iframe.get(0).onload = function () {
+                                modal.modal("hide");
+                                $('html, body').animate({ scrollTop: iframe.offset().top - $(".nav-logo").offset().top }, 1000);
 
-                                 try{
-                                     var doc = this.document || this.contentDocument || this.contentWindow.document;
-                                     //back to our site
-                                     iframe.hide();
-                                     return window.location = "/";
-                                 }catch(e){
-                                     console.error(e);                                     
-                                 }
+                                try {
+                                    var doc = this.document || this.contentDocument || this.contentWindow.document;
+                                    //back to our site
+                                    iframe.hide();
+                                    return window.location = "/";
+                                } catch (e) {
+                                    console.error(e);
+                                }
                             }
                         } else {
                             app.showModal({
@@ -492,7 +510,7 @@
                                 }
                             });
                         }
-                        
+
                     },
                     error: function (xhr, status, error) {
                         app.hideModal();
@@ -507,19 +525,19 @@
 
             }
         });
-        
+
         $(document).on("click", ".promo-redeem button", function (e) {
             e.preventDefault();
             if ($("#promocode").val()) {
                 $.get('/checkout/validatepromo/' + $("#promocode").val())
-                        .then(function (data) {
-                            if (data.state) {
-                                app.cartUtil.updateView(null, data.promo);
-                                app.showNotification(data.msg)
-                            } else {
-                                app.showModal({ title: "", msg: data.msg })
-                            }
-                        });
+                    .then(function (data) {
+                        if (data.state) {
+                            app.cartUtil.updateView(null, data.promo);
+                            app.showNotification(data.msg)
+                        } else {
+                            app.showModal({ title: "", msg: data.msg })
+                        }
+                    });
             }
         })
 
@@ -527,13 +545,13 @@
         for (var i = 0; i < elements.length; i++) {
             elements[i].oninvalid = function (e) {
                 e.target.setCustomValidity("");
-                if($( e.target).is(":visible")){
-                     if (!e.target.validity.valid) {
+                if ($(e.target).is(":visible")) {
+                    if (!e.target.validity.valid) {
                         var errMessage = $(e.target).siblings(".invalid-feedback").text().trim() || "This field cannot be left blank!"
                         e.target.setCustomValidity(errMessage);
                     }
-                }else{
-                    console.log($( e.target).attr("name") + " is not visible!");
+                } else {
+                    console.log($(e.target).attr("name") + " is not visible!");
                     e.target.validity.valid = true;
                 }
             };

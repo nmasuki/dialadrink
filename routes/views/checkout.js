@@ -200,7 +200,7 @@ function okHiIntegration(req, res, order, cartItems, next) {
 	najax.post({
 		url: url,
 		contentType: "application/json; charset=utf-8",
-		headers: { "api-key": res.locals.OkHiKey },
+		headers: { "api-key": res.locals.OkHiServerKey },
 		data: data,
 		rejectUnauthorized: false,
 		requestCert: true,
