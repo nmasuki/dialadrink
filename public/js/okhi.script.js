@@ -11,7 +11,7 @@ $(document).ready(function () {
         console.error(arguments);
     });
 
-    var loadLocationCard = function (user) {
+    window.loadLocationCard = function (user) {
         var errorTimeOut;
         $('#lets-okhi').hide();
 
@@ -140,11 +140,7 @@ $(document).ready(function () {
                 window.addressData = null;
                 if ($('#lets-okhi iframe').length) return;
 
-                $("#lets-okhi").parent().hide();
-                $("#addressInputs").slideDown();
-
-                $(".alert-danger").find(".msg-text").html("<strong>Input Error while detecting your location! Please enter your address</strong>");
-                $(".alert-danger").slideDown();
+                loadLocationCard(user);
             }, 5000);
 
             var locationManager = new okhi.OkHiLocationManager({
