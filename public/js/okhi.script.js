@@ -59,10 +59,12 @@ $(document).ready(function () {
         };
 
         user = user || {
-            phone: "+" + $("#phoneNumber").val().cleanPhoneNumber(), // required
+            phone: $("#phoneNumber").val() || "", // required
             firstName: $("#firstName").val(), // optional
             lastName: $("#lastName").val(), // optional
         };
+
+        user.phone = "+" + user.phone.cleanPhoneNumber()
 
         if (!user.firstName) delete user.firstName;
         if (!user.lastName) delete user.lastName;
@@ -130,10 +132,12 @@ $(document).ready(function () {
         };
 
         user = user || {
-            phone: "+" + $("#phoneNumber").val().cleanPhoneNumber(),
-            firstName: $("#firstName").val(),
-            lastName: $("#lastName").val(),
+            phone: $("#phoneNumber").val() || "", // required
+            firstName: $("#firstName").val(), // optional
+            lastName: $("#lastName").val(), // optional
         };
+
+        user.phone = "+" + user.phone.cleanPhoneNumber()
 
         if (user.phone && user.firstName && user.lastName) {
             errorTimeOut = setTimeout(function () {
