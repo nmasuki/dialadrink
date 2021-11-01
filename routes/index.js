@@ -57,6 +57,7 @@ exports = module.exports = function (app) {
 
 	// Views
 	app.use('/brand', middleware.globalCache, routes.views.brand);
+	app.use('/product-origin', middleware.globalCache, routes.views['product-origin']);
 	app.use('/blog', middleware.globalCache, routes.views.blog);
 	app.use('/contact-us', middleware.globalCache, routes.views.contact);
 	app.use('/gallery', middleware.globalCache, routes.views.gallery);
