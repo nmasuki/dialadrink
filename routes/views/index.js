@@ -21,7 +21,8 @@ function search(req, res, next) {
     var queryTitle = ((req.params.query || "").replace(/[^\w]+/g, " ").toProperCase()).replace(/\s(Whiskies|Whiskey|Wine|Gin)/g, "").trim()
     //Searching h1 title
     locals.page = Object.assign({ h1: queryTitle }, locals.page || {});
-
+    locals.page.h1 = locals.page.h1 || queryTitle;
+        
     locals.page.canonical = [keystone.get('url'), (req.params.query || "").cleanId()]
         .filter(p => p).map(p => p.trim('/')).join('/');
 
@@ -33,7 +34,7 @@ function search(req, res, next) {
         while (products[++i] && meta.length < 100) {
             meta += (meta ? ", " : "") + products[i].name;
             if (title.length < 40)
-                title += (title ? (i ? ", " : " - ") : "") + products[i].name;
+                title += (title ? (i ? ", " : "|") : "") + products[i].name;
         }
 
         if (!locals.page.meta)
