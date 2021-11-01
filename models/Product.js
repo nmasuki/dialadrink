@@ -758,6 +758,7 @@ Product.search = function (query, next, deepSearch) {
             { name: keyRegex },
             { quantity: nameRegex },
             { quantity: keyRegex },
+            { countryOfOrigin: nameRegex},
             {
                 $or: [
                     { 'company.name': keyRegex },
