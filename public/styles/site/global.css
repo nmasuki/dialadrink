@@ -31,7 +31,7 @@ body {
 select {
     font-size: 13px;
     display: inline-block;
-    color: #848484;
+    color: #161515;
     font-family: Helvetica Neue;
     vertical-align: top;
     height: 22px;
@@ -67,7 +67,7 @@ select {
     border: none;
     vertical-align: middle;
     line-height: normal;
-    color: #848484 !important;
+    color: #161515 !important;
     border: 1px solid #dbdbdb
 }
 
