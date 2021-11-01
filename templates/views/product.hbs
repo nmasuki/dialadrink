@@ -27,31 +27,28 @@ input[type="radio"], input[type="checkbox"] {
         data-product="{{_id}}" itemscope itemtype="http://schema.org/Product">
         
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-1 product-thumbnails">
+                {{#each altImages}}
+                    <div class="thumbnail">
+                        <img alt="{{{../name}}}" height="42" width="42" 
+                                data-img="{{cloudinaryUrl this crop='fit'}}"
+                                src="{{cloudinaryUrl this width=42 height=42 crop='fit'}}"/>
+                    </div>
+                {{else}}
+                    <div class="thumbnail">
+                        <img alt="{{{../name}}}" height="42" width="42" 
+                                data-img="{{cloudinaryUrl this crop='fit'}}"
+                                src="{{cloudinaryUrl image width=42 height=42 crop='fit'}}"/>
+                    </div>
+                {{/each}}
+            </div>
+            <div class="col-md-3">
                 <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit'}})">
                     <img itemprop="image"
                         src="{{cloudinaryUrl image width=100 height=100  crop='fit'}}" 
                         data-src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
                         class="image-responsive" style="min-height: 380px; max-height: 400px; margin: 0 auto" />
                 </figure>
-                <div class="row product-thumbnails">
-                    {{#each altImages}}
-                        <div class="col-md-1 col-xs-1 col-sm-1">
-                            <div class="thumbnail">
-                                <img alt="{{{../name}}}"
-                                     data-img="{{cloudinaryUrl this crop='fit'}}"
-                                     src="{{cloudinaryUrl this width=24 height=24 crop='fit'}}"/>
-                            </div>
-                        </div>
-                    {{else}}
-                        <div class="col-md-1 col-xs-1 col-sm-1">
-                            <div class="thumbnail">
-                                <img height="24" width="24" data-img="{{cloudinaryUrl image crop='fit'}}"
-                                     src="{{cloudinaryUrl image width=24 height=24 crop='fit'}}"/>
-                            </div>
-                        </div>
-                    {{/each}}
-                </div>
             </div>
 
             <div class="col-md-4">
@@ -184,6 +181,7 @@ input[type="radio"], input[type="checkbox"] {
                 </div>
                 <!-- end row -->
             </div>
+
             <div class="col-md-4" style="padding-left: 20px !important; color: black; font-size: 20px">
                 {{#if alcoholContent}}
                     <div class="row" style="padding-bottom: 3px;">
