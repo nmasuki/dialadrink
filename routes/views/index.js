@@ -28,9 +28,9 @@ function search(req, res, next) {
 
     function renderResults(products, title) {
         title = (title || "").toProperCase();
+        locals.page.h1 = locals.page.h1 || title;
 
-        var i = -1,
-            meta = title.replace(/\ \-\ /g, ", ");
+        var i = -1, meta = title.replace(/\ \-\ /g, ", ");
         while (products[++i] && meta.length < 100) {
             meta += (meta ? ", " : "") + products[i].name;
             if (title.length < 40)
