@@ -105,6 +105,8 @@ input[type="radio"], input[type="checkbox"] {
                                 {{else}}
                                     <span itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
                                 {{/if}}
+                                &nbsp;
+                                <span itemprop="priceQuantity">{{quantity}}</span>   
                             </h2>
                         {{/ifgt}}
                     </div>
