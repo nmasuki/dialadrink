@@ -29,20 +29,20 @@ input[type="radio"], input[type="checkbox"] {
         <div class="row">
             <div class="col-md-1 product-thumbnails">
                 {{#each altImages}}
-                    <div class="thumbnail">
+                    <div class="thumbnail" style="width: 48px;">
                         <img alt="{{{../name}}}" height="42" width="42" 
                                 data-img="{{cloudinaryUrl this crop='fit'}}"
                                 src="{{cloudinaryUrl this width=42 height=42 crop='fit'}}"/>
                     </div>
                 {{else}}
-                    <div class="thumbnail">
+                    <div class="thumbnail" style="width: 48px;">
                         <img alt="{{{../name}}}" height="42" width="42" 
                                 data-img="{{cloudinaryUrl this crop='fit'}}"
                                 src="{{cloudinaryUrl image width=42 height=42 crop='fit'}}"/>
                     </div>
                 {{/each}}
             </div>
-            
+
             <div class="col-md-4">
                 <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit'}})">
                     <img itemprop="image"
