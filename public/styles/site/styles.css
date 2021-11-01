@@ -342,7 +342,7 @@ input.text {
 }
 
 .review-link a {
-    color: #848484
+    color: #161515
 }
 
 @media (min-width: 1200px) {
@@ -497,7 +497,7 @@ input.text {
 }
 
 a {
-    color: #848484
+    color: #161515
 }
 
 a:hover {
@@ -795,7 +795,7 @@ body.active_rtl {
 
 body {
     font-family: Helvetica Neue;
-    color: #848484
+    color: #161515
 }
 
 body header {
@@ -971,7 +971,7 @@ body header.home1_theme_header .main-header .nav-top .nav-cart .cart .num-items-
 }
 
 body header.home1_theme_header .main-header .nav-top #cart-info {
-    color: #848484;
+    color: #161515;
     border-radius: 0;
     padding: 0;
     width: 305px;
@@ -1927,7 +1927,7 @@ body header.home1_theme_header #loginBox.dropdown-menu {
     border-radius: 0;
     width: 220px;
     border: 0;
-    color: #848484
+    color: #161515
 }
 
 body header.home1_theme_header #loginBox .required {
@@ -2458,7 +2458,7 @@ body header.home2_theme_header .nav-cart .cart .num-items-in-cart .cart_text {
 }
 
 body header.home2_theme_header #cart-info {
-    color: #848484;
+    color: #161515;
     border-radius: 0;
     margin: 17px 0 0 0;
     padding: 0;
@@ -3491,7 +3491,7 @@ body header.home2_theme_header #loginBox.dropdown-menu {
     left: auto;
     right: 0;
     border: 0;
-    color: #848484
+    color: #161515
 }
 
 body header.home2_theme_header #loginBox .required {
@@ -4004,7 +4004,7 @@ body header.home3_theme_header .main-header .nav-top .search-field .search .fa-s
 }
 
 body header.home3_theme_header .main-header .nav-top #cart-info {
-    color: #848484;
+    color: #161515;
     border-radius: 0;
     margin: 17px 0 0 0;
     margin-right: -2px;
@@ -5141,7 +5141,7 @@ body header.home3_theme_header #loginBox.dropdown-menu {
     width: 220px;
     left: 0;
     border: 0;
-    color: #848484
+    color: #161515
 }
 
 body header.home3_theme_header #loginBox .required {
@@ -5227,7 +5227,7 @@ body header.home3_theme_header.affix .navigation_area ul.navigation_links>li {
 }
 
 body header.home3_theme_header.affix .navigation_area ul.navigation_links>li>a {
-    color: #848484
+    color: #161515
 }
 
 @media (min-width: 1200px) {
@@ -6050,7 +6050,7 @@ body .sidebar-content ul li.active a {
 
 body .sidebar-content span,body .sidebar-content a {
     letter-spacing: 1px;
-    color: #848484;
+    color: #161515;
     font-weight: 400;
     font-size: 14px
 }
@@ -9126,7 +9126,7 @@ body .list-collection-content .product .col-info .title {
 }
 
 body .list-collection-content .product .col-info .price {
-    color: #848484;
+    color: #161515;
     font-size: 12px
 }
 
@@ -9169,12 +9169,12 @@ body #collection .show-per-page #showButton {
 }
 
 body #collection .show-per-page #showButton span {
-    color: #848484;
+    color: #161515;
     font-size: 14px
 }
 
 body #collection .show-per-page #showButton .fa {
-    color: #848484;
+    color: #161515;
     margin-left: 5px;
     margin-right: 5px
 }
@@ -9218,12 +9218,12 @@ body #collection .sortBy #sortButton {
 }
 
 body #collection .sortBy #sortButton span {
-    color: #848484;
+    color: #161515;
     font-size: 14px
 }
 
 body #collection .sortBy #sortButton .fa {
-    color: #848484;
+    color: #161515;
     margin-left: 5px;
     margin-right: 5px
 }
@@ -9601,7 +9601,7 @@ body #collection .collection-items.full_width .product .product-price span,body 
 }
 
 body #collection .collection-items.full_width .product .product-description {
-    color: #848484;
+    color: #161515;
     font-size: 12px;
     font-weight: 400;
     line-height: 1.8em;
@@ -9727,7 +9727,7 @@ body #collection .collection-bottom-toolbar .product-counter {
     line-height: 30px;
     letter-spacing: 1px;
     font-size: 14px;
-    color: #848484;
+    color: #161515;
     font-weight: 400
 }
 
@@ -9908,7 +9908,7 @@ body .product-detail-content #product-information .description {
     padding-top: 10px;
     font-size: 12px;
     font-weight: 400;
-    color: #848484;
+    color: #161515;
     border-bottom: 1px solid #dbdbdb;
     letter-spacing: 1px;
     line-height: 1.75em;
@@ -10083,7 +10083,7 @@ body .product-detail-content #product-information .product-detail-tag ul .tags s
 }
 
 body .product-detail-content #product-information .product-detail-tag ul .tags a {
-    color: #848484
+    color: #161515
 }
 
 body .product-detail-content #product-information .review-link {
@@ -10200,7 +10200,7 @@ body #tabs-information .tabs-title ul.nav-tabs li.active a {
 body #tabs-information .tabs-content {
     padding: 40px 50px;
     border: 1px solid #dbdbdb;
-    color: #848484;
+    color: #161515;
     font-weight: 400;
     line-height: 1.8em;
     letter-spacing: 1px
@@ -10350,7 +10350,7 @@ body #customer_review .spr-content * {
 }
 
 body #customer_review .spr-content {
-    color: #848484;
+    color: #161515;
     width: 70%;
     font-weight: 400
 }
@@ -10481,7 +10481,7 @@ body .group-blog-top .group-blog-title .article-name a {
 }
 
 body .group-blog-top .article-info {
-    color: #848484;
+    color: #161515;
     font-weight: 400;
     padding-bottom: 32px;
     margin-bottom: 40px;
@@ -10521,7 +10521,7 @@ body .article-image {
 
 body .article-content {
     line-height: 1.7em;
-    color: #848484;
+    color: #161515;
     font-weight: 400;
     letter-spacing: 1px
 }
@@ -11215,7 +11215,7 @@ body .page-404-content .page-404-content-wrapper .page-404-content-inner #page-4
 
 body .page-404-content .page-404-content-wrapper .page-404-content-inner #page-404 .subtext {
     font-weight: 600;
-    color: #848484
+    color: #161515
 }
 
 body .page-404-content .page-404-content-wrapper .page-404-content-inner #page-404 .search-field {
@@ -11792,7 +11792,7 @@ body .register-content #guest,body .register-content #register,body .register-co
 }
 
 body .register-content #guest label,body .register-content #register label,body .register-content #recover-password label,body .register-content #login label,body .login-content #guest label,body .login-content #register label,body .login-content #recover-password label,body .login-content #login label {
-    color: #848484;
+    color: #161515;
     padding-left: 0;
     padding-right: 0
 }
@@ -11931,7 +11931,7 @@ body .address_table .label,body .group-form-address .label {
 }
 
 body .address_table .label label,body .group-form-address .label label {
-    color: #848484
+    color: #161515
 }
 
 body .address_table .value,body .group-form-address .value {
@@ -14210,7 +14210,7 @@ body footer.home6_theme_footer .footer_contact_group>div .fa {
 }
 
 a .fa:hover,.home_featured_wrapper a {
-    color: #848484;
+    color: #161515;
     text-decoration: none
 }
 
