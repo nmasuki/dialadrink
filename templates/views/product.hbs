@@ -88,7 +88,8 @@ input[type="radio"], input[type="checkbox"] {
                                 {{/each}}
                             </div>
                         {{else}}
-                            <h2 style="margin-top:5px; white-space:nowrap;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+                            <h2 style="margin-top:5px; white-space:nowrap;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">              
+                                <span itemprop="priceQuantity">{{quantity}}</span>@
                                 <span itemprop="priceCurrency">{{currency}}</span>
                                 {{#if percentOffer}}
                                     <span>
@@ -101,8 +102,7 @@ input[type="radio"], input[type="checkbox"] {
                                     </span>
                                 {{else}}
                                     <span itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
-                                {{/if}}
-                                <span itemprop="priceQuantity">{{quantity}}</span>   
+                                {{/if}}  
                             </h2>
                         {{/ifgt}}
                     </div>
