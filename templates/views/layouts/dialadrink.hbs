@@ -69,7 +69,7 @@
     <link rel="alternate stylesheet" onload="if(this.rel != 'stylesheet') this.rel='stylesheet'; return true" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
     <link rel="alternate stylesheet" onload="if(this.rel != 'stylesheet') this.rel='stylesheet'; return true" type="text/css" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
     
-    {{#ifeq 'production'}}
+    {{#ifeq env 'production'}}
         <link rel="preload stylesheet" as="style" type="text/css" href="/styles/site{{dotmin}}.css">
     {{else}}
         <link rel="stylesheet/less" type="text/css" href="/styles/bootstrap/bootstrap.css">
