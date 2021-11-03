@@ -22,7 +22,7 @@
     {{#if page.keyWords}}<meta name="keywords" content="{{page.keyWords}}"/>{{/if}}
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="{{appTitle}}"/>
-    <meta property="og:description" content="{{{truncate  (cleanHtml page.meta) 500}}}"/>
+    <meta property="og:description" content="{{{truncate (cleanHtml page.meta) 500}}}"/>
     {{#if product}}
     {{#each product.altImages}}<meta property="og:image" content="{{cloudinaryUrl this crop='fit'}}"/>{{else}}<meta property="og:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>{{/each}}
     <meta property='product:price:amount' content='{{product.price}}'/>
@@ -69,7 +69,7 @@
     <link rel="alternate stylesheet" onload="if(this.rel != 'stylesheet') this.rel='stylesheet'; return true" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
     <link rel="alternate stylesheet" onload="if(this.rel != 'stylesheet') this.rel='stylesheet'; return true" type="text/css" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
     
-    {{#ifeq #ifeq env 'production'}}
+    {{#ifeq 'production'}}
         <link rel="preload stylesheet" as="style" type="text/css" href="/styles/site{{dotmin}}.css">
     {{else}}
         <link rel="stylesheet/less" type="text/css" href="/styles/bootstrap/bootstrap.css">
