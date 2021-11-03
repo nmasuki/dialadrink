@@ -289,7 +289,6 @@ module.exports = function () {
         gte: function (v1, v2, options) {
             return v1 >= v2;
         },
-
         ifeq: function (v1, v2, options) {
             return v1 === v2 ? options.fn(this) : options.inverse(this);
         },
@@ -391,7 +390,7 @@ module.exports = function () {
     }
 
     _helpers.cleanHtml = function(str){
-        return (str || "").replace(/<(?:.|\n)*?>/gm, '').replace(/"/gm, "\\\"");
+        return (str || "").replace(/<(?:.|\n)*?>/gm, '').replace(/"/gm, "\\\"").replace(/&[^;]+;/, "");
     };
 
     // Direct url link to a specific brand
