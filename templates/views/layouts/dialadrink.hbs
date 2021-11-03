@@ -23,13 +23,12 @@
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="{{appTitle}}"/>
     <meta property="og:description" content="{{{truncate  (cleanHtml page.meta) 500}}}"/>
-
     {{#if product}}
-        {{#each product.altImages}}<meta property="og:image" content="{{cloudinaryUrl this crop='fit'}}"/>{{else}}<meta property="og:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>{{/each}}
-        <meta property='product:price:amount' content='{{product.price}}'/>
-        <meta property='product:price:currency' content='{{product.currency}}'/>
+    {{#each product.altImages}}<meta property="og:image" content="{{cloudinaryUrl this crop='fit'}}"/>{{else}}<meta property="og:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>{{/each}}
+    <meta property='product:price:amount' content='{{product.price}}'/>
+    <meta property='product:price:currency' content='{{product.currency}}'/>
     {{else}}
-        <meta property="og:image" content="https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-152x152.png"/>
+    <meta property="og:image" content="https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-152x152.png"/>
     {{/if}}
 
     <meta name="twitter:site" content="@liqourdelivery"/>
@@ -139,7 +138,7 @@
                             <div class="currencies-switcher">
                                 <div>
                                     <a href="/">
-                                        <span style="color: white">{{appTitle}}</span>
+                                        <span style="color: #f13939">{{appTitle}}</span>
                                     </a>
                                 </div>
                             </div>

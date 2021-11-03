@@ -21,10 +21,8 @@ function search(req, res, next) {
     var queryTitle = ((req.params.query || "").replace(/[^\w]+/g, " ").toProperCase()).replace(/\s(Whiskies|Whiskey|Wine|Gin)/g, "").trim()
     //Searching h1 title
     locals.page = Object.assign({ h1: queryTitle }, locals.page || {});
-    locals.page.h1 = locals.page.h1 || queryTitle;
-        
-    locals.page.canonical = [keystone.get('url'), (req.params.query || "").cleanId()]
-        .filter(p => p).map(p => p.trim('/')).join('/');
+    locals.page.h1 = locals.page.h1 || queryTitle;        
+    locals.page.canonical = [keystone.get('url'), (req.params.query || "").cleanId()].filter(p => p).map(p => p.trim('/')).join('/');
 
     function renderResults(products, title) {
         title = (title || "").toProperCase();
@@ -38,7 +36,7 @@ function search(req, res, next) {
         }
 
         if (!locals.page.meta)
-            locals.page.meta = meta + ", Best prices online - " + keystone.get("name");
+            locals.page.meta = meta + ", Best prices in Nairobi - " + keystone.get("name");
 
         if (!locals.page.title || locals.page.title == keystone.get("name"))
             locals.page.title = "{1} - {2}".format(title.split(",").first(), title, keystone.get("name"));
@@ -57,6 +55,7 @@ function search(req, res, next) {
 
             renderSingleResults(products.first());
         } else {
+            var groupedBySubCategories = products.groupBy(p => p.subCategory && p.subCategory.name || p.subCategory || p.category && p.category.name || p.category);
             locals.products = products;
             locals.uifilters = Product.getUIFilters(products);
 
@@ -66,7 +65,7 @@ function search(req, res, next) {
             if (categories.length > 2 || subCategories.length > 5)
                 return view.render('products');
 
-            if (locals.page.h1.length <= 5) {
+            if (locals.page.h1.length <= 10) {
                 if (categories.length == 1) {
                     var cat = categories[0].category;
                     if (cat && cat.name) {
