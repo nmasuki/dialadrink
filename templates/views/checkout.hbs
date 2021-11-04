@@ -59,9 +59,9 @@
                             style="width: 52px; height: 52px">
                     </div>
                     <div class="col-md-8">
-                        <h6 class="my-0"><a href="/{{product.href}}">{{product.name}}
+                        <h4 class="my-0"><a href="/{{product.href}}">{{product.name}}
                                 &nbsp;{{quantity}}</a>
-                        </h6>
+                        </h4>
                         <small class="text-muted">{{truncate description 50}}</small>
                         <small class="text-muted">
                             <span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
@@ -82,7 +82,7 @@
                 <li class="transaction-charges list-group-item d-flex justify-content-between lh-condensed row"
                     style="display: none;">
                     <div class="text-info">
-                        <h6 class="my-0">Transaction Charges</h6>
+                        <h4 class="my-0">Transaction Charges</h4>
                     </div>
                     <span class="cart-currency">KES</span>
                     <span class="text-info cart-amount">100.00</span>
@@ -91,7 +91,7 @@
                 <li class="delivery-charges list-group-item d-flex justify-content-between lh-condensed row"
                     style="display: none;">
                     <div class="text-info">
-                        <h6 class="my-0">Delivery Charges</h6>
+                        <h4 class="my-0">Delivery Charges</h4>
                     </div>
                     <span class="cart-currency">KES</span>
                     <span class="text-info cart-amount">50.00</span>
@@ -100,7 +100,7 @@
                 <li {{#unless promocode}}style="display: none;" {{/unless}}
                     class="promo-code-wrapper list-group-item d-flex justify-content-between bg-light">
                     <div class="text-success">
-                        <h6 class="my-0">Promo code</h6>
+                        <h4 class="my-0">Promo code</h4>
                         <small class="promo-code">{{promocode.code}}</small>
                     </div>
                     <span class="cart-currency">KES</span>
