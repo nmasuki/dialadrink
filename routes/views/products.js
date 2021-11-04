@@ -24,27 +24,28 @@ function index(req, res) {
         keystone.list('Product').offerAndPopular(homeGroupSize, (err, data) => {
             locals = Object.assign(locals, data || {});
 
-            var products = data.products;            
+            var products = data.products;                 
             var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
             if (brands.length == 1) locals.brand = brands.first();
 
             var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
             var lastRemovedKey, lastRemoved;
 
-            Object.keys(res.locals.groupedBrands).forEach(k => {
+            Object.keys(locals.groupedBrands).forEach(k => {
                 if (!categories.find(c => k == c.name)) {
                     lastRemovedKey = k;
-                    lastRemoved = res.locals.groupedBrands[k];
-                    //delete res.locals.groupedBrands[k];
+                    lastRemoved = locals.groupedBrands[k];
+                    //delete locals.groupedBrands[k];
                 }
             });
 
-            if (Object.keys(res.locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
-                res.locals.groupedBrands[lastRemovedKey] = lastRemoved;
-
-            res.locals.uifilters = keystone.list('Product').getUIFilters(products);
-            if (!Object.keys(res.locals.groupedBrands).length)
-                delete res.locals.groupedBrands;
+            if (Object.keys(locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
+                locals.groupedBrands[lastRemovedKey] = lastRemoved;
+            
+            locals.groupedProducts = keystone.list('Product').groupProducts(products, homeGroupSize); 
+            locals.uifilters = keystone.list('Product').getUIFilters(products);
+            if (!Object.keys(locals.groupedBrands).length)
+                delete locals.groupedBrands;
 
             next();
         });
