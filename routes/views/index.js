@@ -9,6 +9,7 @@ var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
 var MenuItem = keystone.list("MenuItem");
 var Blog = keystone.list("Blog");
+var homeGroupSize = process.env.HOME_GROUP_SIZE || 12;
 
 function search(req, res, next) {
     var view = new keystone.View(req, res);
@@ -55,7 +56,21 @@ function search(req, res, next) {
 
             renderSingleResults(products.first());
         } else {
-            var groupedBySubCategories = products.groupBy(p => p.subCategory && p.subCategory.name || p.subCategory || p.category && p.category.name || p.category);
+            var groupedProducts = products.groupBy(p => p.subCategory && p.subCategory.name || p.subCategory || p.category && p.category.name || p.category);
+            var hasMore = {};
+            for(var i in groupedProducts){
+                if(groupedProducts[i].length < 4)
+                    delete groupedProducts[i];
+                else{
+                    var count = Math.min(homeGroupSize, groupedProducts[i].length - groupedProducts[i].length % 4);
+                    hasMore[i] = groupedProducts[i].length > count;
+                    groupedProducts[i] = groupedProducts[i].slice(0, count);
+                }
+            }
+
+            locals.groupedProducts = Object.keys(groupedProducts)
+                .map(key => { return { key, products: groupedProducts[key], hasMore: hasMore[key]}});
+            
             locals.products = products;
             locals.uifilters = Product.getUIFilters(products);
 

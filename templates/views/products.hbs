@@ -3,6 +3,18 @@
         min-height: 250px;
         max-height: 250px;
     }
+
+    a.more-link {
+        background: #2f93a3 !important;
+        padding: 8px 14px 9px 35px;
+        color: white  !important;
+        border-radius: 19px;
+    }
+
+    a.more-link:after{
+        content: '>';
+        padding: 10px 0px 10px 39px;
+    }
 </style>
 <div class="container">
     {{#if brand}}
@@ -83,28 +95,60 @@
         {{/if}}
     </div>
 {{else}}
-    {{#if products.length}}
-        <div class="container">
-            <div class="row products-grid">
-                {{#each products}}
-                    <div class="col-md-3 col-lg-3 col-sm-12 single" 
-                        itemscope itemtype="http://schema.org/Product"
-                        style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                        
-                        {{>product}}
+    {{#ifgt groupedProducts.length 2}}  
+        {{#each groupedProducts}}
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">
+                        <h2 class="home_featured_title home-title page-title">
+                            <span class="category-name">{{key}}</span>
+                        </h2>
                     </div>
-                {{/each}}
-            </div>
-        </div>
-    {{else}}
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <h2 style="font-size: 18px;">No results found!</h2>
-                    <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png"/>
-                    <br/>
-                    <a href="/">Back to Today's Offers</a>
+                    <div class="col-sm-4"></div>
                 </div>
-            </div>    
-        </div>
-    {{/if}}
+                
+                <div class="row products-grid">
+                    {{#each products}}
+                        <div class="col-md-3 col-lg-3 col-sm-12 single" 
+                            itemscope itemtype="http://schema.org/Product"
+                            style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                            {{>product}}
+                        </div>
+                    {{/each}}
+                </div>
+
+                {{#if hasMore}}
+                    <div class="row" style="text-align: center;">
+                        <a class="more-link" href="/{{cleanId key}}">More</a>
+                    </div>
+                {{/if}}
+            </div>
+        {{/each}}
+    {{else}}
+        {{#if products.length}}
+            <div class="container">
+                <div class="row products-grid">
+                    {{#each products}}
+                        <div class="col-md-3 col-lg-3 col-sm-12 single" 
+                            itemscope itemtype="http://schema.org/Product"
+                            style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                        
+                            {{>product}}
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        {{else}}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h2 style="font-size: 18px;">No results found!</h2>
+                        <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png"/>
+                        <br/>
+                        <a href="/">Back to Today's Offers</a>
+                    </div>
+                </div>    
+            </div>
+        {{/if}}
+    {{/ifgt}}
 {{/if}}
