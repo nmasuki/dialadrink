@@ -32,9 +32,16 @@
     {{/if}}
 
     <meta name="twitter:site" content="@liqourdelivery"/>
-    {{#if product}}<meta name="twitter:card" content="summary_large_image"/>{{/if}}
     <meta name="twitter:title" content="{{{cleanHtml page.title}}}"/>
     <meta name="twitter:description" content="{{{truncate  (cleanHtml page.meta) 500}}}"/>
+    {{#if product}}
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>
+    {{else}}
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:image" content="https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-152x152.png"/>
+    {{/if}}
+
     {{#if page.canonical}}<link rel="canonical" href="{{page.canonical}}"/>{{/if}}
 
     <style>
