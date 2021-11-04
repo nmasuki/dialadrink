@@ -12,7 +12,7 @@ function index(req, res) {
         h1: "Today's Offers"
     }, locals.page || {});
 
-    locals.page.canonical = [keystone.get('url'), 'index.html']
+    locals.page.canonical = [keystone.get('url'), '']
         .filter(p => p).map(p => p.trim('/')).join('/');
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
