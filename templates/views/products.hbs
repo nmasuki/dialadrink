@@ -98,16 +98,18 @@
     {{#ifgt groupedProducts.length 2}}  
         {{#each groupedProducts}}
             <div class="container">
-                <div class="row">
-                    <div class="col-sm-4"></div>
-                    <div class="col-sm-4">
-                        <h2 class="home_featured_title home-title page-title">
-                            <span class="category-name">{{key}}</span>
-                        </h2>
+                {{#if key}}
+                    <div class="row">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <h2 class="home_featured_title home-title page-title">
+                                <span class="category-name">{{key}}</span>
+                            </h2>
+                        </div>
+                        <div class="col-sm-4"></div>
                     </div>
-                    <div class="col-sm-4"></div>
-                </div>
-                
+                {{/if}}
+
                 <div class="row products-grid">
                     {{#each products}}
                         <div class="col-md-3 col-lg-3 col-sm-12 single" 
@@ -118,10 +120,13 @@
                     {{/each}}
                 </div>
 
+                
+                {{#if key}}
                 {{#if hasMore}}
                     <div class="row" style="text-align: center;">
                         <a class="more-link" href="/{{cleanId key}}">More</a>
                     </div>
+                {{/if}}
                 {{/if}}
             </div>
         {{/each}}

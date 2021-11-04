@@ -810,6 +810,24 @@ Product.search = function (query, next, deepSearch) {
     });
 };
 
+Product.groupProducts = function(products, maxGroupSize){
+    maxGroupSize = maxGroupSize || 12;
+    var groupedProducts = products.groupBy(p => p.subCategory && p.subCategory.name || p.subCategory || '');
+    var hasMore = {};
+    for(var i in groupedProducts){
+        if(groupedProducts[i].length < 4)
+            delete groupedProducts[i];
+        else{
+            var count = Math.min(maxGroupSize, groupedProducts[i].length - groupedProducts[i].length % 4);
+            hasMore[i] = groupedProducts[i].length > count;
+            groupedProducts[i] = groupedProducts[i].slice(0, count);
+        }
+    }
+
+    return  Object.keys(groupedProducts)
+        .map(key => { return { key, products: groupedProducts[key], hasMore: hasMore[key]}});            
+}
+
 Product.getUIFilters = function (products, limit) {
     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
     var subCategoryGroups = Object.values(products.filter(p => p.subCategory).groupBy(p => p.subCategory._id));

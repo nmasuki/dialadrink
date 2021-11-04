@@ -55,23 +55,9 @@ function search(req, res, next) {
                 locals.breadcrumbs.pop();
 
             renderSingleResults(products.first());
-        } else {
-            var groupedProducts = products.groupBy(p => p.subCategory && p.subCategory.name || p.subCategory || p.category && p.category.name || p.category);
-            var hasMore = {};
-            for(var i in groupedProducts){
-                if(groupedProducts[i].length < 4)
-                    delete groupedProducts[i];
-                else{
-                    var count = Math.min(homeGroupSize, groupedProducts[i].length - groupedProducts[i].length % 4);
-                    hasMore[i] = groupedProducts[i].length > count;
-                    groupedProducts[i] = groupedProducts[i].slice(0, count);
-                }
-            }
-
-            locals.groupedProducts = Object.keys(groupedProducts)
-                .map(key => { return { key, products: groupedProducts[key], hasMore: hasMore[key]}});
-            
+        } else {            
             locals.products = products;
+            locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
             locals.uifilters = Product.getUIFilters(products);
 
             var categories = products.filter(p => p.category).distinctBy(p => p.category.id || p.category);
