@@ -33,7 +33,6 @@ function requestCache(duration, _key) {
                 var resSend = res.send;
 
                 res.send = (body) => {
-                    console.log(`Caching for ${duration}s: ` + key);
                     memCache.put(key, body, duration * 1000);
                     resSend.call(res, body);
                 };
