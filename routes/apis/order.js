@@ -226,8 +226,8 @@ router.post("/cancel/:orderNo", function(req, res){
 
 function okHiIntegration(req, res, order, cartItems, next) {
 	var url = process.env.NODE_ENV == "production" ?
-		"https://server.okhi.co/v1/interactions" :
-		"https://sandbox-server.okhi.dev/v1/interactions";
+		"https://server.okhi.co/v5/interactions" :
+		"https://sandbox-server.okhi.dev/v5/interactions";
 
 	var data = {
 		id: order.orderNumber,
@@ -264,7 +264,7 @@ function okHiIntegration(req, res, order, cartItems, next) {
 	najax.post({
 		url: url,
 		contentType: "application/json; charset=utf-8",
-		headers: { "api-key": res.locals.OkHiClientKey },
+		headers: { "api-key": res.locals.OkHiServerKey },
 		data: data,
 		rejectUnauthorized: false,
 		requestCert: true,
