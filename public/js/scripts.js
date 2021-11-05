@@ -791,7 +791,7 @@ $(document).ready(function ($) {
         e.stopPropagation();
     });
     
-    setTimeout(handleProductSorting, 1000);
+    handleProductSorting();
 
     loadParticles();
 
