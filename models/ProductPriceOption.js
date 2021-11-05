@@ -55,7 +55,8 @@ ProductPriceOption.schema.pre('save', function (next) {
                 if (err || !product)
                     return next(err);
 
-                var thisOption = product.priceOptions.find(po => "" + po.option._id == "" + ppo.option);
+                product.priceOptions = product.priceOptions || [];
+                var thisOption = product.priceOptions.find(po => "" + (po.option && po.option._id) == "" + ppo.option);
 
                 if (!thisOption)
                     product.priceOptions.push(thisOption = ppo);
