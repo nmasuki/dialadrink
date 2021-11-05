@@ -1330,7 +1330,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + container.escapeExpression(((helper = (helper = helpers.dotmin || (depth0 != null ? depth0.dotmin : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"dotmin","hash":{},"data":data}) : helper)))
     + ".css\">\r\n";
 },"27":function(container,depth0,helpers,partials,data) {
-    return "        <link rel=\"stylesheet/less\" type=\"text/css\" href=\"/styles/bootstrap/bootstrap.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/js/social-buttons.min.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/js/owlcarousel/assets/owl.carousel.min.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/js/owlcarousel/assets/owl.theme.default.min.css\">\r\n        <link rel=\"stylesheet/less\" type=\"text/css\" href=\"/styles/site/global.less\">\r\n        <link rel=\"stylesheet/less\" type=\"text/css\" href=\"/styles/site/layout.less\">\r\n        <link rel=\"stylesheet/less\" type=\"text/css\" href=\"/styles/site/styles.less\">\r\n        <script src=\"//cdn.jsdelivr.net/npm/less@3.13\"></script>\r\n";
+    return "        <link rel=\"stylesheet\" type=\"text/css\" href=\"/styles/bootstrap/bootstrap.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/js/social-buttons.min.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/js/owlcarousel/assets/owl.carousel.min.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/js/owlcarousel/assets/owl.theme.default.min.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/styles/site/global.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/styles/site/layout.css\">\r\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"/styles/site/styles.css\">\r\n        <!--script src=\"//cdn.jsdelivr.net/npm/less@3.13\"></script-->\r\n";
 },"29":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function";
 
@@ -1340,7 +1340,7 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + ((stack1 = ((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</span>\r\n                                </a>\r\n                            </li>\r\n";
 },"31":function(container,depth0,helpers,partials,data) {
-    return "89px;";
+    return "117px;";
 },"33":function(container,depth0,helpers,partials,data) {
     return "0";
 },"35":function(container,depth0,helpers,partials,data) {
@@ -1388,9 +1388,8 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
 
   return "                    <div class=\"row scroll-x\">\r\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.navLinks : depth0),{"name":"each","hash":{},"fn":container.program(52, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                    </div>\r\n                    <div class=\"row scroll-x\" style=\"top: 123px;\">\r\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.uifilters : depth0),{"name":"each","hash":{},"fn":container.program(54, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "                    </div>\r\n";
+    + "                    </div>\r\n"
+    + ((stack1 = helpers.unless.call(alias1,((stack1 = (depth0 != null ? depth0.offers : depth0)) != null ? stack1.length : stack1),{"name":"unless","hash":{},"fn":container.program(54, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"52":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function";
 
@@ -1400,54 +1399,60 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + ((stack1 = ((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</span>\r\n                            </a>\r\n";
 },"54":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "                        <div class=\"row scroll-x\" style=\"top: 139px;\">\r\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.uifilters : depth0),{"name":"each","hash":{},"fn":container.program(55, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                        </div>\r\n";
+},"55":function(container,depth0,helpers,partials,data) {
     var alias1=container.lambda, alias2=container.escapeExpression;
 
-  return "                            <span class=\"filter noselect\" data-filterby=\""
+  return "                                <span class=\"filter noselect\" data-filterby=\""
     + alias2(alias1((depth0 != null ? depth0.filter : depth0), depth0))
-    + "\">\r\n                                "
+    + "\">\r\n                                    "
     + alias2(alias1((depth0 != null ? depth0.filter : depth0), depth0))
     + " <small style=\"font-size: 0.8em; display: none\">("
     + alias2(alias1((depth0 != null ? depth0.hits : depth0), depth0))
-    + ")</small>\r\n                            </span>\r\n";
-},"56":function(container,depth0,helpers,partials,data) {
-    var stack1;
-
-  return "                    <div class=\"row owl-carousel offset-0\" data-items=\"1\" data-autoplay=\"true\">\r\n"
-    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(57, data, 0),"inverse":container.program(60, data, 0),"data":data})) != null ? stack1 : "")
-    + "                    </div>\r\n";
+    + ")</small>\r\n                                </span>\r\n";
 },"57":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.mobileBannerImages : stack1),{"name":"each","hash":{},"fn":container.program(58, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+  return "                    <div class=\"row owl-carousel offset-0\" data-items=\"1\" data-autoplay=\"true\">\r\n"
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(58, data, 0),"inverse":container.program(61, data, 0),"data":data})) != null ? stack1 : "")
+    + "                    </div>\r\n";
 },"58":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.mobileBannerImages : stack1),{"name":"each","hash":{},"fn":container.program(59, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"59":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                                <div class=\"collection-heading-inner heading-group item inset-2\"\r\n                                    style=\"height: 377px; background-image:url("
     + ((stack1 = (helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),depth0,{"name":"cloudinaryUrl","hash":{"crop":"fit","width":377,"height":377},"data":data})) != null ? stack1 : "")
     + ")\">\r\n                                </div>\r\n";
-},"60":function(container,depth0,helpers,partials,data) {
+},"61":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.bannerImages : stack1),{"name":"each","hash":{},"fn":container.program(61, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
-},"61":function(container,depth0,helpers,partials,data) {
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.bannerImages : stack1),{"name":"each","hash":{},"fn":container.program(62, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"62":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                                <div class=\"collection-heading-inner heading-group item inset-2\"\r\n                                    style=\"background-image:url("
     + ((stack1 = (helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),depth0,{"name":"cloudinaryUrl","hash":{"crop":"fit","width":1140,"height":300},"data":data})) != null ? stack1 : "")
     + ")\">\r\n                                </div>\r\n";
-},"63":function(container,depth0,helpers,partials,data) {
+},"64":function(container,depth0,helpers,partials,data) {
     return "col-sm-4";
-},"65":function(container,depth0,helpers,partials,data) {
+},"66":function(container,depth0,helpers,partials,data) {
     return "col-sm-5";
-},"67":function(container,depth0,helpers,partials,data) {
+},"68":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(data && data.last),{"name":"if","hash":{},"fn":container.program(68, data, 0),"inverse":container.program(70, data, 0),"data":data})) != null ? stack1 : "");
-},"68":function(container,depth0,helpers,partials,data) {
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(data && data.last),{"name":"if","hash":{},"fn":container.program(69, data, 0),"inverse":container.program(71, data, 0),"data":data})) != null ? stack1 : "");
+},"69":function(container,depth0,helpers,partials,data) {
     return "                                <span itemprop=\"title\" style=\"color: #f44336;\">"
     + container.escapeExpression((helpers.propercase || (depth0 && depth0.propercase) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.label : depth0),{"name":"propercase","hash":{},"data":data}))
     + "</span>\r\n";
-},"70":function(container,depth0,helpers,partials,data) {
+},"71":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "                                <a href=\""
@@ -1457,23 +1462,23 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + "\" itemprop=\"url\">\r\n                                    <span itemprop=\"title\">"
     + alias4((helpers.propercase || (depth0 && depth0.propercase) || alias2).call(alias1,(depth0 != null ? depth0.label : depth0),{"name":"propercase","hash":{},"data":data}))
     + "</span>\r\n                                </a>\r\n                                <span class=\"arrow-space\">&#62;</span>\r\n";
-},"72":function(container,depth0,helpers,partials,data) {
+},"73":function(container,depth0,helpers,partials,data) {
     return "                            <span itemprop=\"title\" style=\"color: #f44336;\">\r\n								Home\r\n							</span>\r\n";
-},"74":function(container,depth0,helpers,partials,data) {
+},"75":function(container,depth0,helpers,partials,data) {
     return "col-sm-3";
-},"76":function(container,depth0,helpers,partials,data) {
+},"77":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                        <h1 class=\"home_featured_title home-title page-title\">\r\n                            <span class=\"category-name\">"
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1), depth0)) != null ? stack1 : "")
     + "</span>\r\n                        </h1>\r\n";
-},"78":function(container,depth0,helpers,partials,data) {
+},"79":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                <div class=\"container\" style=\"margin-bottom: 0\">\r\n                    <div class=\"row\">\r\n                        <div class=\"col-sm-10\">\r\n                            <div style=\"overflow: auto;white-space: nowrap;\">\r\n"
-    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.uifilters : depth0),{"name":"each","hash":{},"fn":container.program(79, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.uifilters : depth0),{"name":"each","hash":{},"fn":container.program(80, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                            </div>\r\n                        </div>\r\n\r\n                        <div class=\"col-sm-2\">\r\n                                <span class=\"sorting noselect dropdown-toggle\">\r\n                                    <span id=\"sortby\" style=\"padding-left: 5px;\">Sorted by Name</span>\r\n                                    <i class=\"fa fa-sort-amount-asc\" style=\"float: right; padding:0;\"></i>\r\n                                </span>\r\n                                <ul class=\"dropdown-menu\" style=\"display: none; left: -30%;\">\r\n                                    <li class=\"noselect sort-products\" data-sortby=\"name\">Name<i class=\"fa fa-sort-alpha-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\r\n                                    <li class=\"noselect sort-products\" data-sortby=\"price\">Price<i class=\"fa fa-sort-amount-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\r\n                                    <li class=\"noselect sort-products\" data-sortby=\"popularity\">Popularity<i class=\"fa fa-sort-amount-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\r\n                                    <li class=\"noselect sort-products\" data-sortby=\"size\">Quantity<i class=\"fa fa-sort-numeric-asc\" style=\"float: right;padding-right: 5px;\"></i></li>\r\n                                </ul> \r\n                        </div>\r\n                    </div>\r\n                </div>\r\n";
-},"79":function(container,depth0,helpers,partials,data) {
+},"80":function(container,depth0,helpers,partials,data) {
     var alias1=container.lambda, alias2=container.escapeExpression;
 
   return "                                    <span class=\"filter noselect\" data-filterby=\""
@@ -1483,13 +1488,13 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + " <small style=\"font-size: 0.8em; display: none\">("
     + alias2(alias1((depth0 != null ? depth0.hits : depth0), depth0))
     + ")</small>\r\n                                    </span>\r\n";
-},"81":function(container,depth0,helpers,partials,data) {
+},"82":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                <div class=\"container content\">\r\n"
-    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.breafContent : stack1),{"name":"if","hash":{},"fn":container.program(82, data, 0),"inverse":container.program(84, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.breafContent : stack1),{"name":"if","hash":{},"fn":container.program(83, data, 0),"inverse":container.program(85, data, 0),"data":data})) != null ? stack1 : "")
     + "                </div>\r\n";
-},"82":function(container,depth0,helpers,partials,data) {
+},"83":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.lambda;
 
   return "                        <div id=\"breafContent\">\r\n                            "
@@ -1497,26 +1502,26 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + "\r\n                            <div>\r\n                                <a href=\"javascript:void(0)\" onclick=\"showMore('#breafContent', '#fullContent')\">Show more...</a>\r\n                            </div>\r\n                        </div>\r\n                        \r\n                        <div id=\"fullContent\" style=\"display:none;\">\r\n                            "
     + ((stack1 = alias1(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.content : stack1), depth0)) != null ? stack1 : "")
     + "\r\n                            <div>\r\n                                <a href=\"javascript:void(0)\" onclick=\"showLess('#breafContent', '#fullContent')\">Show less...</a>\r\n                            </div>\r\n                        </div>\r\n";
-},"84":function(container,depth0,helpers,partials,data) {
+},"85":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                        "
     + ((stack1 = container.lambda(((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.content : stack1), depth0)) != null ? stack1 : "")
     + "\r\n";
-},"86":function(container,depth0,helpers,partials,data) {
+},"87":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                    <h2 style=\"font-size: 15px;text-transform: uppercase\">SHOP BY BRAND</h2>                    \r\n"
-    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.groupedBrands : depth0),{"name":"each","hash":{},"fn":container.program(87, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
-},"87":function(container,depth0,helpers,partials,data) {
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.groupedBrands : depth0),{"name":"each","hash":{},"fn":container.program(88, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"88":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
   return "                        <div class=\"row\" style=\"margin: 8px\">\r\n                            <div style=\"float: left; min-width: 80px\"><b style=\"\">"
     + container.escapeExpression(((helper = (helper = helpers.key || (data && data.key)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"key","hash":{},"data":data}) : helper)))
     + "</b>:</div> \r\n"
-    + ((stack1 = helpers.each.call(alias1,depth0,{"name":"each","hash":{},"fn":container.program(88, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,depth0,{"name":"each","hash":{},"fn":container.program(89, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                        </div>\r\n";
-},"88":function(container,depth0,helpers,partials,data) {
+},"89":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3=container.escapeExpression, alias4="function";
 
   return "                                <a href=\""
@@ -1526,23 +1531,23 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + "\" style=\"display: inline-block;\">"
     + ((stack1 = ((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</a>\r\n                                "
-    + ((stack1 = helpers.unless.call(alias1,(data && data.last),{"name":"unless","hash":{},"fn":container.program(89, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.unless.call(alias1,(data && data.last),{"name":"unless","hash":{},"fn":container.program(90, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\r\n";
-},"89":function(container,depth0,helpers,partials,data) {
+},"90":function(container,depth0,helpers,partials,data) {
     return "<span style=\"color: #F44336\"> | </span>";
-},"91":function(container,depth0,helpers,partials,data) {
+},"92":function(container,depth0,helpers,partials,data) {
     return "\r\n";
-},"93":function(container,depth0,helpers,partials,data) {
+},"94":function(container,depth0,helpers,partials,data) {
     return "                window.isMobile = true;\r\n";
-},"95":function(container,depth0,helpers,partials,data) {
+},"96":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "                window.isMobile = false;\r\n                $(document).ready(function(){\r\n                    $(\".inst-checkout\").css({display: '"
-    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(96, data, 0),"inverse":container.program(98, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(97, data, 0),"inverse":container.program(99, data, 0),"data":data})) != null ? stack1 : "")
     + "'})\r\n                    var width = $(document.body).width();\r\n                    var left = (width - $(\".inst-checkout\").width())/2;\r\n                    if(left > 0)\r\n                        $(\".inst-checkout\").css({left: left});\r\n                });\r\n";
-},"96":function(container,depth0,helpers,partials,data) {
+},"97":function(container,depth0,helpers,partials,data) {
     return "block";
-},"98":function(container,depth0,helpers,partials,data) {
+},"99":function(container,depth0,helpers,partials,data) {
     return "flex";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3=container.escapeExpression, alias4="function";
@@ -1608,25 +1613,25 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
     + "                            </ul>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </section>\r\n</header>\r\n\r\n<div class=\"fix-sticky\"></div>\r\n\r\n<!-- Main Content -->\r\n<main class=\"main-content\" role=\"main\" style=\"min-height: 400px\">\r\n    <section class=\"collection-heading\">\r\n        <div class=\"collection-heading-wrapper\">\r\n            <div class=\"container\" style=\"padding-bottom: 0\">   \r\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(51, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\r\n"
-    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.bannerImages : stack1),{"name":"if","hash":{},"fn":container.program(56, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.bannerImages : stack1),{"name":"if","hash":{},"fn":container.program(57, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "            </div>\r\n        </div>\r\n    </section>\r\n\r\n    <section class=\"home3_featured\" id=\"home_featured_layout\">\r\n        <div class=\"home_featured_wrapper\">\r\n            <div class=\"container\" style=\"margin-bottom: 0\">\r\n                <div class=\""
-    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(63, data, 0),"inverse":container.program(65, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(64, data, 0),"inverse":container.program(66, data, 0),"data":data})) != null ? stack1 : "")
     + "\" style=\"text-align: left;\">\r\n                    <div class=\"breadcrumb clearfix\" style=\"background-color: transparent\">\r\n"
-    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.breadcrumbs : depth0),{"name":"each","hash":{},"fn":container.program(67, data, 0),"inverse":container.program(72, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.breadcrumbs : depth0),{"name":"each","hash":{},"fn":container.program(68, data, 0),"inverse":container.program(73, data, 0),"data":data})) != null ? stack1 : "")
     + "                    </div>\r\n                </div>\r\n\r\n                <div class=\""
-    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(63, data, 0),"inverse":container.program(74, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(64, data, 0),"inverse":container.program(75, data, 0),"data":data})) != null ? stack1 : "")
     + "\">\r\n"
-    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(76, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.h1 : stack1),{"name":"if","hash":{},"fn":container.program(77, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "                </div>\r\n\r\n                <div class=\"col-sm-4\">\r\n                    <div class=\"col-sm-8\" style=\"text-align: center; display:none;\">                        \r\n                        <span>Offer ends in </span><br><span class=\"countDownTimer\" id=\"countDownTimer\">00:00:00</span>\r\n                    </div>\r\n                </div>\r\n            </div>           \r\n\r\n"
-    + ((stack1 = helpers.unless.call(alias1,(depth0 != null ? depth0.isMobile : depth0),{"name":"unless","hash":{},"fn":container.program(78, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.unless.call(alias1,(depth0 != null ? depth0.isMobile : depth0),{"name":"unless","hash":{},"fn":container.program(79, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\r\n            "
     + ((stack1 = ((helper = (helper = helpers.body || (depth0 != null ? depth0.body : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"body","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "\r\n\r\n"
-    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.content : stack1),{"name":"if","hash":{},"fn":container.program(81, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.page : depth0)) != null ? stack1.content : stack1),{"name":"if","hash":{},"fn":container.program(82, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\r\n            <div class=\"container shop-by-brand\">\r\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.groupedBrands : depth0),{"name":"if","hash":{},"fn":container.program(86, data, 0),"inverse":container.program(91, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.groupedBrands : depth0),{"name":"if","hash":{},"fn":container.program(87, data, 0),"inverse":container.program(92, data, 0),"data":data})) != null ? stack1 : "")
     + "            </div>            \r\n\r\n            <div class=\"container inst-checkout\" style=\"width:100%; display:none;\">\r\n                <div class=\"col-md-4 action-wrapper\" style=\"margin: 0 auto;\">\r\n                    <div class=\"flat-button view-cart\" onclick=\"window.location='/cart'\" style=\"cursor: pointer\">\r\n                        <span class=\"badge badge-secondary badge-pill cart-total-pieces\" style=\"position:absolute;background-color:red;\">0</span>\r\n                        <img src=\"/images/ic_shopping_cart_empty.png\" alt=\"My Cart\" style=\"width: 46px;height: 46px;\">\r\n                        View Cart\r\n                    </div>\r\n\r\n                    <div class=\"flat-button\" onclick=\"window.location='/checkout'\" style=\"white-space: nowrap; cursor: pointer\">\r\n                        Instant Checkout\r\n                    </div>                       \r\n                </div>\r\n            </div>\r\n      \r\n            <script type=\"text/javascript\">\r\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(93, data, 0),"inverse":container.program(95, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isMobile : depth0),{"name":"if","hash":{},"fn":container.program(94, data, 0),"inverse":container.program(96, data, 0),"data":data})) != null ? stack1 : "")
     + "            \r\n            function showMore(breaf, detailed){\r\n                $(breaf).slideUp();\r\n                $(detailed).slideDown();\r\n                return false;\r\n            }\r\n\r\n            function showLess(breaf, detailed){\r\n                $(breaf).slideDown();\r\n                $(detailed).slideUp();\r\n                return false;\r\n            }\r\n\r\n            </script>\r\n            \r\n        </div>\r\n    </section>\r\n</main>\r\n\r\n<!-- Footer -->\r\n<!-- Footer -->\r\n<footer>\r\n    <div class=\"container\">\r\n        <div class=\"row\">\r\n            <div class=\"col-md-3 col-sm-6 footerleft \">\r\n                <h4 class=\"heading7\">DIAL A DRINK KENYA</h4>\r\n                <ul class=\"footer-ul\">\r\n                    <li>\r\n                        <a href=\"/giftpacks\">Gifts Delivery</a>\r\n                    </li>\r\n                    <li>\r\n                        <a href=\"/blog\">Blog</a>\r\n                    </li>\r\n                    <li>\r\n                        <a href=\"/about-us\">About Us</a>\r\n                    </li>\r\n                    <li>\r\n                        <a href=\"/delivery-locations\">Delivery Locations</a>\r\n                    </li>\r\n                    <li>\r\n                        <a href=\"/pricelist\">Get Our Pricelist</a>\r\n                    </li>\r\n                    <li>\r\n                        <a href=\"/\">Drinks Delivery Kenya</a>\r\n                    </li>\r\n                </ul>\r\n\r\n            </div>\r\n            <div class=\"col-md-3 col-sm-6 paddingtop-bottom\">\r\n                <h4 class=\"heading7\">GENERAL LINKS</h4>\r\n                <ul class=\"footer-ul\">\r\n                    <li>\r\n                        <a href=\"/terms-and-conditions\">Terms and Conditions</a>\r\n                    </li>\r\n                    <li>\r\n                        <a href=\"/privacy-policy\" title=\"Buy alcohol online in Kenya\" rel=\"noopener\">Privacy Policy</a>\r\n                    </li>\r\n                    <li>\r\n                        <a href=\"/sitemap\">Sitemap</a>\r\n                    </li>\r\n                    <li>\r\n                        <a href=\"https://play.google.com/store/apps/details?id=com.dialadrinkkenya\">Get Our App</a>\r\n                    </li>\r\n                </ul>\r\n            </div>\r\n\r\n            <div class=\"col-md-3 col-sm-6 paddingtop-bottom\">\r\n                <h4 class=\"heading7\">PAYMENT METHODS</h4>\r\n\r\n                <ul style=\"color: #161515\">\r\n                    <li><p>Cash On Delivery</p></li>\r\n                    <li>\r\n                        <p>\r\n                            <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/mpesa.png\" alt=\"Pay via MPESA\" height=\"30px\">\r\n                        </p>\r\n                    </li>\r\n                    <li>\r\n                        <p>\r\n                            <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/visa.png\" alt=\"Pay via VISA\" height=\"30px\">\r\n                        </p>\r\n                    </li>\r\n                    <li>\r\n                        <p>\r\n                            <img src=\"https://res.cloudinary.com/nmasuki/image/upload/c_fill/mastercard.png\" alt=\"Pay Via Master Card\" height=\"30px\">\r\n                        </p>\r\n                    </li>\r\n                </ul>\r\n            </div>\r\n\r\n            <div class=\"col-md-3 col-sm-6 paddingtop-bottom\">\r\n                <h4 class=\"heading7\">SOCIAL NETWORKS</h4>\r\n                <div class=\"footer-ul\">\r\n                    <a href=\"https://www.facebook.com/drinkdeliverynairobi\" title=\""
     + ((stack1 = ((helper = (helper = helpers.appTitle || (depth0 != null ? depth0.appTitle : depth0)) != null ? helper : alias2),(typeof helper === alias4 ? helper.call(alias1,{"name":"appTitle","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + " Facebook\"\r\n                       class=\"icon-social facebook\">\r\n                        <i class=\"fa fa-facebook\"></i>\r\n                    </a>\r\n                    <a href=\"https://twitter.com/liqourdelivery\" title=\""
