@@ -22,15 +22,16 @@ function requestCache(duration, _key) {
 
         try {
             let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
-            let key = '__express__' + (isMobile ? "_mobile_" : "") + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
+            let key = ('__express__' + (isMobile ? "__mobile__" : "") + (_key || req.session.id) + (req.originalUrl || req.url)).trim('/');
             let cacheContent = memCache.get(key);
             if (cacheContent) {
-                console.log("Using cache:" + key);
+                console.log("Using cache: " + key);
                 return res.send(cacheContent);
             } else {
                 var resSend = res.send;
 
-                res.send = (body) => {
+                res.send = (body) => {                    
+                    console.log(`Caching for ${duration}s: ` + key);
                     memCache.put(key, body, duration * 1000);
                     resSend.call(res, body);
                 };
