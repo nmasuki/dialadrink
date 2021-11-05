@@ -17,16 +17,20 @@
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{#if page.meta}}
     <meta name="description" content="{{truncate  (cleanHtml page.meta) 500 ' '}}"/>
+    {{else}}
+    <meta name="description" content="{{page.title}} "/>
+    {{/if}}
 
     {{#if page.keyWords}}<meta name="keywords" content="{{page.keyWords}}"/>{{/if}}
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="{{appTitle}}"/>
     <meta property="og:description" content="{{{truncate (cleanHtml page.meta) 500}}}"/>
     {{#if product}}
-    {{#each product.altImages}}<meta property="og:image" content="{{cloudinaryUrl this crop='fit'}}"/>{{else}}<meta property="og:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>{{/each}}
     <meta property='product:price:amount' content='{{product.price}}'/>
     <meta property='product:price:currency' content='{{product.currency}}'/>
+    {{#each product.altImages}}<meta property="og:image" content="{{cloudinaryUrl this crop='fit'}}"/>{{else}}<meta property="og:image" content="{{cloudinaryUrl product.image crop='fit'}}"/>{{/each}}    
     {{else}}
     <meta property="og:image" content="https://res.cloudinary.com/nmasuki/image/upload/c_fill/icons/apple-icon-152x152.png"/>
     {{/if}}
@@ -412,11 +416,11 @@
                 {{/if}}
             </div>            
 
-            <div class="container inst-checkout" style="width:100%; display:{{#if isMobile}}block{{else}}flex{{/if}};">
+            <div class="container inst-checkout" style="width:100%; display:none;">
                 <div class="col-md-4 action-wrapper" style="margin: 0 auto;">
                     <div class="flat-button view-cart" onclick="window.location='/cart'" style="cursor: pointer">
                         <span class="badge badge-secondary badge-pill cart-total-pieces" style="position:absolute;background-color:red;">0</span>
-                        <img src="/images/ic_shopping_cart_empty.png" alt="My cart" style="width: 46px;height: 46px;">
+                        <img src="/images/ic_shopping_cart_empty.png" alt="My Cart" style="width: 46px;height: 46px;">
                         View Cart
                     </div>
 
@@ -432,6 +436,7 @@
             {{else}}
                 window.isMobile = false;
                 $(document).ready(function(){
+                    $(".inst-checkout").css({display: '{{#if isMobile}}block{{else}}flex{{/if}}'})
                     var width = $(document.body).width();
                     var left = (width - $(".inst-checkout").width())/2;
                     if(left > 0)
@@ -466,16 +471,16 @@
                 <h4 class="heading7">DIAL A DRINK KENYA</h4>
                 <ul class="footer-ul">
                     <li>
-                        <a href="/about-us">About Us</a>
+                        <a href="/giftpacks">Gifts Delivery</a>
                     </li>
                     <li>
                         <a href="/blog">Blog</a>
                     </li>
                     <li>
-                        <a href="/delivery-locations">Delivery Locations</a>
+                        <a href="/about-us">About Us</a>
                     </li>
                     <li>
-                        <a href="/giftpacks">Gifts Delivery</a>
+                        <a href="/delivery-locations">Delivery Locations</a>
                     </li>
                     <li>
                         <a href="/pricelist">Get Our Pricelist</a>

@@ -25,13 +25,16 @@ function requestCache(duration, _key) {
             let key = '__express__' + (isMobile ? "_mobile_" : "") + (_key || req.session.id) + "[" + (req.originalUrl || req.url) + "]";
             let cacheContent = memCache.get(key);
             if (cacheContent) {
+                console.log("Using cache:" + key);
                 return res.send(cacheContent);
             } else {
                 var resSend = res.send;
+
                 res.send = (body) => {
                     memCache.put(key, body, duration * 1000);
                     resSend.call(res, body);
                 };
+
                 next();
             }
         } catch (e) {
@@ -42,9 +45,9 @@ function requestCache(duration, _key) {
     };
 }
 
-exports.globalCache = (req, res, next) => next(); //**/ requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/");
+exports.globalCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/"); //(req, res, next) => next(); //**/ 
 
-exports.sessionCache = requestCache((process.env.CACHE_TIME || 10) * 60);
+exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 
 /**
  Initialises the standard view locals
@@ -138,6 +141,7 @@ exports.initLocals = function (req, res, next) {
 
     //Authorization
     var { username, password } = getAuthInfo(req);
+
     //Other locals only applied to views and not ajax calls
     if (username || password) {         
         return next();

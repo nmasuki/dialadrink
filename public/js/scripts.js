@@ -706,7 +706,7 @@ function handleProductSorting() {
             }
         });
 
-        $(".filter").click(function (e) {
+        $(document).on("click", ".filter", function (e) {
             if ($(this).hasClass("active")) {
                 $(this).removeClass("active");
                 $grid.isotope({filter: "*"});//Remove filter.
@@ -730,7 +730,7 @@ function handleProductSorting() {
             }
         });
 
-        $(".sort-products").click(function (e) {
+        $(document).on("click", ".sort-products", function (e) {
             $(this).parents(".dropdown-menu").hide();
 
             var sortBy = $(this).data('sortby') || 'name';

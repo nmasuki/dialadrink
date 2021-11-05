@@ -65,13 +65,14 @@ exports = module.exports = function (app) {
 	app.use('/product', middleware.globalCache, routes.views.product);
 	app.use('/category', middleware.globalCache, routes.views.category);
 	app.use('/product', middleware.globalCache, routes.views.category);
-	app.use('/checkout', routes.views.checkout);
-	app.use('/cart', routes.views.cart);
+	
+	app.use('/checkout', middleware.sessionCache, routes.views.checkout);	
+	app.use('/cart', middleware.sessionCache, routes.views.cart);
+	app.use('/order', middleware.sessionCache, routes.views.order);
 
 	app.use('/', middleware.globalCache, routes.views.products);
 	app.use('/', middleware.globalCache, routes.views.index);
 
-	app.use('/order', routes.views.order);
 	app.use('/pesapal', routes.views.pesapal);
 	app.use('/africastalking', routes.views.africastalking);
 	app.use('/cybersource', routes.views.cybersource);
