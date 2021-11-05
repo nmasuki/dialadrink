@@ -47,6 +47,7 @@
     {{/if}}
 
     {{#if page.canonical}}<link rel="canonical" href="{{page.canonical}}"/>{{/if}}
+    {{#if appUrl}}{{#ifeq env 'production'}}<base href="{{appUrl}}"/>{{/ifeq}}{{/if}}
 
     <style>
         @media (max-width: 991px) {
@@ -68,8 +69,14 @@
             position: fixed;
             top: 0;
             z-index: -1;
-        }        
-    </style>
+        }   
+    </style>    
+                            
+    {{#if isMobile}}
+        <style>
+            .col-sm-12.single { width: 100% !important; }
+        </style>
+    {{/if}} 
 </head>
 
 <body class="07_MediaCenter" id="dad_Body">
@@ -328,13 +335,6 @@
 							</span>
                         {{/each}}
                     </div>
-                    <div>
-                    {{#each uifilters}}
-                        <span style="display: none;" class="filter noselect" data-filterby="{{this.filter}}">
-                            {{this.filter}} <small style="font-size: 0.8em; display: none">({{this.hits}})</small>
-                        </span>
-                    {{/each}}
-                    </div>
                 </div>
 
                 <div class="{{#if page.h1}}col-sm-4{{else}}col-sm-3{{/if}}">
@@ -349,29 +349,35 @@
                     <div class="col-sm-8" style="text-align: center; display:none;">                        
                         <span>Offer ends in </span><br><span class="countDownTimer" id="countDownTimer">00:00:00</span>
                     </div>
-                    
-                    {{#if isMobile}}
-                        <style>
-                            .col-sm-12.single { width: 100% !important; }
-                        </style>
-                    {{/if}}
+                </div>
+            </div>           
 
-                    {{#unless isMobile}}
-                        {{#if uifilters}}
-                            <div class="col-sm-4" style="float:right">
-                                <span class="sorting noselect dropdown-toggle">
-                                    <span id="sortby" style="padding-left: 5px;">Sorted by Name</span>
-                                    <i class="fa fa-sort-amount-asc" style="float: right; padding:6px;"></i>
+            <div class="container" style="margin-bottom: 0">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div style="overflow: auto;white-space: nowrap;">
+                            {{#each uifilters}}
+                                <span class="filter noselect" data-filterby="{{this.filter}}">
+                                    {{this.filter}} <small style="font-size: 0.8em; display: none">({{this.hits}})</small>
                                 </span>
-                                <ul class="dropdown-menu" style="display: none; left: -30%;">
-                                    <li class="noselect sort-products" data-sortby="name">Name<i class="fa fa-sort-alpha-asc" style="float: right;padding-right: 5px;"></i></li>
-                                    <li class="noselect sort-products" data-sortby="price">Price<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
-                                    <li class="noselect sort-products" data-sortby="popularity">Popularity<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
-                                    <li class="noselect sort-products" data-sortby="size">Quantity<i class="fa fa-sort-numeric-asc" style="float: right;padding-right: 5px;"></i></li>
-                                </ul>             
-                            </div>
-                        {{/if}}
-                    {{/unless}}
+                            {{/each}}
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        {{#unless isMobile}}
+                            <span class="sorting noselect dropdown-toggle">
+                                <span id="sortby" style="padding-left: 5px;">Sorted by Name</span>
+                                <i class="fa fa-sort-amount-asc" style="float: right; padding:0;"></i>
+                            </span>
+                            <ul class="dropdown-menu" style="display: none; left: -30%;">
+                                <li class="noselect sort-products" data-sortby="name">Name<i class="fa fa-sort-alpha-asc" style="float: right;padding-right: 5px;"></i></li>
+                                <li class="noselect sort-products" data-sortby="price">Price<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
+                                <li class="noselect sort-products" data-sortby="popularity">Popularity<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
+                                <li class="noselect sort-products" data-sortby="size">Quantity<i class="fa fa-sort-numeric-asc" style="float: right;padding-right: 5px;"></i></li>
+                            </ul> 
+                        {{/unless}}
+                    </div>
                 </div>
             </div>
 

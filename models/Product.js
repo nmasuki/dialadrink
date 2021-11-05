@@ -843,8 +843,7 @@ Product.getUIFilters = function (products, limit) {
     var brandGroups = Object.values(products.filter(p => p.brand)
         .groupBy(p => p.brand._id));
 
-    var l = 0,
-        i = 0;
+    var l = 0, i = 0;
     var regexStr = "Whiskies|Whiskey";
 
     categories.forEach(c => c && c.name ? regexStr += "|" + c.name + "(es|s|ry)|" + c.name : null);
@@ -855,7 +854,7 @@ Product.getUIFilters = function (products, limit) {
     uifilters = uifilters.concat(tagsGroups.map(g => {
         return {
             filter: g[0].t.replace(regex, "").trim(),
-            hits: g.length * 0.85,
+            hits: g.length * 1.25,
             g: g
         };
     }));
@@ -906,7 +905,4 @@ Product.getUIFilters = function (products, limit) {
 };
 
 var topHitsPerWeek = 100;
-Product.model.find()
-    .exec(function (err, data) {
-        topHitsPerWeek = data.max(p => p.hitsPerWeek);
-    });
+Product.model.find().exec((err, data) => topHitsPerWeek = data.max(p => p.hitsPerWeek));
