@@ -1,8 +1,14 @@
+#rm .env?
+#rm upgrade.sh?
+
 cp .env /var/tmp/dialadrink-prod.env
 cp upgrade.sh /var/tmp/upgrade.sh
 
 git checkout .
 git pull -X theirs
+
+rm .env?
+rm upgrade.sh?
 
 cp /var/tmp/dialadrink-prod.env .env
 cp /var/tmp/upgrade.sh upgrade.sh
