@@ -144,9 +144,7 @@ Product.schema.virtual("keyWords").get(function () {
 
     var sentence = (tags.concat([this.name, this.pageTitle, this.description]))
         .join(", ").replace(/(&nbsp;?)/g, " ")
-        .replace(/\W/g, function (x) {
-            return (x.trim() + " ");
-        })
+        .replace(/\W/g, x => x.trim())
         .truncate(500);
 
     var keyWords = extractor.extract(sentence, {
@@ -192,7 +190,8 @@ Product.schema.virtual('averageRatings').get(function () {
         return Math.round((this.ratings || []).avg(r => r.rating));
     else if (this.onOffer)
         return 4.5;
-    else if (this.category && this.category.name) { //Developers own ratings
+    else if (this.category && this.category.name) { 
+        //Developers own ratings
         if (this.category.name.toLowerCase().contains("whisky"))
             return 4.6;
         else if (this.category.name.toLowerCase().contains("beer"))
