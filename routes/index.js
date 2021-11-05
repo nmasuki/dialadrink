@@ -40,6 +40,9 @@ var routes = {
 exports = module.exports = function (app) {
 	app.enable('view cache');
 
+	if (process.env.NODE_ENV != "production")
+		app.use(require('less-middleware')({ src: __dirname + '/public' }));
+
 	// Api endpoints
 	var apis = Object.keys(routes.apis).map((i) => { 
 		return {
