@@ -42,7 +42,7 @@ function index(req, res) {
             if (Object.keys(locals.groupedBrands).length % 2 != 0 && lastRemovedKey && lastRemoved)
                 locals.groupedBrands[lastRemovedKey] = lastRemoved;
             
-            locals.groupedProducts = keystone.list('Product').groupProducts(products, homeGroupSize); 
+            //locals.groupedProducts = keystone.list('Product').groupProducts(products, homeGroupSize); 
             locals.uifilters = keystone.list('Product').getUIFilters(products);
             if (!Object.keys(locals.groupedBrands).length)
                 delete locals.groupedBrands;

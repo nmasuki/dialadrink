@@ -57,7 +57,7 @@ function search(req, res, next) {
             renderSingleResults(products.first());
         } else {            
             locals.products = products;
-            locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
+            //locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
             locals.uifilters = Product.getUIFilters(products);
 
             var categories = products.filter(p => p.category).distinctBy(p => p.category.id || p.category);
