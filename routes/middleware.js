@@ -22,7 +22,9 @@ function requestCache(duration, _key) {
 
         try {
             let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
-            let key = ('__express__' + (isMobile ? "__mobile__" : "") + (_key || req.session.id) + (req.originalUrl || req.url)).trim('/');
+            let keyParts = ['__express__', (isMobile ? "__mobile__" : ""), (_key || req.session.id), (req.originalUrl || req.url)]
+            let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
+
             let cacheContent = memCache.get(key);
             if (cacheContent) {
                 console.log("Using cache: " + key);
@@ -30,7 +32,7 @@ function requestCache(duration, _key) {
             } else {
                 var resSend = res.send;
 
-                res.send = (body) => {                    
+                res.send = (body) => {
                     console.log(`Caching for ${duration}s: ` + key);
                     memCache.put(key, body, duration * 1000);
                     resSend.call(res, body);
@@ -70,43 +72,43 @@ exports.initLocals = function (req, res, next) {
 
     //App
     res.locals.app = req.headers.packagename;
-    
+
     //AppVersion
     res.locals.appVersion = global.appVersion = req.headers.appversion;
 
     //Geolocation
-    if(req.headers.geolocation){
+    if (req.headers.geolocation) {
         var regex = /geo:(-?\d+\.?\d*),(-?\d+\.?\d*);cgen=gps/i;
         var split = regex.exec(req.headers.geolocation);
-        
+
         res.locals.appGeolocation = {
             lat: split[1],
             lng: split[2]
         };
 
         console.log("Geolocation:", res.locals.appGeolocation);
-    } 
+    }
 
     //Push Notification VAPID public key
     res.locals.vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
 
     //OKHi Env
-    res.locals.OkHiEnv = process.env.NODE_ENV == "production"? "" :"sandbox-";
-    
+    res.locals.OkHiEnv = process.env.NODE_ENV == "production" ? "" : "sandbox-";
+
     //OKHi Key
-    res.locals.OkHiServerKey = process.env.NODE_ENV == "production" 
-            ? process.env.OKHI_SERVER_KEY 
-            : process.env.OKHI_DEV_SERVER_KEY;
+    res.locals.OkHiServerKey = process.env.NODE_ENV == "production"
+        ? process.env.OKHI_SERVER_KEY
+        : process.env.OKHI_DEV_SERVER_KEY;
 
     //OKHi Client Key
-    res.locals.OkHiClientKey = process.env.NODE_ENV == "production" 
-            ? process.env.OKHI_CLIENT_KEY 
-            : process.env.OKHI_DEV_CLIENT_KEY;
+    res.locals.OkHiClientKey = process.env.NODE_ENV == "production"
+        ? process.env.OKHI_CLIENT_KEY
+        : process.env.OKHI_DEV_CLIENT_KEY;
 
     //OKHi Branch
-    res.locals.OkHiBranch = process.env.NODE_ENV == "production" 
-            ? process.env.OKHI_BRANCH 
-            : process.env.OKHI_DEV_BRANCH;
+    res.locals.OkHiBranch = process.env.NODE_ENV == "production"
+        ? process.env.OKHI_BRANCH
+        : process.env.OKHI_DEV_BRANCH;
 
     //CSRF
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
@@ -132,11 +134,11 @@ exports.initLocals = function (req, res, next) {
     res.locals.clientIp = possibleIps.find(ip => ip && ip != '127.0.0.1' && ip != '::1');
 
     //Close of day Date    
-    var latest = require('../helpers/LocalStorage').getInstance("closeofday").getAll().orderBy(c => c.createdDate).last();        
+    var latest = require('../helpers/LocalStorage').getInstance("closeofday").getAll().orderBy(c => c.createdDate).last();
     if (latest && latest.createdDate)
         res.locals.lastCloseOfDay = new Date(latest.createdDate).toISOString().substr(0, 10);
     else {
-        var backdate = process.env.NODE_ENV == "production"? 7: 100;        
+        var backdate = process.env.NODE_ENV == "production" ? 7 : 100;
         res.locals.lastCloseOfDay = new Date().addDays(-backdate).toISOString().substr(0, 10);
     }
 
@@ -144,7 +146,7 @@ exports.initLocals = function (req, res, next) {
     var { username, password } = getAuthInfo(req);
 
     //Other locals only applied to views and not ajax calls
-    if (username || password) {         
+    if (username || password) {
         return next();
     } else if (req.xhr) {
         var csrf_token = keystone.security.csrf.requestToken(req);
@@ -242,10 +244,10 @@ exports.initBrandsLocals = function (req, res, next) {
 
             for (var i in groups)
                 groups[i] = groups[i]
-                //.orderByDescending(b => products
-                //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
-                //    .avg(p => p.popularity))
-                .slice(0, 10);
+                    //.orderByDescending(b => products
+                    //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
+                    //    .avg(p => p.popularity))
+                    .slice(0, 10);
 
             res.locals.groupedBrands = groups;
 
@@ -279,7 +281,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
         .sort({ index: 1 })
         .deepPopulate("parent.parent.parent")
         .exec((err, menus) => {
-            if(err || !menus)
+            if (err || !menus)
                 return next(err || "Unknow error reading menus!");
 
             var menu = menus.orderBy(m => m.href.length).first();
@@ -291,14 +293,14 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
                 } while (menu = menu.parent);
             }
 
-            if (breadcrumbs.length){
+            if (breadcrumbs.length) {
                 breadcrumbs = breadcrumbs.reverse()
                     .filter(b => b.label)
                     .distinctBy(b => b.index)
-                    .distinctBy(b => (b.href || "").replace(/^https?\:\/\/[^\/]*/,"").toLowerCase().trim());
-                    
+                    .distinctBy(b => (b.href || "").replace(/^https?\:\/\/[^\/]*/, "").toLowerCase().trim());
+
                 res.locals.breadcrumbs = breadcrumbs;
-            }else
+            } else
                 res.locals.breadcrumbs = [{
                     "label": "Home",
                     "href": "/"
@@ -360,8 +362,8 @@ exports.flashMessages = function (req, res, next) {
         warning: req.flash('warning'),
         error: req.flash('error'),
     };
-    
-    res.locals.messages = _.some(flashMessages, msgs =>  msgs.length) ? flashMessages : false;
+
+    res.locals.messages = _.some(flashMessages, msgs => msgs.length) ? flashMessages : false;
 
     next();
 };
@@ -375,18 +377,18 @@ exports.requireAPIUser = function (req, res, next) {
         return setAppUserFromAuth(req, res, err => {
             if (err)
                 return res.status(401).send(err);
-            
+
             return next();
         });
     });
 };
 
 var setAppUser = function (req, res, user) {
-    if (!user) 
+    if (!user)
         return Promise.reject("No matching user found!").catch(console.error);
-    else if(user.accountStatus && user.accountStatus != "Active" && (!res.locals.app || res.locals.app != "com.dialadrinkkenya"))
+    else if (user.accountStatus && user.accountStatus != "Active" && (!res.locals.app || res.locals.app != "com.dialadrinkkenya"))
         return Promise.reject(`User ${user.fullName} in ${user.accountStatus} status!`).catch(console.error);
-    
+
     if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
         return new Promise((resolve, reject) => {
             keystone.list("AppUser").find({ phoneNumber: user.phoneNumber })
@@ -394,11 +396,11 @@ var setAppUser = function (req, res, user) {
                 .then(users => {
                     var tosave = false;
                     var user = users && users[0];
-                    
+
                     res.locals.appUser = global.appUser = user;
                     user.sessions = user.sessions || [];
                     user.clientIps = user.clientIps || [];
-                    
+
                     if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0) {
                         user.sessions.push(req.sessionID);
                         tosave = true;
@@ -420,7 +422,7 @@ var setAppUser = function (req, res, user) {
     return new Promise((resolve, reject) => {
         keystone.list("Client").model.findOne({ phoneNumber: user.phoneNumber.cleanPhoneNumber() })
             .exec((err, client) => {
-                if(err)
+                if (err)
                     return reject(err);
 
                 res.locals.appUser = global.appUser = client;
@@ -441,7 +443,7 @@ var setAppUser = function (req, res, user) {
 
                 return resolve(client);
             });
-    });    
+    });
 };
 
 var setAppUserFromAuth = function (req, res, next) {
@@ -463,15 +465,15 @@ var setAppUserFromAuth = function (req, res, next) {
             if (err)
                 return next({ response: "error", message: "NotAuthorized! " + err });
         }).then(users => {
-            
-            var user = users.find(c => password == c.password  || c.passwords.contains(password)) ||
+
+            var user = users.find(c => password == c.password || c.passwords.contains(password)) ||
                 users.filter(c => c.tempPassword && !c.tempPassword.used && c.tempPassword.pwd && c.tempPassword.expiry < Date.now())
                     .find(c => password == c.tempPassword.pwd.encryptPassword().encryptedPassword);
 
             setAppUser(req, res, user)
                 .then(user => next(null, user))
                 .catch(err => {
-                    if(err) console.error(err);
+                    if (err) console.error(err);
                     if (users.length)
                         console.log(`${users.length} users match username ${username}.` +
                             `Invalid password? '${password}' '${users.map(u => u.passwords).join(',')}'`);
@@ -505,8 +507,8 @@ var setAppUserFromSession = function (req, res, callback) {
             }
         }]
     };
-    
-    if (req.session.userData){
+
+    if (req.session.userData) {
         filter.$or.push({
             phoneNumber: req.session.userData.phoneNumber.cleanPhoneNumber()
         });
@@ -515,22 +517,22 @@ var setAppUserFromSession = function (req, res, callback) {
     return keystone.list("AppUser")
         .findOne(filter)
         .catch(err => {
-            if(err){
+            if (err) {
                 if (typeof callback == "function")
                     callback(err);
             }
         })
         .then(client => {
-            if(!client){
+            if (!client) {
                 var err = client ? null : new Error("No client matches sessionId:" + req.sessionID);
-                if (typeof callback == "function")            
+                if (typeof callback == "function")
                     callback(err, client);
                 return;
             }
 
             setAppUser(req, res, client)
-                .then(client => typeof callback == "function"? callback(null, client): null)
-                .catch(err => typeof callback == "function"? callback(err): null);            
+                .then(client => typeof callback == "function" ? callback(null, client) : null)
+                .catch(err => typeof callback == "function" ? callback(err) : null);
         });
 };
 
