@@ -853,12 +853,12 @@ Product.getUIFilters = function (products, limit) {
     uifilters = uifilters.concat(tagsGroups.map(g => {
         return {
             filter: g[0].t.replace(regex, "").trim(),
-            hits: g.length * 1.25,
+            hits: g.length * 1.5,
             g: g
         };
     }));
 
-    if (categories.length > 3) {
+    if (categories.length >= 3) {
         var categoryGroups = Object.values(products.filter(p => p.category).groupBy(p => p.category._id));
         uifilters = uifilters.concat(categoryGroups.map(g => {
             return {
@@ -869,11 +869,11 @@ Product.getUIFilters = function (products, limit) {
         }));
     }
 
-    if (subCategoryGroups.length > 3)
+    if (subCategoryGroups.length >= 3)
         uifilters = uifilters.concat(subCategoryGroups.map(g => {
             return {
                 filter: g[0].subCategory.name.replace(regex, "").trim(),
-                hits: g.length * 0.7,
+                hits: g.length * 1.2,
                 g: g
             };
         }));
