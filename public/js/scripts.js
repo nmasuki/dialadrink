@@ -658,7 +658,7 @@ function handleProductSorting() {
             return parseFloat(value);
         }
 
-        expectedValue = expectedValue.removeAssents();
+        expectedValue = (expectedValue || "").toString().removeAssents();
         var expectedValueRegex = new RegExp(expectedValue, "i");
 
         return function (elem) {
@@ -671,7 +671,7 @@ function handleProductSorting() {
                 if ($.isArray(fValue))
                     fValue = fValue.join(",");
 
-                return fValue && expectedValueRegex.test(fValue.removeAssents());
+                return fValue && expectedValueRegex.test(fValue.toString().removeAssents());
             }
 
             if (property == 'price' && data.offerPrice)
