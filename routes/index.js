@@ -40,9 +40,10 @@ var routes = {
 exports = module.exports = function (app) {
 	app.enable('view cache');
 
-	if (process.env.NODE_ENV != "production")
+	if (process.env.NODE_ENV != "production"){
 		app.use(require('less-middleware')({ src: __dirname + '/public' }));
-
+		app.use(keystone.express.static(__dirname + '/public'));
+	}
 	// Api endpoints
 	var apis = Object.keys(routes.apis).map((i) => { 
 		return {
@@ -58,7 +59,15 @@ exports = module.exports = function (app) {
 		}
 	});
 
-	// Views
+	// Views	
+	app.use('/checkout', routes.views.checkout);	
+	app.use('/cart', routes.views.cart);
+	app.use('/order', routes.views.order);
+
+	app.use('/pesapal', routes.views.pesapal);
+	app.use('/africastalking', routes.views.africastalking);
+	app.use('/cybersource', routes.views.cybersource);
+
 	app.use('/brand', middleware.globalCache, routes.views.brand);
 	app.use('/product-origin', middleware.globalCache, routes.views['product-origin']);
 	app.use('/blog', middleware.globalCache, routes.views.blog);
@@ -67,18 +76,10 @@ exports = module.exports = function (app) {
 
 	app.use('/product', middleware.globalCache, routes.views.product);
 	app.use('/category', middleware.globalCache, routes.views.category);
-	app.use('/product', middleware.globalCache, routes.views.category);
-	
-	app.use('/checkout', middleware.sessionCache, routes.views.checkout);	
-	app.use('/cart', middleware.sessionCache, routes.views.cart);
-	app.use('/order', middleware.sessionCache, routes.views.order);
+	app.use('/product', middleware.globalCache, routes.views.category);	
 
 	app.use('/', middleware.globalCache, routes.views.products);
 	app.use('/', middleware.globalCache, routes.views.index);
-
-	app.use('/pesapal', routes.views.pesapal);
-	app.use('/africastalking', routes.views.africastalking);
-	app.use('/cybersource', routes.views.cybersource);
 
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
