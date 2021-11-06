@@ -1,4 +1,4 @@
-var CACHE_VERSION = 3;
+var CACHE_VERSION = 4;
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
