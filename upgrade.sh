@@ -6,6 +6,6 @@ git pull -X theirs
 git add .
 git commit -m "Server updates"
 git push
-git stash pop
+#git stash pop
 pm2 reload main --update-env --log-date-format 'DD-MM HH:mm:ss.SSS'
 pm2 log
