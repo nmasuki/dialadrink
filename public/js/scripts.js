@@ -652,9 +652,6 @@ function handleProductSorting() {
             var value = qty.replace(/([^\d.]+)/, "").trim() || 0;
             var measure = qty.replace(/([\d.]+)/, "").trim() || "ml";
 
-            if(qty.indexOf(".") >= 0)
-                console.log(qty, value, measure);
-
             if(measure[0] == "l")
                 return parseFloat(value) * 1000;
 
@@ -666,13 +663,13 @@ function handleProductSorting() {
                 data = JSON.parse(json) || {};
 
             if (expectedValue) {
-                var regex = new RegExp(expectedValue, "i");
+                var regex = new RegExp(expectedValue.removeAssents(), "i");
                 var fValue = data[property] && (data[property].name || data[property] || "");
 
                 if($.isArray(fValue))
                     fValue = fValue.join(",");
 
-                return fValue && regex.test(fValue);
+                return fValue && regex.test(fValue.removeAssents());
             }
 
             if (property == 'price' && data.offerPrice)
