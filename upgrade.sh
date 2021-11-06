@@ -1,1 +1,10 @@
-cp .env /var/tmp/dialadrink-prod.env && cp upgrade.sh /var/tmp/upgrade.sh && git checkout . && git pull -X theirs && cp /var/tmp/dialadrink-prod.env .env && cp /var/tmp/upgrade.sh upgrade.sh && ./update-sw-version.sh && grunt build && git add . && git commit -m "Server updates" && git push && pm2 reload main --update-env --log-date-format 'DD-MM HH:mm:ss.SSS' && pm2 log
+git stash
+git pull -X theirs
+./update-sw-version.sh
+grunt build
+git add .
+git commit -m "Server updates"
+git push
+git stash pop
+pm2 reload main --update-env --log-date-format 'DD-MM HH:mm:ss.SSS'
+pm2 log
