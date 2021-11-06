@@ -1,3 +1,4 @@
+git stash clear
 git stash
 git pull -X theirs
 ./update-sw-version.sh

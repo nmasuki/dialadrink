@@ -1,4 +1,5 @@
-var CACHE_VERSION = ;
+var CACHE_VERSION = 1;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
@@ -17,8 +18,13 @@ var CACHE_VERSION = 139;
 var CACHE_VERSION = 139;
 >>>>>>> Stashed changes
 =======
+<<<<<<< Updated upstream
 var CACHE_VERSION = 145;
 >>>>>>> fbe2ff23e337f26890e1d04f9efb632fd3070576
+=======
+var CACHE_VERSION = 139;
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
