@@ -187,7 +187,7 @@ exports.initLocals = function (req, res, next) {
             next();
             var ms = new Date().getTime() - istart.getTime();
             if (process.env.NODE_ENV == "development" || ms > 300)
-                console.log("Initiated Locals in ", ms, "ms");
+                console.log("Initiated Locals in ", ms + "ms");
         });
     }
 };

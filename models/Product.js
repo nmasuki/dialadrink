@@ -853,7 +853,7 @@ Product.getUIFilters = function (products, limit) {
     uifilters = uifilters.concat(tagsGroups.map(g => {
         return {
             filter: g[0].t.replace(regex, "").trim(),
-            hits: g.length * 0.5,
+            hits: g.length * 0.4,
             g: g
         };
     }));
@@ -889,12 +889,13 @@ Product.getUIFilters = function (products, limit) {
 
     var strUIfilters = uifilters
         .filter(f => f.hits > 0 && f.filter && !/^\d/.test(f.filter))
+        .filter(f => f.filter.cleanId().split('-').length <= 3)
         .orderByDescending(f => f.hits)
         .distinctBy(f => f.filter.cleanId())
         .distinctBy(f => f.g.map(p => p.id).orderBy(i => i).join("|"));
 
     strUIfilters.forEach(s => {
-        if (l <= 78) {
+        if (l <= 100) {
             i += 1;
             l += (s.filter || s).length;
         }
