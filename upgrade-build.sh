@@ -1,6 +1,7 @@
 git stash
 git pull -X theirs
 ./update-sw-version.sh
+grunt build
 git add .
 git commit -m "Server updates"
 git push

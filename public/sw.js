@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 var CACHE_VERSION = 140;
+=======
+var CACHE_VERSION = 139;
+>>>>>>> Stashed changes
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
