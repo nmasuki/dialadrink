@@ -1,6 +1,7 @@
 cp .env /var/tmp/dialadrink-prod.env 
 cp upgrade.sh /var/tmp/upgrade.sh
 
+#Stash uncommited changes
 git stash
 git pull -X theirs
 
@@ -18,7 +19,8 @@ git unstash
 
 #Reload service
 #pm2 reload dev --update-env --log-date-format 'DD-MM HH:mm:ss.SSS'
-pm2 reload main --update-env --log-date-format 'DD-MM HH:mm:ss.SSS'
+#pm2 reload main --update-env --log-date-format 'DD-MM HH:mm:ss.SSS'
+pm2 reload main
 
 #Display logs
 pm2 log
