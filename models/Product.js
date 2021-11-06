@@ -896,7 +896,7 @@ Product.getUIFilters = function (products, limit) {
         .distinctBy(f => f.g.map(p => p.id).orderBy(i => i).join("|"));
 
     strUIfilters.forEach(s => {
-        if (l <= 80) {
+        if (l <= 75) {
             i += 1;
             l += (s.filter || s).length;
         }
