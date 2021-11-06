@@ -658,18 +658,20 @@ function handleProductSorting() {
             return parseFloat(value);
         }
 
+        expectedValue = expectedValue.removeAssents();
+        var expectedValueRegex = new RegExp(expectedValue, "i");               
+
         return function (elem) {
             var json = $(elem || this).find('script.json').text() || "{}",
                 data = JSON.parse(json) || {};
 
             if (expectedValue) {
-                var regex = new RegExp(expectedValue.removeAssents(), "i");
                 var fValue = data[property] && (data[property].name || data[property] || "");
 
                 if($.isArray(fValue))
                     fValue = fValue.join(",");
 
-                return fValue && regex.test(fValue.removeAssents());
+                return fValue && expectedValueRegex.test(fValue.removeAssents());
             }
 
             if (property == 'price' && data.offerPrice)
@@ -681,6 +683,7 @@ function handleProductSorting() {
                     return data.options.max(function(o){ return getSize(o.quantity);});
                 return 0;
             }
+            
             if(property == 'tags')
                 return (data[property] || []).sort()[0];
                             
