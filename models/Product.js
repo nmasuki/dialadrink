@@ -890,12 +890,13 @@ Product.getUIFilters = function (products, limit) {
     var strUIfilters = uifilters
         .filter(f => f.hits > 0 && f.filter && !/^\d/.test(f.filter))
         .filter(f => f.filter.cleanId().split('-').length <= 3)
+        .filter(f => f.g.length < products.length * .7)
         .orderByDescending(f => f.hits)
         .distinctBy(f => f.filter.cleanId())
         .distinctBy(f => f.g.map(p => p.id).orderBy(i => i).join("|"));
 
     strUIfilters.forEach(s => {
-        if (l <= 65) {
+        if (l <= 80) {
             i += 1;
             l += (s.filter || s).length;
         }
