@@ -152,7 +152,7 @@ function handleDropdown() {
             }
         });
 
-        $('.dropdown-toggle').parent().click(function(e){
+        $('.dropdown-toggle').parent().click(function (e) {
             if (touch == false) {
                 $(this).find('.dropdown-menu').stop(true, true).slideDown(300);
             }
@@ -257,34 +257,34 @@ function startDictation() {
 
     if (window.hasOwnProperty('webkitSpeechRecognition')) {
 
-      var recognition = new webkitSpeechRecognition();
+        var recognition = new webkitSpeechRecognition();
 
-      recognition.continuous = false;
-      recognition.interimResults = false;
+        recognition.continuous = false;
+        recognition.interimResults = false;
 
-      recognition.lang = "en-US";
-      recognition.start();
+        recognition.lang = "en-US";
+        recognition.start();
 
-      recognition.onresult = function(e) {
-        var query = e.results[0][0].transcript;
-        recognition.stop();
-        
-        console.log(query);
-        window.location.href = "/search/" + query;
-      };
+        recognition.onresult = function (e) {
+            var query = e.results[0][0].transcript;
+            recognition.stop();
 
-      recognition.onerror = function(e) {
-        recognition.stop();
-      };
+            console.log(query);
+            window.location.href = "/search/" + query;
+        };
+
+        recognition.onerror = function (e) {
+            recognition.stop();
+        };
 
     }
-  }
+}
 
 function handleSearchingAndPaging() {
     //{{#if isMobile}}/assets/icon-voice-search.gif{{else}}/assets/icon-search.png{{/if}}
-    $('#search_box').on('change', function(){
-        if($(this).data("mobile")){
-            if($(this).val())
+    $('#search_box').on('change', function () {
+        if ($(this).data("mobile")) {
+            if ($(this).val())
                 $("#search").attr("src", "/assets/icon-search.png");
             else
                 $("#search").attr("src", "/assets/icon-voice-search.svg");
@@ -293,13 +293,13 @@ function handleSearchingAndPaging() {
 
     $('#search').on('click', function (e) {
         e.preventDefault();
-        
+
         var query = $('#search_box').val();
 
         if (query) {
             console.log(query);
             window.location.href = "/search/" + query;
-        }else{
+        } else {
             startDictation.call(this);
         }
     });
@@ -310,7 +310,7 @@ function handleSearchingAndPaging() {
 }
 
 function handleSearchAutoComplete() {
-    if ($.fn.autocomplete){
+    if ($.fn.autocomplete) {
         var ac = $("#search_box").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -322,7 +322,7 @@ function handleSearchAutoComplete() {
                 });
             },
             minLength: 2,
-            select: function (event, ui) {            
+            select: function (event, ui) {
                 var query = (ui.item.name || ui.item).cleanId();
                 if (query !== "") {
                     console.log(query)
@@ -337,8 +337,8 @@ function handleSearchAutoComplete() {
                 }
             }
         });
-        
-        ac.data("ui-autocomplete")._renderItem = function( ul, item ) {
+
+        ac.data("ui-autocomplete")._renderItem = function (ul, item) {
             var html = "<div><img style='height:32px;width: 32px' src='{0}'/>{1}</div>".format(item.image, item.name);
             return $("<li></li>").data("item.autocomplete", item)
                 .append(html)
@@ -570,7 +570,7 @@ function handleProductRating() {
 
     $(document).on("click", ".thumbnail", function (e) {
         var src = $(this).find("img").data("img");
-        if (src){
+        if (src) {
             $(".image-responsive")
                 .attr("src", src)
                 .parent().css({ "background-image": "url('" + src + "')" });
@@ -646,20 +646,20 @@ function onTouchStart(e) {
 function handleProductSorting() {
 
     function getSortFn(property, expectedValue) {
-        function getSize(qty){
-            if(!qty) return 0;
+        function getSize(qty) {
+            if (!qty) return 0;
             qty = qty.toLowerCase();
             var value = qty.replace(/([^\d.]+)/, "").trim() || 0;
             var measure = qty.replace(/([\d.]+)/, "").trim() || "ml";
 
-            if(measure[0] == "l")
+            if (measure[0] == "l")
                 return parseFloat(value) * 1000;
 
             return parseFloat(value);
         }
 
         expectedValue = expectedValue.removeAssents();
-        var expectedValueRegex = new RegExp(expectedValue, "i");               
+        var expectedValueRegex = new RegExp(expectedValue, "i");
 
         return function (elem) {
             var json = $(elem || this).find('script.json').text() || "{}",
@@ -668,7 +668,7 @@ function handleProductSorting() {
             if (expectedValue) {
                 var fValue = data[property] && (data[property].name || data[property] || "");
 
-                if($.isArray(fValue))
+                if ($.isArray(fValue))
                     fValue = fValue.join(",");
 
                 return fValue && expectedValueRegex.test(fValue.removeAssents());
@@ -676,17 +676,17 @@ function handleProductSorting() {
 
             if (property == 'price' && data.offerPrice)
                 return data.offerPrice;
-            if(property == 'popularity')
+            if (property == 'popularity')
                 return -data.popularityRatio; // -data[property];
-            if(property == 'size'){
-                if(data.options && data.options.length)
-                    return data.options.max(function(o){ return getSize(o.quantity);});
+            if (property == 'size') {
+                if (data.options && data.options.length)
+                    return data.options.max(function (o) { return getSize(o.quantity); });
                 return 0;
             }
-            
-            if(property == 'tags')
+
+            if (property == 'tags')
                 return (data[property] || []).sort()[0];
-                            
+
             return data[property];
         };
     }
@@ -694,8 +694,8 @@ function handleProductSorting() {
     var $grid = $('.products-grid');
 
     if ($grid.isotope) {
-        if(window.isMobile && window.getWidthBrowser() <= 700)
-            $grid.find(".col-sm-12.single").css({"width":"100%"});
+        if (window.isMobile && window.getWidthBrowser() <= 700)
+            $grid.find(".col-sm-12.single").css({ "width": "100%" });
 
         $grid.isotope({
             getSortData: {
@@ -709,10 +709,11 @@ function handleProductSorting() {
         $(document).on("click", ".filter", function (e) {
             if ($(this).hasClass("active")) {
                 $(this).removeClass("active");
-                $grid.isotope({filter: "*"});//Remove filter.
+                $grid.isotope({ filter: "*" });//Remove filter.
             } else {
                 var filterBy = ["category", "subCategory", "brand", "tags"];
                 var filterByVal = $(this).data("filterby");
+                var filterByFns = filterBy.map(function (f) { return getSortFn(f, filterByVal); })
 
                 if (filterBy) {
                     $(this).siblings(".active").removeClass("active");
@@ -721,9 +722,7 @@ function handleProductSorting() {
                     $grid.isotope({
                         filter: function (elem) {
                             elem = elem || this;
-                            return filterBy.any(function (f) {
-                                return getSortFn(f, filterByVal)(elem);
-                            });
+                            return filterByFns.any(function (f) { return f(elem); });
                         }
                     });
                 }
@@ -740,13 +739,13 @@ function handleProductSorting() {
             $grid.isotope({ sortBy: sortBy, sortAscending: sortAscending });
             $grid.data("sortBy", sortBy).data("sortDir", sortDir);
             app.setCookie("sortBy", sortBy).setCookie("sortDir", sortDir);
-            
+
             console.log('Sorting by ' + sortBy + " " + sortDir);
 
             function changeSortDirIcon(i, el) {
                 var sortIcon = sortDir;
-                if(sortBy == "popularity")
-                    sortIcon = sortDir == "desc"? "asc": "desc";
+                if (sortBy == "popularity")
+                    sortIcon = sortDir == "desc" ? "asc" : "desc";
 
                 var cls = ($(el).attr("class") || "").replace(/(asc|desc)/, sortIcon);
                 if (cls) $(el).attr("class", cls);
@@ -754,9 +753,9 @@ function handleProductSorting() {
 
             $(this).find('i.fa').each(changeSortDirIcon);
             $(".sorting, .sorting .fa").each(changeSortDirIcon);
-            $(".sorting #sortby").text("Sorted by " + $(this).text());            
+            $(".sorting #sortby").text("Sorted by " + $(this).text());
         });
-        
+
         /***/
         var sortBy = app.getCookie("sortBy") || "popularity";
         $(".sort-products[data-sortby=" + sortBy + "]").trigger('click');
@@ -790,7 +789,7 @@ $(document).ready(function ($) {
 
         e.stopPropagation();
     });
-    
+
     handleProductSorting();
 
     loadParticles();
