@@ -1395,7 +1395,9 @@ this["templates"]["views"]["layouts"]["dialadrink"]["hbs"]["templates/views/layo
 
   return "                            <a href=\""
     + ((stack1 = ((helper = (helper = helpers.href || (depth0 != null ? depth0.href : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"href","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "\">\r\n                                <span class=\"orb\">"
+    + "\">\r\n                                <img class=\"orb\" src=\""
+    + container.escapeExpression((helpers.cloudinaryUrl || (depth0 && depth0.cloudinaryUrl) || alias2).call(alias1,(depth0 != null ? depth0.image : depth0),{"name":"cloudinaryUrl","hash":{"crop":"fill","radius":15,"height":68,"width":68},"data":data}))
+    + "\"\r\n                                <span>"
     + ((stack1 = ((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</span>\r\n                            </a>\r\n";
 },"54":function(container,depth0,helpers,partials,data) {
