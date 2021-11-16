@@ -8,7 +8,7 @@
  * modules in your project's /lib directory.
  */
 var _ = require('lodash');
-var keystone = require("keystone");
+var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
 var memCache = require("memory-cache");
 
@@ -314,6 +314,13 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
 };
 
 exports.initTopMenuLocals = function (req, res, next) {
+    res.locals.OrbCloudinaryOptions = {
+        secure: true,
+        transformation: [{
+            width: 68, height: 68, radius: "15", crop: "fill"
+        }]
+    };
+
     var cachedPage = memCache ? memCache.get("__topmenu__") : null;
 
     if (cachedPage) {
