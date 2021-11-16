@@ -25,6 +25,8 @@ function search(req, res, next) {
     locals.page.h1 = locals.page.h1 || queryTitle;        
     locals.page.canonical = [keystone.get('url'), (req.params.query || "").cleanId()].filter(p => p).map(p => p.trim('/')).join('/');
 
+    var homeGroupSize = process.env.HOME_GROUP_SIZE || 12;
+
     function renderResults(products, title) {
         title = (title || "").toProperCase();
         locals.page.h1 = locals.page.h1 || title;
@@ -56,7 +58,7 @@ function search(req, res, next) {
 
             renderSingleResults(products.first());
         } else {            
-            locals.products = products;
+            locals.products = products.slice(0, homeGroupSize * 2);            
             //locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
             locals.uifilters = Product.getUIFilters(products);
 

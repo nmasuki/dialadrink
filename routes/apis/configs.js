@@ -129,9 +129,9 @@ router.get("/tiles", function (req, res, next) {
     var cachedPage = memCache ? memCache.get("__topmenu__") : null;
 
     if (cachedPage) {
-        navLinks = Object.assign(navLinks || {}, cachedPage || {});
+        var navLinks = Object.assign(navLinks || {}, cachedPage || {});
         json.response = "success";
-        json.data = navLinks.orderBy(l=>l.index).map(d => {
+        json.data = navLinks.orderBy(l => l.index).map(d => {
             return {
                 id: d.id,
                 slug: d.key,

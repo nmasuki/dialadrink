@@ -33,7 +33,8 @@ ProductBrand.schema.pre('save', function (next) {
 ProductBrand.register();
 
 ProductBrand.findPopularBrands = function (callback) {
-    return keystone.list('Product').findPublished({})
+    return keystone.list('Product')
+        .findPublished({})
         .sort('-popularity')
         .exec((err, _products) => {
             var brands = (_products ||[]).map(p => {
