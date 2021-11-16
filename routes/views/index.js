@@ -60,7 +60,7 @@ function search(req, res, next) {
         } else {            
             locals.products = products.slice(0, homeGroupSize * 4);            
             //locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
-            locals.uifilters = Product.getUIFilters(products);
+            locals.uifilters = Product.getUIFilters(locals.products);
 
             var categories = products.filter(p => p.category).distinctBy(p => p.category.id || p.category);
             var subCategories = products.filter(p => p.subCategory).distinctBy(p => p.subCategory.id || p.subCategory);
