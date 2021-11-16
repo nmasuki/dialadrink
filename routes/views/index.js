@@ -58,7 +58,7 @@ function search(req, res, next) {
 
             renderSingleResults(products.first());
         } else {            
-            locals.products = products.slice(0, homeGroupSize * 2);            
+            locals.products = products.slice(0, homeGroupSize * 4);            
             //locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
             locals.uifilters = Product.getUIFilters(products);
 
