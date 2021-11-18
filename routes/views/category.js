@@ -103,9 +103,12 @@ router.get("/:category/:subcategory", function (req, res) {
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 
+    var homeGroupSize = process.env.HOME_GROUP_SIZE || 12;
+
     // Load Products
     view.on('init', function (next) {
-        keystone.list('ProductSubCategory').model.find({
+        keystone.list('ProductSubCategory').model
+            .find({
                 key: locals.filters.subcategory.cleanId()
             })
             .exec((err, subCategories) => {

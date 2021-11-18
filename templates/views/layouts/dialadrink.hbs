@@ -363,6 +363,7 @@
             </div>           
 
             {{#unless isMobile}}
+            {{#if products.length}}
                 <div class="container" style="margin-bottom: 0">
                     <div class="row">
                         <div class="col-sm-10">
@@ -376,19 +377,20 @@
                         </div>
 
                         <div class="col-sm-2">
-                                <span class="sorting noselect dropdown-toggle">
-                                    <span id="sortby">Sorted by Name</span>
-                                    <i class="fa fa-sort-amount-asc" style="float: right; padding:0 4px;"></i>
-                                </span>
-                                <ul class="dropdown-menu" style="display: none; left: 40px;">
-                                    <li class="noselect sort-products" data-sortby="name">Name<i class="fa fa-sort-alpha-asc" style="float: right;padding-right: 5px;"></i></li>
-                                    <li class="noselect sort-products" data-sortby="price">Price<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
-                                    <li class="noselect sort-products" data-sortby="popularity">Popularity<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
-                                    <li class="noselect sort-products" data-sortby="size">Quantity<i class="fa fa-sort-numeric-asc" style="float: right;padding-right: 5px;"></i></li>
-                                </ul> 
+                            <span class="sorting noselect dropdown-toggle">
+                                <span id="sortby">Sorted by Name</span>
+                                <i class="fa fa-sort-amount-asc" style="float: right; padding:0 4px;"></i>
+                            </span>
+                            <ul class="dropdown-menu" style="display: none; left: 40px;">
+                                <li class="noselect sort-products" data-sortby="name">Name<i class="fa fa-sort-alpha-asc" style="float: right;padding-right: 5px;"></i></li>
+                                <li class="noselect sort-products" data-sortby="price">Price<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
+                                <li class="noselect sort-products" data-sortby="popularity">Popularity<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
+                                <li class="noselect sort-products" data-sortby="size">Quantity<i class="fa fa-sort-numeric-asc" style="float: right;padding-right: 5px;"></i></li>
+                            </ul> 
                         </div>
                     </div>
                 </div>
+            {{/if}}
             {{/unless}}
 
             {{{body}}}
