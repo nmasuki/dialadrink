@@ -1,5 +1,5 @@
 git pull -X theirs
-./update-sw-version.sh
+#./update-sw-version.sh
 #grunt build
 git add .
 git commit -m "$HOSTNAME upgrade"
