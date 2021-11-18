@@ -288,8 +288,11 @@
                     <div class="row scroll-x">
                         {{#each navLinks}}                            
                             <a href="{{{href}}}">
-                                <img class="orb" src="{{cloudinaryUrl image width=68 height=68 radius=15 crop='fill'}}"
-                                <span>{{{label}}}</span>
+                                {{#if image}}
+                                <img class="orb" src="{{cloudinaryUrl image width=68 height=68 radius=15 crop='fill'}}" alt="{{{label}}}"/>
+                                {{else}}
+                                <span class="orb">{{{label}}}</span>
+                                {{/if}}
                             </a>
                         {{/each}}
                     </div>
