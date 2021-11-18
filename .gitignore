@@ -8,3 +8,4 @@ public/office.apk
 templates.js
 locks/
 /node_modules*
+/updates/0.0.2-download-products-images.js
