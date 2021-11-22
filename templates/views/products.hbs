@@ -77,7 +77,7 @@
                 <div class="col-sm-4"></div>
                 <div class="col-sm-4">
                     <h2 class="home_featured_title home-title page-title">
-                        {{#ifgte page.h1s.length 2}}
+                        {{#ifgt page.h1s.length 1}}
                             {{#each page.h1s}}
                                 {{#ifeq @index 1}}
                                     <span class="category-name">{{{this}}}</span>
@@ -87,7 +87,7 @@
                             {{/each}}  
                         {{else}}
                             <span class="category-name">Brand Focus</span>   
-                        {{/ifgte}}
+                        {{/ifgt}}
                     </h2>
                 </div>
                 <div class="col-sm-4"></div>
