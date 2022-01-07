@@ -1,0 +1,135 @@
+@media (min-width: 992px){
+    .typo-line{
+        padding-left: 140px;
+        margin-bottom: 40px;
+        position: relative;
+    }
+
+    .typo-line .category{
+        transform: translateY(-50%);
+        top: 50%;
+        left: 0px;
+        position: absolute;
+    }
+}
+
+.all-icons [class*="pe-"]{
+    font-size: 40px;
+}
+.all-icons input{
+    border: 0;
+}
+.all-icons .font-icon-detail{
+    text-align: center;
+    padding: 45px 0px 30px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    margin: 15px 0;
+}
+.all-icons .font-icon-detail input{
+    margin: 25px auto 0;
+    width: 100%;
+    text-align: center;
+    display: block;
+    color: #aaa;
+    font-size: 13px;
+}
+
+#map{
+    position:relative;
+    width:100%;
+    height: calc(100% - 60px);
+}
+
+.places-buttons .btn{
+    margin-bottom: 30px
+}
+.sidebar .nav > li.active-pro{
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+}
+.sidebar .nav > li.active-pro a{
+    background: rgba(255, 255, 255, 0.14);
+    opacity: 1;
+    color: #FFFFFF;
+}
+
+.table-upgrade td:nth-child(2),
+.table-upgrade td:nth-child(3){
+    text-align: center;
+}
+
+.panel-heading{
+    text-align: center;
+}
+
+.panel-body{
+    text-align: center;
+    height: 200px;
+    line-height: 120px;
+    font-weight: bold;
+    font-size: 50px;
+}
+
+.fomu{
+    
+    background-color: #E0E0E0;
+    padding-bottom: 30px;
+}
+
+.item-name{
+    color: #212121;
+    font-size: 14px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+
+.slideshow{
+    
+    margin-left: 85px;
+    margin-right: 85px;
+}
+
+.toppa{
+    margin-top: 20px;
+    text-align: center;
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+    color: #2f93a3;
+}
+.home_tab_top{
+    background-color: #9E9E9E;
+}
+
+
+
+.tool{
+    padding-top: 10px;
+}
+
+.top-drink{
+    color: #2f93a3;
+}
+.item-name{
+    text-align: center;
+}
+
+@media (max-width:480px){
+    .home3_topbanner{
+        display: none;
+
+    }
+    .prodtcts-list div{
+        width: 90px !important;
+        margin: 4px !important ;
+
+    }
+    .prodtcts-list{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}   

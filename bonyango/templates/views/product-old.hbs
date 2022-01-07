@@ -1,0 +1,382 @@
+<link rel="preload" as="style" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+
+{{#with product}}
+    <div class="container" id="product-section"
+         data-product="{{_id}}"
+         itemscope itemtype="http://schema.org/Product">
+        <div class="row">
+            <div class="col-md-4">
+                <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit'}})">
+                    <img itemprop="image"
+                        src="{{cloudinaryUrl image width=100 height=100  crop='fit'}}" 
+                        data-src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
+                        class="image-responsive" style="min-height: 380px; max-height: 400px; margin: 0 auto" />
+                </figure>
+                <div class="row product-thumbnails">
+                    {{#each altImages}}
+                        <div class="col-md-1 col-xs-1 col-sm-1">
+                            <div class="thumbnail">
+                                <img alt="{{{../name}}}"
+                                     data-img="{{cloudinaryUrl this crop='fit'}}"
+                                     src="{{cloudinaryUrl this width=24 height=24 crop='fit'}}"/>
+                            </div>
+                        </div>
+                    {{else}}
+                        <div class="col-md-1 col-xs-1 col-sm-1">
+                            <div class="thumbnail">
+                                <img height="24" width="24" data-img="{{cloudinaryUrl image crop='fit'}}"
+                                     src="{{cloudinaryUrl image width=24 height=24 crop='fit'}}"/>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 style="margin: 0; color: black !important;" itemprop="name">{{{name}}}</h1>
+                    </div>
+                </div><!-- end row-->
+
+                <div class="row">
+                    <div class="col-md-5 bottom-rule">
+                        <h2 style="margin-top:5px" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency">{{currency}}</span>
+                            {{#if percentOffer}}
+                                <span>
+                                    <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                        <span>{{formatNumber price}}</span>
+                                    </span>
+                                    <span itemprop="price" content="{{offerPrice}}" class="product-price" id="product-price">
+                                        {{formatNumber offerPrice}}
+                                    </span>
+                                </span>
+                            {{else}}
+                                <span itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
+                            {{/if}}
+                        </h2>
+                    </div>
+
+                    {{#ifgt options.length 1}}
+                        <div class="col-md-2" style="padding-top: 4px;">Option:</div>
+                        <div class="col-md-3">
+                            <select id="change-quantity" class="quantity" style="width: 134px; height: 40px;">
+                                {{#each options}}
+                                    <option data-offer="{{offerPrice}}" value="{{price}}" {{#ifeq ../price price}}selected{{/ifeq}}>
+                                        {{quantity}}
+                                    </option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    {{else}}
+                        <div class="col-md-5">
+                            <h2 style="margin: 5px 0 0 0;">{{{quantity}}}</h1>
+                        </div>
+                    {{/ifgt}}
+                </div>
+
+                {{#if alcoholContent}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            Alcohol content <span class="monospaced label label-default">{{alcoholContent}}%</span>
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if countryOfOrigin}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            Country Of Origin <span class="monospaced label label-default">{{countryOfOrigin}}</span>
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if howToOpen}}
+                    <div class="row">
+                        <div class="col-md-12">
+                            How to open <span class="monospaced label label-default">{{{howToOpen}}}</span>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                {{#if brand.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                            <p class="description">
+                                Brand: <a href="/{{cleanId brand.name}}">{{brand.name}}</a>
+                            </p>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                <div class="row">
+                    <div class="col-md-4 text-left">
+                        {{#if inStock}}
+                            <span class="monospaced label label-success">In Stock</span>
+                        {{else}}
+                            <span class="monospaced label label-warning">Out of Stock</span>
+                        {{/if}}
+                    </div>
+                </div><!-- end row -->
+
+                <div class="row add-to-cart-wrapper">
+                    <div class="col-md-5 product-qty">
+						<span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty" style="width: 46px;color: black !important;">
+						  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+						</span>
+                        <input id="pieces" class="pieces btn btn-default btn-lg btn-qty" style="width: 48px;color: black !important;" value="1"/>
+                        <span id="pieces-minus" class="pieces-minus btn btn-default btn-lg btn-qty"
+                              style="width: 46px;color: black !important;">
+							<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+						</span>
+                    </div>
+                    <div class="col-md-5" style="margin-top: 5px">
+                        {{#if inStock}}
+                            <image src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png" 
+                                alt="Add to Cart"
+                                class="add-to-cart" 
+                                data-qty="{{quantity}}" data-product="{{_id}}" 
+                                style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
+                            </image>
+                        {{/if}}
+                        <!--<button onclick="window.location='/checkout'" data-product="{{_id}}" style="width: 121px;"-->
+                        <!--class="btn btn-lg btn-brand btn-full-width">-->
+                        <!--Checkout-->
+                        <!--</button>-->
+                    </div>
+                </div><!-- end row -->
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        {{#each tags}}
+                            <span class="label label-primary">
+                                <a href="/{{{cleanId this}}}">{{{this}}}</a>
+                            </span>
+                        {{/each}}
+                        {{#if no}}
+                            <span class="monospaced">No.{{no}}</span>
+                        {{/if}}
+                    </div>
+                </div><!-- end row -->
+
+                <div class="row">
+                    <div class="col-md-12 bottom-rule top-10">
+                        {{#if ../page.canonical}}	
+                            <!-- Facebook -->
+                            <a href="http://www.facebook.com/sharer.php?u={{../page.canonical}}" target="_blank">
+                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
+                            </a>
+                            
+                            <!-- Twitter -->
+                            <a href="https://twitter.com/share?url={{../page.canonical}}&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" target="_blank">
+                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
+                            </a>
+                            
+                            <!-- Google+ -->
+                            <a href="https://plus.google.com/share?url={{../page.canonical}}" target="_blank">
+                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/google.png" alt="Google" />
+                            </a>	
+                                                
+                            <!-- LinkedIn -->
+                            <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{../page.canonical}}" target="_blank">
+                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
+                            </a>
+                            
+                            <!-- Pinterest
+                            <a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());">
+                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/pinterest.png" alt="Pinterest" />
+                            </a>
+                             -->
+                             
+                        {{/if}}
+                    </div>
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    {{#if ../contactNumber}}
+                        <div class="col-md-12 top-10">
+                            <p>
+                                <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+                                To order by telephone, please call
+                                <a href="tel:{{../contactNumber}}">{{../contactNumber}}</a>
+                            </p>
+                        </div>
+                    {{/if}}
+                </div><!-- end row -->
+            </div>
+            <div class="col-md-12 more-details">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    {{#if description}}
+                        <li role="presentation" class="active">
+                            <a href="#description"
+                               aria-controls="description"
+                               role="tab"
+                               data-toggle="tab">Description</a>
+                        </li>
+                    {{/if}}
+                    {{#if youtubeUrl}}
+                        <li role="presentation">
+                            <a href="#youtube" aria-controls="youtube" role="tab" data-toggle="tab">Youtube</a>
+                        </li>
+                    {{/if}}
+                    <li role="presentation">
+                        <a href="#reviews" aria-controls="reviews" role="tab" data-toggle="tab">Reviews</a>
+                    </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    {{#if description}}
+                        <div role="tabpanel" class="tab-pane active" id="description">
+                            {{{description}}}
+                        </div>
+                    {{/if}}
+                    <!-- Youtube video-->
+                    {{#if youtubeUrl}}
+                        <div role="tabpanel" class="tab-pane top-10" id="youtube">
+                            {{#if ../isMobile}}
+                                <iframe width="320" height="180" 
+                                    src="{{youtubeUrl}}" 
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                    frameborder="0" allowfullscreen>
+                                </iframe>
+                            {{else}}
+                                <iframe width="560" height="315" 
+                                    src="{{youtubeUrl}}" 
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                    frameborder="0" allowfullscreen>
+                                </iframe>
+                            {{/if}}
+                        </div>
+                    {{/if}}
+                    <!-- End youtube video-->
+
+                    <div role="tabpanel" class="tab-pane" id="reviews">
+                        <div class="row">
+                            <div class="col-md-12 {{#if ../userRating}}rated{{else}}unrated{{/if}}">
+                                <span class="glyphicon glyphicon-star{{#ifgte 0 averageRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+                                <span class="glyphicon glyphicon-star{{#ifgte 1 averageRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+                                <span class="glyphicon glyphicon-star{{#ifgte 2 averageRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+                                <span class="glyphicon glyphicon-star{{#ifgte 3 averageRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+                                <span class="glyphicon glyphicon-star{{#ifgte 4 averageRatings}}-empty{{/ifgte}}"
+                                    aria-hidden="true">
+                                </span>
+
+                                <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                                    <span class="label label-success">
+                                        <span itemprop="ratingValue">{{formatNumber averageRatings 1}}</span> *
+                                    </span>&nbsp;
+
+                                    {{#if ratingCount}}
+                                        <span itemprop="ratingCount" class="monospaced">{{ratingCount}}</span> reviews.
+                                    {{else}}
+                                        <span itemprop="ratingCount" class="monospaced">1</span> reviews.
+                                    {{/if}}
+
+                                    {{#unless ../userRating}}
+                                        <span class="monospaced right">Rate {{truncate name 25}}!</span>
+                                    {{/unless}}
+                                </span>
+
+                            </div>
+                        </div><!-- end row -->
+                        
+                        {{#if reviews}}{{>productReview}}{{/if}}
+                    </div>
+                </div>
+            </div>
+
+            {{#if ../related}}
+            <div style="border-top: 1px solid lightgray;" class="similar-products col-md-12">
+                <h2 style="font-size: 15px;">Other's also ordered..</h2>
+                    {{#each ../related}}
+                        <div class="col-md-2">
+                            {{>product2}}
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+            <!-- end row -->
+            {{/if}}
+
+            {{#if ../similar}}
+            <div style="border-top: 1px solid lightgray;" class="similar-products col-md-12">
+                <h2 style="font-size: 15px;">You may also like..</h2>
+                    {{#each ../similar}}
+                        <div class="col-md-2">
+                            {{>product2}}
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+            <!-- end row -->
+            {{/if}}
+        <div class="row">
+
+        </div>
+    </div><!-- end container -->
+    
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org/",
+  "@type": "Product",
+  "name": "{{{name}}}",
+  "image": [
+    "{{cloudinaryUrl image crop='fit' width='300'}}"
+   ],
+  "description": "{{{truncate (cleanHtml description) 500 ' '}}}",
+  "brand": {
+    "@type": "Thing",
+    "name": "{{{brand.name}}}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "bestRating": "5",
+    "ratingValue": "{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}",
+    "ratingCount": "{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}"
+  } 
+  {{#if price}},
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "{{currency}}",
+    "price": "{{price}}", 
+    {{#if percentOffer}}
+    "highPrice": "{{price}}",
+    "lowPrice": "{{offerPrice}}",  
+    {{/if}}
+    "priceValidUntil": "{{priceValidUntil}}",
+    "availability": "http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}",
+    "seller": {
+      "@type": "Organization",
+      "name": "{{../title}}"
+    }
+  }{{/if}}
+}
+</script>
+
+{{/with}}
+
+<script>
+    window.minifiedMenu = true;
+    $(document).ready(function () {
+        if (addaffix) addaffix();
+        //$('.tab-content .tab-pane').scrollbar();
+        //$(".similar-products").owlCarousel({items:12})
+
+        {{#if userRating}}
+            var index = Math.min(5,{{userRating.rating}});
+            for (var i = 0; i < index; i++)
+                $(".rated .glyphicon").eq(i).css("color", "orange");
+        {{/if}}
+    })
+</script>

@@ -1,0 +1,176 @@
+<style>
+    .featured-image img.img-responsive {
+        min-height: 150px;
+        max-height: 150px;
+    }
+
+    a.more-link {
+        background: #2f93a3 !important;
+        padding: 8px 14px 9px 35px;
+        color: white  !important;
+        border-radius: 19px;
+    }
+
+    a.more-link:after{
+        content: '>';
+        padding: 10px 0px 10px 39px;
+    }
+
+    .grid-container{
+        display: grid;
+        grid-template-columns: auto auto;
+        
+
+    }
+</style>
+<div class="container">
+    {{#if brand}}
+        <div class="row">
+            {{>brand}}
+        </div>
+    {{/if}}
+</div>
+
+{{#if offers.length}}
+    <div class="container">
+        <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
+            {{#each offers}}
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
+                    itemscope itemtype="http://schema.org/Product"
+                    style="box-shadow:3px 3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                    {{>product}}
+                </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <a href="http://bit.ly/2OZfVz1">
+                <img class="mobile-only"  width="100%" src="https://res.cloudinary.com/dyc0ieeyu/image/upload/c_fit,w_350/pages/WhatsApp_Image_2021-01-28_at_20.45.24_eopi7x.jpg"/>
+                <img class="desktop-only" width="100%" src="https://res.cloudinary.com/dyc0ieeyu/image/upload/c_fit,w_700/pages/WhatsApp_Image_2021-01-28_at_17.13.47_d3fo7n.jpg"/>
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <h2 class="home_featured_title home-title page-title">
+                    {{#each page.h1s}}
+                        {{#ifeq @index 0}}
+                            <span class="category-name">{{{this}}}</span>
+                        {{/ifeq}}
+                    {{else}}
+                        <span class="category-name">Popular Drinks.</span>
+                    {{/each}}    
+                        
+                </h2>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+        
+        <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
+            {{#each popular}}
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}"
+                    itemscope itemtype="http://schema.org/Product"
+                    style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                    {{>product}}
+                </div>
+            {{/each}}
+        </div>
+        
+        {{#if brandFocus.length}}
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
+                    <h2 class="home_featured_title home-title page-title">
+                        {{#ifgt page.h1s.length 1}}
+                            {{#each page.h1s}}
+                                {{#ifeq @index 1}}
+                                    <span class="category-name">{{{this}}}</span>
+                                {{/ifeq}}
+                            {{else}}
+                                <span class="category-name">Brand Focus</span>
+                            {{/each}}  
+                        {{else}}
+                            <span class="category-name">Brand Focus</span>   
+                        {{/ifgt}}
+                    </h2>
+                </div>
+                <div class="col-sm-4"></div>
+            </div>
+            
+            <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
+                {{#each brandFocus}}
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
+                        itemscope itemtype="http://schema.org/Product"
+                        style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                        {{>product}}
+                    </div>
+                {{/each}}
+            </div>
+        {{/if}}
+    </div>
+{{else}}
+    {{#ifgt groupedProducts.length 2}}  
+        {{#each groupedProducts}}
+            <div class="container">
+                {{#if key}}
+                    <div class="row">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <h2 class="home_featured_title home-title page-title">
+                                <span class="category-name">{{key}}</span>
+                            </h2>
+                        </div>
+                        <div class="col-sm-4"></div>
+                    </div>
+                {{/if}}
+
+                <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
+                    {{#each products}}
+                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
+                            itemscope itemtype="http://schema.org/Product"
+                            style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                            {{>product}}
+                        </div>
+                    {{/each}}
+                </div>
+
+                
+                {{#if key}}
+                {{#if hasMore}}
+                    <div class="row" style="text-align: center;">
+                        <a class="more-link" href="/{{cleanId key}}">More</a>
+                    </div>
+                {{/if}}
+                {{/if}}
+            </div>
+        {{/each}}
+    {{else}}
+        {{#if products.length}}
+            <div class="container">
+                <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
+                    {{#each products}}
+                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
+                            itemscope itemtype="http://schema.org/Product"
+                            style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                        
+                            {{>product}}
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        {{else}}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h2 style="font-size: 18px;">No results found!</h2>
+                        <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/no_results.png"/>
+                        <br/>
+                        <a href="/">Back to Today's Offers</a>
+                    </div>
+                </div>    
+            </div>
+        {{/if}}
+    {{/ifgt}}
+{{/if}}

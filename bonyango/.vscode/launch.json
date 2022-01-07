@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [{
+            "type": "node",
+            "protocol": "inspector",
+            "request": "launch",
+            "name": "Dial a Drink Kenya",
+            "program": "${workspaceFolder}/app.js",
+            "sourceMaps": false
+        },   
+        {
+            "type": "node",
+            "protocol": "inspector",
+            "request": "launch",
+            "name": "Dial a Drink Kenya - Workers",
+            "program": "${workspaceFolder}/app-workers.js",
+            "sourceMaps": false
+        }
+    ]
+}

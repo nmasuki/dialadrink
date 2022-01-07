@@ -1,0 +1,23 @@
+<li data-cartid="{{cartId}}" class="list-group-item d-flex justify-content-between lh-condensed row">
+    <div class="col-md-4 col-sm-4">
+        <img class="cart-image" src="{{cloudinaryUrl image crop='fit' height=52}}" style="width: 52px; height: 52px">
+    </div>
+    <div class="col-md-8 col-sm-8">
+        <h4 class="my-0">
+            <a href="/{{product.href}}">{{product.name}}&nbsp;{{quantity}}</a>
+            <a href='#' class='close cart-remove' data-dismiss='alert'>&times;</a>    
+        </h4>
+        <small class="text-muted">{{truncate (cleanHtml product.description) 50}}</small>
+        <small class="text-muted">
+            <span class="cart-pieces">{{pieces}}</span> piece{{#ifgt pieces 1}}s{{/ifgt}}
+            @<span class="cart-currency">KES</span>
+            <stan class="cart-cost">{{price}}</stan>
+        </small>
+        <div class="right">
+            <span class="text-muted">
+                <span class="cart-currency">KES</span>
+                <stan class="cart-price">{{formatNumber (prod pieces price)}}</stan>
+            </span>
+        </div>
+    </div>
+</li>

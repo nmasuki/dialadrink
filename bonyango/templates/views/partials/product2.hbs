@@ -1,0 +1,38 @@
+<div class="featured-image"
+     style="text-align :center; box-shadow:3px 3px 3px #CFD8DC; boarder-radius: 3px; margin: 5px">
+    <a href="{{productUrl href}}" title="{{name}}" style="display :block; color: black;">
+        <div class="item-name"
+             style="text-align:center; justify-content :center; color: black;min-height: 154px">
+
+            <img src="{{placeholderImg}}" data-src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
+                 class="img-responsive" itemprop="image"
+                 style="margin: auto; max-height: 120px;"/>
+
+            <div class="product-details">
+                <a href="{{productUrl href}}" title="{{name}}">
+                    <div itemprop="name" class="drinks-name"
+                         style="font-size: 12px!important; color: black;white-space: nowrap; height: auto">
+                        {{{truncate name 15}}}
+                    </div>
+                </a>
+                <div style="font-size: 12px !important;">{{quantity}}</div>
+                <div style="font-size: 12px !important;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
+                    <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
+                    <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
+                    <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
+                    <span itemprop="priceCurrency">{{currency}}</span>
+                    {{#if percentOffer}}
+                        <span>
+                            <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                <span>{{formatNumber price}}</span>
+                            </span>
+                            <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                        </span>
+                    {{else}}
+                        <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </a>
+</div>

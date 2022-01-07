@@ -1,0 +1,68 @@
+<div class="container">
+	<div class="row page-with-contact-form">
+		<div class="contact-detail col-md-6">
+			<h2>Our Address</h2>
+			<p>Let Dial a Drink Kenya make your drinking as comfortable as your drink. We are just a call a way to quench your thirst. We operate swiftly to let your drink reach you in less than 45 minutes after confirming your order. Call us today and experience the convinience.</p>
+			<ul class="contact-info">
+				<li>
+					<span class="left-area icon-mobile icon"><i class="fa fa-mobile"></i></span>
+					<div class="righ-area">
+						<span>Call us</span> <a href="tel:{{contactNumber}}">{{contactNumber}}</a>
+					</div>
+				</li>
+
+				<li>
+					<span class="left-area icon-email icon"><i class="fa fa-envelope-o"></i></span>
+					<div class="righ-area"><a href="mailto:order@dialadrinkkenya.com">order@dialadrinkkenya.com</a></div>
+				</li>
+				<li>
+					<span class="left-area icon-address icon"><i class="fa fa-map-marker"></i></span>
+					<div class="righ-area"><span>Taveta Road, Nairobi City, Kenya</span></div>
+				</li>
+				<li>
+					<span class="left-area icon-time icon"><i class="fa fa-calendar"></i></span>
+					<div class="righ-area">
+						<span>From Monday to Saturday</span> <span>08.00 hrs to 20:00 hrs</span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="col-sm-8 col-md-6">
+			{{#if enquirySubmitted}}
+			<h3>Thanks for getting in touch.</h3>
+			{{else}}
+			<form method="post">
+				<input type="hidden" name="action" value="contact">
+				<div class="form-group {{#if validationErrors.name}}has-error{{/if}}">
+					<label>Name</label>
+					<input type="text" name="name.full"  class="form-control" value="{{formData.[name.full]}}">
+				</div>
+				<div class="form-group {{#if validationErrors.email}}has-error{{/if}}">
+					<label>Email</label>
+					<input type="email" name="email" class="form-control" value="{{formData.email}}">
+				</div>
+				<div class="form-group">
+					<label>Phone</label>
+					<input type="text" name="phone" placeholder="(optional)" class="form-control" value="{{formData.phone}}">
+				</div>
+				<div class="form-group {{#if validationErrors.enquiryType}}has-error{{/if}}">
+					<label>What are you contacting us about?</label>
+					<select name="enquiryType" class="form-control">
+						<option value="">(select one)</option>
+						{{#each enquiryTypes}}
+						<option value="{{value}}">{{label}}</option>
+						{{/each}}
+					</select>
+				</div>
+				<div class="form-group {{#if validationErrors.message}}has-error{{/if}} ">
+					<label>Message</label>
+					<textarea name="message" placeholder="Leave us a message..." rows="4" class="form-control">{{formData.message}}</textarea>
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary">Send</button>
+				</div>
+			</form>
+			{{/if}}
+		</div>
+	</div>
+</div>

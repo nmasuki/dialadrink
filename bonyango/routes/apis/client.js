@@ -1,0 +1,196 @@
+var keystone = require('keystone');
+var Client = keystone.list("Client");
+var Order = keystone.list("Order");     
+
+var router = keystone.express.Router();
+
+function getClientByReq(req, res, next){
+    var filter = { $or:[]};
+
+    req.body = req.body || {};
+    req.params = req.params || {};
+    req.query = req.query || {};
+    var id = req.body._id || req.params.id || req.query.id;
+
+    if(id) filter.$or.push({ _id: id });
+    
+    if(req.body.phoneNumber || req.query.mobile){
+        var phoneNumber = req.body.phoneNumber || req.params.mobile || req.query.mobile;
+        filter.$or.push({ phoneNumber: phoneNumber.cleanPhoneNumber() });
+        filter.$or.push({ phoneNumber: phoneNumber.cleanPhoneNumber().replace(/\+?254/, "0") });
+        filter.$or.push({ phoneNumber: phoneNumber });
+    }
+
+    Client.model.findOne(filter)
+        .exec((err, client) => {
+            if (err)
+                return res.send({
+                    response: "error",
+                    message: "Error while reading client. " + err
+                });
+            else if (!client) {
+                Order.model.findOne({ client:  id })
+                    .exec((err, order) => {
+                        if (err || !order || !order.delivery || !order.phoneNumber)
+                            return res.send({
+                                response: "error",
+                                message: "Error while reading client. " + (err || "")
+                            });
+
+                        filter = {
+                            $or: [
+                                { phoneNumber: order.phoneNumber }, 
+                                { phoneNumber: order.phoneNumber.cleanPhoneNumber() }, 
+                                { phoneNumber: order.phoneNumber.cleanPhoneNumber().replace(/^254/, "0") }
+                            ].distinct()
+                        };
+
+                        Client.model.findOne(filter)
+                            .exec((err, client) => {
+                                if (err)
+                                    return res.send({
+                                        response: "error",
+                                        message: "Error while reading client. " + err
+                                    });
+
+                                if (!client) {
+                                    client = new Client.model(order.delivery);
+                                    client.update(err => next(client));
+                                }else
+                                    next(client);
+                            });
+                        });
+            } else {
+                next(client);
+            }
+        });
+}
+
+router.get('/', function(req, res, next){
+    var filter = {};
+
+    var page = parseInt(req.query.page || "1") || 1;
+    var pageSize = parseInt(req.query.pageSize || 5000);
+    var skip = (page - 1) * pageSize;
+    console.log(
+        `Getting clients for ${res.locals.app || 'app'}..`, 
+        "page:", page, "pageSize:", pageSize, "skip:", skip
+    );
+
+    if (req.query.query && req.query.query.trim()) {
+        var fields = ["firstName", "lastName", "phoneNumber", "houseNumber", "username"];
+        var regexParts = req.query.query.trim().split(' ')
+            .filter(q => q.trim())
+            .map(q => new RegExp(q.trim().escapeRegExp(), "i"));
+             
+        filter.$or = [];
+        fields.forEach(f => {
+            regexParts.forEach(regex => {
+                x = {};
+                x[f] = regex;
+                filter.$or.push(x);
+            });
+        });
+    }
+    
+    if (res.locals.app == "com.dialadrinkkenya.rider") {
+        
+    } else if (res.locals.app == "com.dialadrinkkenya.office") {
+        
+    } else if (res.locals.appUser) {
+        filter.$and = filter.$and || [];
+        filter.$and.push({
+            phoneNumber: {
+                $in: [
+                    res.locals.appUser.phoneNumber.cleanPhoneNumber(),
+                    res.locals.appUser.phoneNumber.cleanPhoneNumber().replace(/^\+?245/, "0")
+                ].distinct()
+            }
+        });
+    } else {
+         return res.send({
+             response: "error",
+             message: "Not Authorized"
+         });
+    }
+
+    var sort = {};
+	if(req.query.sort){
+		var sortParts = req.query.sort.split(" ").filter(s => !!s);
+		sort[sortParts[0]] = (sortParts[1] || "ASC").toUpperCase() == "ASC"? 1: -1;
+	} else{
+		sort = { createdDate: -1 };
+    }
+    
+    Client.model.find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(pageSize)
+        .exec((err, clients) => {
+            if (err){
+                console.log("Error!", err);
+                return res.send({
+                    response: "error",
+                    message: "Error while reading clients list. " + err
+                });
+            }
+
+            console.log("Found " + clients.length + " clients.");
+            var json = {
+                response: "success",
+                message: "",
+                data: clients.map(c => c.toAppObject())
+            };
+
+            res.send(json);
+        });
+
+});
+
+router.get('/:id', function (req, res, next) {
+    getClientByReq(req, res, client => {
+        res.send({
+            response: "success",
+            message: "",
+            data: client.toAppObject()
+        });
+    });
+});
+
+router.post("/", function (req, res) {
+    getClientByReq(req, res, client => {
+        var message = "";
+        if(!client){
+            client = new Client.model(req.body);
+            message = "Created new client!";
+        }else{
+            message = "Updating client record!";
+            var _rev = req.body._rev || req.body.__v;
+            if (_rev && _rev < client.__v)
+               return res.send({
+                   response: "error",
+                   message: `Document Conflict! Rev: ${client.__v} Your's: ${_rev}`,
+                   data: client.toAppObject()
+               });  
+
+            client.copyAppObject(req.body);     
+        }
+
+        client.update(err => {
+            if(err)
+                return res.send({
+                    response: "error",
+                    message: "Error while saving client details. " + err
+                });
+            
+            res.send({
+                response: "success",
+                message: message,
+                data: client.toAppObject()
+            });
+        });
+
+    });
+});
+
+module.exports = router;

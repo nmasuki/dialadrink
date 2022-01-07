@@ -1,0 +1,170 @@
+<!-- Loading body js script for {{env}} -->
+{{#ifeq env 'production'}}
+    <script src="/js/all.scripts.min.js"></script>
+{{else}}
+    <script src="/js/isotope.pkgd.min.js"></script>
+    <script src="/js/jquery/imagesloaded.pkgd.min.js"></script>
+    <script src="/js/jquery/jquery.flexslider.min.js"></script>
+    <script src="/js/jquery/jquery.zoom.min.js"></script>
+
+    <script src="/js/jquery/jquery.fancybox{{dotmin}}.js"></script>
+    <script src="/js/jquery/jquery.scrollbar{{dotmin}}.js"></script>
+    <script src="/js/owlcarousel/owl.carousel{{dotmin}}.js"></script>
+
+    <!---->
+    <script src="/js/polyfills{{dotmin}}.js"></script>
+    <script src="/js/countDown{{dotmin}}.js"></script>
+    <script src="/js/classie{{dotmin}}.js"></script>
+    <script src="/js/scripts{{dotmin}}.js"></script>
+    <script src="/js/cart{{dotmin}}.js"></script>
+    <script src="/js/app{{dotmin}}.js"></script>
+{{/ifeq}}
+
+<script>
+    function onTouchStart(e){
+        //Do nothing
+    }
+
+    $(document).ready(function () {
+        {{#if isMobile}}
+            document.addEventListener('touchstart', onTouchStart, {passive: true});
+        {{/if}}
+
+        $('body').imagesLoaded()
+            .always(function (instance) {
+                //console.log('all images loaded');
+            })
+            .done(function (instance) {
+                console.log('all images successfully loaded');
+            })
+            .fail(function () {
+                console.log('all images loaded, at least one is broken');
+            })
+            .progress(function (instance, image) {
+                var result = image.isLoaded ? 'loaded' : 'broken';
+                if (!image.isLoaded && location.href != image.img.src)
+                    console.warn('image is ' + result + ' for ' + image.img.src);
+            });
+
+        {{#if (contains page.h1 'Offer')}}
+            $("#countDownTimer").startCountDown();
+        {{/if}}
+
+        $(".owl-carousel").owlCarousel({
+            items: 1,
+            loop: true,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            autoplayHoverPause: true
+        });
+
+        if (location.search.search("sort_by=") === -1) {
+
+        } else {
+            if (location.search != "") {
+                var stpo = location.search.search("sort_by=") + 8,
+                        sortby_url = '.' + location.search.substr(stpo).split('='),
+                        sortby_url_a = sortby_url + " a";
+                $(sortby_url).addClass("active");
+                $('#sortButton .name').html($(sortby_url_a).html());
+            }
+            else {
+                $('.manual').addClass("active");
+            }
+        }
+    });
+
+    function addaffix(scr) {
+        if ($(window).innerWidth() >= 992) {
+            if (window.minifiedMenu || scr > 87) {
+                if (!$('#top').hasClass('affix')) {
+                    $('#top').addClass('affix').addClass('');
+                }
+            }
+            else {
+                if ($('#top').hasClass('affix')) {
+                    $('#top').prev().remove();
+                    $('#top').removeClass('affix').removeClass('');
+                }
+            }
+        }
+        else 
+            $('#top').removeClass('affix');
+    }
+
+    $(window).scroll(function () {
+        var scrollTop = $(this).scrollTop();
+        addaffix(scrollTop);
+    });
+    $(window).resize(function () {
+        var scrollTop = $(this).scrollTop();
+        addaffix(scrollTop);
+    });
+</script>
+
+<!-- Load Google Analytics -->
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-99954194-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<script type="text/html" id="cart-template">
+    {{>mini-cart-item}}
+</script>
+
+<script type="text/html" id="modal-template">
+    <!-- Modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header row">
+                    <div class="col-md-11">
+                        <h4 class="modal-title" style="text-transform: uppercase;" id="myModalLabel">
+                            Dial a Drink!
+                        </h4>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/html" id="loading-template">
+    <div class="modal fade loading" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body loading">
+					<span>
+						<img src="/assets/loader.gif" width="32" alt="Loading.."/> 
+						<span class="loading-msg">Loading! Please wait..</span>
+					</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- /Loading body js script for {{env}} -->

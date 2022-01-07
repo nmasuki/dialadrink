@@ -1,0 +1,11 @@
+node_modules/
+node_modules
+routes/cache
+public/office.apk
+.idea
+.env
+.env-*
+templates.js
+locks/
+/node_modules*
+/updates/0.0.2-download-products-images.js

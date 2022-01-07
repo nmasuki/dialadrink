@@ -1,0 +1,197 @@
+<table width="100%" cellspacing="0" cellpadding="20" border="0">
+    <tbody>
+    <tr>
+        <td style="padding:48px 48px 0" valign="top">
+            <div id="order-body_content_inner"
+                 style="color:#737373;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:14px;line-height:150%;text-align:left">
+                {{#with order}}
+                    <p style="margin:0 0 16px;">Hi {{delivery.firstName}} {{delivery.lastName}}</p>
+                    <p style="margin:0 0 16px;">
+                        Your order has been received and will be dispatched shortly. The order is as follows:
+                    </p>
+
+                    <!--p style="margin:0 0 16px;font-size: 0.9em; color: orange">
+                        Note: Due to the national curfew in Kenya. We will not be taking any orders past 12:00 Midnight. Please stay at home to eradicate COVID-19!
+                    </p-->
+
+                    <h2 style="color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
+                        Order #{{orderNumber}} {{formatDate orderDate 'MMM Do, YYYY'}}
+                    </h2>
+
+                    <div style="margin-bottom:40px">
+                        <table class="order-td"
+                               style="width:100%; font-family:'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;color:#737373;border:1px solid #e4e4e4"
+                               cellspacing="0" cellpadding="6" border="1">
+                            <thead>
+                            <tr>
+                                <th class="order-td" scope="col" style="text-align:left;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    Product
+                                </th>
+                                <th class="order-td" scope="col" style="text-align:left;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    Quantity
+                                </th>
+                                <th class="order-td" scope="col" style="text-align:right;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    Price
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#each cart}}
+                                {{#ifgt pieces 0}}
+                                    <tr class="order-order_item">
+                                        <td class="order-td" style="text-align:left;vertical-align:middle;border:1px solid #eee;word-wrap:break-word;color:#737373;padding:12px">
+                                            {{product.name}} {{quantity}}
+                                        </td>
+                                        <td class="order-td" style="text-align:left;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
+                                            {{pieces}} *
+                                            {{#if percentOffer}}
+                                                <span>
+                                                    <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                                        <span>{{price}}</span>
+                                                    </span>
+                                                    <span>{{offerPrice}}</span>
+                                                </span>
+                                            {{else}}
+                                                <span>{{price}}</span>
+                                            {{/if}}
+                                        </td>
+                                        <td class="order-td" align="right" style="text-align:right;vertical-align:middle;border:1px solid #eee;color:#737373;padding:12px">
+										<span class="order-amount amount">
+											<span class="order-currencySymbol">{{../currency}}</span>
+                                            {{#if percentOffer}}
+                                                <span>
+                                                    <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                                        <span>{{formatNumber (prod pieces price)}}</span>
+                                                    </span>
+                                                    <span >{{formatNumber (prod pieces offerPrice)}}</span>
+                                                </span>
+                                            {{else}}
+                                                <span>{{formatNumber (prod pieces price)}}</span>
+                                            {{/if}}
+										</span>
+                                        </td>
+                                    </tr>
+                                {{/ifgt}}
+                            {{else}}
+                                <tr class="order-order_item">
+                                    <td class="order-td" colspan="3" align="center">
+                                        <img style="height: 50px" src="{{{appUrl}}}/images/empty-cart.png" alt="Empty!"><br/>
+                                        You have no items in your cart!!<br/>
+                                        <a href="{{{appUrl}}}/">Continue shopping with Dial a Drink Kenya.</a>
+                                    </td>
+                                </tr>
+                            {{/each}}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th class="order-td" scope="row" colspan="2"
+                                    style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    Subtotal:
+                                </th>
+                                <td class="order-td"
+                                    style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    <span class="order-amount order-amount">
+                                        <span class="order-currencySymbol">{{currency}}</span>
+                                        {{formatNumber subtotal}}
+                                    </span>
+                                </td>
+                            </tr>
+
+                            {{#each chargesArr}}
+                            {{#if amount}}
+                            <tr>
+                                <th class="order-td" scope="row" colspan="2"
+                                    style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    {{name}}:
+                                </th>
+                                <td class="order-td"
+                                    style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    <span class="order-amount order-amount">
+                                        <span class="order-currencySymbol">{{../currency}}</span>
+                                        {{formatNumber amount}}                                        
+                                    </span>
+                                </td>
+                            </tr>
+                            {{/if}}
+                            {{/each}}
+
+                            {{#if promo.code}}
+                                <tr style="color: lightgreen">
+                                    <td class="order-td" scope="row" colspan="2"
+                                        style="text-align:left;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                        Promotion <i>({{#if promo.name}}{{promo.name}}{{else}}{{promo.code}}{{/if}})</i>
+                                        {{#ifne promo.discountType 'percent'}}{{promo.discountType}}{{else}}{{/ifne}}
+                                        {{promo.discount}}{{#ifeq promo.discountType 'percent'}}
+                                        %{{else}}{{/ifeq}} off on the total order.
+                                    </td>
+                                    <td class="order-td"
+                                        style="text-align:right;border-top-width:4px;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                        <span class="order-amount order-amount">
+                                            <span class="order-currencySymbol">{{currency}}</span>
+                                            ({{{formatNumber discount}}})
+                                        </span>
+                                    </td>
+                                </tr>
+                            {{/if}}
+                            <tr>
+                                <th class="order-td" scope="row" colspan="2"
+                                    style="text-align:right;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    Total:
+                                </th>
+                                <td class="order-td"
+                                    style="text-align:right;color:#737373;border:1px solid #e4e4e4;padding:12px">
+                                    <span class="order-amount order-amount">
+                                        <span class="order-currencySymbol">{{currency}}</span>
+                                        {{{formatNumber total}}}
+							        </span>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <p style="margin:0 0 16px">
+                        <b>Payment Method:</b> {{#if paymentMethod}}{{paymentMethod}}{{else}}Cash on delivery{{/if}}
+                        {{#ifne payment.method 'PesaPal'}}
+                        <p style="cursor: pointer;" onclick="goPay.click()">
+                            Note: You can still pay via MPESA/Visa/Master Card <a name="goPay" href="{{{../appUrl}}}/payment/{{orderNumber}}">here</a>
+                        </p>
+                        {{/ifne}}
+                    </p>
+
+                    <table id="order-addresses"
+                           style="width:100%;vertical-align:top;margin-bottom:40px;padding:0" cellspacing="0"
+                           cellpadding="0" border="0">
+                        <tbody>
+                        <tr>
+                            <td style="text-align:left;border:0;padding:0" width="50%" valign="top">
+                                <h2 style="color:#557da1;display:block;font-family:'Helvetica Neue',Helvetica,Roboto,Arial,sans-serif;font-size:18px;font-weight:bold;line-height:130%;margin:0 0 18px;text-align:left">
+                                    Delivery Address
+                                </h2>
+
+                                <address class="order-address"
+                                    style="padding:12px 12px 0;color:#737373;border:1px solid #e4e4e4">
+                                    {{delivery.firstName}} {{delivery.lastName}}<br>                                    
+
+                                    {{#if deliveryLocation.url}}
+                                        <a href="{{{deliveryLocation.url}}}">{{{deliveryAddress}}}</a><br>
+                                    {{else}}
+                                        {{{deliveryAddress}}}
+                                    {{/if}}
+                                    
+                                    {{#if delivery.phoneNumber}}<a href="tel:{{delivery.phoneNumber}}">{{delivery.phoneNumber}}</a>{{/if}}
+
+                                    <p style="margin:0 0 16px">
+                                        <a href="mailto:{{delivery.email}}" target="_blank">{{delivery.email}}</a>
+                                    </p>
+                                </address>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                {{/with}}
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

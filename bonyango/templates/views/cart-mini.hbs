@@ -1,0 +1,26 @@
+{{#ifgt cartItems.length 0}}
+	<div id="cart-content-mini">
+		<ul class="list-group mb-3" style="margin-bottom: 0;max-height: 528px;overflow: auto;">
+			{{#each cartItems}}
+                {{>mini-cart-item}}
+			{{/each}}
+			<li class="list-group-item d-flex justify-content-between lh-condensed row">
+				<div class="total" style="text-align: right">
+					<div class="col-md-4 col-sm-4">Total (<span class="cart-currency">KES</span>)</div>
+					<strong class="cart-total">
+						{{formatNumber (sumEvals cartItems 'c=>c.pieces*c.price')}}
+					</strong>
+				</div>
+			</li>
+			<li class="list-group-item d-flex justify-content-between lh-condensed row">
+				<button class="btn btn-primary" style="float: right" onclick="window.location='/checkout'"
+						id="update-cart" name="update">Checkout
+				</button>
+			</li>
+		</ul>
+	</div>
+{{else}}
+	<div class="loading cart-loading">
+		<img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart.png" alt="Empty!" style="height: 50px;"/> You have no items in your cart!!
+	</div>
+{{/ifgt}}

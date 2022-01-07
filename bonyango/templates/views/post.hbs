@@ -1,0 +1,31 @@
+<div class="container">
+	<div class="row">
+        <div class="col-sm-8 col-md-9">
+			<article>
+				<p><a href="/blog">&larr; back to the blog</a></p>
+				<hr>
+				<header style="z-index: 0">
+					<h1>{{data.blog.title}}</h1>
+					<h5>
+						{{{categoryList data.blog.categories prefix="Posted in "}}}
+						{{#if author.name.first}}by {{author.name.first}}{{/if}}
+					</h5>
+				</header>
+				<div class="post">
+					{{#if data.blog.image}}<img src="{{{cloudinaryUrl data.blog.image width=750 height=450 crop='fit' }}}" class="img-responsive">{{/if}}
+					{{{data.blog.content.extended}}}
+				</div>
+			</article>
+		</div>
+
+        <div class="col-sm-4 col-md-3">
+            <h2 style="margin-left: 20px">Categories</h2>
+            <div style="margin-top: 30px; margin-left: 20px" class="list-group">
+                <a href="/blog" class="{{#unless filters.category}}active{{/unless}} list-group-item">All Categories</a>
+                {{# each data.categories }}
+                    <a href="{{categoryUrl key}}" class="{{#ifeq ../filters.category key}}active{{/ifeq}} list-group-item">{{name}}</a>
+                {{/each}}
+            </div>
+        </div>
+	</div>
+</div>

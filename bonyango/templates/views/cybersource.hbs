@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="row">
+        <form id="payment_form" action="{{paymentUrl}}" method="post">            
+            <input type="submit" id="submit" name="submit" class="btn btn-primary btn-lg" value="Continue"/>
+
+            <fieldset id="confirmation" style="display: none;">
+                <legend>Review Payment Details</legend>
+                {{#each data}}
+                    <div>
+                        <span class="fieldName">{{@key}}:</span>
+                        <span class="fieldValue">{{this}}</span>
+                    </div> 
+                {{/each}}                
+            </fieldset>
+
+            {{#each data}}
+                <input type="hidden" id="{{@key}}" name="{{@key}}" value="{{this}}">
+            {{/each}}
+
+            <input type="hidden" id="signature" name="signature" value="{{signature}}">
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("submit").click();    
+</script>
+
+<style>
+a {
+    font-size: 1.0em;
+    text-decoration: none;
+}
+
+input[type=submit] {
+    margin-top: 10px;
+}
+
+span {
+    font-weight: bold;
+    width: 350px;
+    display: inline-block;
+}
+
+.fieldName {
+    width: 400px;
+    font-weight: bold;
+    vertical-align: top;
+}
+
+.fieldValue {
+    width: 400px;
+    font-weight: normal;
+    vertical-align: top;
+}
+</style>
