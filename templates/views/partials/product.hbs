@@ -24,7 +24,7 @@
             style="margin: auto"/>
 
         <div itemprop="name" class="drinks-name">
-            <a href="{{productUrl href}}" style="font-size: 12px; color: black;">
+            <a href="{{productUrl href}}" style="font-size: 15px; color: black;">
                 {{truncate name 25}}
                 {{#ifgt alcoholContent 0}}
                 (ABV {{{alcoholContent}}}%)
@@ -45,34 +45,22 @@
                     <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
                 </span>
             {{else}}
-
-            
                 <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
-            {{/if}} <br>
-            
-             {{!-- {{#each stockOptions}}
-                        
-                                <p style="color: rgb(10, 10, 10); font-size: 12px;"><b>{{quantity}} </b>: KES.{{formatNumber price}}</p>
-                           
-                        {{/each}}            --}}
+            {{/if}}             
         </div>
         <br>            
         <div class="dropdown zindex2">
             {{#if inStock}}
                 {{#ifgt stockOptions.length 1}}
-
-                <div style="background-color: #2f93a3; width: 170px; color: white;" data-qty="{{quantity}}" data-product="{{_id}}" >
-                    ADD TO CART
+                    <image src="https://res.cloudinary.com/dyc0ieeyu/image/upload/v1616081598/buynow2_eluftf.png" 
+                        alt="Add to Cart" class="add-to-cart-2" data-qty="{{quantity}}" data-product="{{_id}}" 
+                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
                         {{#ifgt options.length 1}}
-                            <span class="dropdown zindex2" >
+                            <span class="dropdown zindex2" style="left: -39px;">
                                 <i style="color: white;" class="fa fa-angle-down"></i>
                             </span>
                         {{/ifgt}}
-                      
-                    </div>    
-
-                    
-                                      
+                    </image>                        
                     <div class="dropdown-content">
                         {{#each stockOptions}}
                             <a href="#" class="add-to-cart"
@@ -91,17 +79,11 @@
                             </a>
                         {{/each}}
                     </div>
-
-                    
                 {{else}}
-
-                <div style="background-color: #2f93a3; width: 170px; color: white;" data-qty="{{quantity}}" data-product="{{_id}}" >
-                    ADD TO CART
-                    </div>
-                    {{!-- <image src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png" 
+                    <image src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/buynow.png" 
                         alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="{{_id}}" 
-                        style="font-size: 12px !important; padding: 5px; text-transform: none;max-width: 150px;cursor: pointer;">
-                    </image> --}}
+                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
+                    </image>
                 {{/ifgt}}
             {{else}}
                 <image src="https://res.cloudinary.com/nmasuki/image/upload/soldout.png"
