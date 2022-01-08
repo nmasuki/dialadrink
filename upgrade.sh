@@ -5,7 +5,7 @@ newnum=`expr $oldnum + 1`
 echo  "$oldnum => $newnum"
 sed -i "1s/.*/var CACHE_VERSION = $newnum;/" public/sw.js
 
-#grunt build
+grunt build
 git add .
 git commit -m "$HOSTNAME upgrade"
 git push
