@@ -1,7 +1,7 @@
 <style>
     .featured-image img.img-responsive {
-        min-height: 250px;
-        max-height: 250px;
+        min-height: 150px;
+        max-height: 150px;
     }
 
     a.more-link {
@@ -15,6 +15,13 @@
         content: '>';
         padding: 10px 0px 10px 39px;
     }
+
+    .grid-container{
+        display: grid;
+        grid-template-columns: auto auto;
+        
+
+    }
 </style>
 <div class="container">
     {{#if brand}}
@@ -26,11 +33,11 @@
 
 {{#if offers.length}}
     <div class="container">
-        <div class="row products-grid">
+        <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
             {{#each offers}}
-                <div class="col-md-3 col-lg-3 col-sm-12 single" 
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
                     itemscope itemtype="http://schema.org/Product"
-                    style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                    style="box-shadow:3px 3px 3px 3px #CFD8DC; margin-bottom :15px;">                
                     {{>product}}
                 </div>
             {{/each}}
@@ -62,9 +69,9 @@
             <div class="col-sm-4"></div>
         </div>
         
-        <div class="row products-grid">
+        <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
             {{#each popular}}
-                <div class="col-md-3 col-lg-3 col-sm-12 single" 
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}"
                     itemscope itemtype="http://schema.org/Product"
                     style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
                     {{>product}}
@@ -93,9 +100,9 @@
                 <div class="col-sm-4"></div>
             </div>
             
-            <div class="row products-grid">
+            <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                 {{#each brandFocus}}
-                    <div class="col-md-3 col-lg-3 col-sm-12 single" 
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
                         itemscope itemtype="http://schema.org/Product"
                         style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
                         {{>product}}
@@ -120,9 +127,9 @@
                     </div>
                 {{/if}}
 
-                <div class="row products-grid">
+                <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
-                        <div class="col-md-3 col-lg-3 col-sm-12 single" 
+                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
                             itemscope itemtype="http://schema.org/Product"
                             style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
                             {{>product}}
@@ -143,9 +150,9 @@
     {{else}}
         {{#if products.length}}
             <div class="container">
-                <div class="row products-grid">
+                <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
-                        <div class="col-md-3 col-lg-3 col-sm-12 single" 
+                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
                             itemscope itemtype="http://schema.org/Product"
                             style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                        
                             {{>product}}

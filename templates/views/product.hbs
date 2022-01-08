@@ -1,7 +1,19 @@
 <link rel="preload" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 <style type='text/css'>
 .price-options {
-    width: 100%;
+    width: 50%;
+    margin-top: 5px;
+    white-space: nowrap;
+    padding: 5px;
+    margin: 2px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    color: black;
+}
+
+.card {
+    width: 50%;
     margin-top: 5px;
     white-space: nowrap;
     padding: 5px;
@@ -13,11 +25,11 @@
 }
 
 input[type="radio"], input[type="checkbox"] {
-    margin: 4px 0 0;
+    margin: 2px 0 0;
     margin-top: 1px \9;
     line-height: normal;
     height: 20px;
-    width: 16px;
+    width: 12px;
 }
 
 </style>
@@ -55,16 +67,102 @@ input[type="radio"], input[type="checkbox"] {
             <div class="col-md-4">
                 <div class="row">
                     <div class="col-md-12">
-                        <h1 style="margin: 0; color: black !important;" itemprop="name">{{{name}}}</h1>
+                        <div class="row">
+                    <div class="col-md-4 text-left">
+                        {{#if inStock}}
+                            <span class="monospaced label label-success">In Stock</span>
+                        {{else}}
+                            <span class="monospaced label label-warning">Out of Stock</span>
+                        {{/if}}
+                    </div>
+                </div><!-- end row -->
+
+                         {{!-- <b>Product Name:</b> {{name}} --}}
+                        {{!-- <h4 style="margin: 0; color: black !important;" itemprop="name">{{{name}}}</h4 --}}
                     </div>
                 </div>
+
+
+                <div class="col-md-8" style="padding-left: 10px !important; color: black; font-size: 14px">
+                    <div class="col-md-12">
+
+                         <b>Product Name:</b> {{name}}
+                        {{!-- <h4 style="margin: 0; color: black !important;" itemprop="name">{{{name}}}</h4 --}}
+                    </div>
+                {{#if alcoholContent}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                            <b>Alcohol Content:</b> {{alcoholContent}}%
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if countryOfOrigin}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                            <b>Country of Origin: </b> <a href="/product-origin/{{cleanId countryOfOrigin}}">{{countryOfOrigin}}</a>                  
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if howToOpen}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                           <b>How to open: </b>{{{howToOpen}}}
+                        </div>
+                    </div>
+                {{/if}}
+                
+                {{#if brand.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                           <b> Brand: </b><a href="/brand/{{cleanId brand.name}}">{{brand.name}}</a>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                {{#if subCategory.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                           <b> Sub Category: </b><a href="/{{cleanId subCategory.name}}">{{subCategory.name}}</a>
+                        </div>
+                    </div>
+                {{/if}}
+                
+                <br/>
+                {{!-- <div class="row" style="padding-bottom: 3px;">
+                    <div class="col-md-12">
+                        {{#each tags}}
+                            <span class="label label-primary">
+                                <a href="/{{{cleanId this}}}">{{{this}}}</a>
+                            </span>
+                        {{/each}}
+                        {{#if no}}
+                            <span class="monospaced">No.{{no}}</span>
+                        {{/if}}
+                    </div>
+                </div> --}}
+
+                {{!-- <br/>
+                <div class="row" style="padding-bottom: 3px;">
+                    {{#if ../contactNumber}}
+                        <div class="col-md-12 top-10">
+                            <p>
+                                <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+                                To order by telephone, please call
+                                <a href="tel:{{../contactNumber}}">{{../contactNumber}}</a>
+                            </p>
+                        </div>
+                    {{/if}}
+                </div> --}}
+            </div>
 
                 <div class="row">
                     <div class="col-md-12 bottom-rule">
                         {{#ifgt options.length 1}}
                             <div class="change-quantity">  
                                 {{#each options}}
-                                    <label style="font-size: 24px;{{#unless inStock}}text-decoration: line-through;{{/unless}}" class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
+                                    <label style="font-size: 16px;{{#unless inStock}}text-decoration: line-through;{{/unless}}" class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
                                         style="margin-top:5px; white-space:nowrap;" 
                                         itemscope="itemscope" itemprop="offers" itemtype="http://schema.org/Offer">
                                         <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" 
@@ -88,7 +186,7 @@ input[type="radio"], input[type="checkbox"] {
                                 {{/each}}
                             </div>
                         {{else}}
-                            <h2 style="margin-top:5px; white-space:nowrap;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">              
+                            <h4 style="margin-top:5px; white-space:nowrap; color: orangered; padding-left: 10px;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">              
                                 <span itemprop="priceQuantity">{{quantity}} @</span>
                                 <span itemprop="priceCurrency">{{currency}}</span>
                                 {{#if percentOffer}}
@@ -103,20 +201,12 @@ input[type="radio"], input[type="checkbox"] {
                                 {{else}}
                                     <span itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
                                 {{/if}}  
-                            </h2>
+                            </h4>
                         {{/ifgt}}
                     </div>
                 </div>
                 
-                <div class="row">
-                    <div class="col-md-4 text-left">
-                        {{#if inStock}}
-                            <span class="monospaced label label-success">In Stock</span>
-                        {{else}}
-                            <span class="monospaced label label-warning">Out of Stock</span>
-                        {{/if}}
-                    </div>
-                </div><!-- end row -->
+                
 
                 <div class="row add-to-cart-wrapper">
                     <div class="col-md-5 product-qty">
@@ -150,12 +240,12 @@ input[type="radio"], input[type="checkbox"] {
                         {{#if ../page.canonical}}	
                             <!-- Facebook -->
                             <a href="https://www.facebook.com/sharer.php?u={{../page.canonical}}" target="_blank">
-                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
+                                <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
                             </a>
                             
                             <!-- Twitter -->
                             <a href="https://twitter.com/share?url={{../page.canonical}}&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" target="_blank">
-                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
+                                <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
                             </a>
                             
                             <!-- Google+ 
@@ -166,7 +256,7 @@ input[type="radio"], input[type="checkbox"] {
                                     
                             <!-- LinkedIn -->
                             <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{../page.canonical}}" target="_blank">
-                                <img style="width: 42px;" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
+                                <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
                             </a>
                             
                             <!-- Pinterest
@@ -181,74 +271,7 @@ input[type="radio"], input[type="checkbox"] {
                 <!-- end row -->
             </div>
 
-            <div class="col-md-3" style="padding-left: 20px !important; color: black; font-size: 20px">
-                {{#if alcoholContent}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            Alcohol Content: <span class="monospaced label label-info">{{alcoholContent}}%</span>
-                        </div>
-                    </div>
-                {{/if}}
-
-                {{#if countryOfOrigin}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            Country of Origin: <a href="/product-origin/{{cleanId countryOfOrigin}}"><span class="monospaced label label-info">{{countryOfOrigin}}</span></a>                  
-                        </div>
-                    </div>
-                {{/if}}
-
-                {{#if howToOpen}}
-                    <div class="row">
-                        <div class="col-md-12">
-                            How to open: <span class="monospaced label label-info">{{{howToOpen}}}</span>
-                        </div>
-                    </div>
-                {{/if}}
-                
-                {{#if brand.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            Brand: <a href="/brand/{{cleanId brand.name}}"><span class="monospaced label label-info">{{brand.name}}</span></a>
-                        </div>
-                    </div>
-                {{/if}}
-                
-                {{#if subCategory.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            Sub Category: <a href="/{{cleanId subCategory.name}}"><span class="monospaced label label-info">{{subCategory.name}}</span></a>
-                        </div>
-                    </div>
-                {{/if}}
-                
-                <br/>
-                <div class="row" style="padding-bottom: 3px;">
-                    <div class="col-md-12">
-                        {{#each tags}}
-                            <span class="label label-primary">
-                                <a href="/{{{cleanId this}}}">{{{this}}}</a>
-                            </span>
-                        {{/each}}
-                        {{#if no}}
-                            <span class="monospaced">No.{{no}}</span>
-                        {{/if}}
-                    </div>
-                </div>
-
-                <br/>
-                <div class="row" style="padding-bottom: 3px;">
-                    {{#if ../contactNumber}}
-                        <div class="col-md-12 top-10">
-                            <p>
-                                <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
-                                To order by telephone, please call
-                                <a href="tel:{{../contactNumber}}">{{../contactNumber}}</a>
-                            </p>
-                        </div>
-                    {{/if}}
-                </div>
-            </div>
+            
         </div>
 
         <div class="row">        
