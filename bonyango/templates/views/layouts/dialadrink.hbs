@@ -175,7 +175,7 @@
                                     <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png" height="30px" alt="Dial a Drink logo">
                                     <span style="padding-left: 10px; color: white;  font-size: 18px;">
                                          <a href="/">
-                                        <span><strong>Dial A Drink Kenya</strong></span>
+                                        <span><strong>DIAL A DRINK KENYA</strong></span>
                                         </a>
                                         
                                     </span>
@@ -185,17 +185,17 @@
                             </div> 
                         </li>
 
-                        <li class="is-mobile-currency currency_group">
+                        {{!-- <li class="is-mobile-currency currency_group">
                             <div class="currencies-switcher">
-                                <div class="nav-search" style="margin-top: {{#if isMobile}}8px;{{else}}0{{/if}} !important">
+                                <div class="nav-search" style="margin-top: {{#if isMobile}}10px;{{else}}0{{/if}} !important">
                                 <form class="search" action="#">
-                                    <input type="hidden" name="type" value="product"/>
+                                    <input type="hidden" name="type" value="product"/> --}}
                                     {{!-- <input type="image" {{#if isMobile}}data-mobile="true"{{/if}} src="{{#if isMobile}}/assets/icon-voice-search.svg{{else}}/assets/icon-search.png{{/if}}" alt="Go" id="search"> --}}
-                                    <input type="text" name="q" class="search_box" style="width: 300px;" placeholder="Search for a drink" value="" id="search_box"/>
+                                    {{!-- <input type="text" name="q" class="search_box" style="width: 300px; color:rgb(12, 12, 12)" placeholder="Search for a drink" value="" id="search_box"/>
                                 </form>
                             </div>
                             </div>
-                        </li>
+                        </li> --}}
 
                         <li style="float: right" class="is-mobile-cart">
                             <a href="/cart" title="Shopping Cart">
@@ -240,16 +240,25 @@
                 <div class="row">
                     <div class="main-header-inner">
                         <div class="nav-top">
-                        <div class="container fluid">
-                            <div class="nav-search col-md-6 " style="margin-top: !important;">
-                                 
+                        <div class="nav-search" style="margin-top: {{#if isMobile}}10px;{{else}}0{{/if}} !important">
+                                <form class="search" action="#">
+                                    <input type="hidden" name="type" value="product"/>
+                                    {{!-- <input type="image" {{#if isMobile}}data-mobile="true"{{/if}} src="{{#if isMobile}}/assets/icon-voice-search.svg{{else}}/assets/icon-search.png{{/if}}" alt="Go" id="search"> --}}
+                                    <input type="text" name="q" class="search_box" placeholder="Search for a drink..." value="" id="search_box"/>
+                                </form>
                             </div>
-                        </div>
                             <div class="nav-logo" {{#if isMobile}}style="display:none; color: #0a0808"{{/if}}>
                                 <h style="font-size: 28px;">
-                                    <a href="/">
+                                    {{!-- <a href="/">
                                         <strong><span style=" color: #0a0808">{{appTitle}}</span></strong>
-                                    </a>
+                                    </a> --}}
+                                    <span style="padding-left: 10px; color: white;  font-size: 18px;">
+                                         <a href="/">
+                                        <span><strong>DIAL A DRINK KENYA</strong></span>
+                                        </a>
+                                        
+                                    </span>
+
                                 </h>
                             </div>
 
