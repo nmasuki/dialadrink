@@ -7,11 +7,13 @@ require('./helpers/polyfills');
 var keystone = require('keystone');
 global.Handlebars = require('handlebars');
 
-if(process.env.NODE_ENV != "production")
-	var {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
+if(global.Handlebars.VERSION > '4.5.3'){
+	var {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
+	global.Handlebars = allowInsecurePrototypeAccess(global.Handlebars);
+}
 
 var handlebars = require('express-handlebars').create({
-	handlebars: process.env.NODE_ENV != "production"? allowInsecurePrototypeAccess(global.Handlebars): global.Handlebars,
+	handlebars: global.Handlebars,
 	defaultLayout: 'dialadrink',
 	partialsDir: 'templates/views/partials',
 	layoutsDir: 'templates/views/layouts',
