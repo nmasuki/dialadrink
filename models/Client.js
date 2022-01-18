@@ -225,7 +225,7 @@ Client.schema.virtual("imageUrl")
                 var opt =  { public_id: "users/" + client.name.cleanId() };
                 cloudinary.v2.uploader.upload(imageUrl, opt, (err, res) => {
                     if(err || !res)
-                        return console(`Error uploading ${imageUrl}\n${err || "Upload gave no response!"}`)
+                        return console.log(`Error uploading ${imageUrl}\n${err || "Upload gave no response!"}`)
                     client.image = res;
                 });
             }
