@@ -22,31 +22,40 @@
                 itemprop="image" alt="{{{name}}}"
                 class="img-responsive" 
             style="margin: auto"/>
-
-        <div itemprop="name" class="drinks-name">
-            <a href="{{productUrl href}}" style="font-size: 15px; color: black;">
-                {{truncate name 25}}
-                {{#ifgt alcoholContent 0}}
-                (ABV {{{alcoholContent}}}%)
-                {{/ifgt}}
-            </a>
-        </div>            
+           
         <div itemscope itemprop="offers" itemtype="http://schema.org/Offer">
             <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
             <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
             <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
-            <span itemprop="priceQuantity">{{quantity}}</span>   
-            <span itemprop="priceCurrency">{{currency}}</span>
-            {{#if percentOffer}}
-                <span>
-                    <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                        <span>{{formatNumber price}}</span>
-                    </span>
-                    <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
-                </span>
-            {{else}}
-                <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
-            {{/if}}             
+            <div itemprop="name" class="drinks-name">
+            <a href="{{productUrl href}}" style="font-size: 15px; color: black; font-family:'Times New Roman', serif;">
+                {{truncate name 25}}
+                {{#ifgt alcoholContent 0}}
+                <br><p style="color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%)</p>
+                {{/ifgt}}
+            </a>
+        </div> 
+            
+            <div style="font-size: 14px; font-family:'Times New Roman', serif; color: rgb(104, 95, 95);" >
+                        {{#each stockOptions}}
+                           <br> <a href="#" class="add-to-cart"
+                                data-qty="{{quantity}}" data-product="{{../_id}}">
+                                <span>{{quantity}}</span>
+                                <span itemprop="priceCurrency">{{currency}}</span>
+                                {{#if offerPrice}}
+                                    <span>
+                                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                            <span>{{formatNumber price}}</span>
+                                        </span>
+                                        <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                                    </span>
+                                {{else}}
+                                    <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
+                                {{/if}}
+                            </a>
+                        {{/each}}
+                    </div>
+
         </div>
         <br>            
         <div class="dropdown zindex2">
