@@ -3,6 +3,8 @@
  */
 var cartUtil = function () {
     var self = this;
+    self.locations = JSON.parse(sessionStorage['locations'] || '[]')
+
     var _cart = {}, _promo = null, _url = "/api/";
     var locationNai = {lat:-1.2829442, lng:36.8227554};
 
@@ -43,11 +45,13 @@ var cartUtil = function () {
     }
 
     function loadRegionData(location){
-        
+        if(self._loadingRegions && self._loadingRegions.state() != "resolved") 
+            return self._loadingRegions;
+
         if (!self.locations || !self.locations.length)
-            return $.get(_url + "locations").then(function(res) {
+            return self._loadingRegions = $.get(_url + "locations").then(function(res) {
                 if(res.response == "success"){
-                    self.locations = res.data;
+                    sessionStorage['locations'] = self.locations = res.data;
                     var cbd = self.locations.find(function(l){ return l.name == "CBD"; });
                     
                     if(cbd){
