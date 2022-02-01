@@ -19,6 +19,8 @@ if(!fs.existsSync(downloadDir))
     fs.mkdirSync(downloadDir);
 
 exports = module.exports = function (done) {
+    return  done();
+    
     console.log("Downloading product images...");
     Product.model.find({})
         .exec(function (err, products) {
