@@ -5,9 +5,9 @@ var WorkProcessor = require('../helpers/WorkProcessor');
 var self = module.exports = new WorkProcessor(getWork, doWork);
 
 mongoose.connect('mongodb://localhost:27017/lexir', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: false,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: false,
 });
 
 const IndustryMap = mongoose.model('Industry', new mongoose.Schema({}, { strict: false }))
@@ -25,17 +25,17 @@ function getWork(next, done) {
 
     var vowels = "AEIOUY";
     var mapping = industies.filter(i => i.modifiedDate > filter.modifiedDate.$gt).map(p => {
-        var map = {            
+        var map = {
             name: p.name, //:{ type: String, required: true },
             title: p.name, //:{ type: String, required: true },
-            abr: p.name.toUpperCase().split('').filter(c => (c||'').trim() && vowels.indexOf(c) < 0).splice(0, 5).join('')
+            abr: p.name.toUpperCase().split('').filter(c => (c || '').trim() && vowels.indexOf(c) < 0).splice(0, 5).join('')
         };
 
         return map;
     })
 
 
-    if(mapping.length)
+    if (mapping.length)
         console.log("ETLing " + mapping.length + " industries " + filter.modifiedDate.$gt.toISOString());
 
     next(null, mapping, done);
@@ -46,11 +46,11 @@ function doWork(err, industries, next) {
         return console.warn(err);
 
     return new Promise((resolve) => {
-        (function saveNext(){
+        (function saveNext() {
             var p = industries.pop();
-            if(!p) return resolve();
+            if (!p) return resolve();
 
-            var map = new IndustryMap(p);            
+            var map = new IndustryMap(p);
             map.save(saveNext);
         })();
     }).then(next);

@@ -51,7 +51,7 @@ var cartUtil = function () {
         if (!self.locations || !self.locations.length)
             return self._loadingRegions = $.get(_url + "locations").then(function(res) {
                 if(res.response == "success"){
-                    sessionStorage['locations'] = self.locations = res.data;
+                    sessionStorage['locations'] = JSON.stringify(self.locations = res.data);
                     var cbd = self.locations.find(function(l){ return l.name == "CBD"; });
                     
                     if(cbd){
