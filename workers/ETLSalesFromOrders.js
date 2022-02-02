@@ -8,12 +8,13 @@ var self = module.exports = new WorkProcessor(getWork, doWork);
 
 function getAppPaymentMethod(method){
     method = method || "";
+    
     //Cash,MPESA,PesaPal,COOP,Swipe On Delivery,Credit
     var mapping = {
         "Cash": ["Cash", "Cash on Delivery"],
         "MPESA": ["MPESA", "MPESA on Delivery"],
         "PesaPal": ["PesaPal"],
-        "COOP":["CyberSource"],
+        "COOP": ["CyberSource"],
     };
 
     for(var i in mapping){
@@ -26,9 +27,7 @@ function getAppPaymentMethod(method){
 }
 
 function getWork(next, done) {
-    var filter = {
-        orderDate: { $gt: new Date(self.worker.lastRun || '2021-01-01') }
-    };
+    var filter = { orderDate: { $gt: new Date(self.worker.lastRun || '2021-01-01') } };
 
     Order.model.find(filter)
         .deepPopulate('client,cart.product.priceOptions.option')
@@ -42,6 +41,7 @@ function getWork(next, done) {
                         .filter(x => !!x).join(",").split(",")
                         .distinctBy(x => x.toLowerCase().trim().replace(/[\W]+/, ""))
                         .join(", ");
+
                 var producIds = o.cart.selectMany(c => new Array(c.pieces || 1).join(',').split(',')
                     .map(x => c.product && c.product.id)).filter(x => !!x);
 
