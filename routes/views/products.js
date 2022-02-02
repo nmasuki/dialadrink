@@ -44,6 +44,7 @@ function index(req, res) {
             
             //locals.groupedProducts = keystone.list('Product').groupProducts(products, homeGroupSize); 
             locals.uifilters = keystone.list('Product').getUIFilters(products);
+            
             if (!Object.keys(locals.groupedBrands).length)
                 delete locals.groupedBrands;
 
