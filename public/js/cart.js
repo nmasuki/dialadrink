@@ -3,7 +3,7 @@
  */
 var cartUtil = function () {
     var self = this;
-    self.locations = JSON.parse(sessionStorage['locations'] || '[]')
+//    self.locations = JSON.parse(sessionStorage['locations'] || '[]')
 
     var _cart = {}, _promo = null, _url = "/api/";
     var locationNai = {lat:-1.2829442, lng:36.8227554};
