@@ -21,8 +21,6 @@ module.exports = function MoveSMS(sender) {
         if(_smsBalance)
             return Promise.resolve(_smsBalance);
 
-        setTimeout(function(){ _smsBalance = 0; }, 10000);
-
         return (_smsBalance = new Promise((resolve, reject) => {
             var url = apiUrl.format('balance');
             console.log("Getting SMS balance..");
@@ -35,11 +33,14 @@ module.exports = function MoveSMS(sender) {
                 success: function (response) {
                     var numbers = /[\d]+/.exec(response);
                     _smsBalance = parseFloat(numbers.pop() || "0");
+                    
+                    // Force lookup every 30 seconds
+                    setTimeout(function(){ _smsBalance = 0; }, 30 * 1000);
 
                     if(_smsBalance)
                         console.log("SMS balance:", _smsBalance);
                     else
-                        console.error("SMS balance:", _smsBalance);
+                        console.error("SMS balance:", response);
 
                     resolve(_smsBalance);
 

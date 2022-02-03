@@ -757,7 +757,7 @@ function handleProductSorting() {
         });
 
         /***/
-        var sortBy = app.getCookie("sortBy") || "popularity";
+        var sortBy = app.getCookie && app.getCookie("sortBy") || "popularity";
         $(".sort-products[data-sortby=" + sortBy + "]").trigger('click');
         /****/
     } else {
@@ -767,12 +767,8 @@ function handleProductSorting() {
     }
 }
 
-
-
 $(document).ready(function ($) {
-    document.addEventListener('touchstart', onTouchStart, {
-        passive: true
-    });
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
 
     if ($.fn.tooltip)
         $('[data-toggle="tooltip"]').tooltip();
@@ -790,41 +786,45 @@ $(document).ready(function ($) {
         e.stopPropagation();
     });
 
-    handleProductSorting();
+    setTimeout(function () {
 
-    loadParticles();
+        handleProductSorting();
 
-    ioLazyLoad();
+        loadParticles();
 
-    slider_main();
+        ioLazyLoad();
 
-    slider_product();
+        slider_main();
 
-    handleProductRating();
+        slider_product();
 
-    handleDropdown();
+        handleProductRating();
 
-    handleScrollTop();
+        handleDropdown();
 
-    handleSearchingAndPaging();
+        handleScrollTop();
 
-    handleSearchAutoComplete();
+        handleSearchingAndPaging();
 
-    colorwarches();
+        handleSearchAutoComplete();
 
-    handleQuantity();
+        colorwarches();
 
-    handleGridList();
+        handleQuantity();
 
-    toggleTagsFilter();
+        handleGridList();
 
-    handleMap();
+        toggleTagsFilter();
 
-    toggleLeftMenu();
+        handleMap();
 
-    updateScrollThumbsQS();
+        toggleLeftMenu();
 
-    addClassFirst();
+        updateScrollThumbsQS();
+
+        addClassFirst();
+
+    }, 100);
 });
 
 $(window).load(function () {
