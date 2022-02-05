@@ -19,11 +19,13 @@ function search(req, res, next) {
     //if (locals.page && locals.page._id && locals.page.content)
     //    return next();
 
-    var queryTitle = ((req.params.query || "").replace(/[^\w]+/g, " ").toProperCase()).replace(/\s(Whiskies|Whiskey|Wine|Gin)/g, "").trim()
+    req.params.query = req.params.query || req.params.q || "";
+    
+    var queryTitle = ((req.params.query || req.params.q || "").replace(/[^\w]+/g, " ").toProperCase()).replace(/\s(Whiskies|Whiskey|Wine|Gin)/g, "").trim()
     //Searching h1 title
     locals.page = Object.assign({ h1: queryTitle }, locals.page || {});
     locals.page.h1 = locals.page.h1 || queryTitle;        
-    locals.page.canonical = [keystone.get('url'), (req.params.query || "").cleanId()].filter(p => p).map(p => p.trim('/')).join('/');
+    locals.page.canonical = [keystone.get('url'), (req.params.query || req.params.q || "").cleanId()].filter(p => p).map(p => p.trim('/')).join('/');
 
     var homeGroupSize = process.env.HOME_GROUP_SIZE || 12;
 
