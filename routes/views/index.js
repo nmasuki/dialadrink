@@ -19,8 +19,8 @@ function search(req, res, next) {
     //if (locals.page && locals.page._id && locals.page.content)
     //    return next();
 
-    req.params.query = req.params.query || req.params.q || "";
-    
+    req.params.query = req.params.query || req.query.q || req.query.query || "";
+
     var queryTitle = ((req.params.query || req.params.q || "").replace(/[^\w]+/g, " ").toProperCase()).replace(/\s(Whiskies|Whiskey|Wine|Gin)/g, "").trim()
     //Searching h1 title
     locals.page = Object.assign({ h1: queryTitle }, locals.page || {});
@@ -232,6 +232,8 @@ function search(req, res, next) {
     } else
         next();
 }
+
+router.get("/search", search);
 
 router.get("/search/:query", search);
 

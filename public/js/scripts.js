@@ -738,7 +738,8 @@ function handleProductSorting() {
 
             $grid.isotope({ sortBy: sortBy, sortAscending: sortAscending });
             $grid.data("sortBy", sortBy).data("sortDir", sortDir);
-            app.setCookie("sortBy", sortBy).setCookie("sortDir", sortDir);
+
+            app.setCookie && app.setCookie("sortBy", sortBy).setCookie("sortDir", sortDir);
 
             console.log('Sorting by ' + sortBy + " " + sortDir);
 

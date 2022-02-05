@@ -65,7 +65,8 @@ var cartUtil = function () {
             });
 
         if (!location)
-            location = window.addressData && window.addressData.location;
+            location = window.addressData && window.addressData.location || {"lat":-1,"lng":36};
+
         var deliveryDistance = Math.round(10 * distanceFromNai(location))/10;
         
         var inBounds = function(location, bounds) {
@@ -336,7 +337,11 @@ var cartUtil = function () {
             var charges = self.getCharges() || {};
             for(var i in charges){
                 if(charges.hasOwnProperty(i))
+                try{
                     totalCharges += parceFloat(charges[i]);
+                }catch{
+                    
+                }
             }
 
             return amount + totalCharges - self.discount(amount);
