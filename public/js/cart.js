@@ -3,7 +3,7 @@
  */
 var cartUtil = function () {
     var self = this;
-//    self.locations = JSON.parse(sessionStorage['locations'] || '[]')
+    self.locations = JSON.tryParse(sessionStorage['locations'] || '[]');
 
     var _cart = {}, _promo = null, _url = "/api/";
     var locationNai = {lat:-1.2829442, lng:36.8227554};
@@ -12,9 +12,9 @@ var cartUtil = function () {
         if ((l.lat == l2.lat) && (l.lng == l2.lng)) {
             return 0;
         } else {
+            var theta = l.lng - l2.lng;
             var radllat = Math.PI * l.lat / 180;
             var radl2lat = Math.PI * l2.lat / 180;
-            var theta = l.lng - l2.lng;
             var radtheta = Math.PI * theta / 180;
 
             var dist = Math.sin(radllat) * Math.sin(radl2lat) + Math.cos(radllat) * Math.cos(radl2lat) * Math.cos(radtheta);
@@ -336,7 +336,7 @@ var cartUtil = function () {
             var charges = self.getCharges() || {};
             for(var i in charges){
                 if(charges.hasOwnProperty(i))
-                    totalCharges += charges[i];
+                    totalCharges += parceFloat(charges[i]);
             }
 
             return amount + totalCharges - self.discount(amount);
