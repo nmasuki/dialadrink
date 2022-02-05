@@ -320,8 +320,8 @@
 <main class="main-content" role="main" style="min-height: 400px">
     <section class="collection-heading" style="background-color:rgb(245, 240, 240);">
         <div class="collection-heading-wrapper">
-            <div class="container" style="padding-top: 8px">   
-                {{!-- {{#if isMobile}}
+            <div class="container" style="{{#unless isMobile}}padding-top: 8px{{/unless}}">   
+                {{!--#if isMobile}}
                     <div class="col-sm-4" style="font-size: 12px;">
                         {{#each navLinks}}                            
                             <a href="{{{href}}}">
@@ -342,7 +342,7 @@
                             {{/each}}
                         </div>
                     {{/unless}}
-                {{/if}}             --}}
+                {{/if--}}
 
                 {{#if page.bannerImages }}
                     <div class="row owl-carousel offset-0" data-items="1" data-autoplay="true" style="margin-bottom: 5px;">
