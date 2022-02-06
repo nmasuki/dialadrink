@@ -567,7 +567,9 @@ if (!String.prototype.encryptPassword)
         var crypto = require('crypto');
 
         salt = (salt || process.env.SALT || crypto.randomBytes(16).toString('hex'));
-        encryptedPassword = crypto.scryptSync(this.toString(), salt.toString(), 32).toString('hex')
+        encryptedPassword = crypto.scryptSync(this.toString(), salt.toString(), 32).toString('hex');
+
+        console.log("PASSWORD:", this.toString(), "SALT:", salt, "ENCRYPTED:", encryptedPassword)
         
         return {
             salt,
