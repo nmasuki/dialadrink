@@ -564,13 +564,10 @@ if (!String.prototype.truncate)
 
 if (!String.prototype.encryptPassword)
     String.prototype.encryptPassword = function (salt) {
-        var crypto = require('crypto');
+        var bcrypt = require('bcrypt');
 
-        salt = (salt || process.env.SALT || crypto.randomBytes(16).toString('hex'));
-        encryptedPassword = crypto.scryptSync(this.toString(), salt.toString(), 32).toString('hex');
-
-        console.log("PASSWORD:", this.toString(), "SALT:", salt, "ENCRYPTED:", encryptedPassword)
-        
+        salt = (salt || process.env.SALT || bcrypt.genSaltSync());
+        encryptedPassword = bcrypt.hashSync(this.toString(), salt.toString());
         return {
             salt,
             encryptedPassword
