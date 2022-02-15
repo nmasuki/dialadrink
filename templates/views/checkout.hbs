@@ -190,16 +190,16 @@
 
                     {{#if OkHiClientKey}}
                     <div class="row">
-                        <button class="btn btn-secondary" id="lets-okhi" style="display: block;">
-                            <img
-                                src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" />
-                            Location lookup
-                        </button>
-                        <br>
-                        <div class="row">
+                        <div class="row" style="padding-top: 15px">
                             <label for="email">Location details</label>
-                            <div id="lets-okhi-card"></div>
+                            <div id="lets-okhi" style="display: block;"></div>
                         </div>
+                        <br/>
+
+                        <!--button class="btn btn-secondary" id="lets-okhi" style="display: block;">
+                            <img src="https://res.cloudinary.com/nmasuki/image/upload/c_scale,e_colorize:100,w_16/v1571922955/icons/locate.png" />
+                            Location lookup
+                        </button-->
                     </div>
                     {{/if}}
 
@@ -353,25 +353,26 @@
 </div>
 
 {{#if OkHiClientKey}}
-    <script src="https://{{{OkHiEnv}}}api.okhi.io/v5/okweb?clientKey={{{OkHiClientKey}}}&branchId={{{OkHiBranch}}}&callback=initOkHi" async defer></script>
+    <script async defer src="https://{{{OkHiEnv}}}api.okhi.io/v5/okweb/v2?clientKey={{{OkHiClientKey}}}&branchId={{{OkHiBranch}}}&callback=initOkHi"></script>
     <script type="text/javascript">
         var initOkHi = function () {
-            window.okhiConfig = new window.okhi.OkHiConfig({
-                streetView: true,
-            });
-
-            window.okhiStyle = new okhi.OkHiStyle({
-                logo: '{{{appLogo}}}',
-                name: '{{{appTitle}}}',
-                color: '#2f93a3'
-            });
-
             {{#if userData.user }}
                 window.addressData = {
-                    user: {{{json  userData.user}}},
+                    user: {{{json userData.user}}},
                     location: {{{json userData.location}}}
                 }
             {{/if}}
+
+            window.okhiData = {
+                clientKey: '{{{OkHiClientKey}}}',
+                appLogo: '{{{appLogo}}}',
+                appName: '{{{appTitle}}}',
+                appVersion: '1.2.0.0',
+                style: {
+                    primaryColor: "#2f93a3",
+                    highlightColor: "#85FFC7"
+                }
+            }
 
             if(window.loadLocationCard) 
                 return window.loadLocationCard();
@@ -424,13 +425,6 @@
                 iframe.get(0).onload = function () { modal && modal.modal("hide"); }
             }, 500)
         {{/if}}
-
-        if ($('#lets-okhi').length) {
-            $("#addressInputs").find("[required]").removeAttr("required")
-        } else {
-            $('#lets-okhi').hide();
-            $("#addressInputs").attr("required", "true").show();
-        }
 
         $(document).on("click", ".billing-address button[type='submit']", function (e) {
             e.preventDefault();

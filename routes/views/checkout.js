@@ -161,9 +161,9 @@ router.get('/validatepromo/:promocode', function (req, res) {
 });
 
 function okHiIntegration(req, res, order, cartItems, next) {
-	var url = res.locals.OkHiEnv == "prod" ?
-		"https://server.okhi.co/v1/interactions" :
-		"https://sandbox-server.okhi.dev/v1/interactions";
+	var url = process.env.NODE_ENV == "production" 
+		? "https://server.okhi.co/v5/interactions" 
+		: "https://sandbox-server.okhi.dev/v5/interactions";
 
 	var data = {
 		id: order.orderNumber,
@@ -171,12 +171,14 @@ function okHiIntegration(req, res, order, cartItems, next) {
 		locationId: req.body.location.id,
 		value: order.payment.amount,
 		user: req.body.user,
+		location: req.body.location,
 		properties: {
 			brand: "dialadrink",
 			branch: "cbd",
-			paymentMethod: (order.payment.method || "cash"),
-			sendToQueue: true,
+			paymentMethod: (order.payment.method || "cash").toString().toLowerCase(),
 			currency: "KES",
+			sendToQueue: true,
+
 			basket: cartItems.map(c => {
 				var item = {
 					"sku": c.product._id,
@@ -186,13 +188,15 @@ function okHiIntegration(req, res, order, cartItems, next) {
 					"category": c.product.category ? c.product.category.name || c.product.category : "alcohol",
 					"quantity": c.pieces
 				};
+				
 				return item;
-			})
-		},
-		shipping: {
-			"cost": 0,
-			"class": "Flat rate",
-			"expectedDeliveryDate": order.orderDate.addMinutes(30)
+			}),
+
+			shipping: {
+				"cost": 0,
+				"class": "Flat rate",
+				"expectedDeliveryDate": order.orderDate.addMinutes(30)
+			}
 		}
 	};
 
@@ -206,7 +210,7 @@ function okHiIntegration(req, res, order, cartItems, next) {
 		requestCert: true,
 		agent: false,
 		success: function (res) {
-			console.log(res);
+			console.log("OKHI api res:", res);
 			if (typeof next == "function")
 				next(null, res);
 		},
