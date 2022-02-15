@@ -225,10 +225,10 @@ router.post("/cancel/:orderNo", function(req, res){
 });
 
 function okHiIntegration(req, res, order, cartItems, next) {
-	var url = process.env.NODE_ENV == "production" 
-        ? "https://api.okhi.co/v5/interactions" 
-        : "https://sandbox-api.okhi.dev/v5/interactions";
-
+    var url = process.env.NODE_ENV == "production" 
+        ? "https://api.okhi.io/v5/interactions" 
+        : "https://sandbox-api.api.okhi.io/v5/interactions";
+        
 	var data = {
 		id: order.orderNumber,
 		useCase: "e-commerce",
