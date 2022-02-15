@@ -84,7 +84,8 @@ $(document).ready(function () {
             });
 
             document.querySelector('#phoneNumber').addEventListener('input', (ev) => {
-                window.okhiCollection.$set({ userPhoneNumber: ev.target.value });
+                if(ev.target.value)
+                    window.okhiCollection.$set({ userPhoneNumber: "+" + ev.target.value.cleanPhoneNumber() });
             });
 
             document.querySelector('#firstName').addEventListener('input', (ev) => {
