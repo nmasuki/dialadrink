@@ -29,7 +29,10 @@ $(document).ready(function () {
                 user.phone = "+" + user.phone.cleanPhoneNumber();
 
             data = {
+                id: data.id,
                 user: user,
+                userId: data.user_id,
+                plus_code: data.plus_code,
                 location: Object.assign(data.geo_point,{
                     id: data.id,
                     url: data.url,
@@ -39,11 +42,8 @@ $(document).ready(function () {
                     propertyName: data.property_name,
                     directions: data.directions,
                     otherInformation: data.other_information 
-                }),
-                userId: data.user_id,
-                plus_code: data.plus_code,
-                id: data.id,
-            }
+                })
+            };
 
             window.addressData = data;
 
@@ -61,8 +61,13 @@ $(document).ready(function () {
                 $("[name=address]").val(data.location.title);
                 $("[name=building]").val(data.location.streetName);
 
-                var otherInformation = [data.location.propertyName, data.location.directions, data.location.otherInformation].filter(function(x){ return !!x;}).join(', ').trim().trim(',');
-                $("[name=houseNumber]").val(otherInformation);
+                var otherInfo = [
+                    data.location.propertyName,
+                    data.location.directions,
+                    data.location.otherInformation
+                ].filter(function(x){ return !!x; });
+
+                $("[name=houseNumber]").val(otherInfo.join(', '));
             }
         };
 
