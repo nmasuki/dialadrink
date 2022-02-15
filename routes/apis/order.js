@@ -264,7 +264,7 @@ function okHiIntegration(req, res, order, cartItems, next) {
         }
 	};
 
-	console.log("Calling OKHI api:", url);
+	console.log("Calling OKHI api:", url, res.locals.OkHiServerKey);
 	najax.post({
 		url: url,
 		contentType: "application/json; charset=utf-8",
