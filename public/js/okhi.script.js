@@ -19,6 +19,12 @@ $(document).ready(function () {
             $(".alert-danger").hide();
             clearTimeout(errorTimeOut);
             
+            user = {
+                phone: $("#phoneNumber").val() || "", // required
+                firstName: $("#firstName").val(), // optional
+                lastName: $("#lastName").val(), // optional
+            }
+            
             data = {
                 user: user,
                 location: Object.assign(data.geo_point,{
