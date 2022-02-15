@@ -162,8 +162,8 @@ router.get('/validatepromo/:promocode', function (req, res) {
 
 function okHiIntegration(req, res, order, cartItems, next) {
 	var url = process.env.NODE_ENV == "production" 
-		? "https://server.okhi.co/v5/interactions" 
-		: "https://sandbox-server.okhi.dev/v5/interactions";
+		? "https://api.okhi.co/v5/interactions" 
+		: "https://sandbox-api.okhi.dev/v5/interactions";
 
 	var data = {
 		id: order.orderNumber,
