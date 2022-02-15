@@ -24,11 +24,15 @@ $(document).ready(function () {
                 firstName: $("#firstName").val(), // optional
                 lastName: $("#lastName").val(), // optional
             }
-            
+
+            if(user.phone)
+                user.phone = "+" + user.phone.cleanPhoneNumber();
+
             data = {
                 user: user,
                 location: Object.assign(data.geo_point,{
                     id: data.id,
+                    url: data.url,
                     title: data.display_title,
                     subtitle: data.subtitle,
                     streetName: data.street_name,
@@ -36,7 +40,6 @@ $(document).ready(function () {
                     directions: data.directions,
                     otherInformation: data.other_information 
                 }),
-                url: data.url,
                 userId: data.user_id,
                 plus_code: data.plus_code,
                 id: data.id,
