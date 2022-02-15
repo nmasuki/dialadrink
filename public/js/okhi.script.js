@@ -67,8 +67,7 @@ $(document).ready(function () {
                     $(".alert-danger").slideDown();
                 }
                 return;
-            } 
-            
+            }            
 
             if(data.code){
                 $(".alert-danger").find(".msg-text").html("<strong>" + data.message + " while getting user location!</strong>");
