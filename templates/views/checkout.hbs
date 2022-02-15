@@ -393,7 +393,7 @@
 
         window.addEventListener('message', function (event) {
             // IMPORTANT: check the origin of the data! 
-            if (event.origin.startsWith('https://dialadrinkkenya.com')) {
+            if (event.origin.startsWith(window.location.origin)) {
                 // The data was sent from your site.
                 // Data sent with postMessage is stored in event.data:
                 console.log(event.data);
