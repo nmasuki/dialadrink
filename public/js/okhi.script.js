@@ -63,7 +63,7 @@ $(document).ready(function () {
             window.okhiCollection = new okcollect({
                 target: document.querySelector('#lets-okhi'),
                 props: {
-                    API_KEY: window.okhiData.okhiKey,
+                    API_KEY: window.okhiData.clientKey,
                     userFirstName: user.firstName || "",
                     userLastName: user.lastName || "",
                     userPhoneNumber: user.phone || "",
