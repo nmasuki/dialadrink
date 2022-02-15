@@ -14,9 +14,28 @@ $(document).ready(function () {
     window.loadLocationCard = function(user){
         var errorTimeOut;
         $(".alert-danger").hide();
-
+        
         var handleOnSuccess = function (data) {
+            $(".alert-danger").hide();
             clearTimeout(errorTimeOut);
+            
+            data = {
+                user: user,
+                location: Object.assign(data.geo_point,{
+                    id: data.id,
+                    title: data.display_title,
+                    subtitle: data.subtitle,
+                    streetName: data.street_name,
+                    propertyName: data.property_name,
+                    directions: data.directions,
+                    otherInformation: data.other_information 
+                }),
+                url: data.url,
+                userId: data.user_id,
+                plus_code: data.plus_code,
+                id: data.id,
+            }
+
             window.addressData = data;
 
             if (window.addressData) {
@@ -32,7 +51,9 @@ $(document).ready(function () {
 
                 $("[name=address]").val(data.location.title);
                 $("[name=building]").val(data.location.streetName);
-                $("[name=houseNumber]").val([data.location.propertyName, data.location.directions].join(', ').trim().trim(','));
+
+                var otherInformation = [data.location.propertyName, data.location.directions, data.location.otherInformation].filter(function(x){ return !!x;}).join(', ').trim().trim(',');
+                $("[name=houseNumber]").val(otherInformation);
             }
         };
 
@@ -40,9 +61,11 @@ $(document).ready(function () {
             clearTimeout(errorTimeOut);
             window.addressData = null;
 
-            if(data.code == "invalid_phone" && user.phone){
-                $(".alert-danger").find(".msg-text").html("<strong>" + data.message + "</strong>");
-                $(".alert-danger").slideDown();
+            if(data.code == "invalid_phone"){
+                if(user.phone){
+                    $(".alert-danger").find(".msg-text").html("<strong>" + data.message + "</strong>");
+                    $(".alert-danger").slideDown();
+                }
                 return;
             } 
             
@@ -59,7 +82,8 @@ $(document).ready(function () {
             lastName: $("#lastName").val(), // optional
         };
 
-        user.phone = "+" + user.phone.cleanPhoneNumber();
+        if(user.phone)
+            user.phone = "+" + user.phone.cleanPhoneNumber();
 
         if(!window.okhiCollection){
             window.okhiCollection = new okcollect({

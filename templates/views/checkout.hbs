@@ -389,7 +389,7 @@
         if (addaffix) addaffix();
 
         if (window.addressData)
-            app.cartUtil.loadCharges(window.addressData.location);
+            app.cartUtil.loadCharges(window.addressData);
 
         window.addEventListener('message', function (event) {
             // IMPORTANT: check the origin of the data! 
