@@ -13,6 +13,8 @@ $(document).ready(function () {
 
     window.loadLocationCard = function(user){
         var errorTimeOut;
+        $(".alert-danger").hide();
+
         var handleOnSuccess = function (data) {
             clearTimeout(errorTimeOut);
             window.addressData = data;
