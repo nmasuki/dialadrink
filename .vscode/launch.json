@@ -26,6 +26,14 @@
             "name": "Dial a Drink Kenya - Date Since",
             "program": "${workspaceFolder}/test-date-since.js",
             "sourceMaps": false
+        },   
+        {
+            "type": "node",
+            "protocol": "inspector",
+            "request": "launch",
+            "name": "Dial a Drink Kenya - OKHI test",
+            "program": "${workspaceFolder}/test-okhi.js",
+            "sourceMaps": false
         }
     ]
 }
