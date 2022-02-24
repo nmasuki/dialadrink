@@ -225,22 +225,34 @@ router.post("/cancel/:orderNo", function(req, res){
 });
 
 function okHiIntegration(req, res, order, cartItems, next) {
-	var url = process.env.NODE_ENV == "production" ?
-		"https://server.okhi.co/v5/interactions" :
-		"https://sandbox-server.okhi.dev/v5/interactions";
+	var url = process.env.NODE_ENV == "production" 
+		? "https://api.okhi.io/v5/interactions" 
+		: "https://sandbox-api.okhi.io/v5/interactions";
+
+	var user = {
+		"phone": req.body.user.phone,
+		"first_name": req.body.user.firstName,
+		"last_name": req.body.user.lastName
+	};
+
+	var location = Object.assign({
+		"street_name": req.body.location.streetName
+	})
 
 	var data = {
-		id: order.orderNumber,
-		useCase: "e-commerce",
-		locationId: req.body.location.id,
+		user: user,
 		value: order.payment.amount,
-		user: req.body.user,
+		id: order.orderNumber.toString(),
+		use_case: "e-commerce",
+		location_id: req.body.location.id,
+		location: location,
 		properties: {
+			send_to_queue: true,
+			payment_method: (order.payment.method || "cash").toString().toLowerCase(),
 			brand: "dialadrink",
-			branch: "cbd",
-			paymentMethod: (order.payment.method || "cash"),
-			sendToQueue: true,
+			location: "cbd",
 			currency: "KES",
+
 			basket: cartItems.map(c => {
 				var item = {
 					"sku": c.product._id,
@@ -250,27 +262,31 @@ function okHiIntegration(req, res, order, cartItems, next) {
 					"category": c.product.category ? c.product.category.name || c.product.category : "alcohol",
 					"quantity": c.pieces
 				};
+				
 				return item;
-			})
-		},
-		shipping: {
-			"cost": 0,
-			"class": "Flat rate",
-			"expectedDeliveryDate": order.orderDate.addMinutes(30)
+			}),
+
+			shipping: {
+				"cost": 0,
+				"class": "Flat rate",
+				"expected_delivery_date": order.orderDate.addMinutes(30)
+			}
 		}
 	};
 
-	console.log("Calling OKHI api:", url);
+	console.log("Calling OKHI api:", url, res.locals.OkHiServerKey);
+	var key = "Token " + Buffer.from(res.locals.OkHiBranch + ":" + res.locals.OkHiServerKey).toString('base64');
+
 	najax.post({
 		url: url,
 		contentType: "application/json; charset=utf-8",
-		headers: { "api-key": res.locals.OkHiServerKey },
+		headers: { "Authorization": key },
 		data: data,
 		rejectUnauthorized: false,
 		requestCert: true,
 		agent: false,
 		success: function (res) {
-			console.log(res);
+			console.log("OKHI api res:", res);
 			if (typeof next == "function")
 				next(null, res);
 		},

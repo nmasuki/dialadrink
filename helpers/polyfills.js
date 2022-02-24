@@ -586,7 +586,7 @@ if (!Array.prototype.clone)
     };
 
 if (!Array.prototype.nth)
-    Array.prototype.nth = function (filter, index) {
+    Array.prototype.elementAt = Array.prototype.nth = function (filter, index) {
         index = (index || 1) - 1;
         filter = filter || (f => true);
         return this.filter(filter)[index];
@@ -872,70 +872,44 @@ Date.prototype.addMilliseconds = function (value) {
     return new Date(this.getTime() + value);
 };
 
-Date.prototype.since = function (date) {
-
-    var ms = date ? this.getTime() - new Date(date).getTime()
-        : new Date().getTime() - this.getTime();
+Date.prototype.since = function since(date, ms) {
+    var ms = date ? this.getTime() - new Date(date).getTime() : new Date().getTime() - this.getTime();
+    if (ms == 0) return "Now";
 
     var mapping = {
-        ms: 1,
-        secs: 1000,
-        mins: 1000 * 60,
-        hours: 1000 * 60 * 60,
-        days: 1000 * 60 * 60 * 24,
-        weeks: 1000 * 60 * 60 * 24 * 7,
-        months: 1000 * 60 * 60 * 24 * 28,
+        //sentuaries: 100 * 10 * 1000 * 60 * 60 * 24 * 365.25,
+        //dacades: 10 * 1000 * 60 * 60 * 24 * 365.25,
         years: 1000 * 60 * 60 * 24 * 365.25,
+        months: 1000 * 60 * 60 * 24 * 28,
+        weeks: 1000 * 60 * 60 * 24 * 7,
+        days: 1000 * 60 * 60 * 24,
+        hours: 1000 * 60 * 60,
+        mins: 1000 * 60,
+        secs: 1000,
+        ms: 1,
     };
 
-    var values = Object.values(mapping),
-        keys = Object.keys(mapping),
-        period = "ms",
-        val = ms;
+    var periods = [], val = Math.abs(ms);
 
-    for (var i in values) {
-        var limit = values[i] || Infinity;
+    for (var i in mapping) {
+        if(!mapping.hasOwnProperty(i)) continue;
 
-        if (Math.abs(ms / values[i]) <= limit) {
-            period = keys[i];
-            val = ms / values[i];
+        var diff = Math.floor(Math.abs(val / mapping[i]));
 
-            if (period == "hours") {
-                var time = new Date().addHours(-val).toISOString(0, 10);
-                var today = new Date().toISOString(0, 10);
-                if (time < today)
-                    return "Yesterday";
-                else if (time > new Date(today).addDays(1).toISOString(0, 10))
-                    return "Tomorrow";
-            }
-
-            if (period == "days") {
-                if (parseInt(val) == 0)
-                    return "Today";
-                else if (parseInt(val) == 1)
-                    return "Yesterday";
-                else if (parseInt(val) == -1)
-                    return "Tomorrow";
-                else {
-                    var index = parseInt(val);
-                    if (Math.abs(index) < 5) {
-                        var days = ["Sunday", "Monday", "Tuesaday", "Wednesday", "Thursday", "Friday", "Saturday"];
-                        return (index < 0 ? "this " : "") + days[new Date().addDays(-index).getDay()];
-                    }
-                }
-            }
-
-            break;
+        if (diff > 0) {
+            var period = i;
+            if (diff == 1 && period != 'ms')
+                period = period.replace(/(ie)?s$/, "");                
+            
+            periods.push(`${diff} ${period}`)
         }
+
+        val -= diff * mapping[i];
+        if(val == 0) break;
     }
 
-    var rval = Math.round(Math.abs(val));
-    if (rval == 1)
-        period = period.replace(/(ie)?s$/, "");
-
-    console.log(rval, val, period);
-
-    return "{0} {1} {2} {3}".format(val < 0 ? "in" : "", rval, period, val < 0 ? "" : "ago").trim();
+    var prefix = (ms < 0 ? "in" : ""), surfix = (ms < 0 ? "" : "ago");
+    return [prefix, periods.join(', '), surfix].filter(x => x).join(' ').trim();
 };
 
 Number.prototype.pad = function pad(width, z) {
