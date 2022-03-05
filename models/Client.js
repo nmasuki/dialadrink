@@ -179,6 +179,7 @@ Client.schema.virtual("imageUrl")
 
         var cloudinaryOptions = {
             secure: true,
+            fetch_format: "auto",
             transformation: [{
                 width: 200,
                 height: 200,

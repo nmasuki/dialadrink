@@ -31,8 +31,8 @@
             "type": "node",
             "protocol": "inspector",
             "request": "launch",
-            "name": "Dial a Drink Kenya - OKHI test",
-            "program": "${workspaceFolder}/test-okhi.js",
+            "name": "Dial a Drink Kenya - Test",
+            "program": "${workspaceFolder}/test-pattern.js",
             "sourceMaps": false
         }
     ]
