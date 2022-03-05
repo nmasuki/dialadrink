@@ -41,6 +41,7 @@ router.post('/upload', function (req, res) {
                         if(transformation){
                             var cloudinaryOptions = {
                                 secure: true,
+                                fetch_format: "auto",
                                 transformation: [transformation]
                             };
                             var url = cloudinary.url(result.public_id, cloudinaryOptions);

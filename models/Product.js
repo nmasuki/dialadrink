@@ -319,6 +319,7 @@ Product.schema.methods.toAppObject = function () {
 
     var cloudinaryOptions = {
         secure: true,
+        fetch_format: "auto",
         transformation: [{ background: "white" },
             {
                 width: 250,
@@ -330,6 +331,7 @@ Product.schema.methods.toAppObject = function () {
     
     var cloudinarySmallImageOptions = {
         secure: true,
+        fetch_format: "auto",
         transformation: [{ background: "white" },
             {
                 width: 24,
