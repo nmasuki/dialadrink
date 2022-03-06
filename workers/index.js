@@ -1,4 +1,4 @@
-//require('daemon').daemon(null, [], { cwd: __dirname });
+require('daemon').daemon(null, [], { cwd: __dirname });
 
 var keystone = require('../app-init');
 var AppWorker = keystone.list('AppWorker');
