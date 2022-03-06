@@ -88,7 +88,8 @@ Client.add({
         default: Date.now,
         noedit: true
     },
-
+    favouriteDrink: {type: String},
+    favouriteBrand: {type: String},
     lastOrderDate: {type: Types.Datetime, index: true, noedit: true },
     deliveryLocationMeta: { type: String },
     metaDataJSON: { type: String }
@@ -109,28 +110,26 @@ Client.schema.virtual("isAppRegistered").get(function () {
     return !!this.password;
 });
 
-Client.schema.virtual("favouriteDrink")
+Client.schema.virtual("getFavouriteDrink")
     .get(async function () {
         var drinks = await this.getFavouriteDrinks(1);
         if(drinks && drinks.length)
-            return drink[0].name;
+            return drinks[0].name;
 
-        return "your favourite drink";
+        return "Drink";
     });
 
-Client.schema.virtual("favouriteBrand")
+Client.schema.virtual("getFavouriteBrand")
     .get(async function () {
         var drinks = await this.getFavouriteDrinks(100);
         var brands = drinks.groupBy(d => d.brand && d.brand.name || "");
         delete brands[""];
 
-        var favourite = Object.values(brands).orderByDescending(g => g.length)[0][0];
-
-
-        if(favourite)
-            return favourite.name;
+        var favourite = Object.values(brands).orderBy(g => g.length)[0];
+        if(favourite[0])
+            return favourite[0].name;
             
-        return "your favourite brand";
+        return "Cold Drink";
     });
 
 Client.schema.virtual("name")
@@ -674,7 +673,14 @@ Client.schema.pre('save', function (next) {
         client.gender = client.guessGender(client.name).getGender();
     }
 
-    client.updateOrderStats(next);
+    client.getFavouriteDrink(drink => {
+        client.favouriteDrink = drink;
+        client.getFavouriteBrand(brand => {
+            client.favouriteBrand = brand;
+            client.updateOrderStats(next);
+        })
+    })
+    
 });
 
 Client.schema.methods.update = function(){
@@ -703,7 +709,7 @@ Client.schema.methods.getOrders = function(){
         return new Promise(resolve => {
             keystone.list("Order").model.find(findOption)
                 .sort({ orderDate: -1 })
-                .deepPopulate('client,cart.product.priceOptions.option')
+                .deepPopulate('client,cart.product.priceOptions.option,cart.product.brand')
                 .exec((err, orders) => {
                     if (err)
                         return resolve(null);
@@ -721,12 +727,11 @@ Client.schema.methods.getFavouriteDrinks = async function(count, filter){
     count = count || 10;
     filter = filter || (() => true);
 
-    var orders = await client.getOrders();
+    var orders = await this.getOrders();
     if(!orders) return;
 
-    var drinks = orders.selectMany(o => o.cart && o.cart.map(c => c.product) || []);
-    var grouped = Object.values(drinks.groupBy(d => d._id.toString()))
-        .orderByDescending(g => g.length);
+    var drinks = orders.selectMany(o => o.cart && o.cart.map(c => c.product).filter(x => x) || []);
+    var grouped = Object.values(drinks.groupBy(d => d._id.toString())).orderByDescending(g => g.length);
 
     var favourites = grouped.filter(filter).splice(0, count).map(g => g[0]);
 

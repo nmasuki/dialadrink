@@ -826,15 +826,25 @@ Date.prototype.getDaysInMonth = function () {
     return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
 };
 
+Date.prototype.getWeekOfMonth = function(exact) {
+    var firstWeekday = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
+    var offsetDate = this.getDate() + firstWeekday - 1;
+    return Math.floor(offsetDate / 7);
+};
+
 Date.prototype.addYears = function (value) {
-    var years = Math.floor(value);
-    var months = (value - years) * 12;
-    this.setYear(this.getYear() + years);
+    var date = new Date(this.toISOString());
 
-    if (months)
-        this.addMonths(months);
+    var yearsDiff = Math.floor(value);
+    var monthsDiff = (value - yearsDiff) * 12; 
 
-    return this;
+    var year = this.getFullYear() + yearsDiff;
+    date.setYear(year);
+
+    if (monthsDiff)
+        return date.addMonths(monthsDiff);
+
+    return date;
 };
 
 Date.prototype.addMonths = function (value) {
