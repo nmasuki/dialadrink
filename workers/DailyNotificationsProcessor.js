@@ -28,7 +28,7 @@ function getWork(next, done) {
                         clients.push(favoriteDayOrders[0].client);
                 }
 
-                if (clients.length >= 20)
+                if (clients.length >= 40)
                     break;
             }
 
@@ -117,8 +117,7 @@ async function createNotification(client) {
     
     console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${message}`);
     if (process.env.NODE_ENV == "production")
-        return await n.save();
-    
+        return await n.save();    
 }
 
 var lastRun = new Date().addDays(-2);
