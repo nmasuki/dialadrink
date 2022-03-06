@@ -127,10 +127,11 @@ if (process.env.NODE_ENV == "production") {
 	if (!fs.existsSync(__dirname + '/logs'))
 		fs.mkdirSync(__dirname + '/logs');
 
-	var access = fs.createWriteStream(__dirname + '/logs/node.access.log', { flags: 'a' }),
-		 error = fs.createWriteStream(__dirname + '/logs/node.error.log', { flags: 'a' });
+	//var access = fs.createWriteStream(__dirname + '/logs/node.access.log', { flags: 'a' }),
+	//	 error = fs.createWriteStream(__dirname + '/logs/node.error.log', { flags: 'a' });
+	var error = process.stderr; //fs.createWriteStream(__dirname + '/logs/node.error.log', { flags: 'a' });
 
-    process.stdout.write = access.write.bind(access);
+    //process.stdout.write = access.write.bind(access);
     process.stderr.write = function () {
         error.write.apply(this, arguments);
         if(!arguments[0]) return;
