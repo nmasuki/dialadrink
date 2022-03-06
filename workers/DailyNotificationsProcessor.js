@@ -32,6 +32,7 @@ function getWork(next, done) {
                     break;
             }
 
+            console.log(`Got ${clients.length} clients to sent daily notifications to...`);
             return next(null, clients, done);
         });
 }
