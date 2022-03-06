@@ -4,4 +4,4 @@ console.log("Initializing keystone for " + (process.env.NODE_ENV || "developer")
 require('./app-init').start();
 
 //Start Background workers a little later
-setTimeout(function(){ require('./workers').start(); }, 60000);
+setTimeout(function(){ require('./workers').start(); }, 30000);
