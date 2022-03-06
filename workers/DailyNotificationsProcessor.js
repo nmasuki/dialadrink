@@ -28,7 +28,7 @@ function getWork(next, done) {
                         clients.push(favoriteDayOrders[0].client);
                 }
 
-                if (clients.length >= 40)
+                if (clients.length >= 100)
                     break;
             }
 
@@ -105,8 +105,12 @@ async function createNotification(client) {
         }
     });
 
+    var sessions = await client.getSessions();
+    var webpushTokens = sessions.map(s => s.webpush).filter(t => !!t && t.endpoint);
+    var fcmTokens = sessions.map(s => s.fcm).filter(t => !!t);
+
     //Make 60% of the message push notifications
-    if (randomTrue(.60)) {
+    if ((webpushTokens.length || fcmTokens.length) && randomTrue(.60)) {
         n.type = "push"
         n.message.data = {
             buttons: [

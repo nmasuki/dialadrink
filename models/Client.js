@@ -348,6 +348,7 @@ Client.schema.methods.getSessions = function (next) {
 
                 if (!err)
                     resolve(sessions);
+                    
                 if (typeof next == "function")
                     next(err, sessions);
             });
