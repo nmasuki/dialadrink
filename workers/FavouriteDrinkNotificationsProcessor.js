@@ -114,11 +114,11 @@ async function createNotification(client) {
             ]
         }
     }
-
+    
+    console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${message}`);
     if (process.env.NODE_ENV == "production")
         return await n.save();
     
-    console.log(`'${n.type.toUpperCase()}' MSG to ${client.name}: ${message}`);
 }
 
 var lastRun = new Date().addDays(-1);
