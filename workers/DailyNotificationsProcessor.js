@@ -100,14 +100,14 @@ async function createNotification(client) {
         type: "sms",
         status: 'pending',
         message: {
-            body: message.format(client)
+            title: "We have some great offers {firstName}!".format(obj),
+            body: message.format(obj)
         }
     });
 
     //Make 60% of the message push notifications
     if (randomTrue(.60)) {
         n.type = "push"
-        n.message.title = "We have some great offers {firstName}!".format(client);
         n.message.data = {
             buttons: [
                 { action: '/checkout?mergeCart=true', title: "Checkout" },
