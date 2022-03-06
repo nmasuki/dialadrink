@@ -59,7 +59,7 @@ try{
 
             var clients = Array.from(wss.clients);
             var activeClients = clients.filter(c => c.readyState === WebSocket.OPEN);
-            var authorizedClients = activeClients.filter(c => c.user && c.user.accountType && c.user.accountType.contains("office admin"));
+            var authorizedClients = activeClients.filter(c => c.user?.accountType?.contains("office admin"));
 
             console.log(
                 "WSS: Clients: " + clients.length,
@@ -109,7 +109,7 @@ function processIncoming(message) {
 
                             var clients = Array.from(wss.clients);
                             var activeClients = clients.filter(c => c.readyState === WebSocket.OPEN);
-                            var authorizedClients = activeClients.filter(c => c.user && c.user.accountType && c.user.accountType.contains("office admin"));
+                            var authorizedClients = activeClients.filter(c => c.user?.accountType.contains("office admin"));
 
                             console.log(
                                 "WSS: Clients: " + clients.length,
@@ -228,7 +228,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
 
     var clients = Array.from(wss.clients)
         .filter(c => c.readyState === WebSocket.OPEN)
-        .filter(c => c.user && c.user.accountType && c.user.accountType.contains("office admin"));
+        .filter(c => c.user?.accountType.contains("office admin"));
 
     payload.attempts = attempts;
     payload.status = "PROCESSING";
@@ -241,7 +241,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     }
 
     var client = clients[attempts % clients.length];
-    console.info(`WSS: Sending message using ${client.user.fullName}'s phone. to: ${dest}, msg: ${msg}`);
+    console.info(`WSS: Sending message using ${client.user?.fullName}'s phone. to: ${dest}, msg: ${msg}`);
 
     return new Promise((fulfill, reject) => {
         client.send(JSON.stringify(payload), function (err) {
@@ -264,7 +264,7 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
 function isSendReady(){
     var clients = Array.from(wss.clients)
         .filter(c => c.readyState === WebSocket.OPEN)
-        .filter(c => c.user && c.user.accountType && c.user.accountType.contains("office admin"));
+        .filter(c => c.user?.accountType.contains("office admin"));
 
     return clients.length;
 }

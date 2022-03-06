@@ -114,7 +114,7 @@ Client.schema.virtual("getFavouriteDrink")
     .get(async function () {
         var drinks = await this.getFavouriteDrinks(1);
         if(drinks && drinks.length)
-            return drinks[0].name;
+            return this.favouriteDrink = drinks[0].name;
 
         return "Drink";
     });
@@ -125,9 +125,9 @@ Client.schema.virtual("getFavouriteBrand")
         var brands = drinks.groupBy(d => d.brand && d.brand.name || "");
         delete brands[""];
 
-        var favourite = Object.values(brands).orderBy(g => g.length)[0];
+        var favourite = Object.values(brands).orderBy(g => -g.length)[0];
         if(favourite[0])
-            return favourite[0].name;
+            return this.favouriteBrand = favourite[0].name;
             
         return "Cold Drink";
     });
@@ -673,14 +673,17 @@ Client.schema.pre('save', function (next) {
         client.gender = client.guessGender(client.name).getGender();
     }
 
-    client.getFavouriteDrink(drink => {
-        client.favouriteDrink = drink;
-        client.getFavouriteBrand(brand => {
-            client.favouriteBrand = brand;
-            client.updateOrderStats(next);
-        })
-    })
+    var promises = [];
+    if (typeof client.getFavouriteDrink == "function")
+        promises.push(client.getFavouriteDrink());
     
+    if (typeof client.getFavouriteBrand == "function")
+        promises.push(client.getFavouriteBrand());
+
+    if(promises.length)
+        return Promise.all(promises).then(() => client.updateOrderStats(next));
+    else
+        return client.updateOrderStats(next);
 });
 
 Client.schema.methods.update = function(){
@@ -734,7 +737,6 @@ Client.schema.methods.getFavouriteDrinks = async function(count, filter){
     var grouped = Object.values(drinks.groupBy(d => d._id.toString())).orderByDescending(g => g.length);
 
     var favourites = grouped.filter(filter).splice(0, count).map(g => g[0]);
-
     return favourites;
 }
 
