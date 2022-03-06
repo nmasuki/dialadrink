@@ -2,7 +2,6 @@ require('daemon').daemon(null, [], { cwd: __dirname });
 
 var keystone = require('../app-init');
 var AppWorker = keystone.list('AppWorker');
-var async = require('async');
 var fs = require('fs');
 var isFirstPass = true;
 
@@ -40,7 +39,6 @@ function loadWorkers(next) {
 					if (err)
 						console.error(err);
 
-					console.log('Resolving AppWorker modules..');
 					modules = modules.map(m => {
 						var worker = workers.find(w => m.name == w.name);
 						
@@ -80,10 +78,10 @@ function start() {
 					console.log("Loaded " + workers.filter(m => m.worker.isActive).length + "/" + workers.length + " active workers..");
 
 				isFirstPass = false;
-				if (activeWorkers.length)
-					async.each(activeWorkers, m => {
+				if (activeWorkers.length){
+					activeWorkers.forEach(async m => {
 						if (m && m.run) {
-							if(process.env.NODE_ENV != "production")
+							//if(process.env.NODE_ENV != "production")
 								console.log(`Running worker: '${m.name}'`);
 
 							var saveWorker = (() => {
@@ -99,7 +97,8 @@ function start() {
 						} else {
 							console.error(`Worker: '${m.name}' not properly configured!`);
 						}
-					});
+					})
+				}
 
 				//Make next pass after a short delay
 				setTimeout(() => loadWorkers(makePass), process.env.WORK_DELAY || 5000);
