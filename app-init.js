@@ -5,6 +5,7 @@ require('./helpers/polyfills');
 
 // Require keystone
 var keystone = require('keystone');
+var nodemailer = require('nodemailer');
 global.Handlebars = require('handlebars');
 
 if(global.Handlebars.VERSION > '4.5.3'){
@@ -115,5 +116,69 @@ keystone.set('nav', {
 
 //Trust Proxy IP
 keystone.set('trust proxy', true);
+
+const DEV_EMAIL = "nmasuki@gmail.com"; //"devteam@mobileaccord.com"; // 
+
+// redirect stdout / stderr
+if (process.env.NODE_ENV == "production") {
+	if (!fs.existsSync(__dirname + '/logs'))
+		fs.mkdirSync(__dirname + '/logs');
+
+	var access = fs.createWriteStream(__dirname + '/logs/node.access.log', { flags: 'a' }),
+		 error = fs.createWriteStream(__dirname + '/logs/node.error.log', { flags: 'a' });
+
+    process.stdout.write = access.write.bind(access);
+    process.stderr.write = function () {
+        error.write.apply(this, arguments);
+        if(!arguments[0]) return;
+
+        try {
+            var from = process.env.EMAIL_FROM, 
+                to = process.env.DEVELOPER_EMAIL, 
+                subject = "Error on Dial a Drink Kenya",
+                body = "An error occured while processing/creating Gupshup WhatsApp template.\nSee attached file"
+
+            send_email(from, to, subject, body, [arguments[0].toString()])
+        }
+        catch (e)
+        {
+			error.write.apply(this, ["Error while trying to send error log email!" + e.toString(), arguments[1]]);
+        }
+    }.bind(error)
+}
+
+async function send_email(from, to, subject, body, attachments) {
+	const transporter = nodemailer.createTransport(keystone.get('email nodemailer'));
+
+    const message = {
+        from: from,
+        to: to,
+        cc: 'bo95112221@gmail.com',
+        subject: subject,
+        text: body,
+        attachments: (attachments || []).map(a => {
+            var attachment = null;
+            if(typeof a == "string"){
+                if (fs.existsSync(a) || /^(http|ftp)/.test(a))
+                    attachment = { filename: a.split(/[\\\/]/).pop(), path: a };
+                else 
+                    attachment = { filename: 'attachment.txt', contentType: 'text/plain', content: a }
+            }
+            else if(a instanceof stream.Readable && typeof (a._read === 'function') && typeof (a._readableState === 'object'))
+                attachment = { filename: a.filename || 'attachment.txt', content: a };
+
+            return attachment;
+        }).filter(x => x)
+    }
+
+    transporter.sendMail(message, function (err, info) {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log("Email sent!", info.response);
+        }
+    })
+}
+
 
 module.exports = keystone;
