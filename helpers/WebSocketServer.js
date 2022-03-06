@@ -53,7 +53,7 @@ try{
         ws.on('close', function(reasonCode, description) {
             console.log(
                 "WSS: Client disconnected ip:",
-                ws.clientIp, ws.user.fullName,
+                ws.clientIp, ws.user?.fullName || 'Unknown',
                 "ReasonCode:", reasonCode, description
             );
 

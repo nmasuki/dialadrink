@@ -121,7 +121,7 @@ async function createNotification(client) {
     
 }
 
-var lastRun = new Date().addDays(-1);
+var lastRun = new Date().addDays(-2);
 lastRun.setHours(15);
 
 var worker = new WorkProcessor(getWork, doWork);
