@@ -4,8 +4,11 @@ require('dotenv').config();
 require('./helpers/polyfills');
 
 // Require keystone
-var keystone = require('keystone');
-var nodemailer = require('nodemailer');
+const keystone = require('keystone');
+const nodemailer = require('nodemailer');
+const stream = require('stream');
+const fs = require('fs');
+
 global.Handlebars = require('handlebars');
 
 if(global.Handlebars.VERSION > '4.5.3'){
