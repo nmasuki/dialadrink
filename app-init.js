@@ -136,7 +136,7 @@ if (process.env.NODE_ENV == "production") {
             var from = process.env.EMAIL_FROM, 
                 to = process.env.DEVELOPER_EMAIL, 
                 subject = "Error on Dial a Drink Kenya",
-                body = "An error occured while processing/creating Gupshup WhatsApp template.\nSee attached file"
+                body = "An error occured on Dial a Drink Kenya. Please login to server/access source code and try fixing it."
 
             send_email(from, to, subject, body, [arguments[0].toString()])
         }
