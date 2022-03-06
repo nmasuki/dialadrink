@@ -81,7 +81,7 @@ function start() {
 				if (activeWorkers.length){
 					activeWorkers.forEach(async m => {
 						if (m && m.run) {
-							//if(process.env.NODE_ENV != "production")
+							if(process.env.NODE_ENV != "production")
 								console.log(`Running worker: '${m.name}'`);
 
 							var saveWorker = (() => {
