@@ -126,7 +126,7 @@ Client.schema.virtual("getFavouriteBrand")
         delete brands[""];
 
         var favourite = Object.values(brands).orderBy(g => -g.length)[0];
-        if(favourite[0])
+        if(favourite && favourite.length)
             return this.favouriteBrand = favourite[0].name;
             
         return "Cold Drink";

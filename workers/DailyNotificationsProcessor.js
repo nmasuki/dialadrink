@@ -56,7 +56,7 @@ function doWork(err, clients, next) {
 }
 
 function randomInt(min, max) {
-    return min + Math.round(Math.random() * (max - min + 1));
+    return min + Math.round(Math.random() * (max - min));
 }
 
 function randomTrue(probability) {

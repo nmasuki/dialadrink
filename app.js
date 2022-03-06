@@ -3,5 +3,5 @@ console.log("Initializing keystone for " + (process.env.NODE_ENV || "developer")
 // Start Keystone to connect to your database and initialise the web server
 require('./app-init').start();
 
-if(process.env.NODE_ENV != "production")
-    require('./workers').start();
+//Start Background workers a little later
+setTimeout(function(){ require('./workers').start(); }, 60000);

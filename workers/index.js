@@ -1,9 +1,9 @@
-require('daemon').daemon(null, [], { cwd: __dirname });
+//require('daemon').daemon(null, [], { cwd: __dirname });
 
-var async = require('async');
-var fs = require('fs');
 var keystone = require('../app-init');
 var AppWorker = keystone.list('AppWorker');
+var async = require('async');
+var fs = require('fs');
 var isFirstPass = true;
 
 function loadWorkers(next) {
@@ -30,9 +30,9 @@ function loadWorkers(next) {
 					return worker;
 				});
 				
-			var filter = { name: { "$in": modules.map(m => m.name) }};			
+			var filter = {};//{ name: { "$in": modules.map(m => m.name) }};			
 			if (isFirstPass)
-				console.log("Loaded AppWorkers:\n" + filter.name.$in.join(', '));
+				console.log("Loaded AppWorkers:\n" + modules.map(m => m.name).join(', '));
 
 			AppWorker.model
 				.find(filter)
@@ -40,10 +40,12 @@ function loadWorkers(next) {
 					if (err)
 						console.error(err);
 
+					console.log('Resolving AppWorker modules..');
 					modules = modules.map(m => {
 						var worker = workers.find(w => m.name == w.name);
 						
 						if (!worker) {
+							console.log(`Initializing ${m.name}..`);							
 							m.runInterval = 60 * 60 * 1000;
 							worker = new AppWorker.model(m);
 							worker.isActive = true;
