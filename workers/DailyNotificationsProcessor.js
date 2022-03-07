@@ -107,7 +107,7 @@ function doWork(err, clients, next) {
     }
 }
 
-function randomInt(min, max) {
+function randomInt(min, max) {    
     return min + Math.round(Math.random() * (max - min));
 }
 

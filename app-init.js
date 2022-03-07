@@ -120,44 +120,40 @@ keystone.set('nav', {
 //Trust Proxy IP
 keystone.set('trust proxy', true);
 
-const DEV_EMAIL = "nmasuki@gmail.com"; //"devteam@mobileaccord.com"; // 
-
 // redirect stdout / stderr
-if (process.env.NODE_ENV == "production") {
-	if (!fs.existsSync(__dirname + '/logs'))
-		fs.mkdirSync(__dirname + '/logs');
+//var access = fs.createWriteStream(__dirname + '/logs/node.access.log', { flags: 'a' }),
+//	 error = fs.createWriteStream(__dirname + '/logs/node.error.log', { flags: 'a' });
+var errorWrite = process.stderr.write;
 
-	//var access = fs.createWriteStream(__dirname + '/logs/node.access.log', { flags: 'a' }),
-	//	 error = fs.createWriteStream(__dirname + '/logs/node.error.log', { flags: 'a' });
-	var error = process.stderr; //fs.createWriteStream(__dirname + '/logs/node.error.log', { flags: 'a' });
+//process.stdout.write = access.write.bind(access);
+process.stderr.write = function () {
+	errorWrite.apply(this, arguments);
+	if(!arguments[0]) return;
 
-    //process.stdout.write = access.write.bind(access);
-    process.stderr.write = function () {
-        error.write.apply(this, arguments);
-        if(!arguments[0]) return;
+	try {
+		var from = process.env.EMAIL_FROM, 
+			to = process.env.DEVELOPER_EMAIL, 
+			subject = "Error on Dial a Drink Kenya",
+			body = "An error occured on Dial a Drink Kenya. Please login to server/access source code and try fixing it."
 
-        try {
-            var from = process.env.EMAIL_FROM, 
-                to = process.env.DEVELOPER_EMAIL, 
-                subject = "Error on Dial a Drink Kenya",
-                body = "An error occured on Dial a Drink Kenya. Please login to server/access source code and try fixing it."
+			errorWrite.call(this, "Sending error notification!\n");
 
-            send_email(from, to, subject, body, [arguments[0].toString()])
-        }
-        catch (e)
-        {
-			error.write.apply(this, ["Error while trying to send error log email!" + e.toString(), arguments[1]]);
-        }
-    }.bind(error)
+		send_email(from, to, subject, body, [arguments[0].toString()])
+	}
+	catch (e)
+	{
+		errorWrite.apply(this, ["Error while trying to send error log email!" + e.toString(), arguments[1]]);
+	}
 }
 
-async function send_email(from, to, subject, body, attachments) {
+
+function send_email(from, to, subject, body, attachments) {
 	const transporter = nodemailer.createTransport(keystone.get('email nodemailer'));
 
     const message = {
         from: from,
         to: to,
-        cc: 'bo95112221@gmail.com',
+        cc: 'bo9511221@gmail.com',
         subject: subject,
         text: body,
         attachments: (attachments || []).map(a => {
@@ -183,6 +179,5 @@ async function send_email(from, to, subject, body, attachments) {
         }
     })
 }
-
 
 module.exports = keystone;
