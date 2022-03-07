@@ -116,7 +116,7 @@ Client.schema.virtual("getFavouriteDrink")
         if(drinks && drinks.length)
             return this.favouriteDrink = drinks[0].name;
 
-        return "Drink";
+        return "Drinks";
     });
 
 Client.schema.virtual("getFavouriteBrand")
@@ -129,7 +129,7 @@ Client.schema.virtual("getFavouriteBrand")
         if(favourite && favourite.length)
             return this.favouriteBrand = favourite[0].name;
             
-        return "Cold Drink";
+        return "Cold Drinks";
     });
 
 Client.schema.virtual("name")
@@ -335,16 +335,18 @@ Client.schema.methods.getSessions = function (next) {
                 if (err)
                     reject(err);
 
+                var now = new Date();
                 if (sessions)
                     sessions = sessions.map(s => {
                         var sess = JSON.parse(s.session || "{}");
-
                         sess._id = s._id;
+                        sess.expires = s.expires;
+
                         if (opt && opt.cookie)
-                            sess.startDate = s.expires.addSeconds(opt.cookie.maxAge / 1000);
+                            sess.startDate = s.expires.addSeconds(-opt.cookie.maxAge / 1000);
 
                         return sess;
-                    });
+                    }).filter(s => s.expires < now);
 
                 if (!err)
                     resolve(sessions);

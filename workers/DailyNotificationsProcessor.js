@@ -5,8 +5,8 @@ var WorkProcessor = require('../helpers/WorkProcessor');
 var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sartuday"];
 
 function getWork(next, done) {
-    var fromDate = new Date().addYears(-1);
-    var oneWeekAgo = new Date().addDays(-7);
+    var fromDate = new Date().addYears(-3);
+    var oneWeekAgo = new Date().addDays(-6.9);
     var dayOfWeek = new Date().getDay();
     var weekOfMonth = new Date().getWeekOfMonth();
 
@@ -14,7 +14,7 @@ function getWork(next, done) {
         .deepPopulate('client')
         .exec(function (err, orders) {
             var groupedOrders = orders
-                .filter(o => o.orderDate && o.client && (!o.client.lastNotificationDate || o.client.lastNotificationDate < oneWeekAgo))
+                .filter(o => o.orderDate && o.client && (!o.client.lastNotificationDate || o.client.lastNotificationDate <= oneWeekAgo))
                 .groupBy(o => o.client._id.toString());
 
             var clientGroupedOrders = Object.values(groupedOrders).orderBy(o => -o.length);
@@ -28,7 +28,7 @@ function getWork(next, done) {
                         clients.push(favoriteDayOrders[0].client);
                 }
 
-                if (clients.length >= 100)
+                if (clients.length >= 900)
                     break;
             }
 
@@ -63,45 +63,74 @@ function randomTrue(probability) {
     return (randomInt(1, 100) % Math.ceil(1 / (probability || 0.5)) == 0);
 }
 
-var messageTemplates = [
-    "DIALADRINK: Hey {firstName}! It's Another wonderful day to enjoy a {favoriteDrink}. Order a bottle right now to enjoy with friends",
-    "DIALADRINK: Are you in the mood for a cold {favoriteDrink} {firstName}? Order now! We will deliver with 30 mins",
-    "DIALADRINK: It is a terrific day for a {favoriteDrink}. We'll deliver right to your door with no delivery fee within Nairobi",
-    "DIALADRINK has some crazy offers this {dayOfWeek} {firstName}! Order a {favoriteDrink} now and enjoy free delivery within Nairobi",
-    "DIALADRINK: Hey {firstName}! It's a wonderful {dayOfWeek} and we have great offers on {favoriteDrink} just for you.",
-    "DIALADRINK: Hey {firstName}! We have {favoriteDrink} on offer this {dayOfWeek}. Call +254723688108 for quick delivery",
-    "DIALADRINK: Hey {firstName}! {dayOfWeek} is the best day for a cold {favoriteDrink}. Call +254723688108 for swift delivery to your door",
-    "DIALADRINK: Hey {firstName}! We know {dayOfWeek}'s are usually long. Enjoy a bottle of {favoriteDrink} with friends to relax."
-];
+
+const messageTemplate = {
+    intro: [
+        "Happy {dayOfWeek} {firstName}!",
+        "Hi {firstName} and a happy {dayOfWeek}!",
+        "Happy {dayOfWeek} {firstName} and a lovely evening!",
+    ],
+    dailyMessage: [
+        /*Sunday*/  [],
+        /*Monday*/  [],
+        /*Tuesday*/ [],
+        /*Wednesday*/[],
+        /*Thursday*/[],
+        /*Friday*/  [],
+        /*Sartuday*/[],
+    ],
+    message: [        
+        "We have some great offers on {favoriteDrink} for you!",
+        "It's Another wonderful {dayOfWeek} to enjoy a {favoriteDrink} with friends.",
+        "Are you in the mood for a cold {favoriteDrink}?",
+        "It is a terrific day for a {favoriteDrink}.",
+        "We have some crazy offers this {dayOfWeek}!",
+        "It's a wonderful {dayOfWeek} and we have great offers on {favoriteDrink} just for you.",
+        "We have {favoriteDrink} on offer this {dayOfWeek}.",
+        "{dayOfWeek} is the best day for a cold {favoriteDrink}.",
+        "We know {dayOfWeek}'s are long. Enjoy a bottle of {favoriteDrink} with friends to relax."
+    ],
+    outro:[
+        "Order a bottle right now!",
+        "Order now! We will deliver with 30 mins",
+        "Order now and enjoy free delivery within Nairobi",
+        "Call +254723688108 for quick delivery",
+        "Call +254723688108 for swift delivery to your door",
+        "Have it delivered right to your door steps",
+    ],
+
+    get: function(obj, section){
+        if(!messageTemplate[section]) section = 'message';
+        return messageTemplate[section][randomInt(0, messageTemplate[section].length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ')
+    },
+
+    getMessage: function(obj){
+        var parts = ['intro', 'message', 'outro'];
+        var message = '';
+
+        for(var i of parts)
+            if(messageTemplate.hasOwnProperty(i))
+                message += ' ' + messageTemplate[i][randomInt(0, messageTemplate[i].length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ');
+
+        return message.trim();
+    }
+}
 
 async function createNotification(client) {
+    var dayOfWeek = new Date().getDay();
     var obj = Object.assign({
-        dayOfWeek: daysOfWeek[new Date().getDay()],
+        dayOfWeek: daysOfWeek[dayOfWeek],
         favoriteDrink: (randomTrue() ? await client.getFavouriteDrink : await client.getFavouriteBrand)
     }, client.toObject());
 
-    var message = messageTemplates[randomInt(0, messageTemplates.length - 1)].format(obj).replace(/\s(\W)/g, '$1') + '. http://bit.ly/2TCl4MI';
-
-    var date = new Date().toISOString();
-    var scheduleDate = new Date(date.substr(0, 10));
-    var scheduleTime = date.substr(11).split(":");
-
-    if (scheduleTime[0] > 22 - 3) {
-        scheduleTime[0] = 18 - 3;
-        scheduleDate = scheduleDate.addDays(1);
-    } else if (scheduleTime[0] <= 11 - 3) {
-        scheduleTime[0] = 18 - 3;
-        scheduleTime[1] = 45;
-    }
-
     var n = new ClientNotification.model({
         client: client,
-        scheduleDate: new Date(scheduleDate.toISOString().substr(0, 10) + "T" + scheduleTime.join(":")),
+        scheduleDate: new Date(),
         type: "sms",
         status: 'pending',
         message: {
-            title: "We have some great offers {firstName}!".format(obj),
-            body: message.format(obj)
+            title: messageTemplate.get(obj),
+            body: messageTemplate.getMessage(obj)
         }
     });
 
@@ -109,8 +138,8 @@ async function createNotification(client) {
     var webpushTokens = sessions.map(s => s.webpush).filter(t => !!t && t.endpoint);
     var fcmTokens = sessions.map(s => s.fcm).filter(t => !!t);
 
-    //Make 60% of the message push notifications
-    if ((webpushTokens.length || fcmTokens.length) && randomTrue(.60)) {
+    //Send push notification to 80% of users with webpush or fcm token. 
+    if ((webpushTokens.length || fcmTokens.length) && randomTrue(.80)) {
         n.type = "push"
         n.message.data = {
             buttons: [
@@ -118,9 +147,13 @@ async function createNotification(client) {
                 { action: '/', title: "Todays Offers" }
             ]
         }
+    } else {
+        n.message.body = `DIALADRINK: ${n.message.body}.`;
+        if(!n.message.body.contains('http'))
+            n.message.body += '. http://bit.ly/2TCl4MI';
     }
     
-    console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${message}`);
+    console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${n.message.body}`);
     if (process.env.NODE_ENV == "production")
         return await n.save();    
 }
