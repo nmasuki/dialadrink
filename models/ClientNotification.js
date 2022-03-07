@@ -65,7 +65,7 @@ ClientNotification.add({
 
 ClientNotification.schema.pre("save", function(next){
 	ClientNotification.schema.options.strict = false;
-	this.scheduleDate = adJustScheduleDate(scheduleDate); 
+	this.scheduleDate = adJustScheduleDate(this.scheduleDate); 
 	next();
 });
 
