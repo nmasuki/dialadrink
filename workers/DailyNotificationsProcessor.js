@@ -1,8 +1,60 @@
-var keystone = require('keystone');
-var Order = keystone.list('Order');
-var ClientNotification = keystone.list('ClientNotification');
-var WorkProcessor = require('../helpers/WorkProcessor');
-var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sartuday"];
+const keystone = require('keystone');
+const Order = keystone.list('Order');
+const ClientNotification = keystone.list('ClientNotification');
+const WorkProcessor = require('../helpers/WorkProcessor');
+const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sartuday"];
+
+const messageTemplate = {
+    intro: [
+        "Happy {dayOfWeek} {firstName}!",
+        "Hi {firstName} and a happy {dayOfWeek}!",
+        "Happy {dayOfWeek} {firstName} and a lovely evening!",
+    ],
+    dailyMessage: [
+        /*Sunday*/  [],
+        /*Monday*/  [],
+        /*Tuesday*/ [],
+        /*Wednesday*/[],
+        /*Thursday*/[],
+        /*Friday*/  [],
+        /*Sartuday*/[],
+    ],
+    message: [        
+        "We have some great offers on {favoriteDrink} for you!",
+        "It's Another wonderful {dayOfWeek} to enjoy {favoriteDrink} with friends.",
+        "Are you in the mood for a cold {favoriteDrink}?",
+        "It is a terrific day for a {favoriteDrink}.",
+        "We have some crazy offers this {dayOfWeek}!",
+        "It's a wonderful {dayOfWeek} and we have great offers on {favoriteDrink} just for you.",
+        "We have {favoriteDrink} on offer this {dayOfWeek}.",
+        "{dayOfWeek} is the best day for a cold {favoriteDrink}.",
+        "We know {dayOfWeek}'s are long. Enjoy a bottle of {favoriteDrink} with friends to relax."
+    ],
+    outro:[
+        "Order a bottle right now!",
+        "Order now! We will deliver with 30 mins",
+        "Order now and enjoy free delivery within Nairobi",
+        "Call +254723688108 for quick delivery",
+        "Call +254723688108 for swift delivery to your door",
+        "Have it delivered right to your door steps",
+    ],
+
+    get: function(obj, section){
+        if(!messageTemplate[section]) section = 'message';
+        return messageTemplate[section][randomInt(0, messageTemplate[section].length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ')
+    },
+
+    getMessage: function(obj){
+        var parts = ['intro', 'message', 'outro'];
+        var message = '';
+
+        for(var i of parts)
+            if(messageTemplate.hasOwnProperty(i))
+                message += (message? ' ': '') + messageTemplate[i][randomInt(0, messageTemplate[i].length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ');
+
+        return message.trim();
+    }
+}
 
 function getWork(next, done) {
     var fromDate = new Date().addYears(-3);
@@ -63,64 +115,12 @@ function randomTrue(probability) {
     return (randomInt(1, 100) % Math.ceil(1 / (probability || 0.5)) == 0);
 }
 
-
-const messageTemplate = {
-    intro: [
-        "Happy {dayOfWeek} {firstName}!",
-        "Hi {firstName} and a happy {dayOfWeek}!",
-        "Happy {dayOfWeek} {firstName} and a lovely evening!",
-    ],
-    dailyMessage: [
-        /*Sunday*/  [],
-        /*Monday*/  [],
-        /*Tuesday*/ [],
-        /*Wednesday*/[],
-        /*Thursday*/[],
-        /*Friday*/  [],
-        /*Sartuday*/[],
-    ],
-    message: [        
-        "We have some great offers on {favoriteDrink} for you!",
-        "It's Another wonderful {dayOfWeek} to enjoy a {favoriteDrink} with friends.",
-        "Are you in the mood for a cold {favoriteDrink}?",
-        "It is a terrific day for a {favoriteDrink}.",
-        "We have some crazy offers this {dayOfWeek}!",
-        "It's a wonderful {dayOfWeek} and we have great offers on {favoriteDrink} just for you.",
-        "We have {favoriteDrink} on offer this {dayOfWeek}.",
-        "{dayOfWeek} is the best day for a cold {favoriteDrink}.",
-        "We know {dayOfWeek}'s are long. Enjoy a bottle of {favoriteDrink} with friends to relax."
-    ],
-    outro:[
-        "Order a bottle right now!",
-        "Order now! We will deliver with 30 mins",
-        "Order now and enjoy free delivery within Nairobi",
-        "Call +254723688108 for quick delivery",
-        "Call +254723688108 for swift delivery to your door",
-        "Have it delivered right to your door steps",
-    ],
-
-    get: function(obj, section){
-        if(!messageTemplate[section]) section = 'message';
-        return messageTemplate[section][randomInt(0, messageTemplate[section].length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ')
-    },
-
-    getMessage: function(obj){
-        var parts = ['intro', 'message', 'outro'];
-        var message = '';
-
-        for(var i of parts)
-            if(messageTemplate.hasOwnProperty(i))
-                message += ' ' + messageTemplate[i][randomInt(0, messageTemplate[i].length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ');
-
-        return message.trim();
-    }
-}
-
 async function createNotification(client) {
     var dayOfWeek = new Date().getDay();
     var obj = Object.assign({
         dayOfWeek: daysOfWeek[dayOfWeek],
-        favoriteDrink: (randomTrue() ? await client.getFavouriteDrink : await client.getFavouriteBrand)
+        favoriteDrink: (randomTrue() ? await client.getFavouriteDrink : await client.getFavouriteBrand),
+        getFavouriteBrand: await client.getFavouriteBrand,
     }, client.toObject());
 
     var n = new ClientNotification.model({
