@@ -18,7 +18,7 @@ function WorkProcessor(getWork, doWork) {
                 });
 
                 if(gwPromise instanceof Promise)
-                    gwPromise.then(() => console.log(`Run a getWork on ${self.name}..`));
+                    gwPromise.then(() => console.log(`GetWork on ${self.name}..`));
             };
             
             if (!self.lockFile)

@@ -93,9 +93,6 @@ async function start(delay) {
 					var m = activeWorkers[i++];
 					if (m) {
 						if (typeof m.run == "function") {
-							if (process.env.NODE_ENV != "production")
-								console.log(`Starting run on worker: '${m.name}'...`);
-
 							var saveWorker = (async () => {
 								m.worker.lastRun = new Date();
 								return await m.worker.save();
@@ -106,13 +103,9 @@ async function start(delay) {
 								await run.then(saveWorker);
 							else
 								await saveWorker();
-
-							if (process.env.NODE_ENV != "production")
-								console.log(`Finished run on worker: '${m.name}'...`);
 						} else {
 							console.error(`Worker: '${m.name}' not properly configured!`);
 						}
-
 
 						return Promise.delay(process.env.WORK_DELAY || 5000).then(runNextWorker);
 					}
