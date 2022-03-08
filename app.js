@@ -7,4 +7,4 @@ keystone.start();
 
 //Start Background workers a little later
 if (process.env.NODE_ENV != "production")
-    workers.start(process.env.WORK_DELAY * 2);
+    workers.start((process.env.WORK_DELAY || 5000) * 2);

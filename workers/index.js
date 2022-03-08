@@ -75,6 +75,34 @@ async function start(delay) {
 
 			isFirstPass = false;
 			if (activeWorkers.length) {
+				var i = 0;
+				(async function runNextWorker(){
+					var m = activeWorkers[i];
+					if(m){
+						if (typeof m.run == "function") {
+							if (process.env.NODE_ENV != "production")
+								console.log(`Running worker: '${m.name}'...`);
+	
+							var saveWorker = (async () => {
+								m.worker.lastRun = new Date();
+								return await m.worker.save();
+							});
+	
+							var run = m.run();	
+							if (run instanceof Promise)
+								return await run.then(saveWorker);
+							else
+								return await saveWorker();
+						} else {
+							console.error(`Worker: '${m.name}' not properly configured!`);
+						}
+
+						Promise.delay(1000).then(runNextWorker);
+					}
+				})().then(() => {
+					console.log("Done! Awaiting next iteration.")
+				});
+
 				activeWorkers.forEach(async m => {
 					if (m && m.run) {
 						if (process.env.NODE_ENV != "production")
