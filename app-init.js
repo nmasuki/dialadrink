@@ -128,7 +128,8 @@ var errorWrite = process.stderr.write;
 //process.stdout.write = access.write.bind(access);
 process.stderr.write = function () {
 	errorWrite.apply(this, arguments);
-	if(!arguments[0]) return;
+	if(!arguments[0] || arguments[0].toString().length < 300) 
+		return;
 
 	try {
 		var from = process.env.EMAIL_FROM, 

@@ -56,37 +56,37 @@ const messageTemplate = {
     }
 }
 
-function getWork(next, done) {
+async function getWork(next, done) {
     var fromDate = new Date().addYears(-3);
     var oneWeekAgo = new Date().addDays(-6.9);
     var dayOfWeek = new Date().getDay();
     var weekOfMonth = new Date().getWeekOfMonth();
 
-    Order.model.find({ orderDate: { $gt: fromDate } })
-        .deepPopulate('client')
-        .exec(function (err, orders) {
-            var groupedOrders = orders
-                .filter(o => o.orderDate && o.client && (!o.client.lastNotificationDate || o.client.lastNotificationDate <= oneWeekAgo))
-                .groupBy(o => o.client._id.toString());
+    var orders = await Order.model.find({ orderDate: { $gt: fromDate } }).deepPopulate('client').exec();
 
-            var clientGroupedOrders = Object.values(groupedOrders).orderBy(o => -o.length);
+    var groupedOrders = orders
+        .filter(o => o.orderDate && o.client && (!o.client.lastNotificationDate || o.client.lastNotificationDate <= oneWeekAgo))
+        .groupBy(o => o.client._id.toString());
 
-            var clients = [];
-            for (var clientOrders of clientGroupedOrders) {
-                var favoriteWeekOrders = Object.values(clientOrders.groupBy(o => o.orderDate.getWeekOfMonth())).orderBy(o => -o.length)[0];
-                if (favoriteWeekOrders.length && favoriteWeekOrders[0].orderDate.getWeekOfMonth() == weekOfMonth) {
-                    var favoriteDayOrders = Object.values(clientOrders.groupBy(o => o.orderDate.getDay())).orderBy(o => -o.length)[0];
-                    if (favoriteDayOrders.length && favoriteDayOrders[0].orderDate.getDay() == dayOfWeek)
-                        clients.push(favoriteDayOrders[0].client);
-                }
+    var clientGroupedOrders = Object.values(groupedOrders).orderBy(o => -o.length);
 
-                if (clients.length >= 40)
-                    break;
-            }
+    var clients = [];
+    
+    for (var clientOrders of clientGroupedOrders) {
+        var favoriteWeekOrders = Object.values(clientOrders.groupBy(o => o.orderDate.getWeekOfMonth())).orderBy(o => -o.length)[0];
+        if (favoriteWeekOrders.length && favoriteWeekOrders[0].orderDate.getWeekOfMonth() == weekOfMonth) {
+            var favoriteDayOrders = Object.values(clientOrders.groupBy(o => o.orderDate.getDay())).orderBy(o => -o.length)[0];
+            if (favoriteDayOrders.length && favoriteDayOrders[0].orderDate.getDay() == dayOfWeek)
+                clients.push(favoriteDayOrders[0].client);
+        }
 
-            console.log(`Got ${clients.length} clients to sent daily notifications to...`);
-            return next(null, clients, done);
-        });
+        if (clients.length >= 40)
+            break;
+    }
+
+    console.log(`Got ${clients.length} clients to sent daily notifications to...`);
+    next(null, clients, done);
+    return clients;
 }
 
 function doWork(err, clients, next) {
@@ -98,20 +98,16 @@ function doWork(err, clients, next) {
             console.log(clients.length + " client to send daily notifications to..");
 
         var promise = new Promise((resolve, reject) => {
-            var processed = 0;
+            var index = 0;
             (function popNext() {
                 if (clients.length) {
-                    var client = clients.pop();
-                    return createNotification(client).then(() => {
-                        processed += 1;
-                        if (clients.length)
-                            return popNext();
-
-                        console.log(`Created ${processed} daily notifications!`);
-                    });
+                    var client = clients[index++];
+                    if(client)
+                        return createNotification(client).always(() => popNext());
                 }
-
-                resolve(proseses)
+                
+                console.log(`Done Generating ${index - 1}/${clients.length} daily notifications!`);
+                resolve(index);
             })();
         });
 
@@ -173,7 +169,7 @@ async function createNotification(client) {
             n.message.body += '. http://bit.ly/2TCl4MI';
     }
 
-    console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${n.message.body}`);
+    //console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${n.message.body}`);
     if (process.env.NODE_ENV == "production")
         return await n.save();
 }
