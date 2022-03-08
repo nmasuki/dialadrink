@@ -111,7 +111,7 @@ async function start(delay) {
 					}
 				};
 
-				runNextWorker().then(() => console.log("Done! Awaiting next iteration."));
+				runNextWorker().then(() => {});
 			}
 		} else {
 			console.log("No workers found. Exiting workes..");
