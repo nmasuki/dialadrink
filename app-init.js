@@ -120,34 +120,6 @@ keystone.set('nav', {
 //Trust Proxy IP
 keystone.set('trust proxy', true);
 
-// redirect stdout / stderr
-//var access = fs.createWriteStream(__dirname + '/logs/node.access.log', { flags: 'a' }),
-//	 error = fs.createWriteStream(__dirname + '/logs/node.error.log', { flags: 'a' });
-var errorWrite = process.stderr.write;
-
-//process.stdout.write = access.write.bind(access);
-process.stderr.write = function () {
-	errorWrite.apply(this, arguments);
-	if(!arguments[0] || arguments[0].toString().length < 300) 
-		return;
-
-	try {
-		var from = process.env.EMAIL_FROM, 
-			to = process.env.DEVELOPER_EMAIL, 
-			subject = "Error on Dial a Drink Kenya",
-			body = "An error occured on Dial a Drink Kenya. Please login to server/access source code and try fixing it."
-
-			errorWrite.call(this, "Sending error notification!\n");
-
-		send_email(from, to, subject, body, [arguments[0].toString()])
-	}
-	catch (e)
-	{
-		errorWrite.apply(this, ["Error while trying to send error log email!" + e.toString(), arguments[1]]);
-	}
-}
-
-
 function send_email(from, to, subject, body, attachments) {
 	var transportOptions = keystone.get('email nodemailer');
 	const transporter = nodemailer.createTransport(transportOptions);
