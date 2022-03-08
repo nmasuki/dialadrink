@@ -107,7 +107,7 @@ function doWork(err, clients, next) {
             }
         };
 
-        return popNext().then(next);
+        return popNext().then(() => next());
     } else {
         if (typeof next == "function")
             next();
