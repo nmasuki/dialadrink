@@ -23,7 +23,7 @@ function WorkProcessor(getWork, doWork) {
             else
                 lockFile.lock(self.lockFile, function (err) {
                     if (err)
-                        return console.error("Could not aquire lock.", self.lockFile, err);
+                        return console.warn("Could not aquire lock.", self.lockFile, err);
 
                     processWork();
                 });

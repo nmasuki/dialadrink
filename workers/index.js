@@ -6,38 +6,48 @@ var isFirstPass = true;
 function readdir(directory) {
 	return new Promise((resolve, reject) => {
 		fs.readdir(directory, (err, files) => {
-			if(err)
+			if (err)
 				return reject(err);
 
-			resolve(files);
+			resolve(files.map(f => directory + '/' + f));
 		});
 	});
 }
+
+function unlink(file) {
+	return new Promise((resolve, reject) => {
+		if (!fs.existsSync(file)) return resolve(null);
+		fs.unlink(file, (err, data) => {
+			if (err)
+				return reject(err);
+
+			resolve(data);
+		});
+	});
+}
+
+
 
 async function loadWorkers() {
 	if (isFirstPass)
 		console.log("Loading AppWorkers from:", __dirname);
 
-	var lockFiles = (await readdir(__dirname + "/../locks")).filter(f => f.endsWith('.lock'));
 	var jsFiles = (await readdir(__dirname)).filter(f => f && f != 'null' && f.endsWith('.js') && !f.endsWith('index.js'));
-
-	if (lockFiles && lockFiles.length)
-		lockFiles.forEach(f => {
-			if (fs.existsSync(__dirname + "/../locks/" + f))
-				fs.unlink(__dirname + "/../" + f, () => { });
-		});
-
 	var modules = jsFiles.map(f => {
-		var worker = require(__dirname + '/' + f);
-		worker.name = f.replace(/\.js$/, "");
-		worker.lockFile = './locks/' + f.replace(/\.js$/, ".lock");
-		return worker;
-	});
+		var jsPath = [f, __dirname + '/' + f].find(fs.existsSync);
+		if (jsPath) {
+			var worker = require(jsPath);
+			worker.name = f.replace(/\.js$/, "").split('/').last();
+			worker.lockFile = `${__dirname}/../locks/${worker.name}.lock`;
+			if (!fs.existsSync(worker.lockFile))
+				return worker;
+		}
+	}).filter(m => m);
 
 	if (isFirstPass)
 		console.log("Loaded AppWorkers:\n" + modules.map(m => m.name).join(', '));
 
-	var filter = { name: { "$in": modules.map(m => m.name) }};			
+	var filter = { name: { "$in": modules.map(m => m.name) } };
 	var workers = await AppWorker.model.find(filter).exec();
 
 	modules = modules.map(m => {
@@ -58,11 +68,13 @@ async function loadWorkers() {
 	return modules;
 }
 
-async function start(delay) {	
+async function start(delay) {
 	if (process.env.ENABLE_BACKGROUNDWORKER <= 0)
 		return console.log("env.ENABLE_BACKGROUNDWORKER flag set to: " + process.env.ENABLE_BACKGROUNDWORKER);
 
 	console.log("Starting workers for background processes..");
+	var lockFiles = (await readdir(__dirname + "/../locks")).filter(f => f.endsWith('.lock'));
+	for (var f of lockFiles) await unlink(f)
 
 	async function makePass() {
 		// Load workers
@@ -76,28 +88,32 @@ async function start(delay) {
 			isFirstPass = false;
 			if (activeWorkers.length) {
 				var i = 0;
-				(async function runNextWorker(){
-					var m = activeWorkers[i];
-					if(m){
+				(async function runNextWorker() {
+					var m = activeWorkers[i++];
+					if (m) {
 						if (typeof m.run == "function") {
 							if (process.env.NODE_ENV != "production")
-								console.log(`Running worker: '${m.name}'...`);
-	
+								console.log(`Starting run on worker: '${m.name}'...`);
+
 							var saveWorker = (async () => {
 								m.worker.lastRun = new Date();
 								return await m.worker.save();
 							});
-	
-							var run = m.run();	
+
+							var run = m.run();
 							if (run instanceof Promise)
-								return await run.then(saveWorker);
+								await run.then(saveWorker);
 							else
-								return await saveWorker();
+								await saveWorker();
+
+							if (process.env.NODE_ENV != "production")
+								console.log(`Finished run on worker: '${m.name}'...`);
 						} else {
 							console.error(`Worker: '${m.name}' not properly configured!`);
 						}
 
-						Promise.delay(1000).then(runNextWorker);
+
+						return Promise.delay(process.env.WORK_DELAY || 5000).then(runNextWorker);
 					}
 				})().then(() => {
 					console.log("Done! Awaiting next iteration.")
@@ -132,7 +148,7 @@ async function start(delay) {
 		return await await Promise.delay(process.env.WORK_DELAY || 5000).then(makePass);
 
 	}
-		
+
 	return await await Promise.delay(delay || 0).then(makePass);
 }
 

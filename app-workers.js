@@ -6,4 +6,4 @@ var workers = require('./workers');
 keystone.openDatabaseConnection(console.log);
 
 //Start Background workers a little later
-workers.start(process.env.WORK_DELAY * 2);
+workers.start(0);
