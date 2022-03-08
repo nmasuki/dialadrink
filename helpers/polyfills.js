@@ -956,7 +956,7 @@ if (!Promise.any)
     };
 
 if (!Promise.timeout)
-    Promise.timeout = function (timeout) {
+    Promise.delay = Promise.timeout = function (timeout) {
         var args = Array.from(arguments).splice(1);
         return new Promise(resolve => setTimeout(() => resolve(args), timeout));
     };
