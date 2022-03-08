@@ -98,20 +98,19 @@ function doWork(err, clients, next) {
             console.log(clients.length + " client to send daily notifications to..");
 
         var promise = new Promise((resolve, reject) => {
-            var proseses = [];
+            var processed = 0;
             (function popNext() {
                 if (clients.length) {
                     var client = clients.pop();
                     return createNotification(client).then(() => {
+                        processed += 1;
                         if (clients.length)
                             return popNext();
 
-                        proseses.push(client);
-                        console.log("Prosses " + proseses.length);
+                        console.log(`Created ${processed} daily notifications!`);
                     });
                 }
 
-                console.log(`Created all ${proseses.length} notifications!`);
                 resolve(proseses)
             })();
         });
