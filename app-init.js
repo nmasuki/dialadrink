@@ -148,7 +148,8 @@ process.stderr.write = function () {
 
 
 function send_email(from, to, subject, body, attachments) {
-	const transporter = nodemailer.createTransport(keystone.get('email nodemailer'));
+	var transportOptions = keystone.get('email nodemailer');
+	const transporter = nodemailer.createTransport(transportOptions);
 
     const message = {
         from: from,

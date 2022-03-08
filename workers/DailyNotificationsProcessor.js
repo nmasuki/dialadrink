@@ -103,11 +103,12 @@ function doWork(err, clients, next) {
                 await createNotification(client);
 
                 if(client.length) 
-                    await popNext();
+                    return await popNext();
             }
+            console.log("Created all notifications!")
         };
 
-        return popNext().then(() => next());
+        return popNext().then(() => typeof next == "function" ? next() : null);
     } else {
         if (typeof next == "function")
             next();
