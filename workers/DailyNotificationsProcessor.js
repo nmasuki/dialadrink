@@ -80,7 +80,7 @@ function getWork(next, done) {
                         clients.push(favoriteDayOrders[0].client);
                 }
 
-                if (clients.length >= 900)
+                if (clients.length >= 100)
                     break;
             }
 
@@ -97,8 +97,17 @@ function doWork(err, clients, next) {
         if (clients.length)
             console.log(clients.length + " client to send daily notifications to..");
 
-        var promises = clients.map(createNotification);
-        return Promise.all(promises).then(next);
+        async function popNext(){
+            if(clients.length){
+                var client = clients.pop();
+                await createNotification(client);
+
+                if(client.length) 
+                    await popNext();
+            }
+        };
+
+        return popNext().then(next);
     } else {
         if (typeof next == "function")
             next();
