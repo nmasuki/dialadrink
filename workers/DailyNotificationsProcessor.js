@@ -80,7 +80,7 @@ function getWork(next, done) {
                         clients.push(favoriteDayOrders[0].client);
                 }
 
-                if (clients.length >= 100)
+                if (clients.length >= 40)
                     break;
             }
 
