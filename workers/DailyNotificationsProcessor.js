@@ -86,6 +86,7 @@ async function getWork(next, done) {
 
     console.log(`Got ${clients.length} clients to sent daily notifications to...`);
     next(null, clients, done);
+    
     return clients;
 }
 
