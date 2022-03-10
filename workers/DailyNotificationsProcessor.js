@@ -156,7 +156,7 @@ async function createNotification(client) {
     var fcmTokens = sessions.map(s => s.fcm).filter(t => !!t);
 
     //Send push notification to 80% of users with webpush or fcm token. 
-    if ((webpushTokens.length || fcmTokens.length) && randomTrue(.80)) {
+    if ((webpushTokens.length || fcmTokens.length)) {
         n.type = "push"
         n.message.data = {
             buttons: [
@@ -171,7 +171,7 @@ async function createNotification(client) {
     }
 
     //console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${n.message.body}`);
-    if (process.env.NODE_ENV == "production")
+    //if (process.env.NODE_ENV == "production")
         return await n.save();
 }
 
