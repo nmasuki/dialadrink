@@ -6,4 +6,4 @@ console.log("Initializing workers for " + (process.env.NODE_ENV || "developer") 
 keystone.openDatabaseConnection(console.log);
 
 //Start Background workers a little later
-workers.start(0);
+workers.start(2000);

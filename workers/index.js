@@ -63,7 +63,7 @@ async function loadWorkers() {
 	});
 
 	if (isFirstPass)
-		console.log("Loaded AppWorkers:\n\t-" + modules.map(m => `${m.name}: ${m.nextRun}`).join(',\n\t-'));
+		console.log("Loaded AppWorkers:\n\t-" + modules.map(m => `${m.name}: ${m.worker?.nextRun}`).join(',\n\t-'));
 
 	return modules;
 }
