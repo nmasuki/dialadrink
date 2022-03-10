@@ -86,7 +86,19 @@ keystone.set('locals', {
 keystone.set('routes', require('./routes'));
 
 // Mailing configs
-keystone.set('email nodemailer', {
+var nodeOptions = {
+  service: 'Gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: 'dialadrinkkenya.co.ke@gmail.com',
+    pass: 'Enter@1234'
+  }
+};
+
+/***
+var nodeOptions = {
 	// Nodemailer configuration
 	service: 'Zoho',
 	host: process.env.SMTP_HOST,
@@ -96,7 +108,10 @@ keystone.set('email nodemailer', {
 		user: process.env.SMTP_USER, // generated ethereal user
 		pass: process.env.SMTP_PASS // generated ethereal password
 	}
-});
+}; 
+/***/
+
+keystone.set('email nodemailer', nodeOptions);
 
 // Configure the navigation bar in Keystone's AppUser UI
 keystone.set('nav', {
