@@ -167,6 +167,4 @@ function send_email(from, to, subject, body, attachments) {
     })
 }
 
-send_email(null, "nmasuki@gmail.com", "Testing email", "Just testing!");
-
 module.exports = keystone;
