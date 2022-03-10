@@ -4,8 +4,8 @@ var webpush = require("web-push");
 var fs = require('fs');
 var path = require('path');
 
-var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
 var sms = require("../helpers/sms").getInstance();
+var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
 var fileStore = require("../helpers/LocalStorage").getInstance("app-uploads");   
 
 var Types = keystone.Field.Types;
@@ -431,8 +431,8 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                 
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
-            //if (client.lastNotificationDate < new Date().addDays(-30))
-            //    return client.sendSMSNotification("DIALADRINK:Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience!".format(client));
+            if (client.lastNotificationDate < new Date().addDays(-30))
+                return client.sendSMSNotification("DIALADRINK:Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience!".format(client));
             
             return Promise.resolve(`User ${client.name} has no push token associeted!`).then(console.warn);
         }
