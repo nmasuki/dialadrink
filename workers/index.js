@@ -63,7 +63,7 @@ async function loadWorkers() {
 	});
 
 	if (isFirstPass)
-		console.log("Loaded AppWorkers:\n\t-" + modules.map(m => `${m.name}: ${(m.worker?.nextRun - new Date().getTime())/1000}`).join(',\n\t-'));
+		console.log("Loaded AppWorkers:\n\t-" + modules.map(m => `${m.name} execute in ${(m.worker?.nextRun - new Date().getTime())/1000}s`).join(',\n\t-'));
 
 	return modules;
 }
