@@ -118,6 +118,10 @@ function BaseSMS() {
     };
 
     self.isReady = isReady;
+
+    self.init = function(){
+        return wss || (wss = require('../WebSocketServer'))
+    }
     
     return self;
 }

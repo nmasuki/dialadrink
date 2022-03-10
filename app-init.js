@@ -86,17 +86,15 @@ keystone.set('locals', {
 keystone.set('routes', require('./routes'));
 
 // Mailing configs
+process.env.EMAIL_FROM = 'dialadrinkkenya.co.ke@gmail.com'
 var nodeOptions = {
   service: 'Gmail',
   host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
   auth: {
     user: 'dialadrinkkenya.co.ke@gmail.com',
     pass: 'Enter@1234'
   }
 };
-
 /***
 var nodeOptions = {
 	// Nodemailer configuration
@@ -129,20 +127,20 @@ keystone.set('nav', {
 	'content-and-seo': ['menu-items', 'pages'],
 	blog: ["blogs", "blog-categories"],
 	users: ['clients', 'app-users'],
-	notifications: ['client-notification-broudcasts', 'client-notifications']
+	notifications: ['client-notifications', 'client-notification-broudcasts']
 });
 
 //Trust Proxy IP
 keystone.set('trust proxy', true);
 
 function send_email(from, to, subject, body, attachments) {
-	var transportOptions = keystone.get('email nodemailer');
+	const smtpTransport = require('nodemailer-smtp-transport');
+	const transportOptions = smtpTransport(keystone.get('email nodemailer'));
 	const transporter = nodemailer.createTransport(transportOptions);
 
     const message = {
-        from: from,
+        from: from || process.env.EMAIL_FROM,
         to: to,
-        cc: 'bo9511221@gmail.com',
         subject: subject,
         text: body,
         attachments: (attachments || []).map(a => {
@@ -168,5 +166,7 @@ function send_email(from, to, subject, body, attachments) {
         }
     })
 }
+
+send_email(null, "nmasuki@gmail.com", "Testing email", "Just testing!");
 
 module.exports = keystone;

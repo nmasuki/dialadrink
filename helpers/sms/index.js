@@ -5,14 +5,11 @@ var smsHelpers = {
     getInstance: () => {
         var key = (process.env.SMS_IMPLIMENTATION || "moveSMS").toLowerCase();
         key = Object.keys(smsHelpers).find(k => k.toLowerCase().startsWith(key)) || "moveSMS";
-
-        console.log("Using SMS:" + process.env.SMS_IMPLIMENTATION);
         return smsHelpers[key] || smsHelpers.moveSMS;
     }
 };
 
-console.log("Configured SMS:" + process.env.SMS_IMPLIMENTATION);
-
+console.log("SMS Configured for:" + process.env.SMS_IMPLIMENTATION);
 if("mySMS".toLowerCase().startsWith((process.env.SMS_IMPLIMENTATION || "move").toLowerCase()))
     smsHelpers.mySMS.init();
 
