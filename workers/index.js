@@ -44,9 +44,6 @@ async function loadWorkers() {
 		}
 	}).filter(m => m);
 
-	if (isFirstPass)
-		console.log("Loaded AppWorkers:\n" + modules.map(m => m.name).join(', '));
-
 	var filter = { name: { "$in": modules.map(m => m.name) } };
 	var workers = await AppWorker.model.find(filter).exec();
 
@@ -64,6 +61,9 @@ async function loadWorkers() {
 		m.worker = worker;
 		return m;
 	});
+
+	if (isFirstPass)
+		console.log("Loaded AppWorkers:\n\t-" + modules.map(m => `${m.name}: ${m.nextRun}`).join(',\n\t-'));
 
 	return modules;
 }
