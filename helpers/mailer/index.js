@@ -67,24 +67,12 @@ function send(toSend, onSuccess, onFailure) {
 }
 
 module.exports = function (email, options, callback) {
-	options = Object.assign(getSendOptions(options), email);
+	var message = Object.assign(getSendOptions(options), email);
 	
 	// validate
-	if (!options.to.length) {
+	if (!options.to.length)
 		return callback(new Error('No recipients to send to'));
-	}
-
-	process.nextTick(function () {
-		// send
-		send({ message: options },
-			// onSuccess
-			function (res) {
-				callback(null, res);
-			},
-			// onError
-			function (res) {
-				callback(res);
-			}
-		);
-	});
+	
+	//send
+	process.nextTick(() => send({ message: message }, res => callback(null, res), error => callback(error)));
 };

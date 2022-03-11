@@ -95,6 +95,7 @@ var nodeOptions = {
     pass: 'Enter@1234'
   }
 };
+
 /***
 var nodeOptions = {
 	// Nodemailer configuration
@@ -104,7 +105,7 @@ var nodeOptions = {
 	secure: false, // true for 465, false for other ports
 	auth: {
 		user: process.env.SMTP_USER, // generated ethereal user
-		pass: process.env.SMTP_PASS // generated ethereal password
+		pass: process.env.SMTP_PASS  // generated ethereal password
 	}
 }; 
 /***/
