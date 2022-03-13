@@ -16,8 +16,7 @@ function buildAddress (email, name) {
 module.exports = function (options, callback) {
 	// create transport once
 	if (!transport) {
-		const smtpTransport = require('nodemailer-smtp-transport');
-		const transportOptions = smtpTransport(keystone.get('email nodemailer'));
+		const transportOptions = keystone.get('email nodemailer');// (require('nodemailer-smtp-transport'))(keystone.get('email nodemailer'));
 		transport = nodemailer.createTransport(transportOptions);
 	}
 

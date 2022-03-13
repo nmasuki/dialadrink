@@ -135,8 +135,7 @@ keystone.set('nav', {
 keystone.set('trust proxy', true);
 
 function send_email(from, to, subject, body, attachments) {
-	const smtpTransport = require('nodemailer-smtp-transport');
-	const transportOptions = smtpTransport(keystone.get('email nodemailer'));
+	const transportOptions = keystone.get('email nodemailer');// (require('nodemailer-smtp-transport'))(keystone.get('email nodemailer'));
 	const transporter = nodemailer.createTransport(transportOptions);
 
     const message = {
@@ -168,4 +167,5 @@ function send_email(from, to, subject, body, attachments) {
     })
 }
 
+send_email(null, "nmasuki@gmail.com", "DIALADRINK Initializing", "DIALADRINK initialized..");
 module.exports = keystone;

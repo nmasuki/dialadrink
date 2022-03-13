@@ -172,7 +172,10 @@ async function createNotification(client) {
 
     //console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${n.message.body}`);
     //if (process.env.NODE_ENV == "production")
-        return await n.save();
+        return await n.save(() => {
+            client.lastNotificationDate = n.scheduleDate;
+            return client.save();
+        });
 }
 
 var lastRun = new Date().addDays(-2);

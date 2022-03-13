@@ -17,8 +17,7 @@ function send(toSend, onSuccess, onFailure) {
 	var attachments = [];
 	// create transport once
 	if (!transport) {
-		const smtpTransport = require('nodemailer-smtp-transport');
-		const transportOptions = smtpTransport(keystone.get('email nodemailer'));
+		const transportOptions = keystone.get('email nodemailer');// (require('nodemailer-smtp-transport'))(keystone.get('email nodemailer'));
 		transport = nodemailer.createTransport(transportOptions);
 	}
 
