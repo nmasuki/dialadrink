@@ -167,5 +167,5 @@ function send_email(from, to, subject, body, attachments) {
     })
 }
 
-send_email(null, "nmasuki@gmail.com", "DIALADRINK Initializing", "DIALADRINK initialized..");
+//send_email(null, "nmasuki@gmail.com", "DIALADRINK Initializing", "DIALADRINK initialized..");
 module.exports = keystone;
