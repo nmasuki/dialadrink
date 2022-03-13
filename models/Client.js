@@ -656,7 +656,7 @@ Client.schema.methods.guessGender = function(name){
 };
 
 Client.schema.post('save', function(error, doc, next) {
-    console.log(error);
+    if(error) console.log(error);
     next();
 });
 
