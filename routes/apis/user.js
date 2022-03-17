@@ -377,7 +377,6 @@ router.post("/login", function (req, res) {
 	} else {
 		Client.model.find({phoneNumber: mobile})
 		.exec((err, clients) => {
-
 			if (err)
 				return res.send({
 					response: "error",

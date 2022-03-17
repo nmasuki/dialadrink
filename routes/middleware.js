@@ -395,9 +395,15 @@ var setAppUser = function (req, res, user) {
     else if (user.accountStatus && user.accountStatus != "Active" && (!res.locals.app || res.locals.app != "com.dialadrinkkenya"))
         return Promise.reject(`User ${user.fullName} in ${user.accountStatus} status!`).catch(console.error);
 
+    var filter = {};
+    if(user.phoneNumber || user.user_mobile)
+        filter.phoneNumber = (user.phoneNumber || user.user_mobile || "").cleanPhoneNumber();
+    else if(user.userid)
+        filter._id = user.userid;
+
     if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
         return new Promise((resolve, reject) => {
-            keystone.list("AppUser").find({ phoneNumber: user.phoneNumber })
+            keystone.list("AppUser").find(filter)
                 .catch(reject)
                 .then(users => {
                     var tosave = false;
@@ -426,7 +432,8 @@ var setAppUser = function (req, res, user) {
     }
 
     return new Promise((resolve, reject) => {
-        keystone.list("Client").model.findOne({ phoneNumber: user.phoneNumber.cleanPhoneNumber() })
+        keystone.list("Client").model
+            .findOne(filter)
             .exec((err, client) => {
                 if (err)
                     return reject(err);

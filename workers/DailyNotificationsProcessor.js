@@ -12,11 +12,17 @@ const messageTemplate = {
     ],
     dailyMessage: [
         /*Sunday*/[],
-        /*Monday*/[],
+        /*Monday*/[
+            "After a long, hot day, few things are more rewarding than a tall, frosty glass of {favoriteDrink}."
+        ],
         /*Tuesday*/[],
-        /*Wednesday*/[],
+        /*Wednesday*/[
+            "Time to relax with a refreshing {favorite Drink}!",
+        ],
         /*Thursday*/[],
-        /*Friday*/[],
+        /*Friday*/[
+            "Quench your thirst with a sip of cold {favorite Drink}"
+        ],
         /*Sartuday*/[],
     ],
     message: [
