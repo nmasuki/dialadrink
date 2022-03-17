@@ -45,6 +45,38 @@ router.get("/", function (req, res) {
     });
 });
 
+router.get("/v2", function (req, res) {
+    var filter = {};
+
+    if(req.query.id)
+        filter._id = typeof req.query.id == "string"? req.query.id: {"$in": req.query.id.map(id => id)};
+    
+    var page = parseInt(req.query.page || 1);
+    var pageSize = parseInt(req.query.pageSize || 1000);
+    var start = (page - 1) * pageSize;
+    
+    var query = req.query.query || "";
+    console.log("Looking up products.. " + query, "page:", page, "pageSize:", pageSize, "skip:", start);
+    Product.search(query, function (err, products) {
+        var json = {
+            response: "error",
+            message: ""
+        };
+
+        if (err)
+            json.message = "Error fetching drinks! " + err;
+        else {
+            json.response = "success";
+            json.data = products.orderBy(p => p.publishedDate)
+                .slice(start, start + pageSize)
+                .select(d => Object.assign({}, d.toAppObject()));
+            console.log("Found " + json.data.length);
+        }
+
+        res.send(json);
+    });
+});
+
 router.get("/categories", function (req, res) {
     var cloudinaryOptions = {
         secure: true,
