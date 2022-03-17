@@ -750,6 +750,7 @@ Product.search = function (query, next, deepSearch) {
     var filters = {
         "$or": [
             { 'category.key': new RegExp(keyStr + "$", "i") },
+            { _id: query.cleanId() },
             { key: keyRegex },
             { href: keyRegex },
             { href: nameRegex },
