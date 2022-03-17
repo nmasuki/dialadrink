@@ -414,12 +414,12 @@ var setAppUser = function (req, res, user) {
                     user.clientIps = user.clientIps || [];
 
                     if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0) {
-                        user.sessions.push(req.sessionID);
+                        user.sessions = user.sessions.concat([req.sessionID]).distinct();
                         tosave = true;
                     }
 
                     if (res.locals.clientIp && user.clientIps.indexOf(res.locals.clientIp) < 0) {
-                        user.clientIps.push(res.locals.clientIp);
+                        user.clientIps = user.clientIps.concat(res.locals.clientIp).distinct();
                         tosave = true;
                     }
 
@@ -442,12 +442,12 @@ var setAppUser = function (req, res, user) {
 
                 var tosave = false;
                 if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
-                    client.sessions.push(req.sessionID);
+                    client.sessions = client.sessions.concat([req.sessionID]).distinct();
                     tosave = true;
                 }
 
                 if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
-                    client.clientIps.push(res.locals.clientIp);
+                    client.clientIps = client.clientIps.concat([req.clientIp]).distinct();
                     tosave = true;
                 }
 

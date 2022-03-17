@@ -67,9 +67,11 @@ router.get("/v2", function (req, res) {
             json.message = "Error fetching drinks! " + err;
         else {
             json.response = "success";
+            
             json.data = products.orderBy(p => p.publishedDate)
                 .slice(start, start + pageSize)
-                .select(d => Object.assign({}, d.toAppObject()));
+                .map(d => Object.assign({ options: d.options }, d.toAppObject()));
+
             console.log("Found " + json.data.length);
         }
 

@@ -105,6 +105,8 @@ Client.relationship({
     refPath: 'client'
 });
 
+Client.schema.usePushEach = true;
+
 Client.defaultColumns = 'firstName, lastName, phoneNumber, email, address, orderCount, orderValue, lastOrderDate';
 Client.schema.virtual("isAppRegistered").get(function () {
     return !!this.password;
