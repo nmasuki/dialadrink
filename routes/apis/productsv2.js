@@ -6,7 +6,7 @@ var filters = require('../../helpers/filters');
 
 var router = keystone.express.Router();
 
-router.get("/", function (req, res) {
+router.get("/", async function (req, res) {
     var filter = {};
     var ids = req.query.id || req.query.ids;
     var query = req.query.query || "";
@@ -15,7 +15,6 @@ router.get("/", function (req, res) {
         filter._id = {"$in": ids.map(id => id)};
     else 
         filter = filters.luceneToMongo(ids || query);
-
     
     var orderBy = req.query.sort || req.query.orderBy || "popularityRatio DESC";
     var page = parseInt(req.query.page || 1);
@@ -27,7 +26,7 @@ router.get("/", function (req, res) {
     var json = { response: "error", message: "", count: 0, data: [] };
 
     try{
-        var products = Product.model.find(filter)
+        var products = await Product.model.find(filter)
             .sort(sort).skip(skip).limit(pageSize)
             .populate('brand').populate('category').populate('ratings')
             .deepPopulate("subCategory.category,priceOptions.option")
@@ -46,7 +45,6 @@ router.get("/", function (req, res) {
             json.message = "Error fetching drinks! " + err;
     }
 
-
     res.send(json);
 });
 
@@ -64,7 +62,7 @@ router.get("/:query", async function (req, res, next) {
     var json = { response: "error", message: "", count: 0, data: [] };
 
     try{
-        var products = Product.model.find(filter)
+        var products = await Product.model.find(filter)
             .sort(sort).skip(skip).limit(pageSize)
             .populate('brand').populate('category').populate('ratings')
             .deepPopulate("subCategory.category,priceOptions.option")

@@ -14,10 +14,10 @@ function expandLuceneRange(filter) {
 				.map(v => (v || "").trim().trim('"', '*', ' '))
 
 			var _str = ""; //string.Format("{0}>{1} AND {0}<{2}", parts[1], parts[2], parts[3]);
-			if (parts[0] && parts[1])
+			if (parts[0] && parts[1] && parts[1] != "*")
 				_str += `${parts[0]}>${(parts[3] == "{" ? "=" : "")}${parts[1]}`;
 
-			if (parts[0] && parts[2])
+			if (parts[0] && parts[2] && parts[2] != "*")
 				_str = "(" + _str + (_str ? " AND " : "") + `${parts[0]}<${(parts[4] == "}" ? "=" : "")}${parts[2]})`;
 
 			return (openingBrack ? "(" : "") + `${_str.trim()}` + (clossingBrack ? ")" : "");
@@ -194,7 +194,7 @@ function postfixToMongo(postfix, substitution){
 			var mongoOpMap = { "&": "$and", "|": "$or", "!": "$not" };
 			var mongoOp = mongoOpMap[op];
 
-			var expr = [left, right].filter(x => x).map(x => evaluateLiteral(x, substitution));//.distinctBy(x => JSON.stringify(x));
+			var expr = [left, right].filter(x => x);//.distinctBy(x => JSON.stringify(x));
 			if (expr.length == 1 && !isBinaryOperator(op))
 				return expr[0];
 
@@ -206,7 +206,7 @@ function postfixToMongo(postfix, substitution){
 
 			stack.push(lit);
 		} else {
-			stack.push(t);
+			stack.push(evaluateLiteral(t, substitution));
 		}
 	}
 
@@ -386,7 +386,7 @@ function orderByToSortObj(orderBy) {
 
 		var sort = {};
 		sort[parts[i]] = 1;
-		sortArray.push({})
+		sortArray.push(sort)
 	}
 
 	var $sort = {};
