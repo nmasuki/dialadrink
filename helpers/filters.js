@@ -49,11 +49,11 @@ String.prototype.count = Array.prototype.count = function (func) {
 var operatorSubstitution = { "AND": "&", "OR": "|", "NOT": "!" };
 function runSubstitution(expr, substitution, isRecurssion) {
 	substitution = Object.assign(substitution || {}, operatorSubstitution);
-	var filter = new String(expr).toString();
+	var filter = new String(expr || "").toString();
 
 	filter = expandLuceneRange(filter);
 	for (var i in operatorSubstitution)
-		filter = filter.replaceAll(i, operatorSubstitution[i]);
+		filter = filter.replace(i, operatorSubstitution[i]);
 
 	var groups = Array.from(filter.matchAll(/(\()([^\(\)]+)(\))/g))?.map(g => g[0])?.distinct();
 	if (groups && groups.length) {
