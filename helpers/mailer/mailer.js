@@ -1,4 +1,5 @@
-var _ = require('lodash'),
+var
+	_ = require('lodash'),
 	htmlToText = require('html-to-text'),
 	keystone = require('keystone'),
 	nodemailer = require('nodemailer');
@@ -14,10 +15,10 @@ function buildAddress (email, name) {
 }
 
 module.exports = function (options, callback) {
+
 	// create transport once
 	if (!transport) {
-		const transportOptions = keystone.get('email nodemailer');// (require('nodemailer-smtp-transport'))(keystone.get('email nodemailer'));
-		transport = nodemailer.createTransport(transportOptions);
+		transport = nodemailer.createTransport(keystone.get('email nodemailer'));
 	}
 
 	var locals = options;

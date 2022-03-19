@@ -17,8 +17,7 @@ function send(toSend, onSuccess, onFailure) {
 	var attachments = [];
 	// create transport once
 	if (!transport) {
-		const transportOptions = keystone.get('email nodemailer');// (require('nodemailer-smtp-transport'))(keystone.get('email nodemailer'));
-		transport = nodemailer.createTransport(transportOptions);
+		transport = nodemailer.createTransport(keystone.get('email nodemailer'));
 	}
 
 	if (message.attachments) {
@@ -66,12 +65,24 @@ function send(toSend, onSuccess, onFailure) {
 }
 
 module.exports = function (email, options, callback) {
-	var message = Object.assign(getSendOptions(options), email);
+	options = Object.assign(getSendOptions(options), email);
 	
 	// validate
-	if (!options.to.length)
+	if (!options.to.length) {
 		return callback(new Error('No recipients to send to'));
-	
-	//send
-	process.nextTick(() => send({ message: message }, res => callback(null, res), error => callback(error)));
+	}
+
+	process.nextTick(function () {
+		// send
+		send({ message: options },
+			// onSuccess
+			function (res) {
+				callback(null, res);
+			},
+			// onError
+			function (res) {
+				callback(res);
+			}
+		);
+	});
 };
