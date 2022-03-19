@@ -50,17 +50,14 @@ router.get("/:query", async function (req, res, next) {
     var sort = filters.orderByToSortObj(orderBy);
     var filter = filters.luceneToMongo(query);
 
-    var products = Product.model.find(filter).sort(sort).skip(skip).limit(pageSize)
+    console.log("Running filter on products:" + JSON.stringify(filter));
+    var products = Product.model.find(filter)
+        .sort(sort).skip(skip).limit(pageSize)
         .populate('brand').populate('category').populate('ratings')
         .deepPopulate("subCategory.category,priceOptions.option")
         .exec();
 
-    var json = {
-        response: "error",
-        message: "",
-        count: 0,
-        data: []
-    };
+    var json = { response: "error", message: "", count: 0, data: [] };
 
     if (err)
         json.message = "Error fetching drinks! " + err;
