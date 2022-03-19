@@ -395,15 +395,9 @@ var setAppUser = function (req, res, user) {
     else if (user.accountStatus && user.accountStatus != "Active" && (!res.locals.app || res.locals.app != "com.dialadrinkkenya"))
         return Promise.reject(`User ${user.fullName} in ${user.accountStatus} status!`).catch(console.error);
 
-    var filter = {};
-    if(user.phoneNumber || user.user_mobile)
-        filter.phoneNumber = (user.phoneNumber || user.user_mobile || "").cleanPhoneNumber();
-    else if(user.userid)
-        filter._id = user.userid;
-
     if (res.locals.app == "com.dialadrinkkenya.rider" || res.locals.app == "com.dialadrinkkenya.office") {
         return new Promise((resolve, reject) => {
-            keystone.list("AppUser").find(filter)
+            keystone.list("AppUser").find({ phoneNumber: user.phoneNumber })
                 .catch(reject)
                 .then(users => {
                     var tosave = false;
@@ -414,12 +408,12 @@ var setAppUser = function (req, res, user) {
                     user.clientIps = user.clientIps || [];
 
                     if (req.sessionID && user.sessions.indexOf(req.sessionID) < 0) {
-                        user.sessions = user.sessions.concat([req.sessionID]).distinct();
+                        user.sessions.push(req.sessionID);
                         tosave = true;
                     }
 
                     if (res.locals.clientIp && user.clientIps.indexOf(res.locals.clientIp) < 0) {
-                        user.clientIps = user.clientIps.concat(res.locals.clientIp).distinct();
+                        user.clientIps.push(res.locals.clientIp);
                         tosave = true;
                     }
 
@@ -432,8 +426,7 @@ var setAppUser = function (req, res, user) {
     }
 
     return new Promise((resolve, reject) => {
-        keystone.list("Client").model
-            .findOne(filter)
+        keystone.list("Client").model.findOne({ phoneNumber: user.phoneNumber.cleanPhoneNumber() })
             .exec((err, client) => {
                 if (err)
                     return reject(err);
@@ -442,12 +435,12 @@ var setAppUser = function (req, res, user) {
 
                 var tosave = false;
                 if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0) {
-                    client.sessions = client.sessions.concat([req.sessionID]).distinct();
+                    client.sessions.push(req.sessionID);
                     tosave = true;
                 }
 
                 if (res.locals.clientIp && client.clientIps.indexOf(res.locals.clientIp) < 0) {
-                    client.clientIps = client.clientIps.concat([req.clientIp]).distinct();
+                    client.clientIps.push(res.locals.clientIp);
                     tosave = true;
                 }
 

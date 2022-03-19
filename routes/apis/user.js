@@ -290,29 +290,31 @@ router.post(["/forgot", "/otp"], function (req, res) {
 	};
 
 	console.log("Getting user: " + phoneNumber.cleanPhoneNumber());
-	Client.model.findOne({ phoneNumber: phoneNumber.cleanPhoneNumber() })
-		.exec((err, client) => {
-			if (err) {
-				json.message = "Error while reading registered users. " + err;
-			} else if (client) {
-				client.sendOTP(req.body.otpToken);
+	Client.model.findOne({
+		phoneNumber: phoneNumber.cleanPhoneNumber()
+	})
+	.exec((err, client) => {
+		if (err) {
+			json.message = "Error while reading registered users. " + err;
+		} else if (client) {
+			client.sendOTP(req.body.otpToken);
 
-				if (req.body.otpToken != undefined) {
-					json.data = client.toAppObject();
-					res.locals.appUser = client;
+			if (req.body.otpToken != undefined) {
+				json.data = client.toAppObject();
+				res.locals.appUser = client;
 
-					if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0)
-						client.sessions.push(req.sessionID);
-				}
-
-				//TODO send SMS/Email.
-				json.response = "success";
-			} else {
-				json.message = "User not found!";
+				if (req.sessionID && client.sessions.indexOf(req.sessionID) < 0)
+					client.sessions.push(req.sessionID);
 			}
 
-			return res.send(json);
-		});
+			//TODO send SMS/Email.
+			json.response = "success";
+		} else {
+			json.message = "User not found!";
+		}
+
+		return res.send(json);
+	});
 });
 
 router.post("/login", function (req, res) {
