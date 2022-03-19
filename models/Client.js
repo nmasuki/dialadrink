@@ -693,7 +693,9 @@ Client.schema.pre('save', function (next) {
 
 Client.schema.methods.update = function(){
     if(!this.debounceSave) this.debounceSave = this.save.debounce(10); 
-    return this.debounceSave.apply(this, arguments);
+    return this.debounceSave.apply(this, arguments).catch(function(){
+        console.log("Debounce on client.update")
+    });
 };
 
 Client.schema.methods.getOrders = function(){
