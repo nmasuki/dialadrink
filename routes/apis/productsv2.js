@@ -51,23 +51,26 @@ router.get("/:query", async function (req, res, next) {
     var filter = filters.luceneToMongo(query);
 
     console.log("Running filter on products:" + JSON.stringify(filter));
-    var products = Product.model.find(filter)
-        .sort(sort).skip(skip).limit(pageSize)
-        .populate('brand').populate('category').populate('ratings')
-        .deepPopulate("subCategory.category,priceOptions.option")
-        .exec();
-
     var json = { response: "error", message: "", count: 0, data: [] };
 
-    if (err)
-        json.message = "Error fetching drinks! " + err;
-    else if (products && products.length) {
-        json.response = "success";
-        json.count = products.length;
-        json.data = products.map(d => d.toAppObject());
-    } else {
-        json.response = "success";
-        json.message = "No record matching the query";
+    try{
+        var products = Product.model.find(filter)
+            .sort(sort).skip(skip).limit(pageSize)
+            .populate('brand').populate('category').populate('ratings')
+            .deepPopulate("subCategory.category,priceOptions.option")
+            .exec();
+
+        if (products && products.length) {
+            json.response = "success";
+            json.count = products.length;
+            json.data = products.map(d => d.toAppObject());
+        } else {
+            json.response = "success";
+            json.message = "No record matching the query";
+        }
+    } catch(err){
+        if (err)
+            json.message = "Error fetching drinks! " + err;
     }
 
     res.send(json);

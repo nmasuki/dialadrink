@@ -740,34 +740,37 @@ Product.findByOption = function (filter, callback) {
 };
 
 Product.search = function (query, next, deepSearch) {
-    var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, "\\W*");
-    var keyStr = query.cleanId().trim().escapeRegExp();
+    var filters = query;
+    if(typeof query == "string"){
+        var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, "\\W*");
+        var keyStr = query.cleanId().trim().escapeRegExp();
 
-    var nameRegex = new RegExp("(^|\\W)(" + nameStr + ")", "i");
-    var keyRegex = new RegExp("(^|\\W)(" + keyStr + ")", "i");
+        var nameRegex = new RegExp("(^|\\W)(" + nameStr + ")", "i");
+        var keyRegex = new RegExp("(^|\\W)(" + keyStr + ")", "i");
 
-    // Set filters
-    var filters = {
-        "$or": [
-            { 'category.key': new RegExp(keyStr + "$", "i") },
-            { key: keyRegex },
-            { href: keyRegex },
-            { href: nameRegex },
-            { tags: keyRegex },
-            { tags: nameRegex },
-            { name: nameRegex },
-            { name: keyRegex },
-            { quantity: nameRegex },
-            { quantity: keyRegex },
-            { countryOfOrigin: nameRegex},
-            {
-                $or: [
-                    { 'company.name': keyRegex },
-                    { 'company.name': nameRegex }
-                ]
-            }
-        ]
-    };
+        // Set filters
+        filters = {
+            "$or": [
+                { 'category.key': new RegExp(keyStr + "$", "i") },
+                { key: keyRegex },
+                { href: keyRegex },
+                { href: nameRegex },
+                { tags: keyRegex },
+                { tags: nameRegex },
+                { name: nameRegex },
+                { name: keyRegex },
+                { quantity: nameRegex },
+                { quantity: keyRegex },
+                { countryOfOrigin: nameRegex},
+                {
+                    $or: [
+                        { 'company.name': keyRegex },
+                        { 'company.name': nameRegex }
+                    ]
+                }
+            ]
+        };
+    }
 
     var allProducts = [];
     //Searching by brand then category then product

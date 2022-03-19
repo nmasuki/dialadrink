@@ -1,5 +1,4 @@
-var
-	_ = require('lodash'),
+var _ = require('lodash'),
 	htmlToText = require('html-to-text'),
 	keystone = require('keystone'),
 	nodemailer = require('nodemailer');

@@ -259,6 +259,8 @@ function evaluateLiteral(lit, substitution) {
 function luceneToMongo(expr) {
 	if (!expr)
 		return {};
+	if (/^[a-f0-9]{24}$/.test(expr))
+		return { _id: expr }
 	if (!/[=:]/.test(expr))
 		return { name: new RegExp(`.*?(${expr}).*?`, "i") };
 
