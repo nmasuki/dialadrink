@@ -40,6 +40,7 @@
     "liftoff": "^4.0.0",
     "lockfile": "^1.0.4",
     "lodash": "^4.17.21",
+    "lucene-mongo-query": "^0.5.0",
     "memory-cache": "^0.2.0",
     "moment": "^2.24.0",
     "mongoose": "^5.13.5",

@@ -2,6 +2,7 @@ var keystone = require('keystone');
 var cloudinary = require('cloudinary');
 var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
+var filters = require('../../helpers/filters');
 
 var router = keystone.express.Router();
 
@@ -39,29 +40,40 @@ router.get("/", function (req, res) {
     });
 });
 
-router.get("/:query", function (req, res, next) {
-    var query = req.params.query;    
-    Product.search(query, function (err, products) {
-        var json = {
-            response: "error",
-            message: "",
-            count: 0,
-            data: []
-        };
+router.get("/:query", async function (req, res, next) {
+    var query = req.params.query || "";
+    var orderBy = req.query.sort || req.query.orderBy || "popularityRatio DESC";
+    
+    var page = parseInt(req.query.page || 1);
+    var pageSize = parseInt(req.query.pageSize || 1500);
+    var skip = (page - 1) * pageSize;
+    var sort = filters.orderByToSortObj(orderBy);
+    var filter = filters.luceneToMongo(query);
 
-        if (err)
-            json.message = "Error fetching drinks! " + err;
-        else if (products && products.length) {
-            json.response = "success";
-            json.count = products.length;
-            json.data = products.map(d => d.toAppObject());
-        } else {
-            json.response = "success";
-            json.message = "No record matching the query";
-        }
+    var products = Product.model.find(filter).sort(sort).skip(skip).limit(pageSize)
+        .populate('brand').populate('category').populate('ratings')
+        .deepPopulate("subCategory.category,priceOptions.option")
+        .exec();
 
-        res.send(json);
-    });
+    var json = {
+        response: "error",
+        message: "",
+        count: 0,
+        data: []
+    };
+
+    if (err)
+        json.message = "Error fetching drinks! " + err;
+    else if (products && products.length) {
+        json.response = "success";
+        json.count = products.length;
+        json.data = products.map(d => d.toAppObject());
+    } else {
+        json.response = "success";
+        json.message = "No record matching the query";
+    }
+
+    res.send(json);
 });
 
 router.get("/related/:productId", function(req, res, next){
