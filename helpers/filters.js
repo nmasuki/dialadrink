@@ -46,6 +46,19 @@ String.prototype.count = Array.prototype.count = function (func) {
 	return c;
 }
 
+if (!String.prototype.replaceAll) {
+	String.prototype.replaceAll = function(str, newStr){
+
+		// If a regex pattern
+		if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
+			return this.replace(str, newStr);
+		}
+
+		// If a string
+		return this.replace(new RegExp(str, 'g'), newStr);
+	};
+}
+
 var operatorSubstitution = { "AND": "&", "OR": "|", "NOT": "!" };
 function runSubstitution(expr, substitution, isRecurssion) {
 	substitution = Object.assign(substitution || {}, operatorSubstitution);
@@ -53,7 +66,7 @@ function runSubstitution(expr, substitution, isRecurssion) {
 
 	filter = expandLuceneRange(filter);
 	for (var i in operatorSubstitution)
-		filter = filter.replace(i, operatorSubstitution[i]);
+		filter = filter.replaceAll(i, operatorSubstitution[i]);
 
 	var groups = Array.from(filter.matchAll(/(\()([^\(\)]+)(\))/g))?.map(g => g[0])?.distinct();
 	if (groups && groups.length) {
