@@ -383,7 +383,7 @@ Product.schema.methods.toAppObject = function () {
         quantity: d.quantity,        
         currency: d.currency,
 
-        options: d.productOptions.map(o => {
+        options: (d.priceOptions || []).map(o => {
             return {
                 _id: o.id || o._id,
                 quantity: o.quantity,
