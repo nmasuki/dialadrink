@@ -382,9 +382,11 @@ Product.schema.methods.toAppObject = function () {
 
         quantity: d.quantity,        
         currency: d.currency,
+
+        options: d.priceOptions
     });
 
-    ["__v", 'options', 'defaultOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
+    ["__v", 'defaultOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
         delete obj[i];
     });
 
