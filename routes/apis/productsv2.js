@@ -5,7 +5,8 @@ var filters = require('../../helpers/filters');
 var router = keystone.express.Router();
 
 async function getPagedProducts(page, pageSize, query, orderBy){
-    console.log(`Running filter on products: '${typeof query == "object"? JSON.stringify(query): query}'`);
+    var strQuery = typeof query == "object"? JSON.stringify(query): query;
+    console.log(`Running filter on products: '${strQuery}' Page:${page}, PageSize:${pageSize}`);
     var json = { response: "error", message: "", count: 0, data: [] };
 
     try{
@@ -21,12 +22,12 @@ async function getPagedProducts(page, pageSize, query, orderBy){
         products = products.slice((page - 1) * pageSize, pageSize);
 
         if (products && products.length) {
-            console.log(`Got ${products.length} products with query '${typeof query == "object"? JSON.stringify(query): query}'..`);
+            console.log(`Got ${products.length} products with query '${strQuery}' Page:${page}, PageSize:${pageSize}.`);
             json.response = "success";
             json.count = products.length;
             json.data = products;
         } else {
-            console.log(`Got no products with query '${typeof query == "object"? JSON.stringify(query): query}'..`);
+            console.log(`Got no products with query '${strQuery}' Page:${page}, PageSize:${pageSize}`);
             json.response = "success";
             json.message = "No record matching the query";
         }
