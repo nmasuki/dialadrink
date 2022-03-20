@@ -21,12 +21,12 @@ async function getPagedProducts(page, pageSize, query, orderBy){
         products = products.slice((page - 1) * pageSize, pageSize);
 
         if (products && products.length) {
-            console.log(`Got ${products.length} products with query '${query}'..`);
+            console.log(`Got ${products.length} products with query '${typeof query == "object"? JSON.stringify(query): query}'..`);
             json.response = "success";
             json.count = products.length;
             json.data = products;
         } else {
-            console.log(`Got no products with query '${query}'..`);
+            console.log(`Got no products with query '${typeof query == "object"? JSON.stringify(query): query}'..`);
             json.response = "success";
             json.message = "No record matching the query";
         }

@@ -369,7 +369,7 @@ Product.schema.methods.toAppObject = function () {
 
         inStock: !!d.inStock,
         hitsPerWeek: d.hitsPerWeek,
-        
+
         remainingStock: 10,
         reorderLevel: d.reorderLevel,
         
@@ -377,6 +377,7 @@ Product.schema.methods.toAppObject = function () {
         price: d.price || 0,
         offerPrice: d.offerPrice || 0,
 
+        isFeatured: d.onOffer,
         onOffer: (d.offerPrice || 0) > 0 && d.offerPrice < d.price,
 
         quantity: d.quantity,        
