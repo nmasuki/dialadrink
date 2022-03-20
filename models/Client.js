@@ -114,7 +114,10 @@ Client.schema.virtual("isAppRegistered").get(function () {
 
 Client.schema.virtual("getFavouriteDrink")
     .get(async function () {
-        var drinks = await this.getFavouriteDrinks(1);
+        var drinks = (await this.getFavouriteDrinks(100)).filter(p => {
+            var cat = (p.category.id || p.category || "").toString();            
+            return cat && cat != "60129fcaed81b0076eb0363f";
+         } );
         if(drinks && drinks.length)
             return this.favouriteDrink = drinks[0].name;
 
@@ -719,7 +722,7 @@ Client.schema.methods.getOrders = function(){
         return new Promise(resolve => {
             keystone.list("Order").model.find(findOption)
                 .sort({ orderDate: -1 })
-                .deepPopulate('client,cart.product.priceOptions.option,cart.product.brand')
+                .deepPopulate('client,cart.product.priceOptions.option,cart.product.brand,,cart.product.category')
                 .exec((err, orders) => {
                     if (err)
                         return resolve(null);
