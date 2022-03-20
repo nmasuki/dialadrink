@@ -5,7 +5,7 @@ var filters = require('../../helpers/filters');
 var router = keystone.express.Router();
 
 async function getPagedProducts(page, pageSize, query, orderBy){
-    console.log(`Running filter on products: '${query}'`);
+    console.log(`Running filter on products: '${typeof query == "object"? JSON.stringify(query): query}'`);
     var json = { response: "error", message: "", count: 0, data: [] };
 
     try{
