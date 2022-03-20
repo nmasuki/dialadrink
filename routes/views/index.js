@@ -346,6 +346,15 @@ router.get("/pricelist", function (req, res) {
         locals.lastUpdated = products.map(p => p.modifiedDate).orderBy().last();
         locals.categories = products.map(p => p.category && p.category.name).filter(c => !!c).distinct().orderBy();
 
+        var options = {
+            //8.27 × 11.69 in
+            //"height": (11.69) + "in",        // allowed units: mm, cm, in, px
+            //"width": (8.27) + "in",            // allowed units: mm, cm, in, px
+            "phantomPath": "/usr/local/bin/phantomjs",
+            "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+            //"orientation": "landscape", // portrait or landscape
+        };
+
         function printPdf(err, html, next) {
             if (html) {
                 var pdf = require('html-pdf');
@@ -355,20 +364,17 @@ router.get("/pricelist", function (req, res) {
                 // If you use 'inline/attachment' here it will automatically open/download the PDF
                 res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
                 res.setHeader('Content-type', 'application/pdf');
-
-                pdf.create(html, {
-                    //8.27 × 11.69 in
-                    //"height": (11.69) + "in",        // allowed units: mm, cm, in, px
-                    //"width": (8.27) + "in",            // allowed units: mm, cm, in, px
-
-                    "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
-                    //"orientation": "landscape", // portrait or landscape
-                }).toStream(function (err, stream) {
-                    if (err)
-                        console.warn(err);
-                    else
-                        stream.pipe(res);
-                });
+                try{
+                    pdf.create(html, options).toStream(function (err, stream) {
+                        if (err)
+                            console.warn(err);
+                        else
+                            stream.pipe(res);
+                    });
+                } catch(e){
+                    console.error("Error while creating pdf: " + e);
+                    res.status(404).render('errors/404');
+                }
             } else if (next) {
                 next(err);
             } else {
