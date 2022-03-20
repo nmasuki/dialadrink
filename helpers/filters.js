@@ -178,7 +178,13 @@ var unaryOperators = ["!"],
 	isBinaryOperator = (a => binaryOperator.indexOf(a) >= 0),
 	isParen = (a => isOpeningParen(a) || isClosingParen(a)),
 	isOpeningParen = (a => a == "("),
-	isClosingParen = (a => a == ")");
+	isClosingParen = (a => a == ")"),
+	stringValueMapping = {
+		'null': null, 
+		'undefined': undefined, 
+		'true': true,
+		'false': false
+	};
 
 function substituteBack(expr, substitution) {
 	var mapping = {};
@@ -250,6 +256,10 @@ function evaluateLiteral(lit, substitution) {
 
 	var l = opPos != 0 ? value.split('').splice(0, opPos).join('') : null;
 	var r = opPos < value.length ? value.split('').splice(opPos + op.length).join('') : null;
+	var n;
+
+	if (stringValueMapping[r]) r = stringValueMapping[r];
+	if (!isNaN(n = parseFloat(r)) && isFinite(r)) r = n;
 
 	let res = {};
 	if (l && r) {
@@ -272,6 +282,8 @@ function evaluateLiteral(lit, substitution) {
 function luceneToMongo(expr) {
 	if (!expr)
 		return {};
+	if(typeof expr == "object")
+		return expr;
 	if (/^[a-f0-9]{24}$/.test(expr))
 		return { _id: expr }
 	if (!/[=:]/.test(expr))
@@ -380,6 +392,27 @@ function luceneToFn(filter) {
 	return mongoFilterToFn(luceneToMongo(filter))
 }
 
+function orderByExpr(list, orderBy){
+	if(!orderBy) return list;
+
+	var orderByObj = orderByToSortObj(orderBy);
+	var ordered = list.slice(0);
+
+	for(var i in orderByObj){
+		if(!orderByObj.hasOwnProperty(i)) continue;
+
+		let orderProperty = i;
+		let orderDir = orderByObj[i];
+
+		if(orderDir == -1)
+			ordered = ordered.orderByDescending(a =>  a[orderProperty]);
+		else			
+			ordered = ordered.orderBy(a =>  a[orderProperty]);
+	}
+
+	return ordered;
+}
+
 function orderByToSortObj(orderBy) {
 	var parts = (orderBy || "").split(' ');
 	var sortArray = [];
@@ -410,6 +443,10 @@ function orderByToSortObj(orderBy) {
 	return $sort;
 }
 
+Array.prototype.orderByExpr = function(orderBy){
+	return orderByExpr(this, orderBy);
+}
+
 //String.prototype.luceneToMongo = function () { return luceneToMongo(this); };
 
 //String.prototype.luceneToFn = function () { return luceneToFn(this); };
@@ -418,5 +455,6 @@ module.exports = {
 	mongoFilterToFn: mongoFilterToFn,
 	luceneToMongo: luceneToMongo,
 	luceneToFn: luceneToFn,
+	orderByExpr: orderByExpr,
 	orderByToSortObj: orderByToSortObj
 };

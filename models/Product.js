@@ -345,6 +345,7 @@ Product.schema.methods.toAppObject = function () {
         id: d.id,
         _id: d.id,
         _rev: d.__v,
+
         url: [keystone.get('url'), d.href].map(p => p.trim('/')).join('/'),
         
         imageFullSize: d.image.secure_url,
@@ -365,14 +366,19 @@ Product.schema.methods.toAppObject = function () {
 
         ratings: d.averageRatings,
         ratingCount: d.ratingCount,
+
         inStock: !!d.inStock,
         hitsPerWeek: d.hitsPerWeek,
+        
         remainingStock: 10,
         reorderLevel: d.reorderLevel,
         
         //Use cheapest option for price
         price: d.price || 0,
         offerPrice: d.offerPrice || 0,
+
+        onOffer: (d.offerPrice || 0) > 0 && d.offerPrice < d.price,
+
         quantity: d.quantity,        
         currency: d.currency,
     });
@@ -698,6 +704,7 @@ Product.findByCategory = function (filter, callback) {
                     "$in": categories.map(b => b._id)
                 }
             };
+            
             Product.findPublished(filter, callback);
         });
 };
