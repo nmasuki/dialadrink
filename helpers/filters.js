@@ -47,7 +47,7 @@ String.prototype.count = Array.prototype.count = function (func) {
 }
 
 if (!String.prototype.replaceAll) {
-	String.prototype.replaceAll = function(str, newStr){
+	String.prototype.replaceAll = function (str, newStr) {
 
 		// If a regex pattern
 		if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
@@ -139,7 +139,7 @@ function runSubstitution(expr, substitution, isRecurssion) {
 	return filter.replaceAll(' ', '');
 }
 
-function toPostfixNotation(infixToken){
+function toPostfixNotation(infixToken) {
 	var outputQueue = [];
 	var stack = [];
 
@@ -180,8 +180,8 @@ var unaryOperators = ["!"],
 	isOpeningParen = (a => a == "("),
 	isClosingParen = (a => a == ")"),
 	stringValueMapping = {
-		'null': null, 
-		'undefined': undefined, 
+		'null': null,
+		'undefined': undefined,
 		'true': true,
 		'false': false
 	};
@@ -199,17 +199,17 @@ function substituteBack(expr, substitution) {
 	return expr.map(x => isParen(x) ? x : mapping[x] || `<<<${x}>>>`).join(' ')
 }
 
-function postfixToMongo(postfix, substitution){
+function postfixToMongo(postfix, substitution) {
 	var stack = [];
 	var index = 0;
 
-	while(postfix.length > index){
+	while (postfix.length > index) {
 		var t = postfix[index++];
-		if(isOperator(t)){
-			var op = t, left = stack.pop(), right;			
-			if(isBinaryOperator(op))
-			 	right = stack.pop();
-			
+		if (isOperator(t)) {
+			var op = t, left = stack.pop(), right;
+			if (isBinaryOperator(op))
+				right = stack.pop();
+
 			var mongoOpMap = { "&": "$and", "|": "$or", "!": "$not" };
 			var mongoOp = mongoOpMap[op];
 
@@ -230,15 +230,15 @@ function postfixToMongo(postfix, substitution){
 	}
 
 
-	if(stack.length > 1)
+	if (stack.length > 1)
 		throw "Error in expression";
-	
+
 	return stack.pop();
 }
 
 function evaluateLiteral(lit, substitution) {
 	var exprIndex = Object.values(substitution).indexOf(lit);
-	if (exprIndex < 0) 	return lit;
+	if (exprIndex < 0) return lit;
 
 	var value = Object.keys(substitution)[exprIndex];
 
@@ -257,6 +257,9 @@ function evaluateLiteral(lit, substitution) {
 	var l = opPos != 0 ? value.split('').splice(0, opPos).join('') : null;
 	var r = opPos < value.length ? value.split('').splice(opPos + op.length).join('') : null;
 	var n;
+
+	if (r) r = r.trim();
+	if (l) l = l.trim();
 
 	if (stringValueMapping[r]) r = stringValueMapping[r];
 	if (!isNaN(n = parseFloat(r)) && isFinite(r)) r = n;
@@ -282,7 +285,7 @@ function evaluateLiteral(lit, substitution) {
 function luceneToMongo(expr) {
 	if (!expr)
 		return {};
-	if(typeof expr == "object")
+	if (typeof expr == "object")
 		return expr;
 	if (/^[a-f0-9]{24}$/.test(expr))
 		return { _id: expr }
@@ -392,22 +395,22 @@ function luceneToFn(filter) {
 	return mongoFilterToFn(luceneToMongo(filter))
 }
 
-function orderByExpr(list, orderBy){
-	if(!orderBy) return list;
+function orderByExpr(list, orderBy) {
+	if (!orderBy) return list;
 
 	var orderByObj = orderByToSortObj(orderBy);
 	var ordered = list.slice(0);
 
-	for(var i in orderByObj){
-		if(!orderByObj.hasOwnProperty(i)) continue;
+	for (var i in orderByObj) {
+		if (!orderByObj.hasOwnProperty(i)) continue;
 
 		let orderProperty = i;
 		let orderDir = orderByObj[i];
 
-		if(orderDir == -1)
-			ordered = ordered.orderByDescending(a =>  a[orderProperty]);
-		else			
-			ordered = ordered.orderBy(a =>  a[orderProperty]);
+		if (orderDir == -1)
+			ordered = ordered.orderByDescending(a => a[orderProperty]);
+		else
+			ordered = ordered.orderBy(a => a[orderProperty]);
 	}
 
 	return ordered;
@@ -443,7 +446,7 @@ function orderByToSortObj(orderBy) {
 	return $sort;
 }
 
-Array.prototype.orderByExpr = function(orderBy){
+Array.prototype.orderByExpr = function (orderBy) {
 	return orderByExpr(this, orderBy);
 }
 
