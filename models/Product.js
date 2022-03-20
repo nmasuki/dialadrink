@@ -386,7 +386,7 @@ Product.schema.methods.toAppObject = function () {
         options: (d.priceOptions || []).map(o => {
             return {
                 _id: o.id || o._id,
-                quantity: o.option.quantity,
+                quantity: o.quantity,
                 currency: o.currency,
                 offerPrice: o.offerPrice,
                 price: o.price,
@@ -421,9 +421,9 @@ Product.schema.pre('save', function (next) {
     }
 
     if (defaultOption) {
-        this.price = defaultOption.price;
-        this.offerPrice = defaultOption.offerPrice;
         this.quantity = defaultOption.quantity;
+        this.price    = defaultOption.price;
+        this.offerPrice = defaultOption.offerPrice;
     }
 
     if (this.youtubeUrl)
