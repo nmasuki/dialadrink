@@ -305,7 +305,7 @@ Product.schema.methods.findSimilar = function (callback) {
 };
 
 Product.schema.methods.findRelated = function (callback) {
-    return Product.findRelated(callback, [this.id || this._id]);
+    return Product.findRelated([this.id || this._id], callback);
 };
 
 var saveDebounce = function(){ return this.save(); }.debounce();
@@ -518,7 +518,7 @@ Product.schema.set('toJSON', {
 
 Product.register();
 
-Product.findRelated = function (products, callback) {
+Product.findRelated = function (products, callback) {    
     //Get Cart Items
     var productIds = Array.isArray(products)
         ? products.map(p => (p.id || p._id || p || "").toString())
@@ -527,6 +527,9 @@ Product.findRelated = function (products, callback) {
     return new Promise((resolve, reject) => {
         keystone.list("CartItem").model.find({ product: { $in: productIds } })
             .exec((err, cartItems) => {
+                if(err || !cartItems)
+                    return console.warn("No related cartItems found!");
+
                 var cartIds = cartItems.map(c => c._id);
                 return keystone.list("Order").model.find({ cart: { $in: cartIds } })
                     .deepPopulate("cart.product.category,cart.product.relatedProducts")
