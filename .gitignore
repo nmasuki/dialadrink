@@ -10,3 +10,5 @@ locks/
 /node_modules*
 *.sh
 /updates/0.0.1-products-images-remove-background.js
+*.tar
+*.bz2
