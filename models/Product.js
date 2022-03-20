@@ -383,7 +383,16 @@ Product.schema.methods.toAppObject = function () {
         quantity: d.quantity,        
         currency: d.currency,
 
-        options: d.priceOptions
+        options: d.productOptions.map(o => {
+            return {
+                _id: o.id || o._id,
+                quantity: o.quantity,
+                currency: o.currency,
+                offerPrice: o.offerPrice,
+                price: o.price,
+                inStock: o.inStock
+            }
+        }).distinctBy(o => o.quantity)
     });
 
     ["__v", 'defaultOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
