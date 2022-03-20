@@ -73,16 +73,20 @@ router.get("/:query", async function (req, res, next) {
             .exec();
 
         if (products && products.length) {
+            console.log(`Got ${products.length} products with query '${query}'..`);
             json.response = "success";
             json.count = products.length;
             json.data = products.map(d => d.toAppObject());
         } else {
+            console.log(`Got no products with query '${query}'..`);
             json.response = "success";
             json.message = "No record matching the query";
         }
     } catch(err){
-        if (err)
+        if (err){
             json.message = "Error fetching drinks! " + err;
+            console.error(json.message);
+        }
     }
 
     res.send(json);

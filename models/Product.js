@@ -522,7 +522,7 @@ Product.findRelated = function (products, callback) {
     //Get Cart Items
     var productIds = Array.isArray(products)
         ? products.map(p => (p.id || p._id || p || "").toString())
-        : [(products.id || product._id || product || "").toString()];
+        : [(products.id || products._id || products || "").toString()];
 
     return new Promise((resolve, reject) => {
         keystone.list("CartItem").model.find({ product: { $in: productIds } })

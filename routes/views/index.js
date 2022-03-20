@@ -342,7 +342,7 @@ router.get("/pricelist", function (req, res) {
     var locals = res.locals;
 
     Product.findPublished({}, function (err, products) {
-        locals.products = products.orderBy(p => p.name);
+        locals.products = products.orderBy(p => p.name).distinctBy(p => [p.name]);
         locals.lastUpdated = products.map(p => p.modifiedDate).orderBy().last();
         locals.categories = products.map(p => p.category && p.category.name).filter(c => !!c).distinct().orderBy();
 
