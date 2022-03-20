@@ -53,7 +53,7 @@ router.get("/", async function (req, res) {
     
     var orderBy = req.query.sort || req.query.orderBy || "popularityRatio DESC";
     var page = parseInt(req.query.page || 1);
-    var pageSize = parseInt(req.query.pageSize || 1500);
+    var pageSize = parseInt(req.query.pageSize || 20);
 
     var json = await getPagedProducts(page, pageSize, filter, orderBy);
     res.send(json);
@@ -64,7 +64,7 @@ router.get("/:query", async function (req, res, next) {
     var orderBy = req.query.sort || req.query.orderBy || "popularityRatio DESC";
     
     var page = parseInt(req.query.page || 1);
-    var pageSize = parseInt(req.query.pageSize || 1500);
+    var pageSize = parseInt(req.query.pageSize || 20);
 
     var json = await getPagedProducts(page, pageSize, query, orderBy)
 
