@@ -116,7 +116,7 @@ Client.schema.virtual("getFavouriteDrink")
     .get(async function () {
         var drinks = (await this.getFavouriteDrinks(100)).filter(p => {
             var cat = (p.category.id || p.category || "").toString();            
-            return cat && cat != "60129fcaed81b0076eb0363f" && !p.category.name.contains("Cigga");
+            return cat && cat != "60129fcaed81b0076eb0363f" && !p.category.name.startsWith("Cig");
          } );
         if(drinks && drinks.length)
             return this.favouriteDrink = drinks[0].name;

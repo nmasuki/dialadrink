@@ -25,7 +25,7 @@ function getWork(next, done) {
                 return console.error("Error reading brands!", err || "Unknown");
 
             var vowels = "AEIOUY";
-            var mapping = brands.map(p => {
+            var mapping = brands.filter(i => i.modifiedDate > filter.modifiedDate.$gt).map(p => {
                 var map = {         
                     _id: p._id,           
                     name: p.name,
