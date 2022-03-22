@@ -59,14 +59,30 @@ router.get("/", async function (req, res) {
     res.send(json);
 });
 
-router.get("/:query", async function (req, res, next) {
-    var query = req.params.query || "";
-    var orderBy = req.query.sort || req.query.orderBy || "popularityRatio DESC";
-    
-    var page = parseInt(req.query.page || 1);
-    var pageSize = parseInt(req.query.pageSize || 20);
+router.get("/:id", async function (req, res, next) {
+    var id = req.params.id || "";
 
-    var json = await getPagedProducts(page, pageSize, query, orderBy)
+    var json = { response: "error", message: "", data: [] };
+
+    try {
+        var product = await Product.model.findOne({_id: id })
+            .populate('brand').populate('category').populate('ratings')
+            .deepPopulate("subCategory.category,priceOptions.option")
+            .exec();
+
+        if (product) {
+            json.response = "success";
+            json.data = [product];
+        } else {
+            json.response = "success";
+            json.message = "No record matching the query";
+        }
+    } catch (err) {
+        if (err) {
+            json.message = `Error fetching drink by id: ${id}!` + err;
+            console.error(json.message);
+        }
+    }
 
     res.send(json);
 });
