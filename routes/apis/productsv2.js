@@ -72,7 +72,7 @@ router.get("/:id", async function (req, res, next) {
 
         if (product) {
             json.response = "success";
-            json.data = [product];
+            json.data = [product.toAppObject()];
         } else {
             json.response = "success";
             json.message = "No record matching the query";
