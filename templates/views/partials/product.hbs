@@ -1,3 +1,6 @@
+
+<div>
+    <div style="float: left;">
 {{#if percentOffer}}
     <a href="{{productUrl href}}" aria-label="{{{percentOffer}}}% off on {{{name}}}" style="position: absolute; display :block; color: black;">
         <div class="product-promo">
@@ -7,6 +10,17 @@
         </div>
     </a>
 {{/if}}
+</div>
+
+<div style="float: right;">
+
+    <a target="_blank" rel="noreferrer" href="https://api.whatsapp.com/send?l=en&phone='+254723688108'&text=I%20would%20like to%20order%201%20{{{name}}}%20{{quantity}}%20@%20{{price}} %20
+    https://www.dialadrinkkenya.com/{{{name}}}" title="Whatsup">
+    <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/whatsapp.png" width="40px" alt="Whatsup to order">
+    </a>
+
+</div>
+</div>
 
 <div class="featured-image" style="text-align :center;" aria-label="Access product {{{name}}}" id="product{{_id}}">
     <div class="product-hover-blind"></div>
@@ -28,14 +42,14 @@
             <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
             <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
             <div itemprop="name" class="drinks-name">
-                <a href="{{productUrl href}}" style="font-size: 15px; color: black; font-family:'Times New Roman', serif;">
+                <a href="{{productUrl href}}" style="font-size: 15px; color: black; font-family:'Arial, Helvetica', sans-serif;">
                     {{truncate name 25}}
                     {{#ifgt alcoholContent 0}}
                     <br><p style="color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%)</p>
                     {{/ifgt}}
                 </a>
             </div>            
-            <div style="font-size: 14px; font-family:'Times New Roman', serif; color: rgb(104, 95, 95);" >
+            <div style="font-size: 14px; font-family:'Arial, Helvetica', sans-serif; color: rgb(104, 95, 95);" >
                 {{#each stockOptions}}
                     <br> <a href="#" class="add-to-cart"
                         data-qty="{{quantity}}" data-product="{{../_id}}">
