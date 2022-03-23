@@ -3,6 +3,7 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
+    "console": "integratedTerminal",
     "configurations": [{
             "type": "node",
             "protocol": "inspector",
@@ -31,8 +32,8 @@
             "type": "node",
             "protocol": "inspector",
             "request": "launch",
-            "name": "Dial a Drink Kenya - OKHI test",
-            "program": "${workspaceFolder}/test-okhi.js",
+            "name": "Dial a Drink Kenya - Test",
+            "program": "${workspaceFolder}/test-lucene.js",
             "sourceMaps": false
         }
     ]

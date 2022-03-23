@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var lockFile = require('lockfile');
 var dataDir = path.resolve("../data/");
+var { mongoFilterToFn } = require('./filters');
 
 try{
     console.log("LocalStorage dir:", dataDir);
@@ -21,99 +22,6 @@ function uuidv4() {
         return v.toString(16);
     });
 }
-
-function mongoFilterToFunction(filter){
-    if(typeof filter == "string"){
-        var regex = new RegExp("(" + filter.escapeRegExp() + ")", "ig");
-        return (val => !filter || regex.test(JSON.stringify(val)));
-    }
-           
-    return function(val){
-        if(!filter) return true;
-
-        var matched = true;
-		
-        for(var i in filter){
-			if(!matched) return matched;
-				
-			var parts = i.split(".");
-			
-			if(parts.length > 1){
-				for(var j = 0; j < parts.length - 1; j++){
-					if(filter.hasOwnProperty(p)){
-						filter = filter[p];
-						i = i.substr(i.indexOf("."));
-					}
-				}
-			}
-
-			if(filter.hasOwnProperty(i)){
-				switch(i){
-					case "$not":
-						matched = matched && !mongoFilterToFunction(filter[i])(val);
-						break;
-					case "$or":
-						if(!Array.isArray(filter[i]))
-						   throw "Expecting an array at " + i;
-						
-						matched = matched &&  Array.from(filter[i]).some(f => mongoFilterToFunction(f)(val));
-						break;
-					case "$and":
-						if(!Array.isArray(filter[i]))
-							throw "Expecting an array at " + i;
-						
-						matched = matched &&  Array.from(filter[i]).every(f => mongoFilterToFunction(f)(val));
-						break;
-					case "$in":
-						if(!Array.isArray(filter[i]))
-							throw `Expecting an array at '${i}' to evaluate!`;
-						
-						matched = matched && Array.from(filter[i]).some(f => mongoFilterToFunction(f)(val));
-						break;
-					case "$elemMatch":
-						if(!val || !Array.isArray(val))
-							throw `Expecting an array at '${i}' to evaluate!`;
-						
-						matched = matched && Array.from(val).some(v => mongoFilterToFunction(filter[i])(v));
-						break;
-					case "$gt":
-						matched = matched && val > filter[i];
-						break;
-					case "$gte":
-						matched = matched && val >= filter[i];
-						break;
-					case "$lt":
-						matched = matched && val < filter[i];
-						break;
-					case "$lte":
-						matched = matched && val <= filter[i];
-						break;
-					case "$ne":
-						if(filter[i] instanceof RegExp)
-							matched = matched && !filter[i].test(val);
-						else
-							matched = matched && val != filter[i];
-						break;
-					case "$eq":
-						if(filter[i] instanceof RegExp)
-							matched = matched && filter[i].test(val);
-						else
-							matched = matched && val == filter[i];
-						break;
-					default:
-						if(filter[i] instanceof RegExp)
-							matched = matched && val && filter[i].test(val[i]);
-						else
-							matched = matched && val && val[i] == filter[i];
-				}
-			}           
-        }
-        
-        return matched;
-    };
-}
-
-String.prototype.toMongoToFn = function(){ return mongoFilterToFunction(this); };
 
 function getAll(entityName) {
     var all = {};
@@ -279,7 +187,7 @@ function LocalStorage(entityName) {
 
     self.getAll = function (filter, sortBy) {
         sortBy = sortBy || "";
-        var filtered = Object.values(getAll(entityName)).filter(mongoFilterToFunction(filter));
+        var filtered = Object.values(getAll(entityName)).filter(mongoFilterToFn(filter));
         var dir = /(^|\s)DESC($|\s)/i.test(sortBy)? -1: 1;        
 
         var sortByFxns = sortBy.split(/[^\w\s]/).filter(s => !!s).map(sort =>{

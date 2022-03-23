@@ -342,9 +342,18 @@ router.get("/pricelist", function (req, res) {
     var locals = res.locals;
 
     Product.findPublished({}, function (err, products) {
-        locals.products = products.orderBy(p => p.name);
+        locals.products = products.orderBy(p => p.name).distinctBy(p => [p.name]);
         locals.lastUpdated = products.map(p => p.modifiedDate).orderBy().last();
         locals.categories = products.map(p => p.category && p.category.name).filter(c => !!c).distinct().orderBy();
+
+        var options = {
+            //8.27 × 11.69 in
+            //"height": (11.69) + "in",        // allowed units: mm, cm, in, px
+            //"width": (8.27) + "in",            // allowed units: mm, cm, in, px
+            "phantomPath": "/usr/local/bin/phantomjs",
+            "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+            //"orientation": "landscape", // portrait or landscape
+        };
 
         function printPdf(err, html, next) {
             if (html) {
@@ -355,20 +364,17 @@ router.get("/pricelist", function (req, res) {
                 // If you use 'inline/attachment' here it will automatically open/download the PDF
                 res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
                 res.setHeader('Content-type', 'application/pdf');
-
-                pdf.create(html, {
-                    //8.27 × 11.69 in
-                    //"height": (11.69) + "in",        // allowed units: mm, cm, in, px
-                    //"width": (8.27) + "in",            // allowed units: mm, cm, in, px
-
-                    "format": "A4", // allowed units: A3, A4, A5, Legal, Letter, Tabloid
-                    //"orientation": "landscape", // portrait or landscape
-                }).toStream(function (err, stream) {
-                    if (err)
-                        console.warn(err);
-                    else
-                        stream.pipe(res);
-                });
+                try{
+                    pdf.create(html, options).toStream(function (err, stream) {
+                        if (err)
+                            console.warn(err);
+                        else
+                            stream.pipe(res);
+                    });
+                } catch(e){
+                    console.error("Error while creating pdf: " + e);
+                    res.status(404).render('errors/404');
+                }
             } else if (next) {
                 next(err);
             } else {
@@ -431,134 +437,136 @@ router.get("/products.xml", function (req, res) {
     });
 });
 
-function sitemap(req, res) {
+async function sitemap(req, res) {
     var view = new keystone.View(req, res);
     var locals = res.locals;
-    var xml = require('xml');
 
     locals.links = [];
 
-    var addLinks = function (links) {
-        links.forEach(l => {
-            var found = locals.links.find(p => l.href == p.href);
-            if (found) {
-                if (!found.modifiedDate || found.modifiedDate < l.modifiedDate)
-                    found.modifiedDate = l.modifiedDate;
-                if (found.priority < l.priority)
-                    found.priority = l.priority;
-            } else if (l.href) {
-                locals.links.push(l);
+    function addLinks(links) {
+        if(links)
+            links.forEach(l => {
+                var found = locals.links.find(p => l.href == p.href);
+                if (found) {
+                    if (!found.modifiedDate || found.modifiedDate < l.modifiedDate)
+                        found.modifiedDate = l.modifiedDate;
+                    if (found.priority < l.priority)
+                        found.priority = l.priority;
+                } else if (l.href) {
+                    locals.links.push(l);
+                }
+            });
+    }
+
+    function linksFromMenus(menus){
+        let links = menus?.distinctBy(m => m.href)
+            .orderBy(m => m.index * 10 - (m.level) + m.href.length / 100)
+            .map(m => {
+                return {
+                    href: m.href,
+                    priority: (m.level == 0 ? 1.0 : 0.7 + (1.0 - 0.7) / m.level),
+                    modifiedDate: m.modifiedDate
+                };
+            });
+
+        return links;
+    }
+
+    function linksFromPages(pages){
+        let links = pages?.filter(p => p.href && p.content)
+            .map(p => {
+                return {
+                    href: p.href,
+                    priority: 0.85,
+                    modifiedDate: p.modifiedDate
+                };
+            });
+            
+        return links;
+    }
+
+    function linksFromProducts(products){
+        var brands = products.filter(p => p.brand).map(p => p.brand).distinctBy(b => b.id);
+        var companies = brands.filter(p => p.company && p.company.name).map(p => p.company).distinctBy(b => b.name);
+        var subCategories = products.filter(p => p.subCategory).map(p => p.subCategory).distinctBy(b => b.id);
+
+        let links = products?.map(p => {
+            return {
+                href: p.href,
+                modifiedDate: p.modifiedDate,
+                priority: 0.9999 * p.popularityRatio
+            };
+        });
+
+        links = links.concat(subCategories?.map(p => {
+            return {
+                href: p.key.trim('/').trim(),
+                modifiedDate: p.modifiedDate,
+                priority: 0.75
+            };
+        }));
+
+        links = links.concat(brands?.map(p => {
+            return {
+                href: p.href,
+                modifiedDate: p.modifiedDate,
+                priority: 0.7
+            };
+        }));
+
+        links = links.concat(companies?.map(p => {
+            return {
+                href: p.name.cleanId(),
+                priority: 0.5
+            };
+        }));
+
+        return links;
+    }
+
+    function linksFromCategories(categories){
+        let links = categories?.map(p => {
+            return {
+                href: p.key.trim('/').trim(),
+                modifiedDate: p.modifiedDate,
+                priority: 0.78
             }
         });
-    };
 
-    MenuItem.model
-        .find({}).sort({
-            index: 1,
-            level: -1
-        })
-        .exec((err, menus) => {
-            var links = menus.distinctBy(m => m.href)
-                .orderBy(m => m.index * 10 - (m.level) + m.href.length / 100)
-                .map(m => {
-                    return {
-                        href: m.href,
-                        priority: (m.level == 0 ? 1.0 : 0.7 + (1.0 - 0.7) / m.level),
-                        modifiedDate: m.modifiedDate
-                    };
-                });
+        return links;
+    }
 
-            addLinks(links);
-        })
-        .then(Page.model.find({})
-            .exec((err, pages) => {
-                var links = pages.filter(p => p.href && p.content)
-                    .map(p => {
-                        return {
-                            href: p.href,
-                            priority: 0.85,
-                            modifiedDate: p.modifiedDate
-                        };
-                    });
+    function linksFromBlogss(blogs){
+        let links = blogs.map(p => {
+            return {
+                href: p.href,
+                modifiedDate: p.publishedDate,
+                priority: 0.76
+            };
+        });
 
-                addLinks(links);
-            })
-            .then(Product.findPublished({})
-                .exec((err, products) => {
-                    var brands = products.filter(p => p.brand).map(p => p.brand).distinctBy(b => b.id);
-                    var companies = brands.filter(p => p.company && p.company.name).map(p => p.company).distinctBy(b => b.name);
-                    var subCategories = products.filter(p => p.subCategory).map(p => p.subCategory).distinctBy(b => b.id);
+        return links;
+    }
 
-                    var links = products.map(p => {
-                        return {
-                            href: p.href,
-                            modifiedDate: p.modifiedDate,
-                            priority: 0.9999 * p.popularityRatio
-                        };
-                    });
+    var menus = await  MenuItem.model.find({}).sort({ index: 1, level: -1 }).exec();
+    var pages = await Page.model.find({}).exec();
+    var products = await Product.findPublished({}).exec();
+    var categories = await ProductCategory.model.find({}).exec();
+    var blogs = await Blog.model.find({}).exec();
 
-                    links = links.concat(subCategories.map(p => {
-                        return {
-                            href: p.key.trim('/').trim(),
-                            modifiedDate: p.modifiedDate,
-                            priority: 0.75
-                        };
-                    }));
+    let links = linksFromMenus(menus)
+        .concat(linksFromPages(pages))
+        .concat(linksFromProducts(products))
+        .concat(linksFromCategories(categories))
+        .concat(linksFromBlogss(blogs))
+    
+    addLinks(links);
 
-                    links = links.concat(brands.map(p => {
-                        return {
-                            href: p.href,
-                            modifiedDate: p.modifiedDate,
-                            priority: 0.7
-                        };
-                    }));
-
-                    links = links.concat(companies.map(p => {
-                        return {
-                            href: p.name.cleanId(),
-                            priority: 0.5
-                        };
-                    }));
-
-                    addLinks(links);
-                })
-                .then(() => ProductCategory.model.find({})
-                    .exec((err, categories) => {
-                        var links = categories.map(p => {
-                            return {
-                                href: p.key.trim('/').trim(),
-                                modifiedDate: p.modifiedDate,
-                                priority: 0.78
-                            }
-                        });
-
-                        addLinks(links);
-                    })
-                    .then(() => Blog.model.find({})
-                        .exec((err, blogs) => {
-                            var links = blogs.map(p => {
-                                return {
-                                    href: p.href,
-                                    modifiedDate: p.publishedDate,
-                                    priority: 0.76
-                                };
-                            });
-
-                            addLinks(links);
-                        })
-                        .then(() => {
-                            locals.links = locals.links.orderBy(l => -l.priority + l.href.length / 100000);
-                            view.render('sitemapXml', {
-                                layout: false
-                            }, function (err, xmlText) {
-                                res.setHeader('Content-Type', 'text/xml');
-                                res.send(xmlText);
-                            });
-                        })
-                    )
-                )
-            )
-        );
+    locals.links = locals.links.orderBy(l => -l.priority + l.href.length / 100000);
+    view.render('sitemapXml', { layout: false }, function (err, xmlText) {
+        res.setHeader('Content-Type', 'text/xml');
+        res.send(xmlText);
+    });    
 }
 
 router.get('/sitemap', sitemap);

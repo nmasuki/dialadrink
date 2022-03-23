@@ -318,7 +318,7 @@ router.post(["/forgot", "/otp"], function (req, res) {
 });
 
 router.post("/login", function (req, res) {
-	var mobile = (req.body.mobile || "").cleanPhoneNumber();
+	var mobile = (req.body.mobile || req.body.username || "").cleanPhoneNumber();
 	var password = req.body.password || "12345";
 
 	if (!mobile || !password)
@@ -379,7 +379,6 @@ router.post("/login", function (req, res) {
 	} else {
 		Client.model.find({phoneNumber: mobile})
 		.exec((err, clients) => {
-
 			if (err)
 				return res.send({
 					response: "error",

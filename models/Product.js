@@ -305,7 +305,7 @@ Product.schema.methods.findSimilar = function (callback) {
 };
 
 Product.schema.methods.findRelated = function (callback) {
-    return Product.findRelated(callback, [this.id || this._id]);
+    return Product.findRelated([this.id || this._id], callback);
 };
 
 var saveDebounce = function(){ return this.save(); }.debounce();
@@ -319,6 +319,7 @@ Product.schema.methods.toAppObject = function () {
 
     var cloudinaryOptions = {
         secure: true,
+        fetch_format: "auto",
         transformation: [{ background: "white" },
             {
                 width: 250,
@@ -330,6 +331,7 @@ Product.schema.methods.toAppObject = function () {
     
     var cloudinarySmallImageOptions = {
         secure: true,
+        fetch_format: "auto",
         transformation: [{ background: "white" },
             {
                 width: 24,
@@ -343,6 +345,7 @@ Product.schema.methods.toAppObject = function () {
         id: d.id,
         _id: d.id,
         _rev: d.__v,
+
         url: [keystone.get('url'), d.href].map(p => p.trim('/')).join('/'),
         
         imageFullSize: d.image.secure_url,
@@ -363,19 +366,36 @@ Product.schema.methods.toAppObject = function () {
 
         ratings: d.averageRatings,
         ratingCount: d.ratingCount,
+
         inStock: !!d.inStock,
         hitsPerWeek: d.hitsPerWeek,
+
         remainingStock: 10,
         reorderLevel: d.reorderLevel,
         
         //Use cheapest option for price
         price: d.price || 0,
         offerPrice: d.offerPrice || 0,
+
+        isFeatured: d.onOffer,
+        onOffer: (d.offerPrice || 0) > 0 && d.offerPrice < d.price,
+
         quantity: d.quantity,        
         currency: d.currency,
+
+        options: (d.priceOptions || []).map(o => {
+            return {
+                id: o.id || o._id,
+                quantity: o.quantity || o.option?.quantity,
+                currency: o.currency,
+                offerPrice: o.offerPrice,
+                price: o.price,
+                inStock: o.inStock
+            }
+        }).distinctBy(o => o.quantity)
     });
 
-    ["__v", 'options', 'defaultOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
+    ["__v", 'defaultOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
         delete obj[i];
     });
 
@@ -401,9 +421,9 @@ Product.schema.pre('save', function (next) {
     }
 
     if (defaultOption) {
-        this.price = defaultOption.price;
-        this.offerPrice = defaultOption.offerPrice;
         this.quantity = defaultOption.quantity;
+        this.price    = defaultOption.price;
+        this.offerPrice = defaultOption.offerPrice;
     }
 
     if (this.youtubeUrl)
@@ -516,80 +536,86 @@ Product.schema.set('toJSON', {
 
 Product.register();
 
-Product.findRelated = function (callback, products) {
+Product.findRelated = function (products, callback) {    
     //Get Cart Items
-    var productIds = Array.isArray(products)?
-        products.map(p => (p.id || p._id || p || "").toString()):
-        [products || ""];
+    var productIds = Array.isArray(products)
+        ? products.map(p => (p.id || p._id || p || "").toString())
+        : [(products.id || products._id || products || "").toString()];
 
-    return keystone.list("CartItem").model.find({ product: {$in: productIds}})
-        .exec((err, cartItems) => {
-            var cartIds = cartItems.map(c => c._id);
-            return keystone.list("Order").model.find({ cart: { $in: cartIds }})
-                .deepPopulate("cart.product.category,cart.product.relatedProducts")
-                .exec((err, orders) => {
-                    if (err)
-                        return console.log(err, orders);
+    return new Promise((resolve, reject) => {
+        keystone.list("CartItem").model.find({ product: { $in: productIds } })
+            .exec((err, cartItems) => {
+                if(err || !cartItems)
+                    return console.warn("No related cartItems found!");
 
-                    var productCounts = {};
-                    var categoryCounts = {};
-                    var products = [];
+                var cartIds = cartItems.map(c => c._id);
+                return keystone.list("Order").model.find({ cart: { $in: cartIds } })
+                    .deepPopulate("cart.product.category,cart.product.relatedProducts")
+                    .exec((err, orders) => {
+                        if (err)
+                            return console.log(err, orders);
 
-                    orders.forEach(order => {
-                        order.cart.forEach(item => {
-                            if (!item || !item.product) return;
-                            function incrementCounts(p){
-                                var id = (p._id || p).toString();
-                                var catId = ((p.category && p.category._id || p.category) || "").toString();
-                                
-                                if(catId)
-                                    categoryCounts[catId] = (categoryCounts[catId] = categoryCounts[catId] || 0) + 1;
-                                
-                                if (!productIds.contains(id))
-                                    productCounts[id] = (productCounts[id] = productCounts[id] || 0) + 1;
-                                else
-                                    products.push(p);
-                            }
+                        var productCounts = {};
+                        var categoryCounts = {};
+                        var products = [];
 
-                            incrementCounts(item.product);                            
-                            if(item.product.relatedProducts)
-                                item.product.relatedProducts.forEach(incrementCounts);                            
-                        });
-                    });
-
-                    var relatedProdIds = Object.keys(productCounts);                    
-                    //Get products that where ordered together
-                    return Product.findPublished({ _id: { $in: relatedProdIds }})
-                        .exec((err, related) => {
-                            if (err){
-                                if (typeof callback == "function")
-                                    return callback(err, related);
-                                return;
-                            }
-
-                            related = related.orderByDescending(p => p.hitsPerWeek)
-                                .orderByDescending(p => {
+                        orders.forEach(order => {
+                            order.cart.forEach(item => {
+                                if (!item || !item.product) return;
+                                function incrementCounts(p) {
                                     var id = (p._id || p).toString();
                                     var catId = ((p.category && p.category._id || p.category) || "").toString();
-                                
-                                    var score = productCounts[id] + (categoryCounts[catId] || 0) * 0.2;
-                                    var extraTags = ["extras", "extra", "soft-drinks", "cigars-and-ciggarrettes", "other", "others"];
 
-                                    if (products.some(product => product.category && p.category && product.category.key == p.category.key))
-                                        score *= 0.3;
-                                    else if ((p.category && extraTags.some(t=> p.category.key == t)) || (p.tags || []).some(t => extraTags.contains(t.toLowerCase())))
-                                        score *= 2.75;
+                                    if (catId)
+                                        categoryCounts[catId] = (categoryCounts[catId] = categoryCounts[catId] || 0) + 1;
 
-                                    return score;
-                                });
+                                    if (!productIds.contains(id))
+                                        productCounts[id] = (productCounts[id] = productCounts[id] || 0) + 1;
+                                    else
+                                        products.push(p);
+                                }
 
-                            if (typeof callback == "function")
-                                callback(null, related);
-
-                            return related;
+                                incrementCounts(item.product);
+                                if (item.product.relatedProducts)
+                                    item.product.relatedProducts.forEach(incrementCounts);
+                            });
                         });
-                });
-        });
+
+                        var relatedProdIds = Object.keys(productCounts);
+
+                        //Get products that where ordered together
+                        return Product.findPublished({ _id: { $in: relatedProdIds } })
+                            .exec((err, related) => {
+                                if (err) {
+                                    if (typeof callback == "function")
+                                        return callback(err, related);
+                                    return;
+                                }
+
+                                related = related.orderByDescending(p => p.hitsPerWeek)
+                                    .orderByDescending(p => {
+                                        var id = (p._id || p).toString();
+                                        var catId = ((p.category && p.category._id || p.category) || "").toString();
+
+                                        var score = productCounts[id] + (categoryCounts[catId] || 0) * 0.2;
+                                        var extraTags = ["extras", "extra", "soft-drinks", "cigars-and-ciggarrettes", "other", "others"];
+
+                                        if (products.some(product => product.category && p.category && product.category.key == p.category.key))
+                                            score *= 0.3;
+                                        else if ((p.category && extraTags.some(t => p.category.key == t)) || (p.tags || []).some(t => extraTags.contains(t.toLowerCase())))
+                                            score *= 2.75;
+
+                                        return score;
+                                    });
+
+                                if (typeof callback == "function")
+                                    callback(null, related);
+
+                                return resolve(related);
+                            });
+                    });
+            });
+    })
 };
 
 Product.offerAndPopular = function(size, callback){
@@ -690,6 +716,7 @@ Product.findByCategory = function (filter, callback) {
                     "$in": categories.map(b => b._id)
                 }
             };
+            
             Product.findPublished(filter, callback);
         });
 };
@@ -738,34 +765,37 @@ Product.findByOption = function (filter, callback) {
 };
 
 Product.search = function (query, next, deepSearch) {
-    var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, "\\W*");
-    var keyStr = query.cleanId().trim().escapeRegExp();
+    var filters = query;
+    if(typeof query == "string"){
+        var nameStr = query.trim().toLowerCase().replace(/\-/g, " ").escapeRegExp().replace(/\s+/g, "\\W*");
+        var keyStr = query.cleanId().trim().escapeRegExp();
 
-    var nameRegex = new RegExp("(^|\\W)(" + nameStr + ")", "i");
-    var keyRegex = new RegExp("(^|\\W)(" + keyStr + ")", "i");
+        var nameRegex = new RegExp("(^|\\W)(" + nameStr + ")", "i");
+        var keyRegex = new RegExp("(^|\\W)(" + keyStr + ")", "i");
 
-    // Set filters
-    var filters = {
-        "$or": [
-            { 'category.key': new RegExp(keyStr + "$", "i") },
-            { key: keyRegex },
-            { href: keyRegex },
-            { href: nameRegex },
-            { tags: keyRegex },
-            { tags: nameRegex },
-            { name: nameRegex },
-            { name: keyRegex },
-            { quantity: nameRegex },
-            { quantity: keyRegex },
-            { countryOfOrigin: nameRegex},
-            {
-                $or: [
-                    { 'company.name': keyRegex },
-                    { 'company.name': nameRegex }
-                ]
-            }
-        ]
-    };
+        // Set filters
+        filters = {
+            "$or": [
+                { 'category.key': new RegExp(keyStr + "$", "i") },
+                { key: keyRegex },
+                { href: keyRegex },
+                { href: nameRegex },
+                { tags: keyRegex },
+                { tags: nameRegex },
+                { name: nameRegex },
+                { name: keyRegex },
+                { quantity: nameRegex },
+                { quantity: keyRegex },
+                { countryOfOrigin: nameRegex},
+                {
+                    $or: [
+                        { 'company.name': keyRegex },
+                        { 'company.name': nameRegex }
+                    ]
+                }
+            ]
+        };
+    }
 
     var allProducts = [];
     //Searching by brand then category then product

@@ -48,6 +48,7 @@ router.get("/", function (req, res) {
 router.get("/categories", function (req, res) {
     var cloudinaryOptions = {
         secure: true,
+        fetch_format: "auto",
         transformation: [
             //{ effect: "cartoonify" },
             //{ background: "white" }, 

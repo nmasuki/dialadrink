@@ -4,8 +4,8 @@ var webpush = require("web-push");
 var fs = require('fs');
 var path = require('path');
 
-var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
 var sms = require("../helpers/sms").getInstance();
+var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
 var fileStore = require("../helpers/LocalStorage").getInstance("app-uploads");   
 
 var Types = keystone.Field.Types;
@@ -88,7 +88,8 @@ Client.add({
         default: Date.now,
         noedit: true
     },
-
+    favouriteDrink: {type: String},
+    favouriteBrand: {type: String},
     lastOrderDate: {type: Types.Datetime, index: true, noedit: true },
     deliveryLocationMeta: { type: String },
     metaDataJSON: { type: String }
@@ -104,33 +105,36 @@ Client.relationship({
     refPath: 'client'
 });
 
+Client.schema.usePushEach = true;
+
 Client.defaultColumns = 'firstName, lastName, phoneNumber, email, address, orderCount, orderValue, lastOrderDate';
 Client.schema.virtual("isAppRegistered").get(function () {
     return !!this.password;
 });
 
-Client.schema.virtual("favouriteDrink")
+Client.schema.virtual("getFavouriteDrink")
     .get(async function () {
-        var drinks = await this.getFavouriteDrinks(1);
+        var drinks = (await this.getFavouriteDrinks(100)).filter(p => {
+            var cat = (p.category.id || p.category || "").toString();            
+            return cat && cat != "60129fcaed81b0076eb0363f" && !p.category.name.startsWith("Cig");
+         } );
         if(drinks && drinks.length)
-            return drink[0].name;
+            return this.favouriteDrink = drinks[0].name;
 
-        return "your favourite drink";
+        return "Drinks";
     });
 
-Client.schema.virtual("favouriteBrand")
+Client.schema.virtual("getFavouriteBrand")
     .get(async function () {
         var drinks = await this.getFavouriteDrinks(100);
         var brands = drinks.groupBy(d => d.brand && d.brand.name || "");
         delete brands[""];
 
-        var favourite = Object.values(brands).orderByDescending(g => g.length)[0][0];
-
-
-        if(favourite)
-            return favourite.name;
+        var favourite = Object.values(brands).orderBy(g => -g.length)[0];
+        if(favourite && favourite.length)
+            return this.favouriteBrand = favourite[0].name;
             
-        return "your favourite brand";
+        return "Cold Drinks";
     });
 
 Client.schema.virtual("name")
@@ -179,6 +183,7 @@ Client.schema.virtual("imageUrl")
 
         var cloudinaryOptions = {
             secure: true,
+            fetch_format: "auto",
             transformation: [{
                 width: 200,
                 height: 200,
@@ -335,19 +340,22 @@ Client.schema.methods.getSessions = function (next) {
                 if (err)
                     reject(err);
 
+                var now = new Date();
                 if (sessions)
                     sessions = sessions.map(s => {
                         var sess = JSON.parse(s.session || "{}");
-
                         sess._id = s._id;
+                        sess.expires = s.expires;
+
                         if (opt && opt.cookie)
-                            sess.startDate = s.expires.addSeconds(opt.cookie.maxAge / 1000);
+                            sess.startDate = s.expires.addSeconds(-opt.cookie.maxAge / 1000);
 
                         return sess;
-                    });
+                    }).filter(s => s.expires < now);
 
                 if (!err)
                     resolve(sessions);
+                    
                 if (typeof next == "function")
                     next(err, sessions);
             });
@@ -428,8 +436,8 @@ Client.schema.methods.sendNotification = function (title, body, icon, data) {
                 
         } else {
             //TODO: NO webpush/fcm tokens to push to. Consider using sms/email
-            //if (client.lastNotificationDate < new Date().addDays(-30))
-            //    return client.sendSMSNotification("DIALADRINK:Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience!".format(client));
+            if (client.lastNotificationDate < new Date().addDays(-30))
+                return client.sendSMSNotification("DIALADRINK:Hey {firstName}. Install our app at http://bit.ly/2OZfVz1 and enjoy a faster, more customized experience!".format(client));
             
             return Promise.resolve(`User ${client.name} has no push token associeted!`).then(console.warn);
         }
@@ -653,7 +661,7 @@ Client.schema.methods.guessGender = function(name){
 };
 
 Client.schema.post('save', function(error, doc, next) {
-    console.log(error);
+    if(error) console.log(error);
     next();
 });
 
@@ -673,12 +681,24 @@ Client.schema.pre('save', function (next) {
         client.gender = client.guessGender(client.name).getGender();
     }
 
-    client.updateOrderStats(next);
+    var promises = [];
+    if (typeof client.getFavouriteDrink == "function")
+        promises.push(client.getFavouriteDrink());
+    
+    if (typeof client.getFavouriteBrand == "function")
+        promises.push(client.getFavouriteBrand());
+
+    if(promises.length)
+        return Promise.all(promises).then(() => client.updateOrderStats(next));
+    else
+        return client.updateOrderStats(next);
 });
 
 Client.schema.methods.update = function(){
     if(!this.debounceSave) this.debounceSave = this.save.debounce(10); 
-    return this.debounceSave.apply(this, arguments);
+    return this.debounceSave.apply(this, arguments).catch(function(){
+        console.log("Debounce on client.update()")
+    });
 };
 
 Client.schema.methods.getOrders = function(){
@@ -702,7 +722,7 @@ Client.schema.methods.getOrders = function(){
         return new Promise(resolve => {
             keystone.list("Order").model.find(findOption)
                 .sort({ orderDate: -1 })
-                .deepPopulate('client,cart.product.priceOptions.option')
+                .deepPopulate('client,cart.product.priceOptions.option,cart.product.brand,,cart.product.category')
                 .exec((err, orders) => {
                     if (err)
                         return resolve(null);
@@ -720,15 +740,13 @@ Client.schema.methods.getFavouriteDrinks = async function(count, filter){
     count = count || 10;
     filter = filter || (() => true);
 
-    var orders = await client.getOrders();
+    var orders = await this.getOrders();
     if(!orders) return;
 
-    var drinks = orders.selectMany(o => o.cart && o.cart.map(c => c.product) || []);
-    var grouped = Object.values(drinks.groupBy(d => d._id.toString()))
-        .orderByDescending(g => g.length);
+    var drinks = orders.selectMany(o => o.cart && o.cart.map(c => c.product).filter(x => x) || []);
+    var grouped = Object.values(drinks.groupBy(d => d._id.toString())).orderByDescending(g => g.length);
 
     var favourites = grouped.filter(filter).splice(0, count).map(g => g[0]);
-
     return favourites;
 }
 

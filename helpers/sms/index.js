@@ -9,4 +9,8 @@ var smsHelpers = {
     }
 };
 
+console.log("SMS Configured for:" + process.env.SMS_IMPLIMENTATION);
+if("mySMS".toLowerCase().startsWith((process.env.SMS_IMPLIMENTATION || "move").toLowerCase()))
+    smsHelpers.mySMS.init();
+
 module.exports = smsHelpers;

@@ -4,7 +4,11 @@ require('dotenv').config();
 require('./helpers/polyfills');
 
 // Require keystone
-var keystone = require('keystone');
+const keystone = require('keystone');
+const nodemailer = require('nodemailer');
+const stream = require('stream');
+const fs = require('fs');
+
 global.Handlebars = require('handlebars');
 
 if(global.Handlebars.VERSION > '4.5.3'){
@@ -82,7 +86,18 @@ keystone.set('locals', {
 keystone.set('routes', require('./routes'));
 
 // Mailing configs
-keystone.set('email nodemailer', {
+process.env.EMAIL_FROM = 'dialadrinkkenya.co.ke@gmail.com'
+var nodeOptions = {
+  service: 'Gmail',
+  host: 'smtp.gmail.com',
+  auth: {
+    user: 'dialadrinkkenya.co.ke@gmail.com',
+    pass: 'Enter@1234'
+  }
+};
+
+/***
+var nodeOptions = {
 	// Nodemailer configuration
 	service: 'Zoho',
 	host: process.env.SMTP_HOST,
@@ -90,9 +105,12 @@ keystone.set('email nodemailer', {
 	secure: false, // true for 465, false for other ports
 	auth: {
 		user: process.env.SMTP_USER, // generated ethereal user
-		pass: process.env.SMTP_PASS // generated ethereal password
+		pass: process.env.SMTP_PASS  // generated ethereal password
 	}
-});
+}; 
+/***/
+
+keystone.set('email nodemailer', nodeOptions);
 
 // Configure the navigation bar in Keystone's AppUser UI
 keystone.set('nav', {
@@ -110,10 +128,44 @@ keystone.set('nav', {
 	'content-and-seo': ['menu-items', 'pages'],
 	blog: ["blogs", "blog-categories"],
 	users: ['clients', 'app-users'],
-	notifications: ['client-notification-broudcasts', 'client-notifications']
+	notifications: ['client-notifications', 'client-notification-broudcasts']
 });
 
 //Trust Proxy IP
 keystone.set('trust proxy', true);
 
+function send_email(from, to, subject, body, attachments) {
+	const transportOptions = keystone.get('email nodemailer');// (require('nodemailer-smtp-transport'))(keystone.get('email nodemailer'));
+	const transporter = nodemailer.createTransport(transportOptions);
+
+    const message = {
+        from: from || process.env.EMAIL_FROM,
+        to: to,
+        subject: subject,
+        text: body,
+        attachments: (attachments || []).map(a => {
+            var attachment = null;
+            if(typeof a == "string"){
+                if (fs.existsSync(a) || /^(http|ftp)/.test(a))
+                    attachment = { filename: a.split(/[\\\/]/).pop(), path: a };
+                else 
+                    attachment = { filename: 'attachment.txt', contentType: 'text/plain', content: a }
+            }
+            else if(a instanceof stream.Readable && typeof (a._read === 'function') && typeof (a._readableState === 'object'))
+                attachment = { filename: a.filename || 'attachment.txt', content: a };
+
+            return attachment;
+        }).filter(x => x)
+    }
+
+    transporter.sendMail(message, function (err, info) {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log("Email sent!", info.response);
+        }
+    })
+}
+
+//send_email(null, "nmasuki@gmail.com", "DIALADRINK Initializing", "DIALADRINK initialized..");
 module.exports = keystone;

@@ -42,23 +42,23 @@ input[type="radio"], input[type="checkbox"] {
                 {{#each altImages}}
                     <div class="thumbnail" style="width: 48px;">
                         <img alt="{{{../name}}}" height="42" width="42" 
-                                data-img="{{cloudinaryUrl this crop='fit'}}"
+                                data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
                                 src="{{cloudinaryUrl this width=42 height=42 crop='fit'}}"/>
                     </div>
                 {{else}}
                     <div class="thumbnail" style="width: 48px;">
                         <img alt="{{{../name}}}" height="42" width="42" 
-                                data-img="{{cloudinaryUrl this crop='fit'}}"
-                                src="{{cloudinaryUrl image width=42 height=42 crop='fit'}}"/>
+                                data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
+                                src="{{cloudinaryUrl image width=42 height=42 crop='fit' background_removal='cloudinary_ai'}}"/>
                     </div>
                 {{/each}}
             </div>
 
             <div class="col-sm-4 col-12">
-                <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit'}})">
+                <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}})">
                     <img itemprop="image" class="image-responsive" 
                         src="{{cloudinaryUrl image width=380 height=380  crop='fit'}}" 
-                        data-src="{{cloudinaryUrl image crop='fit'}}" alt="{{{name}}}"
+                        data-src="{{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}" alt="{{{name}}}"
                         style="min-height: 380px; max-height: 400px; margin: 0 auto" />
                 </figure>
             </div>

@@ -71,6 +71,7 @@ router.get("/banners", function (req, res) {
                                 secure: true,
                                 height: 450,
                                 crop: "fit",
+                                fetch_format: "auto"
                             }),
                             status: ""
                         };
@@ -118,6 +119,7 @@ router.get("/tiles", function (req, res, next) {
 
     var cloudinaryOptions = {
         secure: true,
+        fetch_format: "auto",
         transformation: [{
             width: 250,
             height: 250,

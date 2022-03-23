@@ -1,9 +1,18 @@
 var najax = require('najax');
-var wss = require('../WebSocketServer');
 var LocalStorage = require('../LocalStorage');
 var ls = new LocalStorage("lookups");
 
 var lookupCount = 0;
+var wss;
+
+function getWSS(){
+    return wss || (wss = require('../WebSocketServer'))
+}
+
+function isReady(){
+    return getWSS().isReady();
+}
+
 function pickOneApiKey() {
     var allKeys = [
         '159eece6bd4f7fdc23916fd7778efa8c', 
@@ -45,7 +54,7 @@ function BaseSMS() {
             console.warn("Some invalid numbers found! Not sending sms to these: '" + numbers.filter((n, i) => values[i].valid).join() + "' !");
 
         try {
-            var response = await wss.sendSMS(validNos, message.replace(/\s{2,}/g, " "));
+            var response = await getWSS().sendSMS(validNos, message.replace(/\s{2,}/g, " "));
             if (typeof next == "function")
                 next(null, response);
             return response;
@@ -108,7 +117,11 @@ function BaseSMS() {
         });
     };
 
-    self.isReady = wss.isReady;
+    self.isReady = isReady;
+
+    self.init = function(){
+        return wss || (wss = require('../WebSocketServer'))
+    }
     
     return self;
 }
