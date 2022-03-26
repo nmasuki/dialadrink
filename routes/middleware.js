@@ -30,16 +30,15 @@ function requestCache(duration, _key) {
                 console.log("Using cache: " + key);
                 return res.send(cacheContent);
             } else {
-                if(res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300){
-                    var resSend = res.send;
+                var resSend = res.send;
 
-                    res.send = (body) => {
+                res.send = (body) => {
+                    if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
                         memCache.put(key, body, duration * 1000);
-                        resSend.call(res, body);
-                    };
+                    resSend.call(res, body);
+                };
 
-                    next();
-                }
+                next();
             }
         } catch (e) {
             console.warn("Error while getting cached http response!", e);
