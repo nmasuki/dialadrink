@@ -936,4 +936,4 @@ Product.getUIFilters = function (products, limit) {
 };
 
 var topHitsPerWeek = 100;
-Product.model.find().exec((err, data) => topHitsPerWeek = data.max(p => p.hitsPerWeek));
+Product.model.find().exec((err, data) => topHitsPerWeek = data.max(p => p?.hitsPerWeek));
