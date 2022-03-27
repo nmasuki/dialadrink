@@ -405,10 +405,12 @@ Product.schema.methods.toAppObject = function () {
 Product.defaultColumns = 'name, image, brand, category, state, onOffer';
 
 keystone.deepPopulate(Product.schema);
-Product.schema.pre('save', function (next) {
+Product.schema.pre('save', async function (next) {
     var product = this;
     if(this.priceOptions.every(p => p.inStock != product.inStock))
         this.priceOptions.forEach(p => p.inStock = product.inStock);
+
+    this.relatedProducts = (await this.findRelated()).slice(0, 20);
 
     this.modifiedDate = new Date();
     var defaultOption = this.defaultOption || this.priceOptions.first();
