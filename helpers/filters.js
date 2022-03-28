@@ -169,7 +169,6 @@ function toPostfixNotation(infixToken) {
 	return outputQueue.join('')
 }
 
-var cache = {};
 var unaryOperators = ["!"],
 	binaryOperator = ["&", "|"],
 	isLiteral = (a => /[a-z\u0370-\u03FF]/i.test(a)),

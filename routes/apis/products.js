@@ -149,31 +149,28 @@ router.get("/:query", function (req, res, next) {
     });
 });
 
-router.get("/related/:productId", function(req, res, next){
-    Product.model.findOne({_id: req.params.productId})
-        .exec((err, product) => {
-            var json = {
-                response: "error",
-                message: "",
-                count: 0,
-                data: []
-            };
 
-            if (err)
-                json.message = "Error fetching related products! " + err;
-            else if (product) {
-                return product.findRelated((err, products) => {
-                    json.response = "success";
-                    json.data = products.map(d => d.toAppObject());
-                    
-                    res.send(json);
-                });
-            } else {
-                json.message = `No record matching the id '${req.params.productId}'`;
-            }
-            
-            res.send(json);
-        });
+router.get("/related/:productId", async function(req, res, next){
+    var json = {
+        response: "error",
+        message: "",
+        count: 0,
+        data: []
+    };
+
+    try {
+        var products = await Product.findRelated([req.params.productId]);
+        if (products && products.length) {
+            json.response = "success";
+            json.data = products.map(d => d.toAppObject());
+        } else {
+            json.message = `No record matching the id '${req.params.productId}'`;
+        }
+    } catch (e) {
+
+    }
+
+    res.send(json);
 });
 
 module.exports = router;

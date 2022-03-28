@@ -183,9 +183,9 @@ router.get('/update/:id/:pieces', function (req, res) {
 });
 
 router.post('/update', function (req, res){
-	var ids = (typeof(req.body.item_id) == "string") ? [req.body.item_id] : req.body.item_id;
-	var pieces = (typeof (req.body.item_pieces) == "string") ? [req.body.item_pieces] : req.body.item_pieces;
-	var opts = (typeof (req.body.item_opt) == "string") ? [req.body.item_opt] : req.body.item_opt;
+	var ids = Array.isArray(req.body.item_id) ? req.body.item_id : [req.body.item_id];
+	var pieces = Array.isArray(req.body.item_pieces) ? req.body.item_pieces : [req.body.item_pieces];
+	var opts = Array.isArray(req.body.item_opt) ? req.body.item_opt : [req.body.item_opt];
 
 	if (ids && ids.length) {
 		var updates = [];
@@ -193,7 +193,11 @@ router.post('/update', function (req, res){
 		var trackUpdates = function(cartItem, msg) {
 			updates.push({msg: msg, cartItem: cartItem});
 			if (updates.length >= ids.length) 
-				return res.send({ state: true, msg: msg, updates: updates });			
+				return res.send({
+					msg: msg,
+					state: true,
+					data: updates.map(i => i.cartItem)
+				});			
 		};
 
 		if(req.query.empty)
