@@ -33,7 +33,8 @@ function requestCache(duration, _key) {
                 var resSend = res.send;
 
                 res.send = (body) => {
-                    memCache.put(key, body, duration * 1000);
+                    if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
+                        memCache.put(key, body, duration * 1000);
                     resSend.call(res, body);
                 };
 
