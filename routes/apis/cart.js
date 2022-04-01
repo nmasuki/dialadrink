@@ -6,6 +6,7 @@ var router = keystone.express.Router();
 
 function getMergedCart(req, res, callback){
 	var client = res.locals.appUser;
+	
 	if (!client) 
 		return callback(new Error("We could not resolve the logged in user!"));
 
@@ -18,8 +19,7 @@ function getMergedCart(req, res, callback){
 				carts.push(s.cart);
 				if (s._id != req.sessionID) {
 					delete s.cart;
-					db.collection('app_sessions')
-						.update({_id: s._id}, { $set: {session: JSON.stringify(s) }});
+					db.collection('app_sessions').update({_id: s._id}, { $set: {session: JSON.stringify(s) }});
 				}
 			}
 		});
@@ -196,7 +196,20 @@ router.post('/update', function (req, res){
 				return res.send({
 					msg: msg,
 					state: true,
-					data: updates.map(i => i.cartItem)
+					data: updates.map(i => {
+						var cart;
+						if(typeof i.cartItem.toAppObject == "function")
+							cart = i.cartItem.toAppObject();
+						else if (typeof i.cartItem.toObject == "function")
+							cart = i.cartItem.toObject();
+						else
+							cart = i.cartItem;
+
+						delete cart.image;
+						delete cart.product;
+
+						return cart;
+					})
 				});			
 		};
 

@@ -100,10 +100,11 @@ CartItem.schema.methods.toAppObject = function () {
         price: priceOption.price,
         offerPrice: priceOption.offerPrice,
         quantity: priceOption.quantity,
-        //product: this.product && this.product.toAppObject ? this.product.toAppObject() : null,
+        imageUrl: this.product.image.secure_url,
         productId: (this.product && (this.product._id || this.product) || "").toString()
     });
 
+    delete obj.image;
     delete obj.product;
     return obj;
 };
