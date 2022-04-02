@@ -144,8 +144,8 @@
                         </div>
                         <div class="tool right-area hidden-xs">
                             <ul class="unstyled">
-                                <li class="toolbar-customer my-wishlist"><a href="/">Home</a></li>
-                                <li class="toolbar-customer my-wishlist"><a href="/contact-us">Contact Us</a></li>
+                                <li class="toolbar-customer my-wishlist"><NuxtLink to="/">Home</NuxtLink></li>
+                                <li class="toolbar-customer my-wishlist"><NuxtLink to="/contact-us">Contact Us</NuxtLink></li>
                             </ul>
                             <a href="http://bit.ly/2OZfVz1">
                                      <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/pl_Q8A94zAyV.webp?ik-sdk-version=javascript-1.4.3&updatedAt=1648474529710" height="50px" alt="Play Store">
@@ -177,7 +177,8 @@
                                 <div>
                                     <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png" height="30px" alt="Dial a Drink logo">
                                     <span style="padding-left: 10px; color: white;  font-size: 18px;">
-                                         <a href="/">
+                                         {{!-- <a href="/"> --}}
+                                         <NuxtLink to="/"></NuxtLink>
                                         <span><strong>DIAL A DRINK KENYA</strong></span>
                                         </a>
                                         
@@ -219,9 +220,11 @@
                     style="position: fixed;top: 36px;z-index: 100;opacity: 0.8;" id="is-mobile-nav-menu">
                     <ul class="nav navbar-nav hoverMenuWrapper">
                         <li class="nav-item">
-                            <a href="/giftpack">
+                            {{!-- <a href="/giftpack">
                                 <span>Gift Pack</span>
-                            </a>
+                            </a> --}}
+
+                             <NuxtLink to="/giftpack">Gift Pack</NuxtLink>
                         </li>
 
                         <li class="nav-item">
