@@ -114,7 +114,7 @@ exports.initLocals = function (req, res, next) {
     res.locals.csrf_token = keystone.security.csrf.getToken(req, res);
 
     //Cart items
-    res.locals.cartItems = Object.values(req.session.cart || {}).orderBy(c => c.product.name);
+    res.locals.cartItems = Object.values(req.session.cart || {}).orderBy(c => c?.product?.name);
 
     //Some user data
     if (req.session.userData && req.session.userData.saveInfo)
