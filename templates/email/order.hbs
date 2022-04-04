@@ -153,9 +153,11 @@
                     <p style="margin:0 0 16px">
                         <b>Payment Method:</b> {{#if paymentMethod}}{{paymentMethod}}{{else}}Cash on delivery{{/if}}
                         {{#ifne payment.method 'PesaPal'}}
+                        {{!-- 
                         <p style="cursor: pointer;" onclick="goPay.click()">
                             Note: You can still pay via MPESA/Visa/Master Card <a name="goPay" href="{{{../appUrl}}}/payment/{{orderNumber}}">here</a>
                         </p>
+                        --}}
                         {{/ifne}}
                     </p>
 
