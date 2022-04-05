@@ -44,6 +44,7 @@ exports = module.exports = function (app) {
 		app.use(require('less-middleware')({ src: __dirname + '/public' }));
 		app.use(keystone.express.static(__dirname + '/public'));
 	}
+	
 	// Api endpoints
 	var apis = Object.keys(routes.apis).map((i) => { 
 		return {
