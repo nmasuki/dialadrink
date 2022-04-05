@@ -144,8 +144,9 @@
                         </div>
                         <div class="tool right-area hidden-xs">
                             <ul class="unstyled">
-                                <li class="toolbar-customer my-wishlist"><NuxtLink to="/">Home</NuxtLink></li>
-                                <li class="toolbar-customer my-wishlist"><NuxtLink to="/contact-us">Contact Us</NuxtLink></li>
+                                
+                                <li class="toolbar-customer my-wishlist"><a href="/">Home</a></li>
+                                <li class="toolbar-customer my-wishlist"><a href="/contact-us">Contact Us</a></li>
                             </ul>
                             <a href="http://bit.ly/2OZfVz1">
                                      <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/pl_Q8A94zAyV.webp?ik-sdk-version=javascript-1.4.3&updatedAt=1648474529710" height="50px" alt="Play Store">
@@ -249,8 +250,7 @@
                         <div class="nav-top">
                         <div class="nav-search" style="margin-top: {{#if isMobile}}10px;{{else}}0{{/if}} !important">
                                 <form class="search" action="/search">
-                                    {{!-- <input type="image" {{#if isMobile}}data-mobile="true"{{/if}} src="{{#if isMobile}}/assets/icon-voice-search.svg{{else}}/assets/icon-search.png{{/if}}" alt="Go" id="search"> --}}
-                                    <input type="text" name="query" class="search_box" placeholder="Search for a drink..." value="" id="search_box"/>
+                                   <input type="text" name="query" class="search_box" placeholder="Search for a drink..." value="" id="search_box"/>
                                 </form>
                             </div>
                             <div class="nav-logo" {{#if isMobile}}style="display:none; color: #0a0808"{{/if}}>
@@ -328,29 +328,7 @@
     <section class="collection-heading" style="background-color:rgb(245, 240, 240);">
         <div class="collection-heading-wrapper">
             <div class="container" style="{{#unless isMobile}}padding-top: 8px{{/unless}}">   
-                {{!--#if isMobile}}
-                    <div class="col-sm-4" style="font-size: 12px;">
-                        {{#each navLinks}}                            
-                            <a href="{{{href}}}">
-                                {{#if image}}
-                                <img class="borb" src="{{cloudinaryUrl image width=68 height=68 radius=1 crop='fill'}}" alt="{{{label}}}"/>
-                                {{else}}
-                                <span class="borb">{{{label}}}</span>                                
-                                {{/if}}
-                            </a>
-                        {{/each}}
-                    </div>
-                    {{#unless offers.length}}
-                        <div class="row scroll-x" style="top: 139px;">
-                            {{#each uifilters}}
-                                <span class="filter noselect" data-filterby="{{this.filter}}">
-                                    {{this.filter}} <small style="font-size: 0.8em; display: none">({{this.hits}})</small>
-                                </span>
-                            {{/each}}
-                        </div>
-                    {{/unless}}
-                {{/if--}}
-
+                
                 {{#if page.bannerImages }}
                     <div class="row owl-carousel offset-0" data-items="1" data-autoplay="true" style="margin-bottom: 5px;">
                         {{#if isMobile}}
@@ -658,17 +636,10 @@
 <div class="copyright">
     <div class="container">
         <div class="col-md-6">
-            <p>�{{{appTitle}}} 2017 - All Rights Reserved</p>
+            <p>{{{appTitle}}} 2017 - All Rights Reserved</p>
         </div>
         <div class="col-md-6">
-            <!-- <ul class="bottom_ul">
-              <li><a href="/">Drinks delivery kenya</a></li>
-              <li><a href="#">About us</a></li>
-              <li><a href="/">Blog</a></li>
-              <li><a href="#">Faq's</a></li>
-              <li><a href="#">Contact us</a></li>
-              <li><a href="/sitemap">Site Map</a></li>
-            </ul> -->
+           
         </div>
     </div>
 </div>
