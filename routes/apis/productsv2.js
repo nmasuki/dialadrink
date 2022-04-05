@@ -17,7 +17,7 @@ async function getPagedProducts(page, pageSize, query, orderBy){
 
         var products = allProducts.map(d => d.toAppObject());
 
-        products = products.filter(filters.luceneToFn(query));
+        products = products.filter(filters.mongoFilterToFn(query));
         products = products.orderByExpr(orderBy);
         products = products.slice((page - 1) * pageSize, pageSize);
 

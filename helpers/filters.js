@@ -55,7 +55,7 @@ if (!String.prototype.replaceAll) {
 		}
 
 		// If a string
-		return this.replace(new RegExp(str, 'g'), newStr);
+		return this.replace(new RegExp(escapeRegex(str), 'g'), newStr);
 	};
 }
 
@@ -217,9 +217,18 @@ function postfixToMongo(postfix, substitution) {
 				return expr[0];
 
 			var lit = {};
-			if (mongoOp)
-				lit[mongoOp] = expr;
-			else
+			if (mongoOp){
+				if(["$or", "$and"].indexOf(mongoOp) >= 0){
+					if(left[mongoOp] && Array.isArray(left[mongoOp]))
+						lit[mongoOp] = left[mongoOp].concat(right);
+					else if(right[mongoOp] && Array.isArray(right[mongoOp]))
+						lit[mongoOp] = right[mongoOp].concat(left);
+					else 
+						lit[mongoOp] = expr;
+				}else{
+					lit[mongoOp] = expr;
+				}
+			}else
 				lit = Object.assign(left || {}, right || {});
 
 			stack.push(lit);
@@ -259,6 +268,9 @@ function evaluateLiteral(lit, substitution) {
 
 	if (r) r = r.trim();
 	if (l) l = l.trim();
+
+	if(typeof l == "string" && l.contains("*")) l = new RegExp(l.replaceAll(/[\*~]/g, "(.*?)", "i"));
+	if(typeof r == "string" && r.contains("*")) r = new RegExp(r.replaceAll(/[\*~]/g, "(.*?)", "i"));
 
 	if (stringValueMapping[r]) r = stringValueMapping[r];
 	if (!isNaN(n = parseFloat(r)) && isFinite(r)) r = n;
@@ -305,10 +317,58 @@ function mongoFilterToFn(filter) {
 		return (val => !filter || regex.test(JSON.stringify(val)));
 	}
 
-	return function (val) {
+	return function (doc) {
 		if (!filter) return true;
 
 		var matched = true;
+		var val;
+
+		var mathchEval = {
+			"$not": () => {
+				matched = matched && !mongoFilterToFn(filter[i])(val)
+			},
+			"$or": () => {
+				if (!Array.isArray(filter[i]))
+					throw "Expecting an array at " + i;
+
+				matched = matched && Array.from(filter[i]).some(f => mongoFilterToFn(f)(val));
+			},
+			"$and": () => {
+				if (!Array.isArray(filter[i]))
+					throw "Expecting an array at " + i;
+
+				matched = matched && Array.from(filter[i]).every(f => mongoFilterToFn(f)(val));
+			},
+			"$in": () => {
+				if (!Array.isArray(filter[i]))
+					throw `Expecting an array at '${i}' to evaluate!`;
+
+				matched = matched && Array.from(filter[i]).some(f => mongoFilterToFn(f)(val));
+			},
+			"$elemMatch": () => {
+				if (!val || !Array.isArray(val))
+					throw `Expecting an array at '${i}' to evaluate!`;
+
+				matched = matched && Array.from(val).some(v => mongoFilterToFn(filter[i])(v));
+			},
+			"$gt": () => matched = matched && val > filter[i],
+			"$gte": () => matched = matched && val >= filter[i],
+			"$lt": () => matched = matched && val < filter[i],
+			"$ne": () => {
+				if (filter[i] instanceof RegExp)
+					matched = matched && !filter[i].test(val);
+				else
+					matched = matched && val != filter[i];
+			},
+			"$eq": () => {
+				if (filter[i] instanceof RegExp)
+					matched = matched && filter[i].test(val);
+				else if(filter[i] && filter[i]["$elemMatch"])
+					matched = matched && mongoFilterToFn(filter[i])(val);
+				else
+					matched = matched && val == filter[i];
+			}
+		};
 
 		for (var i in filter) {
 			if (!matched) return matched;
@@ -324,65 +384,15 @@ function mongoFilterToFn(filter) {
 				}
 			}
 
+			var key = Object.keys(doc || {}).find(k => k.toLowerCase().trim() == i.toLowerCase().trim());
+			val = doc[key] || doc;
+
 			if (filter.hasOwnProperty(i)) {
-				switch (i) {
-					case "$not":
-						matched = matched && !mongoFilterToFn(filter[i])(val);
-						break;
-					case "$or":
-						if (!Array.isArray(filter[i]))
-							throw "Expecting an array at " + i;
-
-						matched = matched && Array.from(filter[i]).some(f => mongoFilterToFn(f)(val));
-						break;
-					case "$and":
-						if (!Array.isArray(filter[i]))
-							throw "Expecting an array at " + i;
-
-						matched = matched && Array.from(filter[i]).every(f => mongoFilterToFn(f)(val));
-						break;
-					case "$in":
-						if (!Array.isArray(filter[i]))
-							throw `Expecting an array at '${i}' to evaluate!`;
-
-						matched = matched && Array.from(filter[i]).some(f => mongoFilterToFn(f)(val));
-						break;
-					case "$elemMatch":
-						if (!val || !Array.isArray(val))
-							throw `Expecting an array at '${i}' to evaluate!`;
-
-						matched = matched && Array.from(val).some(v => mongoFilterToFn(filter[i])(v));
-						break;
-					case "$gt":
-						matched = matched && val > filter[i];
-						break;
-					case "$gte":
-						matched = matched && val >= filter[i];
-						break;
-					case "$lt":
-						matched = matched && val < filter[i];
-						break;
-					case "$lte":
-						matched = matched && val <= filter[i];
-						break;
-					case "$ne":
-						if (filter[i] instanceof RegExp)
-							matched = matched && !filter[i].test(val);
-						else
-							matched = matched && val != filter[i];
-						break;
-					case "$eq":
-						if (filter[i] instanceof RegExp)
-							matched = matched && filter[i].test(val);
-						else
-							matched = matched && val == filter[i];
-						break;
-					default:
-						if (filter[i] instanceof RegExp)
-							matched = matched && val && filter[i].test(val[i]);
-						else
-							matched = matched && val && val[i] == filter[i];
-				}
+				var fn = mathchEval[i] || mathchEval["$eq"];
+				if(fn)
+				 	fn();
+				else
+					console.warn(filter[i]);	 
 			}
 		}
 
