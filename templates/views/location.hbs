@@ -3,7 +3,11 @@
         <img class="col-md-6 col-lg-6" src="{{mapUrl}}" alt="{{name}}, {{city}} map!" />
         <div class="col-md-6 col-lg-6" style="padding-left: 22px !important">
             {{#each locations}}
-                <strong>{{name}}, {{city}}</strong>
+
+            <h1>
+                <span class="category-name">{{name}}</span>
+            </h1>
+                <strong>{{city}}</strong>
                 <p>{{{description}}}</p>
             {{/each}}
         </div>
