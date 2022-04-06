@@ -81,7 +81,10 @@ function runSubstitution(expr, substitution, isRecurssion) {
 	var regex2 = /[a-z\u0370-\u03FF]/i;
 
 	var sValues = Object.values(substitution);
-	var matches = filter.match(regex)?.map(x => x?.trim().trim('()')).filter(x => x && sValues.indexOf(x) < 0);
+	var matches = filter.match(regex)
+		?.map(x => x?.trim().trim('()'))
+		.filter(x => x && sValues.indexOf(x) < 0)
+		.orderByDescending(x => x.length);
 
 	var last = sValues[sValues.length - 1];
 	if (last == "!") last = String.fromCharCode(64);

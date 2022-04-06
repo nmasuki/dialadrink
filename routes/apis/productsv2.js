@@ -10,14 +10,13 @@ async function getPagedProducts(page, pageSize, query, orderBy){
     var json = { response: "error", message: "", count: 0, data: [] };
 
     try{
-        var allProducts = await Product.model.find({})
+        var products = await Product.model.find(query)
             .populate('brand').populate('category').populate('ratings')
             .deepPopulate("subCategory.category,priceOptions.option")
             .exec();
 
-        var products = allProducts.map(d => d.toAppObject());
-
-        products = products.filter(filters.mongoFilterToFn(query));
+        products = products.map(d => d.toAppObject());
+        //products = products.filter(filters.mongoFilterToFn(query));
         products = products.orderByExpr(orderBy);
         products = products.slice((page - 1) * pageSize, pageSize);
 
@@ -45,7 +44,30 @@ router.get("/", async function (req, res) {
     var filter = {};
     var ids = req.query.id || req.query.ids;
     var query = req.query.query || "";
+
+    var mapping = {
+        "category": "category.name",
+        "company": "company.name",
+        "brand": "brand.name",
+        "CountryOfOrigin": "countryOfOrigin",
+        "Description": "description",
+        "subcategory": "subcategory.name",
+        "price": "priceOptions.option.price",
+        "quantity": "priceOptions.option.quantity",
+        "currency": "priceOptions.option.currency",
+        "offerPrice": "priceOptions.option.offerPrice",
+        "inStock": "priceOptions.option.inStock",
+        "isFeatured": "onOffer"
+    };
     
+    if (query) {
+        for (var i in mapping) {
+            if (!mapping.hasOwnProperty(i)) continue;
+            var regex = new RegExp("\\b(" + i + ")\\b", "ig");            
+            query = query.replaceAll(regex, mapping[i]);
+        }
+    }
+
     if(ids && Array.isArray(ids))
         filter._id = {"$in": ids.map(id => id)};
     else 
