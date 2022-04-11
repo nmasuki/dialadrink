@@ -503,7 +503,7 @@ var setAppUserFromAuth = function (req, res, next) {
 
 var setAppUserFromSession = function (req, res, callback) {
     if (res.locals.appUser)
-        return Promise.resolve();
+        return Promise.resolve(res.locals.appUser);
 
     var filter = {
         $or: [{
@@ -554,13 +554,7 @@ var getAuthInfo = function (req) {
         password = parts[1],
         authTime = parts[2];
 
-    return {
-        scheme,
-        username,
-        password,
-        authTime,
-        platform
-    };
+    return { scheme, username, password, authTime, platform };
 };
 
 /**

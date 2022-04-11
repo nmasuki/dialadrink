@@ -196,7 +196,7 @@ router.post('/update', function (req, res){
 				return res.send({
 					msg: msg,
 					state: true,
-					data: updates.map(i => {
+					data: updates.filter(i => i.cartItem).map(i => {
 						var cart;
 						if(typeof i.cartItem.toAppObject == "function")
 							cart = i.cartItem.toAppObject();

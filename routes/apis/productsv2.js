@@ -1,6 +1,7 @@
 var keystone = require('keystone');
 var Product = keystone.list("Product");
 var filters = require('../../helpers/filters');
+var memCache = require("memory-cache");
 
 var router = keystone.express.Router();
 
@@ -10,13 +11,18 @@ async function getPagedProducts(page, pageSize, query, orderBy){
     var json = { response: "error", message: "", count: 0, data: [] };
 
     try{
-        var allProducts = await Product.model.find({})
-            .populate('brand').populate('category').populate('ratings')
-            .deepPopulate("subCategory.category,priceOptions.option")
-            .exec();
+        var allProducts = memCache.get("allProducts");
+
+        if (!allProducts || !allProducts.length) {
+            allProducts = await Product.model.find({})
+                .populate('brand').populate('category').populate('ratings')
+                .deepPopulate("subCategory.category,priceOptions.option")
+                .exec();
+
+            memCache.put("allProducts", allProducts, 120 * 1000);
+        }
 
         var products = allProducts.map(d => d.toAppObject());
-
         products = products.filter(filters.luceneToFn(query));
         products = products.orderByExpr(orderBy);
         products = products.slice((page - 1) * pageSize, pageSize);
@@ -42,10 +48,10 @@ async function getPagedProducts(page, pageSize, query, orderBy){
 }
 
 router.get("/", async function (req, res) {
-    var filter = {};
     var ids = req.query.id || req.query.ids;
     var query = req.query.query || "";
     
+    var filter = {};
     if(ids && Array.isArray(ids))
         filter._id = {"$in": ids.map(id => id)};
     else 
