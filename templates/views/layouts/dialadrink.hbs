@@ -147,6 +147,7 @@
                                 
                                 <li class="toolbar-customer my-wishlist"><a href="/">Home</a></li>
                                 <li class="toolbar-customer my-wishlist"><a href="/contact-us">Contact Us</a></li>
+                                <li class="toolbar-customer my-wishlist"><a href="/delivery-locations">Delivery Locations</a></li>
                             </ul>
                             <a href="http://bit.ly/2OZfVz1">
                                      <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/pl_Q8A94zAyV.webp?ik-sdk-version=javascript-1.4.3&updatedAt=1648474529710" height="50px" alt="Play Store">
@@ -221,10 +222,7 @@
                     style="position: fixed;top: 36px;z-index: 100;opacity: 0.8;" id="is-mobile-nav-menu">
                     <ul class="nav navbar-nav hoverMenuWrapper">
                         <li class="nav-item">
-                            {{!-- <a href="/giftpack">
-                                <span>Gift Pack</span>
-                            </a> --}}
-
+                             
                              <NuxtLink to="/giftpack">Gift Pack</NuxtLink>
                         </li>
 
@@ -465,24 +463,7 @@
                         {{{page.content}}}
                     {{/if}}                    
                 </div>
-            {{/if}}
-
-            <div class="container shop-by-brand">
-                {{#if groupedBrands}}
-                    <h2 style="font-size: 15px;text-transform: uppercase">SHOP BY BRAND</h2>                    
-                    {{#each groupedBrands}}
-                        <div class="row" style="margin: 8px">
-                            <div style="float: left; min-width: 80px"><b style="">{{@key}}</b>:</div> 
-                            {{#each this}}
-                                <a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a>
-                                {{#unless @last}}<span style="color: #F44336"> | </span>{{/unless}}
-                            {{/each}}
-                        </div>
-                    {{/each}}
-                {{else}}
-
-                {{/if}}
-            </div>            
+            {{/if}}      
 
             <div class="container inst-checkout" style="width:100%; display:none;">
                 <div class="col-md-4 action-wrapper" style="margin: 0 auto;">
