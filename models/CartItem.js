@@ -100,7 +100,7 @@ CartItem.schema.methods.toAppObject = function () {
         price: priceOption.price,
         offerPrice: priceOption.offerPrice,
         quantity: priceOption.quantity,
-        imageUrl: this.product.image.secure_url,
+        imageUrl: this.product && this.product.image && this.product.image.secure_url,
         productId: (this.product && (this.product._id || this.product) || "").toString()
     });
 
