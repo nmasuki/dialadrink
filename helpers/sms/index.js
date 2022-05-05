@@ -3,6 +3,7 @@ var smsHelpers = {
     mySMS: new (require('./MySMS'))(),
     moveSMS: new (require('./MoveSMS'))(),
     africasTalking: new (require('./AfricasTalkingSMS'))(),
+    smsAfrica: new (require('./SMSAfrica'))(),
     getInstance: () => {
         return smsHelpers[smsHelpers.key] || smsHelpers.moveSMS;
     }

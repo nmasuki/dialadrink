@@ -191,20 +191,18 @@ exports.initLocals = (req, res, next) => {
             getCloseOfDayCount(res), getClientCount(res),
             getDashboardItemCount(res), getAppUserCount(res),
             getNotificationCount(res)
-        ]).then(values => {
-        
-        var keys = [
-            "delivery", "product",
-            "orders", "inventory",
-            "sales", "purchases",
-            "expenses", "riders",
-            "closeofday", "client",
-            "dashmenuitem", "appuser",
-            "notification"
-        ];
+        ]).then(values => {        
+            var keys = [
+                "delivery", "product",
+                "orders", "inventory",
+                "sales", "purchases",
+                "expenses", "riders",
+                "closeofday", "client",
+                "dashmenuitem", "appuser",
+                "notification"
+            ];
 
-        keys.forEach((k, i) => menuCounts[k] = parseInt(values[i]));
-        
-        next();
-    });
+            keys.forEach((k, i) => menuCounts[k] = parseInt(values[i]));            
+            next();
+        });
 };
