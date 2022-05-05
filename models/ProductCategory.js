@@ -7,7 +7,7 @@ var cloudinaryOptions = {
     fetch_format: "auto",
     transformation: [
         { effect: "cartoonify" },
-        { background: "white" }, 
+        { background: "transparent" }, 
         { width: 250, height: 250, radius: "15", crop: "fill" }
     ]
 };
