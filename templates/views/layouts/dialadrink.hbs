@@ -289,12 +289,6 @@
                         </div>
                         <div class="navigation_area">
                             <ul class="navigation_links">
-                                <li class="nav-item" style="margin: 0">
-                                    <a href="/giftpacks" title="Gift Packs">
-                                        <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill,w_32/giftpack.png" alt="Gify Park" style="width: 32px"/>
-                                        <span class="hide_affix">Gift Packs</span>
-                                    </a>
-                                </li>
                                 {{#each navLinks}}
                                     <li class="nav-item {{#ifgt submenus.length 0}}dropdown{{/ifgt}}">
                                         <a href="{{{href}}}"{{#ifgt submenus.length 0}} data-toggle="dropdown"
