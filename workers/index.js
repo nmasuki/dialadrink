@@ -26,8 +26,6 @@ function unlink(file) {
 	});
 }
 
-
-
 async function loadWorkers() {
 	if (isFirstPass)
 		console.log("Loading AppWorkers from:", __dirname);

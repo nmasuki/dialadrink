@@ -17,7 +17,7 @@
  * See the Express application routing documentation for more information:
  * http://expressjs.com/api.html#app.VERB
  */
-
+var path = require('path');
 var keystone = require('keystone');
 var middleware = require('./middleware');
 var middlewareApi = require('./middleware-api');
@@ -40,13 +40,20 @@ var routes = {
 exports = module.exports = function (app) {
 	app.enable('view cache');
 
-	if (process.env.NODE_ENV != "production"){
-		app.use(require('less-middleware')({ src: __dirname + '/public' }));
-		app.use(keystone.express.static(__dirname + '/public'));
+	if (process.env.NODE_ENV != "production") {
+		var publicPath = path.resolve(__dirname + '/../public');
+			
+		try {
+			app.use(require('less-middleware')({ src: publicPath }));
+		} catch (e) {
+			//console.error(e);
+		} finally {
+			app.use(keystone.express.static(publicPath));
+		}
 	}
-	
+
 	// Api endpoints
-	var apis = Object.keys(routes.apis).map((i) => { 
+	var apis = Object.keys(routes.apis).map((i) => {
 		return {
 			path: "/api" + (i == "index" ? "" : "/" + i),
 			api: routes.apis[i]
@@ -61,7 +68,7 @@ exports = module.exports = function (app) {
 	});
 
 	// Views	
-	app.use('/checkout', routes.views.checkout);	
+	app.use('/checkout', routes.views.checkout);
 	app.use('/cart', routes.views.cart);
 	app.use('/order', routes.views.order);
 
@@ -77,7 +84,7 @@ exports = module.exports = function (app) {
 
 	app.use('/product', middleware.globalCache, routes.views.product);
 	app.use('/category', middleware.globalCache, routes.views.category);
-	app.use('/product', middleware.globalCache, routes.views.category);	
+	app.use('/product', middleware.globalCache, routes.views.category);
 
 	app.use('/', middleware.globalCache, routes.views.products);
 	app.use('/', middleware.globalCache, routes.views.index);

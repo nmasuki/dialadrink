@@ -1,5 +1,5 @@
 var keystone = require('keystone');
-var cloudinary = require('cloudinary');
+var filters = require('../../helpers/filters');
 var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
 
@@ -45,50 +45,11 @@ router.get("/", function (req, res) {
     });
 });
 
-router.get("/categories", function (req, res) {
-    var cloudinaryOptions = {
-        secure: true,
-        fetch_format: "auto",
-        transformation: [
-            //{ effect: "cartoonify" },
-            //{ background: "white" }, 
-            { width: 250, height:250, radius: "15", crop: "fill" }
-        ]
-    };
-    
-    ProductCategory.model.find()
-        .populate("menus")
-        .exec((err, categories) => {
-            var json = {
-                response: "error",
-                message: "",
-                data: []
-            };
+router.get("/categories", async function (req, res) {   
+    var fetchCategories = ProductCategory.model.find().populate("menus").exec();
+    var json = await filters.getPaged("allCategories", fetchCategories, req, res);  
+    return res.send(json);
 
-            if (err)
-                json.message = "Error fetching drinks! " + err;
-            else if (categories && categories.length) {
-                json.response = "success";
-                json.data = categories.orderBy(c => {
-                    var menus = c.menus.orderBy(m => m.index);                        
-                    return menus.length? menus[0].index: 100;
-                }).map(d => {
-                    return {
-                        id: d.id,
-                        slug: d.key,
-                        name: d.name || '',
-                        image: (d.image ? cloudinary.url(d.image.public_id, cloudinaryOptions) : res.locals.placeholderImg),
-                        title: d.pageTitle || '',
-                        description: d.description || ''
-                    };
-                });
-            } else {
-                json.response = "success";
-                json.message = "No record matching the query";
-            }
-
-            res.send(json);
-        });
 });
 
 router.get("/category/:category", function (req, res) {

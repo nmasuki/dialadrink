@@ -1,3 +1,5 @@
+var memCache = require("memory-cache");
+
 function escapeRegex(str) {
 	return str.replace(/[-[/\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
@@ -220,18 +222,18 @@ function postfixToMongo(postfix, substitution) {
 				return expr[0];
 
 			var lit = {};
-			if (mongoOp){
-				if(["$or", "$and"].indexOf(mongoOp) >= 0){
-					if(left[mongoOp] && Array.isArray(left[mongoOp]))
+			if (mongoOp) {
+				if (["$or", "$and"].indexOf(mongoOp) >= 0) {
+					if (left[mongoOp] && Array.isArray(left[mongoOp]))
 						lit[mongoOp] = left[mongoOp].concat(right);
-					else if(right[mongoOp] && Array.isArray(right[mongoOp]))
+					else if (right[mongoOp] && Array.isArray(right[mongoOp]))
 						lit[mongoOp] = right[mongoOp].concat(left);
-					else 
+					else
 						lit[mongoOp] = expr;
-				}else{
+				} else {
 					lit[mongoOp] = expr;
 				}
-			}else
+			} else
 				lit = Object.assign(left || {}, right || {});
 
 			stack.push(lit);
@@ -272,8 +274,8 @@ function evaluateLiteral(lit, substitution) {
 	if (r) r = r.trim();
 	if (l) l = l.trim();
 
-	if(typeof l == "string" && l.contains("*")) l = new RegExp(l.replaceAll(/[\*~]/g, "(.*?)", "i"));
-	if(typeof r == "string" && r.contains("*")) r = new RegExp(r.replaceAll(/[\*~]/g, "(.*?)", "i"));
+	if (typeof l == "string" && l.contains("*")) l = new RegExp(l.replaceAll(/[\*~]/g, "(.*?)", "i"));
+	if (typeof r == "string" && r.contains("*")) r = new RegExp(r.replaceAll(/[\*~]/g, "(.*?)", "i"));
 
 	if (stringValueMapping[r]) r = stringValueMapping[r];
 	if (!isNaN(n = parseFloat(r)) && isFinite(r)) r = n;
@@ -366,7 +368,7 @@ function mongoFilterToFn(filter) {
 			"$eq": () => {
 				if (filter[i] instanceof RegExp)
 					matched = matched && filter[i].test(val);
-				else if(filter[i] && filter[i]["$elemMatch"])
+				else if (filter[i] && filter[i]["$elemMatch"])
 					matched = matched && mongoFilterToFn(filter[i])(val);
 				else
 					matched = matched && val == filter[i];
@@ -392,10 +394,10 @@ function mongoFilterToFn(filter) {
 
 			if (filter.hasOwnProperty(i)) {
 				var fn = mathchEval[i] || mathchEval["$eq"];
-				if(fn)
-				 	fn();
+				if (fn)
+					fn();
 				else
-					console.warn(filter[i]);	 
+					console.warn(filter[i]);
 			}
 		}
 
@@ -458,9 +460,63 @@ function orderByToSortObj(orderBy) {
 	return $sort;
 }
 
-Array.prototype.orderByExpr = function (orderBy) {
-	return orderByExpr(this, orderBy);
+async function getPaged(cacheKey, fetchPromise, req, res) {
+	var filter = {};
+
+	var page = parseInt(req.query.page || 1);
+	var pageSize = parseInt(req.query.pageSize || 20);
+	var query = req.query.query || "";
+	var ids = req.query.id || req.query.ids || req.body.id || req.body.ids;
+	var orderBy = req.query.sort || req.query.sortBy || req.query.order || req.query.orderBy || "modifiedDate DESC";
+
+	if (ids && Array.isArray(ids))
+		filter._id = { "$in": ids.map(id => id) };
+	else
+		filter = luceneToMongo(ids || query);
+
+	var json = { response: "error", message: "", count: 0, data: [] };
+	var strQuery = typeof query == "object" ? JSON.stringify(query) : query;
+
+	cacheKey = cacheKey || ("key-" + new Date().getTime());
+	console.log(`Running filter on ${cacheKey}: '${strQuery}' Page:${page}, PageSize:${pageSize}`);
+
+	try {
+		var fullList = memCache.get(cacheKey);
+
+		if (!fullList || !fullList.length) {
+			fullList = await fetchPromise;
+			memCache.put(cacheKey, fullList, 120 * 1000);
+		}
+
+		var list = fullList.map(d => typeof d.toAppObject == "function" ? d.toAppObject() : typeof d.toObject == "function" ? d.toObject() : d);
+		list = list.filter(luceneToFn(query));
+		list = list.orderByExpr(orderBy);
+		list = list.slice((page - 1) * pageSize, pageSize);
+
+		if (list && list.length) {
+			console.log(`Got ${list.length} ${cacheKey} with query '${strQuery}' Page:${page}, PageSize:${pageSize}.`);
+			json.response = "success";
+			json.count = list.length;
+			json.data = list;
+		} else {
+			console.log(`Got no ${cacheKey} with query '${strQuery}' Page:${page}, PageSize:${pageSize}`);
+			json.response = "success";
+			json.message = "No record matching the query";
+		}
+	} catch (err) {
+		if (err) {
+			json.message = "Error fetching drinks! " + err;
+			console.error(json.message);
+		}
+	}
+
+	return json;
 }
+
+if (!Array.prototype.orderByExpr)
+	Array.prototype.orderByExpr = function (orderBy) {
+		return orderByExpr(this, orderBy);
+	}
 
 //String.prototype.luceneToMongo = function () { return luceneToMongo(this); };
 
@@ -471,5 +527,6 @@ module.exports = {
 	luceneToMongo: luceneToMongo,
 	luceneToFn: luceneToFn,
 	orderByExpr: orderByExpr,
-	orderByToSortObj: orderByToSortObj
+	orderByToSortObj: orderByToSortObj,
+	getPaged: getPaged
 };
