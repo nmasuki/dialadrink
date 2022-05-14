@@ -1,6 +1,17 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
 var MenuItem = keystone.list("MenuItem");
+var cloudinary = require('cloudinary');    
+var cloudinaryOptions = {
+    secure: true,
+    fetch_format: "auto",
+    transformation: [
+        //{ effect: "cartoonify" },
+        { background: "transparent" }, 
+        { width: 250, height: 250, radius: "15", crop: "fill" }
+    ]
+};
+
 
 /**
  * ProductCategory Model
@@ -88,6 +99,18 @@ ProductCategory.schema.methods.updateMenu = function(next){
                     if(typeof next == "function")
                         next(null, this.menus);
                 });
+};
+
+ProductCategory.schema.methods.toAppObject = function(){
+    var d = this;
+    return {
+        id: d.id,
+        slug: d.key,
+        name: d.name || '',
+        image: (d.image ? cloudinary.url(d.image.public_id, cloudinaryOptions) : res.locals.placeholderImg),
+        title: d.pageTitle || '',
+        description: d.description || ''
+    };
 };
 
 ProductCategory.register();

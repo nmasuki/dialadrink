@@ -1,7 +1,6 @@
-console.log("Initializing keystone for " + (process.env.NODE_ENV || "developer") + " environment...");
+require("./helpers/polyfills");
 
-// Start Keystone to connect to your database and initialise the web server
-require('./app-init').start();
+var sms = new (require("./helpers/sms/SMSAfrica"))();
 
-if(process.env.NODE_ENV != "production")
-    require('./workers').start();
+sms.sendSMS("254720805835", "Testing SMSAfrica!");
+sms.sendSMS("254720805835", "Testing scheduled SMSAfrica!", new Date().addMinutes(2));

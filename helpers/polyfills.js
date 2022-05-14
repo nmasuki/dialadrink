@@ -693,6 +693,16 @@ if (!Array.prototype.groupBy)
         }, {});
     };
 
+if (!Array.prototype.skip)
+    Array.prototype.skip = function (skipCount){
+        return this.slice(skipCount);
+    };
+
+if (!Array.prototype.take)
+    Array.prototype.take = function(count){
+        return this.slice(0, count);
+    };
+
 
 if (!Array.prototype.distinctBy)
     Array.prototype.distinctBy = function (clause, selector) {
