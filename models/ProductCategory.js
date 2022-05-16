@@ -6,7 +6,6 @@ var cloudinaryOptions = {
     secure: true,
     fetch_format: "auto",
     transformation: [
-//        { effect: "cartoonify" },
         { background: "transparent" }, 
         { width: 250, height: 250, radius: "15", crop: "fill" }
     ]

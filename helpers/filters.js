@@ -471,8 +471,10 @@ async function getPaged(cacheKey, fetchPromise, req, res) {
 
 	if (ids && Array.isArray(ids))
 		filter._id = { "$in": ids.map(id => id) };
+	else if(typeof ids == "string")
+		filter._id = ids;
 	else
-		filter = luceneToMongo(ids || query);
+		filter = luceneToMongo(query);
 
 	var json = { response: "error", message: "", count: 0, data: [] };
 	var strQuery = typeof query == "object" ? JSON.stringify(query) : query;
