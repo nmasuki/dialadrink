@@ -49,7 +49,6 @@ router.get("/categories", async function (req, res) {
     var fetchCategories = ProductCategory.model.find().populate("menus").exec();
     var json = await filters.getPaged("allCategories", fetchCategories, req, res);  
     return res.send(json);
-
 });
 
 router.get("/category/:category", function (req, res) {
@@ -109,7 +108,6 @@ router.get("/:query", function (req, res, next) {
         res.send(json);
     });
 });
-
 
 router.get("/related/:productId", async function(req, res, next){
     var json = {
