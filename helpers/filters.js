@@ -493,7 +493,7 @@ async function getPaged(cacheKey, fetchPromise, req, res) {
 		var list = fullList.map(d => typeof d.toAppObject == "function" ? d.toAppObject() : typeof d.toObject == "function" ? d.toObject() : d);
 		list = list.filter(luceneToFn(query));
 		list = list.orderByExpr(orderBy);
-		list = list.slice((page - 1) * pageSize, pageSize);
+		list = list.slice((page - 1) * pageSize, page * pageSize);
 
 		if (list && list.length) {
 			console.log(`Got ${list.length} ${cacheKey} with query '${strQuery}' Page:${page}, PageSize:${pageSize}.`);

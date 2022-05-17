@@ -1,6 +1,5 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
-var MenuItem = keystone.list("MenuItem");
 var cloudinary = require('cloudinary');    
 var cloudinaryOptions = {
     secure: true,
@@ -51,11 +50,7 @@ ProductCategory.schema.methods.updateMenu = function(next){
     var regex = new RegExp(href.escapeRegExp() + "[/#]?$");
     var parentRegex = new RegExp(brandHref.escapeRegExp() + "[/#]?$");
 
-    keystone.list("MenuItem").model
-                .find({ "$or":[
-                    {href: regex},
-                    {href: parentRegex}
-                ]}) 
+    keystone.list("MenuItem").model.find({ "$or":[{href: regex}, {href: parentRegex}]}) 
                 .exec((err, allmenus) => {                    
                     if(err){
                         console.warn(err);
@@ -77,7 +72,7 @@ ProductCategory.schema.methods.updateMenu = function(next){
                             return m;
                         });
                     }else{
-                        var menu = new MenuItem.model({
+                        var menu = new (keystone.list("MenuItem")).model({
                             index: 1,
                             level: 2,
                             href: href,
@@ -108,7 +103,8 @@ ProductCategory.schema.methods.toAppObject = function(){
         name: d.name || '',
         image: (d.image ? cloudinary.url(d.image.public_id, cloudinaryOptions) : res.locals.placeholderImg),
         title: d.pageTitle || '',
-        description: d.description || ''
+        description: d.description || '',
+        index: d.menus ? d.menus.min(m => m.index): 0
     };
 };
 

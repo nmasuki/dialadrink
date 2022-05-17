@@ -53,6 +53,7 @@ router.get("/categories", async function (req, res) {
 
 router.get("/category/:category", function (req, res) {
     ProductCategory.model.find({ key: req.params.category.cleanId() })
+        .populate("menus")
         .exec((err, categories) => {
             var filter = {
                 category: {
