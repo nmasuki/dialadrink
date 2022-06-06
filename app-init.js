@@ -86,13 +86,14 @@ keystone.set('locals', {
 keystone.set('routes', require('./routes'));
 
 // Mailing configs
-process.env.EMAIL_FROM = 'dialadrinkkenya.co.ke@gmail.com'
+process.env.EMAIL_FROM = process.env.SMTP_USER
+
 var nodeOptions = {
   service: 'Gmail',
-  host: 'smtp.gmail.com',
+  host: process.env.SMTP_HOST || 'smtp.zoho.com',
   auth: {
-    user: 'dialadrinkkenya.co.ke@gmail.com',
-    pass: 'Enter@1234'
+    user: process.env.SMTP_USER || 'order@dialadrinkkenya.com',
+    pass: process.env.SMTP_PASS || 'simon2017'
   }
 };
 
