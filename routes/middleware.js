@@ -81,12 +81,7 @@ exports.initLocals = function (req, res, next) {
         var regex = /geo:(-?\d+\.?\d*),(-?\d+\.?\d*);cgen=gps/i;
         var split = regex.exec(req.headers.geolocation);
 
-        res.locals.appGeolocation = {
-            lat: split[1],
-            lng: split[2]
-        };
-
-        console.log("Geolocation:", res.locals.appGeolocation);
+        res.locals.appGeolocation = { lat: split[1], lng: split[2] };
     }
 
     //Push Notification VAPID public key

@@ -89,7 +89,7 @@ keystone.set('routes', require('./routes'));
 process.env.EMAIL_FROM = process.env.SMTP_USER
 
 var nodeOptions = {
-  service: 'Gmail',
+  service: process.env.SMTP_SERVICE || 'Gmail',
   host: process.env.SMTP_HOST || 'smtp.zoho.com',
   auth: {
     user: process.env.SMTP_USER || 'order@dialadrinkkenya.com',
