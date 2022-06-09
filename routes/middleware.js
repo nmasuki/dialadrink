@@ -52,13 +52,13 @@ exports.globalCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/"
 
 exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 
-/**
+/***
  Initialises the standard view locals
 
  The included layout depends on the navLinks array to generate
  the navigation in the header, you may wish to change this array
  or replace it with your own templates / logic.
- */
+ ***/
 exports.initLocals = function (req, res, next) {
 
     //App Logo
@@ -354,9 +354,9 @@ exports.initTopMenuLocals = function (req, res, next) {
         });
 };
 
-/**
+/****
  Fetches and clears the flashMessages before a view is rendered
- */
+ ****/
 exports.flashMessages = function (req, res, next) {
     var flashMessages = {
         info: req.flash('info'),
