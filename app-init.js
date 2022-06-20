@@ -89,16 +89,13 @@ keystone.set('routes', require('./routes'));
 var nodeOptions = {
   service: process.env.SMTP_SERVICE || 'Zoho',
   host: process.env.SMTP_HOST || 'smtp.zoho.com',
+  port: (process.env.SMTP_PORT || 587),
+  secure: (process.env.SMTP_PORT || 587) == 465, // true for 465, false for other ports
   auth: {
     user: process.env.SMTP_USER || 'order@dialadrinkkenya.com',
     pass: process.env.SMTP_PASS || 'simon2017'
   }
 };
-
-if(nodeOptions != 'Gmail'){
-	nodeOptions.port = 587;
-	nodeOptions.secure = false; // true for 465, false for other ports
-}
 
 keystone.set('email nodemailer', nodeOptions);
 
@@ -157,5 +154,9 @@ function send_email(from, to, subject, body, attachments) {
     })
 }
 
-//send_email(null, "nmasuki@gmail.com", "DIALADRINK Initializing", "DIALADRINK initialized..");
+if(process.env.NODE_ENV != "production"){
+	console.log("Sending test email...")
+	send_email(null, "nmasuki@gmail.com", "DIALADRINK Initializing", "DIALADRINK initialized...");
+}
+
 module.exports = keystone;
