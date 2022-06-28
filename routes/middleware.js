@@ -52,13 +52,13 @@ exports.globalCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60, "/"
 
 exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
 
-/**
+/***
  Initialises the standard view locals
 
  The included layout depends on the navLinks array to generate
  the navigation in the header, you may wish to change this array
  or replace it with your own templates / logic.
- */
+ ***/
 exports.initLocals = function (req, res, next) {
 
     //App Logo
@@ -81,12 +81,7 @@ exports.initLocals = function (req, res, next) {
         var regex = /geo:(-?\d+\.?\d*),(-?\d+\.?\d*);cgen=gps/i;
         var split = regex.exec(req.headers.geolocation);
 
-        res.locals.appGeolocation = {
-            lat: split[1],
-            lng: split[2]
-        };
-
-        console.log("Geolocation:", res.locals.appGeolocation);
+        res.locals.appGeolocation = { lat: split[1], lng: split[2] };
     }
 
     //Push Notification VAPID public key
@@ -359,9 +354,9 @@ exports.initTopMenuLocals = function (req, res, next) {
         });
 };
 
-/**
+/****
  Fetches and clears the flashMessages before a view is rendered
- */
+ ****/
 exports.flashMessages = function (req, res, next) {
     var flashMessages = {
         info: req.flash('info'),

@@ -1,6 +1,5 @@
 var keystone = require('keystone');
 var pesapalHelper = require('../../helpers/PesaPal');
-
 var router = keystone.express.Router();
 
 var Page = keystone.list("Page");
@@ -9,7 +8,6 @@ var Product = keystone.list("Product");
 var ProductCategory = keystone.list("ProductCategory");
 var MenuItem = keystone.list("MenuItem");
 var Blog = keystone.list("Blog");
-var homeGroupSize = process.env.HOME_GROUP_SIZE || 12;
 
 function search(req, res, next) {
     var view = new keystone.View(req, res);

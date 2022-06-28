@@ -4,7 +4,7 @@ var apiUrl = `https://sms.smsafrica.co.ke/sms/v3/{0}`;
 
 var credentials = {
     username: "dialadrink",
-    apiKey: process.env.SMSAFRICA_APIKEY || 'uqx53Hml1cPWC8LopwXvNsi9IkyQ0aRdJFt2B7TrbjzMeSAhGZVYUKfO6Egn4D'
+    apiKey: process.env.SMSAFRICA_APIKEY || 'kq5aOuGc671t4NVHv0LdPi8z9AKnSIFDBol3pxhsygXrRQfjJZEembMw2UCTWY'
 };
 
 function SMSAfrica(sender) {

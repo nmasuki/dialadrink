@@ -471,8 +471,10 @@ async function getPaged(cacheKey, fetchPromise, req, res) {
 
 	if (ids && Array.isArray(ids))
 		filter._id = { "$in": ids.map(id => id) };
+	else if(typeof ids == "string")
+		filter._id = ids;
 	else
-		filter = luceneToMongo(ids || query);
+		filter = luceneToMongo(query);
 
 	var json = { response: "error", message: "", count: 0, data: [] };
 	var strQuery = typeof query == "object" ? JSON.stringify(query) : query;
@@ -486,12 +488,13 @@ async function getPaged(cacheKey, fetchPromise, req, res) {
 		if (!fullList || !fullList.length) {
 			fullList = await fetchPromise;
 			memCache.put(cacheKey, fullList, 120 * 1000);
+			console.log("")
 		}
 
 		var list = fullList.map(d => typeof d.toAppObject == "function" ? d.toAppObject() : typeof d.toObject == "function" ? d.toObject() : d);
 		list = list.filter(luceneToFn(query));
 		list = list.orderByExpr(orderBy);
-		list = list.slice((page - 1) * pageSize, pageSize);
+		list = list.slice((page - 1) * pageSize, page * pageSize);
 
 		if (list && list.length) {
 			console.log(`Got ${list.length} ${cacheKey} with query '${strQuery}' Page:${page}, PageSize:${pageSize}.`);

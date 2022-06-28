@@ -255,7 +255,7 @@ Product.schema.virtual('priceValidUntil').get(function () {
 });
 
 Product.schema.virtual('popularityRatio').get(function () {
-    var max = 1.0, min = 0.75;
+    var max = 1.0, min = 0.5;
     var ratio = this.hitsPerWeek / topHitsPerWeek;
 
     if (ratio)
@@ -265,7 +265,7 @@ Product.schema.virtual('popularityRatio').get(function () {
 });
 
 Product.schema.virtual('hitsPerWeek').get(function () {
-    var weeks = (new Date().getTime() - this.modifiedDate.getTime()) / 604800000.0;
+    var weeks = (new Date().getTime() - this.publishedDate.getTime()) / 604800000.0;
 
     if (weeks <= 1)
         return topHitsPerWeek;
@@ -938,4 +938,6 @@ Product.getUIFilters = function (products, limit) {
 };
 
 var topHitsPerWeek = 100;
-Product.model.find().exec((err, data) => topHitsPerWeek = data.max(p => p?.hitsPerWeek));
+Product.model.find().exec((err, data) => { 
+    topHitsPerWeek = data.max(p => p?.hitsPerWeek);
+});

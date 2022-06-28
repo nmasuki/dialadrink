@@ -86,29 +86,19 @@ keystone.set('locals', {
 keystone.set('routes', require('./routes'));
 
 // Mailing configs
-process.env.EMAIL_FROM = 'dialadrinkkenya.co.ke@gmail.com'
 var nodeOptions = {
-  service: 'Gmail',
-  host: 'smtp.gmail.com',
+  service: process.env.SMTP_SERVICE || 'Zoho',
+  host: process.env.SMTP_HOST || 'smtp.zoho.com',
   auth: {
-    user: 'dialadrinkkenya.co.ke@gmail.com',
-    pass: 'Enter@1234'
+    user: process.env.SMTP_USER || 'order@dialadrinkkenya.com',
+    pass: process.env.SMTP_PASS || 'simon2017'
   }
 };
 
-/***
-var nodeOptions = {
-	// Nodemailer configuration
-	service: 'Zoho',
-	host: process.env.SMTP_HOST,
-	port: 587,
-	secure: false, // true for 465, false for other ports
-	auth: {
-		user: process.env.SMTP_USER, // generated ethereal user
-		pass: process.env.SMTP_PASS  // generated ethereal password
-	}
-}; 
-/***/
+if(nodeOptions != 'Gmail'){
+	nodeOptions.port = 587;
+	nodeOptions.secure = false; // true for 465, false for other ports
+}
 
 keystone.set('email nodemailer', nodeOptions);
 

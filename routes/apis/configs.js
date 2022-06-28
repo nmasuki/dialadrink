@@ -10,31 +10,11 @@ var router = keystone.express.Router();
 router.get('/', function (req, res) {
     var json = {
         response: "success",
-        data: [{
-            title: "Site Name",
-            value: keystone.get('name')
-        }, {
-            title: "Site Logo",
-            value: keystone.get('logo')
-        }, {
-            title: "Site Theme",
-            value: "#2f93a3"
-        }, {
-            title: "Site Url",
-            value: keystone.get('url')
-        }, {
-            title: "Min Purchase Order",
-            value: res.locals.maxPurchase || 500
-        }, {
-            title: "Max Purchase Order",
-            value: res.locals.maxPurchase || 125000
-        }, {
-            title: "OkHiEnv",
-            value: res.locals.OkHiEnv
-        }, {
-            title: "OkHiClientKey",
-            value: res.locals.OkHiClientKey
-        }]
+        data: Object.assign({
+            appTheme: "#2F93A3",
+            minPurchase: res.locals.minPurchase || 500,
+            maxPurchase: res.locals.maxPurchase || 125000
+        }, res.locals)
     };
 
     res.send(json);
