@@ -23,55 +23,16 @@
 	<div class="col-md-7">
 		<ul class="list-group mb-3" id="cart-view">
 
-			<li data-cartid="{{cartId}}" class="list-group-item d-flex justify-content-between lh-condensed row" style="border:#000 ;">
-					 
+			<li data-cartid="{{cartId}}" class="list-group-item d-flex justify-content-between lh-condensed row">
+				
 					<div class="col-md-5">
 						<h4 class="my-0">
-							<div class="dropdown zindex2">
-            {{#if inStock}}
-                {{#ifgt stockOptions.length 1}}
-                    <image src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/cart_qAUSkm_Fr.jpeg?ik-sdk-version=javascript-1.4.3&updatedAt=1644052524419" 
-                        alt="Add to Cart" class="add-to-cart-2" data-qty="{{quantity}}" data-product="5b48e934bdd218570be620e7" 
-                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
-                        {{#ifgt options.length 1}}
-                            <span class="dropdown zindex2" style="left: -39px;">
-                                <i style="color: white;" class="fa fa-angle-down"></i>
-                            </span>
-                        {{/ifgt}}
-                    </image>                        
-                    <div class="dropdown-content">
-                        {{#each stockOptions}}
-                            <a href="#" class="add-to-cart"
-                                data-qty="{{quantity}}" data-product="5b48e934bdd218570be620e7">
-                                <span>{{quantity}}</span>
-                                {{#if percentOffer}}
-                                    <span>
-                                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                            <span>{{formatNumber price}}</span>
-                                        </span>
-                                        <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
-                                    </span>
-                                {{else}}
-                                    <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
-                                {{/if}}
-                            </a>
-                        {{/each}}
-                    </div>
-                {{else}}
-				<b>Add Tonic Water</b>
-                    <image src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/bask.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656414423995" 
-                        alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="5b48e934bdd218570be620e7" 
-                        style="width: 35px; height: 35px">
-                    </image>
-                {{/ifgt}}
-            {{else}}
-			<b>Add Tonic Water</b>
-               <image src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/bask.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656414423995" 
-                        alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="5b48e934bdd218570be620e7" 
-                        style="width: 35px; height: 35px">
-                    </image>
-            {{/if}}
-        </div>
+							<a class="cart-product-link" href="/tonic-water">
+								<b>Add Tonic Water </b>
+
+								<img class="cart-image" src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/bask.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656414423995" style="width: 35px; height: 35px">
+					
+							</a>
 						</h4>
 						 
 					</div>
