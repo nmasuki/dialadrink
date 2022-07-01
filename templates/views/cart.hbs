@@ -22,6 +22,22 @@
 <div id="cart-content-main" class="container">
 	<div class="col-md-7">
 		<ul class="list-group mb-3" id="cart-view">
+
+			<li data-cartid="{{cartId}}" class="list-group-item d-flex justify-content-between lh-condensed row">
+				
+					<div class="col-md-5">
+						<h4 class="my-0">
+							<a class="cart-product-link" href="/tonic-water">
+								<b>Add Tonic Water </b>
+
+								<img class="cart-image" src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/bask.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656414423995" style="width: 35px; height: 35px">
+					
+							</a>
+						</h4>
+						 
+					</div>
+					 
+				</li>
 			{{#each cartItems}}
 				<li data-cartid="{{cartId}}" class="list-group-item d-flex justify-content-between lh-condensed row">
 					<div class="col-md-3">
@@ -83,7 +99,7 @@
 					<h4 class="my-0">Delivery Charges</h4>
 				</div>
 				<span class="text-info cart-currency">KES</span> 
-				<span class="text-info cart-amount">50.00</span>
+				<span class="text-info cart-amount">300.00</span>
 			</li>
 
 			<li style="display: none;"

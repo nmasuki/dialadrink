@@ -148,10 +148,37 @@
                                 <li class="toolbar-customer my-wishlist"><a href="/">Home</a></li>
                                 <li class="toolbar-customer my-wishlist"><a href="/contact-us">Contact Us</a></li>
                                 <li class="toolbar-customer my-wishlist"><a href="/delivery-locations">Delivery Locations</a></li>
+                                <li>
+                                <div class="footer-ul">
+                    <a href="https://instagram.com/alcoholdeliverynairobi" title="{{{appTitle}}} Instagram"
+                       class="icon-social instagram">
+                         <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/instagram.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656403108054" alt="Instagram" height="30px">
+                      
+                    </a>
+
+                    <a href="https://www.facebook.com/drinkdeliverynairobi" title="{{{appTitle}}} Facebook"
+                       class="icon-social facebook">
+                            <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/facebooks.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656402362067" alt="Facebook" height="30px">
+                      
+                    </a>
+                    <a href="https://twitter.com/liqourdelivery" title="{{{appTitle}}} Twitter"
+                       class="icon-social twitter">
+
+                            <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/twitter.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656402940870" alt="Twitter" height="30px">
+                    </a>
+                    
+                     <a href="http://bit.ly/2OZfVz1"
+                       class="icon-social youtube">
+                         <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/googleplay.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656407381730" alt="Youtube" height="30px">
+                      
+                    </a>  
+                </div>
+                </li>
                             </ul>
-                            <a href="http://bit.ly/2OZfVz1">
+                            {{!-- <a href="http://bit.ly/2OZfVz1">
                                      <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/pl_Q8A94zAyV.webp?ik-sdk-version=javascript-1.4.3&updatedAt=1648474529710" height="50px" alt="Play Store">
-                                    </a>      
+                                    </a>  --}}
+
                         </div>
                     </div>
                 </div>
@@ -179,12 +206,13 @@
                                 <div>
                                     <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png" height="30px" alt="Dial a Drink logo">
                                     <span style="padding-left: 10px; color: white;  font-size: 18px;">
-                                         {{!-- <a href="/"> --}}
+                                         <a href="/">
                                          <NuxtLink to="/"></NuxtLink>
                                         <span><strong>DIAL A DRINK KENYA</strong></span>
                                         </a>
                                         
                                     </span>
+
                                     <a href="http://bit.ly/2OZfVz1">
                                      <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/pl_Q8A94zAyV.webp?ik-sdk-version=javascript-1.4.3&updatedAt=1648474529710" height="30px" alt="Play Store">
                                     </a>
@@ -232,13 +260,15 @@
             </div>
             <div class="container clearfix">
                 <div class="row">
+
+                                <div class="nav-search" style="margin-top: {{#if isMobile}}10px;{{else}}10px{{/if}} !important">
+                <form class="search" action="/search" style="colo">
+                    <input type="text" name="query" style="color: #000; width:300px; border: 3px solid #555; size: 20px; " class="search_box" placeholder="Search Products" value="" id="search_box"/>
+                </form>
+            </div>
                     <div class="main-header-inner">
                         <div class="nav-top">
-                        <div class="nav-search" style="margin-top: {{#if isMobile}}10px;{{else}}0{{/if}} !important">
-                                <form class="search" action="/search">
-                                   <input type="text" name="query" class="search_box" placeholder="Search for a drink..." value="" id="search_box"/>
-                                </form>
-                            </div>
+                         
                             <div class="nav-logo" {{#if isMobile}}style="display:none; color: #0a0808"{{/if}}>
                                 <h style="font-size: 28px;">
                                     <a href="/">
@@ -254,10 +284,9 @@
                                         <i class="sub-dropdown1 visible-sm visible-md visible-lg"></i>
                                         <i class="sub-dropdown visible-sm visible-md visible-lg"></i>
                                         <div class="num-items-in-cart">
-                                            <img class="cart_img" src="/assets/bg-cart.png" alt="My Cart"/>
+                                            <img class="cart_img" src="/assets/carts.png" alt="My Cart"/>
                                             <span class="cart_text">
 												<a href="/cart">
-                                                    My Cart
                                                     <span class="number cart-total-pieces" id="number">
                                                         {{cartItemCount this}}
                                                     </span>
@@ -392,37 +421,6 @@
                 </div>
             </div>           
 
-            {{#unless isMobile}}
-            {{#if products.length}}
-                <div class="container" style="margin-bottom: 0">
-                    <div class="row">
-                        <div class="col-sm-10">
-                            <div style="overflow: auto;white-space: nowrap;">
-                                {{#each uifilters}}
-                                    <span class="filter noselect" data-filterby="{{this.filter}}">
-                                        {{this.filter}} <small style="font-size: 0.8em; display: none">({{this.hits}})</small>
-                                    </span>
-                                {{/each}}
-                            </div>
-                        </div>
-
-                        <div class="col-sm-2">
-                            <span class="sorting noselect dropdown-toggle">
-                                <span id="sortby">Sorted by Name</span>
-                                <i class="fa fa-sort-amount-asc" style="float: right; padding:0 4px;"></i>
-                            </span>
-                            <ul class="dropdown-menu" style="display: none; left: 40px;">
-                                <li class="noselect sort-products" data-sortby="name">Name<i class="fa fa-sort-alpha-asc" style="float: right;padding-right: 5px;"></i></li>
-                                <li class="noselect sort-products" data-sortby="price">Price<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
-                                <li class="noselect sort-products" data-sortby="popularity">Popularity<i class="fa fa-sort-amount-asc" style="float: right;padding-right: 5px;"></i></li>
-                                <li class="noselect sort-products" data-sortby="size">Quantity<i class="fa fa-sort-numeric-asc" style="float: right;padding-right: 5px;"></i></li>
-                            </ul> 
-                        </div>
-                    </div>
-                </div>
-            {{/if}}
-            {{/unless}}
-
             {{{body}}}
 
             {{#if page.content}}
@@ -552,12 +550,12 @@
                     </li>
                     <li>
                         <p>
-                            <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/visa.png" alt="Pay via VISA" height="30px">
+                            <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/visas.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656403969407" alt="Pay via VISA" height="30px">
                         </p>
                     </li>
                     <li>
                         <p>
-                            <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/mastercard.png" alt="Pay Via Master Card" height="30px">
+                            <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/credit.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656404136596" alt="Pay Via Master Card" height="30px">
                         </p>
                     </li>
                 </ul>
@@ -568,27 +566,35 @@
                 <div class="footer-ul">
                     <a href="https://www.facebook.com/drinkdeliverynairobi" title="{{{appTitle}}} Facebook"
                        class="icon-social facebook">
-                        <i class="fa fa-facebook"></i>
+                            <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/facebooks.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656402362067" alt="Facebook" height="30px">
+                      
                     </a>
                     <a href="https://twitter.com/liqourdelivery" title="{{{appTitle}}} Twitter"
                        class="icon-social twitter">
-                        <i class="fa fa-twitter"></i>
+
+                            <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/twitter.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656402940870" alt="Twitter" height="30px">
+                       
+                        
                     </a>
                     <a href="https://instagram.com/alcoholdeliverynairobi" title="{{{appTitle}}} Instagram"
                        class="icon-social instagram">
-                        <i class="fa fa-instagram"></i>
+                         <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/instagram.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656403108054" alt="Instagram" height="30px">
+                      
                     </a>
                     <a href="https://www.youtube.com/user/dialadrink" title="{{{appTitle}}} Youtube"
                        class="icon-social youtube">
-                        <i class="fa fa-youtube"></i>
+                         <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/youtube.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656403317907" alt="Youtube" height="30px">
+                      
                     </a>
                     <a href="https://plus.google.com/u/1/102101315171058540161" title="{{{appTitle}}} Google+"
                        class="icon-social google-plus">
-                        <i class="fa fa-google-plus"></i>
+                        <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/google.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656403331553" alt="Google Plus" height="30px">
+                      
                     </a>
                     <a href="https://www.pinterest.com/liqourdelivery" title="{{{appTitle}}} Pinterest"
                        class="icon-social google-plus">
-                        <i class="fa fa-pinterest"></i>
+                       <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/pinterest.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656403555265" alt="Google Plus" height="30px">
+                      
                     </a>
                 </div>
 
