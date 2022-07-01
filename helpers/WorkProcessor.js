@@ -6,7 +6,7 @@ function WorkProcessor(getWork, doWork) {
     self.run = function () {
         return new Promise((resolve, reject) => {  
             var processWork = function() {
-                var gwPromise = getWork(function () {
+                var gwPromise = getWork.call(self, function () {
                     var promise = doWork.apply(this, arguments);
                     if (!promise || (promise.costructor && promise.costructor.name != 'Promise'))
                         promise = Promise.resolve(promise || 0);
