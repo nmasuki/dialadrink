@@ -155,8 +155,10 @@ function send_email(from, to, subject, body, attachments) {
 }
 
 if(process.env.NODE_ENV != "production"){
-	console.log("Sending test email...")
-	send_email(null, "nmasuki@gmail.com", "DIALADRINK Initializing", "DIALADRINK initialized...");
+	setTimeout(() =>{
+		console.log("Sending Initializing test email...")
+		send_email(null, process.env.DEVELOPER_EMAIL || "nmasuki@gmail.com", `DIALADRINK Initializing`, `DIALADRINK initialized from ${process.env.LOGNAME}@${process.env.NAME}...`);
+	}, 1000)
 }
 
 module.exports = keystone;
