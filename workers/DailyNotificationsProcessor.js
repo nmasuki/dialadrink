@@ -3,25 +3,37 @@ const Order = keystone.list('Order');
 const ClientNotification = keystone.list('ClientNotification');
 const WorkProcessor = require('../helpers/WorkProcessor');
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sartuday"];
+const daylyMessageCount = 50;
 
 const messageTemplate = {
     intro: [
+        "Hi {firstName}",
         "Happy {dayOfWeek} {firstName}!",
+        "Happy {dayOfWeek} to you and to all out there!",
         "Hi {firstName} and a happy {dayOfWeek}!",
         "Happy {dayOfWeek} {firstName} and a lovely evening!",
     ],
     dailyMessage: [
         /*Sunday*/[],
         /*Monday*/[
-            "After a long, hot day, few things are more rewarding than a tall, frosty glass of {favoriteDrink}."
+            "The toughest activity of a week starts right from {dayOfWeek} morning. How about glass of {favoriteDrink} for making it through the day?",
+            "After a long, hot {dayOfWeek}, few things are more rewarding than a tall, frosty glass of {favoriteDrink}.",
+            "We wish you a warm and exciting week ahead. How about a frosty glass of {favoriteDrink} to brighten your week?",
+            "Let's start this week with lots of positivity in our hearts! A glass of {favoriteDrink} could be what you need.",
+            "Have a glass of {favoriteDrink} and start your week with great enthusiasm.",
+            "May this week bring a lot of happiness to you all.",
         ],
-        /*Tuesday*/[],
+        /*Tuesday*/["A glass of {favoriteDrink} sounds like a good idea this evening."],
         /*Wednesday*/[
-            "Time to relax with a refreshing {favorite Drink}!",
+            "Time to relax with a refreshing {favoriteDrink}!",
         ],
-        /*Thursday*/[],
+        /*Thursday*/[
+            "How about a TBT with a {favoriteDrink}! We got you!",
+        ],
         /*Friday*/[
-            "Quench your thirst with a sip of cold {favorite Drink}"
+            "Quench your thirst with a sip of cold {favoriteDrink}",
+            "Have a glass of {favoriteDrink} and end your week with great enthusiasm.",
+            "It's {dayOfWeek}! We made it through this week. How about glass of {favoriteDrink} to celebrate?"
         ],
         /*Sartuday*/[],
     ],
@@ -46,8 +58,17 @@ const messageTemplate = {
     ],
 
     get: function (obj, section) {
-        if (!messageTemplate[section]) section = 'message';
-        return messageTemplate[section][randomInt(0, messageTemplate[section].length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ')
+        if (!messageTemplate[section]) 
+            section = 'message';
+
+        var messages = messageTemplate[section] || [];
+
+        if(section == 'message'){
+            var dailyMsgs = messageTemplate.dailyMessage[new Date().getDay()] || [];
+            messages = messages.concat(dailyMsgs)
+        }
+
+        return messages[randomInt(0, messages.length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ')
     },
 
     getMessage: function (obj) {
@@ -56,7 +77,7 @@ const messageTemplate = {
 
         for (var i of parts)
             if (messageTemplate.hasOwnProperty(i))
-                message += (message ? ' ' : '') + messageTemplate[i][randomInt(0, messageTemplate[i].length - 1)].format(obj).replace(/\s(\W)\s/g, '$1 ');
+                message += (message ? ' ' : '') + messageTemplate.get(obj, i);
 
         return message.trim();
     }
@@ -77,22 +98,43 @@ async function getWork(next, done) {
     var clientGroupedOrders = Object.values(groupedOrders).orderBy(o => -o.length);
 
     var clients = [];
-    
+
     for (var clientOrders of clientGroupedOrders) {
         var favoriteWeekOrders = Object.values(clientOrders.groupBy(o => o.orderDate.getWeekOfMonth())).orderBy(o => -o.length)[0];
+
         if (favoriteWeekOrders.length && favoriteWeekOrders[0].orderDate.getWeekOfMonth() == weekOfMonth) {
             var favoriteDayOrders = Object.values(clientOrders.groupBy(o => o.orderDate.getDay())).orderBy(o => -o.length)[0];
             if (favoriteDayOrders.length && favoriteDayOrders[0].orderDate.getDay() == dayOfWeek)
                 clients.push(favoriteDayOrders[0].client);
         }
 
-        if (clients.length >= 40)
+        if (clients.length >= daylyMessageCount)
             break;
+    }
+
+    if (clients.length < daylyMessageCount) {
+        console.log(`Got only within week ${weekOfMonth} ${clients.length} clients to sent daily notifications to...`);
+
+        for (var clientOrders of clientGroupedOrders) {
+            var favoriteWeekOrders = Object.values(clientOrders.groupBy(o => o.orderDate.getWeekOfMonth())).orderBy(o => -o.length)[0];
+
+            if (favoriteWeekOrders.length) {
+                var daydiff = Math.abs(favoriteWeekOrders[0].orderDate.getWeekOfMonth() - weekOfMonth);
+                if (daydiff != 0 && daydiff <= 2) {
+                    var favoriteDayOrders = Object.values(clientOrders.groupBy(o => o.orderDate.getDay())).orderBy(o => -o.length)[0];
+                    if (favoriteDayOrders.length && favoriteDayOrders[0].orderDate.getDay() == dayOfWeek)
+                        clients.push(favoriteDayOrders[0].client);
+                }
+            }
+
+            if (clients.length >= daylyMessageCount)
+                break;
+        }
     }
 
     console.log(`Got ${clients.length} clients to sent daily notifications to...`);
     next(null, clients, done);
-    
+
     return clients;
 }
 
@@ -109,10 +151,10 @@ function doWork(err, clients, next) {
             (function popNext() {
                 if (clients.length) {
                     var client = clients[index++];
-                    if(client)
+                    if (client)
                         return createNotification(client).always(() => popNext());
                 }
-                
+
                 console.log(`Done Generating ${index - 1}/${clients.length} daily notifications!`);
                 resolve(index);
             })();
@@ -178,10 +220,10 @@ async function createNotification(client) {
 
     //console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${n.message.body}`);
     //if (process.env.NODE_ENV == "production")
-        return await n.save(() => {
-            client.lastNotificationDate = n.scheduleDate;
-            return client.save();
-        });
+    return await n.save(() => {
+        client.lastNotificationDate = n.scheduleDate;
+        return client.save();
+    });
 }
 
 var lastRun = new Date().addDays(-2);

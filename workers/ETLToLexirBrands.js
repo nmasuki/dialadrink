@@ -1,8 +1,6 @@
 var keystone = require('keystone');
 var mongoose = require('mongoose');
-
 var Brand = keystone.list('ProductBrand');
-
 var WorkProcessor = require('../helpers/WorkProcessor');
 var self = module.exports = new WorkProcessor(getWork, doWork);
 
