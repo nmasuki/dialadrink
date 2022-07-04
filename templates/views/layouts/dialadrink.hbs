@@ -306,21 +306,23 @@
                         </div>
                         <div class="navigation_area">
                             <ul class="navigation_links">
-                                {{#each navLinks}}
-                                    <li class="nav-item {{#ifgt submenus.length 0}}dropdown{{/ifgt}}">
-                                        <a href="{{{href}}}"{{#ifgt submenus.length 0}} data-toggle="dropdown"
+
+                        <div class="col-sm-14" style="font-size: 16px; text-transform:uppercase; font-family: monospace; font-weight:bold">
+                        {{#each navLinks}} 
+                        <li style="display:inline"class="nav-item {{#ifgt submenus.length 0}}dropdown{{/ifgt}}">                           
+                             <a href="{{{href}}}"{{#ifgt submenus.length 0}} data-toggle="dropdown"
                                            class="dropdown-toggle" {{/ifgt}}>
                                             <span>{{{label}}}</span>
-                                        </a>
-                                        {{#ifgt submenus.length 0}}
-                                            <ul class="dropdown-menu">
-                                                {{#each submenus}}
-                                                    <li><a href="{{{href}}}">{{{label}}}</a></li>
-                                                {{/each}}
-                                            </ul>
-                                        {{/ifgt}}
-                                    </li>
-                                {{/each}}
+                            </a>
+                            {{#ifgt submenus.length 0}}
+                                <ul class="dropdown-menu">
+                                    {{#each submenus}}
+                                        <li><a href="{{{href}}}">{{{label}}}</a></li>
+                                    {{/each}}
+                                </ul>
+                            {{/ifgt}}
+                        {{/each}}
+                        </div>
                             </ul>
                         </div>
                     </div>
