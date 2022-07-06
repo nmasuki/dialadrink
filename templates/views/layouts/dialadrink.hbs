@@ -213,9 +213,13 @@
                                         
                                     </span>
 
-                                    <a href="http://bit.ly/2OZfVz1">
-                                     <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/pl_Q8A94zAyV.webp?ik-sdk-version=javascript-1.4.3&updatedAt=1648474529710" height="30px" alt="Play Store">
+                                    <a href="https://instagram.com/dial_a_drink_kenya" title="{{{appTitle}}} Instagram" class="icon-social instagram">
+                                        <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/instagram.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656403108054" alt="Instagram" height="30px">
                                     </a>
+
+                                    <a href="http://bit.ly/2OZfVz1">
+                                        <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/googleplay.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656407381730" alt="Youtube" height="30px">
+                                    </a>  
                                 </div>
                             </div> 
                         </li>
@@ -261,11 +265,11 @@
             <div class="container clearfix">
                 <div class="row">
 
-                                <div class="nav-search" style="margin-top: {{#if isMobile}}10px;{{else}}10px{{/if}} !important">
+                <div class="nav-search" style="margin-top: {{#if isMobile}}30px;{{else}}10px{{/if}} !important">
                 <form class="search" action="/search" style="colo">
                     <input type="text" name="query" style="color: #000; width:300px; border: 3px solid #555; size: 20px; " class="search_box" placeholder="Search Products" value="" id="search_box"/>
                 </form>
-            </div>
+                </div>
                     <div class="main-header-inner">
                         <div class="nav-top">
                          
@@ -321,6 +325,7 @@
                                     {{/each}}
                                 </ul>
                             {{/ifgt}}
+                            </li>
                         {{/each}}
                         </div>
                             </ul>
@@ -345,7 +350,7 @@
                         {{#if isMobile}}
                             {{#each page.mobileBannerImages}}
                                 <div class=" "
-                                    style="height: 200px; background-image:url({{{cloudinaryUrl this height=200 width=350}}})">
+                                    style="height: 290px; background-image:url({{{cloudinaryUrl this height=290 width=350}}})">
                                 </div>
                             {{/each}}
                         {{else}}
