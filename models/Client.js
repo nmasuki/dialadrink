@@ -1,16 +1,17 @@
-var keystone = require('keystone');
-var cloudinary = require('cloudinary');
-var webpush = require("web-push");
-var fs = require('fs');
-var path = require('path');
+const keystone = require('keystone');
+const cloudinary = require('cloudinary');
+const webpush = require("web-push");
+const fs = require('fs');
+const https = require('https'); // or 'https' for https:// URLs 
+const path = require('path');
 
-var sms = require("../helpers/sms").getInstance();
-var fcm = new (require('fcm-node'))(process.env.FCM_KEY);
-var fileStore = require("../helpers/LocalStorage").getInstance("app-uploads");   
+const sms = require("../helpers/sms").getInstance();
+const fcm = new (require('fcm-node'))(process.env.FCM_KEY);
+const fileStore = require("../helpers/LocalStorage").getInstance("app-uploads");   
 
-var Types = keystone.Field.Types;
+const Types = keystone.Field.Types;
 
-var Client = new keystone.List('Client', {
+const Client = new keystone.List('Client', {
     map: { name: 'firstName' },
     defaultSort: '-lastOrderDate',
     autokey: {
@@ -617,24 +618,43 @@ Client.schema.methods.sendOTP = function (otpToken, alphaNumberic) {
 };
 
 var genderList = null;
+var genderListFileUrl = "https://github.com/steffenbs/Netflix-Data-Analysis-with-Machine-Learning/raw/master/name_gender.csv"; 
+var genderListFile = path.resolve("../", "data", "name_gender.csv");
+
+//Download name_gender file if missing or older than 100 days
+if(!fs.existsSync(genderListFile) || fs.statSync(genderListFile).mtime < new Date().addDays(-100)){
+    console.log(`Downloading ${genderListFileUrl}`)
+    const file = fs.createWriteStream(genderListFile);
+    const request = https.get(genderListFileUrl, function(response) {
+       response.pipe(file);
+    
+       // after download completed close filestream
+       file.on("finish", () => {
+           file.close();
+           console.log("Download Completed --> " + genderListFile);
+       });
+    });
+}
+
 Client.schema.methods.guessGender = function(name){
     if(!name) return { getGender: () => null };
       
-    var filename = path.resolve("../", "data", "name_gender.csv");
-    if (!genderList && fs.existsSync(filename)) {
-        var guessGenderCSV = (fs.readFileSync(filename) || "{}").toString();
-        if (guessGenderCSV) {
-            genderList = guessGenderCSV.split('\n').filter(l => l).map(l => {
-                var parts = l.split(',');
-                return {
-                    id: (parts[0] || "").cleanId(),
-                    name: (parts[0]),
-                    gender: parts[1],
-                    probability: parseFloat(parts[2])
-                };
-            }).orderBy(x => -x.probability);
+    if(!genderList || !genderList.length){
+        if(fs.existsSync(genderListFile)) {
+            var guessGenderCSV = (fs.readFileSync(genderListFile) || "{}").toString();
+            if (guessGenderCSV) {
+                genderList = guessGenderCSV.split('\n').filter(l => l).map(l => {
+                    var parts = l.split(',');
+                    return {
+                        id: (parts[0] || "").cleanId(),
+                        name: (parts[0]),
+                        gender: parts[1],
+                        probability: parts[2] ? parseFloat(parts[2]): 1
+                    };
+                }).orderBy(x => -x.probability);
+            }
         }
-    }
+    } 
 
     var ids = (name || "").split(' ').map(n => n.cleanId());
     var matches = (genderList || []).filter(x => ids.indexOf(x.id) >= 0);

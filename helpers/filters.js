@@ -487,7 +487,7 @@ async function getPaged(cacheKey, fetchPromise, req, res) {
 
 		if (!fullList || !fullList.length) {
 			fullList = await fetchPromise;
-			memCache.put(cacheKey, fullList, 120 * 1000);
+			memCache.put(cacheKey, fullList, 10 * 60 * 1000);
 			console.log("")
 		}
 
