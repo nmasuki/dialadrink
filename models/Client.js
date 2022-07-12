@@ -218,7 +218,7 @@ Client.schema.virtual("imageUrl")
     
             if(file)   
                 client.image = file;
-            else {
+            else if(imageUrl && imageUrl.indexOf("res.cloudinary.com") < 0){
                 if(client.image && client.image.url && pidReg.test(client.image.url)){
                     console.log(`URLs match:
                         ${client.image.secure_url}
