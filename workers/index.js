@@ -34,11 +34,16 @@ async function loadWorkers() {
 	var modules = jsFiles.map(f => {
 		var jsPath = [f, __dirname + '/' + f].find(fs.existsSync);
 		if (jsPath) {
-			var worker = require(jsPath);
-			worker.name = f.replace(/\.js$/, "").split('/').last();
-			worker.lockFile = `${__dirname}/../locks/${worker.name}.lock`;
-			if (!fs.existsSync(worker.lockFile))
-				return worker;
+			var name = f.replace(/\.js$/, "").split('/').last();
+			try {
+				var worker = require(jsPath);
+				worker.name = name;
+				worker.lockFile = `${__dirname}/../locks/${worker.name}.lock`;
+				if (!fs.existsSync(worker.lockFile))
+					return worker;
+			} catch (e) {
+				//console.warn(`Error loading worker '${name}'!!`);
+			}
 		}
 	}).filter(m => m);
 
@@ -61,7 +66,7 @@ async function loadWorkers() {
 	});
 
 	if (isFirstPass)
-		console.log("Loaded AppWorkers:\n\t-" + modules.map(m => `${m.name} in ${(m.worker?.nextRun - new Date().getTime())/1000}s`).join('\n\t-'));
+		console.log("Loaded AppWorkers:\n\t-" + modules.map(m => `${m.name} in ${(m.worker?.nextRun - new Date().getTime()) / 1000}s`).join('\n\t-'));
 
 	return modules;
 }
@@ -109,7 +114,7 @@ async function start(delay) {
 					}
 				};
 
-				runNextWorker().then(() => {});
+				runNextWorker().then(() => { });
 			}
 		} else {
 			console.log("No workers found. Exiting workes..");

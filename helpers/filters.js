@@ -101,7 +101,7 @@ function runSubstitution(expr, substitution, isRecurssion) {
 				do {
 					char = String.fromCharCode(++i);
 					if (i > 9000) //Error exit condition
-						return console.error("CAN'T parse expression. i=" + i);
+						return console.error("CAN'T parse expression. depth=" + i);
 
 					if (i == 'Z'.charCodeAt(0) + 1) i = 'a'.charCodeAt(0);
 					if (i == 'z'.charCodeAt(0) + 1) i = 'ά'.charCodeAt(0);
@@ -483,15 +483,14 @@ async function getPaged(cacheKey, fetchPromise, req, res) {
 	console.log(`Running filter on ${cacheKey}: '${strQuery}' Page:${page}, PageSize:${pageSize}`);
 
 	try {
-		var fullList = memCache.get(cacheKey);
+		var list = memCache.get(cacheKey);
 
-		if (!fullList || !fullList.length) {
-			fullList = await fetchPromise;
-			memCache.put(cacheKey, fullList, 120 * 1000);
-			console.log("")
+		if (!list || !list.length) {
+			var fetchedList = await fetchPromise;
+			list = fetchedList.map(d => typeof d.toAppObject == "function" ? d.toAppObject() : typeof d.toObject == "function" ? d.toObject() : d);
+			memCache.put(cacheKey, list, 10 * 60 * 1000);
 		}
-
-		var list = fullList.map(d => typeof d.toAppObject == "function" ? d.toAppObject() : typeof d.toObject == "function" ? d.toObject() : d);
+		
 		list = list.filter(luceneToFn(query));
 		list = list.orderByExpr(orderBy);
 		list = list.slice((page - 1) * pageSize, page * pageSize);
