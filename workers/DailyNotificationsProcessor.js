@@ -3,7 +3,7 @@ const Order = keystone.list('Order');
 const ClientNotification = keystone.list('ClientNotification');
 const WorkProcessor = require('../helpers/WorkProcessor');
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sartuday"];
-const daylyMessageCounts = [10, 10, 10, 10, 30, 50, 50];
+const daylyMessageCounts = [10, 10, 10, 10, 30, 40, 40];
 
 const messageTemplate = {
     intro: [
