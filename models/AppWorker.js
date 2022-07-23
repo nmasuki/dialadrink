@@ -14,9 +14,9 @@ var intervalMap = {
     'every 5 daily': 3 * 24 * 60 * 60 * 1000,
     'weekly': 7 * 24 * 60 * 60 * 1000,
     'monthly': 30 * 24 * 60 * 60 * 1000,
-    'every 2 months': 3 * 30 * 24 * 60 * 60 * 1000,
+    'every 2 months': 2 * 30 * 24 * 60 * 60 * 1000,
     'every 3 months': 3 * 30 * 24 * 60 * 60 * 1000,
-    'every 6 months': 3 * 30 * 24 * 60 * 60 * 1000,
+    'every 6 months': 6 * 30 * 24 * 60 * 60 * 1000,
     'every year': 365.25 * 24 * 60 * 60 * 1000
 };
 

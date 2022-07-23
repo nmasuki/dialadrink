@@ -464,7 +464,7 @@ async function getPaged(cacheKey, fetchPromise, req, res) {
 	var filter = {};
 
 	var page = parseInt(req.query.page || 1);
-	var pageSize = parseInt(req.query.pageSize || 20);
+	var pageSize = parseInt(req.query.pageSize || 100);
 	var query = req.query.query || "";
 	var ids = req.query.id || req.query.ids || req.body.id || req.body.ids;
 	var orderBy = req.query.sort || req.query.sortBy || req.query.order || req.query.orderBy || "modifiedDate DESC";
