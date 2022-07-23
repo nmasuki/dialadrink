@@ -3,7 +3,7 @@ const Order = keystone.list('Order');
 const ClientNotification = keystone.list('ClientNotification');
 const WorkProcessor = require('../helpers/WorkProcessor');
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sartuday"];
-const daylyMessageCount = 50;
+const daylyMessageCounts = [10, 10, 10, 10, 30, 50, 50];
 
 const messageTemplate = {
     intro: [
@@ -88,6 +88,7 @@ async function getWork(next, done) {
     var oneWeekAgo = new Date().addDays(-6.9);
     var dayOfWeek = new Date().getDay();
     var weekOfMonth = new Date().getWeekOfMonth();
+    var daylyMessageCount = daylyMessageCounts[dayOfWeek] || 10;
 
     var orders = await Order.model.find({ orderDate: { $gt: fromDate } }).deepPopulate('client').exec();
 
