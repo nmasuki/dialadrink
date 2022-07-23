@@ -526,9 +526,9 @@ if (!Array.prototype.orderByExpr)
 
 module.exports = {
 	mongoFilterToFn: mongoFilterToFn,
-	luceneToMongo: luceneToMongo,
-	luceneToFn: luceneToFn,
 	orderByExpr: orderByExpr,
 	orderByToSortObj: orderByToSortObj,
+	luceneToMongo: luceneToMongo,
+	luceneToFn: luceneToFn,
 	getPaged: getPaged
 };
