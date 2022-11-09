@@ -10,7 +10,7 @@ router.get("/:orderNo", function (req, res) {
                 return res.status(404).render('errors/404');
 
             var locals = res.locals;
-            order.total = order.subtotal - (order.discount || 0);
+            order.total = (order.subtotal + 195)- (order.discount || 0);
             locals.order = order.toObject({virtuals: true});
 
             if (order.cart && order.cart.length)
