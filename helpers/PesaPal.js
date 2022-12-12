@@ -16,7 +16,7 @@ function shortenUrlBitly(longUrl, next){
     })
     .catch(function(error) {
 		console.warn("Error while doing URL shortening..", error);
-        return shoternUrlGoogle(longUrl, next);
+        return next(null, longUrl);
     });
 }
 
