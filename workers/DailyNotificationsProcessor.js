@@ -7,9 +7,10 @@ const daylyMessageCounts = [10, 10, 10, 10, 30, 40, 40];
 
 const messageTemplate = {
     intro: [
-        "Hi {firstName}",
+        "Hi {firstName}!",
+        "Vipi {firstName}!",
         "Happy {dayOfWeek} {firstName}!",
-        "Happy {dayOfWeek} to you and to all out there!",
+        "Happy {dayOfWeek} to you {firstName}!",
         "Hi {firstName} and a happy {dayOfWeek}!",
         "Happy {dayOfWeek} {firstName} and a lovely evening!",
     ],
@@ -151,7 +152,7 @@ function doWork(err, clients, next) {
             var index = 0;
             (function popNext() {
                 if (clients.length) {
-                    var client = clients[index++];
+                    var client = clients[index++];                    
                     if (client)
                         return createNotification(client).always(() => popNext());
                 }
@@ -199,10 +200,10 @@ async function createNotification(client) {
             body: messageTemplate.getMessage(obj)
         }
     });
-
+    
     var sessions = await client.getSessions();
-    var webpushTokens = sessions.map(s => s.webpush).filter(t => !!t && t.endpoint);
-    var fcmTokens = sessions.map(s => s.fcm).filter(t => !!t);
+    var webpushTokens = sessions.map(s => s.webpush).filter(t => t && t.endpoint);
+    var fcmTokens = sessions.map(s => s.fcm).filter(t => t);
 
     //Send push notification to 80% of users with webpush or fcm token. 
     if ((webpushTokens.length || fcmTokens.length)) {
@@ -213,13 +214,15 @@ async function createNotification(client) {
                 { action: '/', title: "Todays Offers" }
             ]
         }
+    } else if(!/^254/.test(client.phoneNumber)){
+        n.type = "email";
     } else {
         n.message.body = `DIALADRINK: ${n.message.body}.`;
         if (!n.message.body.contains('http'))
             n.message.body += '. http://bit.ly/2TCl4MI';
     }
 
-    //console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${n.message.body}`);
+    console.log(`'${n.type.toUpperCase()}' to ${client.name}: ${n.message.body}`);
     //if (process.env.NODE_ENV == "production")
     return await n.save(() => {
         client.lastNotificationDate = n.scheduleDate;

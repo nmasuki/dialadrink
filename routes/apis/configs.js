@@ -110,10 +110,9 @@ router.get("/tiles", function (req, res, next) {
 
     var cachedPage = memCache ? memCache.get("__topmenu__") : null;
 
-    if (cachedPage) {
-        var navLinks = Object.assign(navLinks || {}, cachedPage || {});
+    if (cachedPage && cachedPage.length) {
         json.response = "success";
-        json.data = navLinks.orderBy(l => l.index).map(d => {
+        json.data = cachedPage.orderBy(l => l.index).map(d => {
             return {
                 id: d.id,
                 slug: d.key,
@@ -129,13 +128,8 @@ router.get("/tiles", function (req, res, next) {
 
     //TopMenu
     keystone.list('MenuItem').model
-        .find({
-            level: 1,
-            type: "top"
-        })
-        .sort({
-            index: 1
-        })
+        .find({ level: 1, type: "top" })
+        .sort({ index: 1 })
         .populate('submenus')
         .exec((err, menu) => {
             if (err)
