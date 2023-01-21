@@ -16,8 +16,7 @@ function shortenUrlBitly(longUrl, next){
     })
     .catch(function(error) {
 		console.warn("Error while doing URL shortening..", error);
-        if (typeof next == "function")
-        	next(error);
+        return next(null, longUrl);
     });
 }
 
@@ -34,8 +33,7 @@ function shoternUrlGoogle(longUrl, next) {
 				next(null, shortUrl);
 		})
 		.catch(function (err) {
-			if (typeof next == "function")
-				next(err.message);
+			return shoternUrl24h(longUrl, next);
 		});
 }
 
