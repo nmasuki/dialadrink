@@ -1,0 +1,15 @@
+<div>
+                {{#if groupedBrands}}
+                    <h2 style="font-size: 15px;text-transform: uppercase">Sub Categories :</h2>                    
+                    {{#each navLinks}}
+                        <div class="row" style="margin: 8px">
+                            {{!-- <div style="float: left; min-width: 80px"><b style="">{{@key}}</b>:</div>  --}}
+                            {{#each submenus}}
+                                        <li style="list-style-type: none;"><a href="{{{href}}}">{{{label}}}</a></li>
+                            {{/each}}
+                        </div>
+                    {{/each}}
+                {{else}}
+
+                {{/if}}
+</div>

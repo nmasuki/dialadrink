@@ -38,6 +38,8 @@
     {{/if}}
 </div>
 
+{{!-- {{>navbar}} --}}
+
 {{#if offers.length}}
     <div class="container">
         <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
@@ -156,8 +158,10 @@
         {{/each}}
     {{else}}
         {{#if products.length}}
+
+        {{>navbar}}
             <div class="container">
-                <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
+                <div>
                     {{#each products}}
                         <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
                             itemscope itemtype="http://schema.org/Product"
