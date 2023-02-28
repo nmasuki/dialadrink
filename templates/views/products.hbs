@@ -22,6 +22,24 @@
         
 
     }
+    .float-container {
+    border: 3px solid #fff;
+    padding: 20px;
+}
+
+    .float-child1 {
+    width: 10%;
+    float: left;
+    padding: 20px;
+    border: 4px solid #2f93a3;
+}
+
+.float-child2 {
+    width: 80%;
+    float: left;
+    padding: 20px;
+    
+}
 
     .table-container{
         display: grid;
@@ -158,13 +176,22 @@
         {{/each}}
     {{else}}
         {{#if products.length}}
+        
 
-        <div class="container">
+    <div class="float-container">
+
+        <div class="{{#if isMobile}}container{{else}}float-child1{{/if}}">
+       
+             {{>navbar}}
+        </div>
+  
+    
+        {{!-- <div class="container">
 
         {{>navbar}}
-        </div>
+        </div> --}}
             <div class="container">
-                <div>
+                <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
                         <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
                             itemscope itemtype="http://schema.org/Product"
@@ -174,6 +201,8 @@
                     {{/each}}
                 </div>
             </div>
+            </div>
+
         {{else}}
             <div class="container">
                 <div class="row">
