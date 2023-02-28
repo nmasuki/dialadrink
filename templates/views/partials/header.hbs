@@ -6,15 +6,13 @@
                 <div class="row">
                     <div class="top-header-inner">
                         <div class="left-area hidden-xs">
-                            <div class="currency_group hidden-xs currencies-switcher">
-                                <a>
+                                <h style="font-size: 28px;">
+                                    <a href="/">
                                     <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png" height="50px" alt="Dial a Drink logo">
-                                    <span style="padding-left: 10px; color: white;  font-size: 18px;">
-                                        <span>CALL</span>
-                                        <span><strong>{{contactNumber}}</strong></span>
-                                    </span>
-                                </a>
-                            </div>
+                                        <strong><span style=" color: white">{{appTitle}}</span></strong>
+                                    </a>
+                                </h>
+
                         </div>
                         <div class="tool right-area hidden-xs">
                             <ul class="unstyled">
@@ -46,6 +44,13 @@
                          <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/googleplay.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656407381730" alt="Youtube" height="30px">
                       
                     </a>  
+
+                    <a>
+                                    <span style="padding-left: 10px; color: white;  font-size: 18px;">
+                                        <span>Call: <strong>{{contactNumber}}</strong></span>
+                                    </span>
+                                </a>
+                    
                 </div>
                 </li>
                             </ul>
@@ -86,14 +91,6 @@
                                         </a>
                                         
                                     </span>
-
-                                    {{!-- <a href="https://instagram.com/dial_a_drink_kenya" title="{{{appTitle}}} Instagram" class="icon-social instagram">
-                                        <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/instagram.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656403108054" alt="Instagram" height="30px">
-                                    </a> --}}
-
-                                    {{!-- <a href="https://play.google.com/store/apps/details?id=com.dial.dialcustomer&pli=1">
-                                        <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/googleplay.png?ik-sdk-version=javascript-1.4.3&updatedAt=1656407381730" alt="Youtube" height="30px">
-                                    </a>   --}}
                                 </div>
                             </div> 
                         </li>
@@ -146,14 +143,6 @@
                 </div>
                     <div class="main-header-inner">
                         <div class="nav-top">
-                         
-                            <div class="nav-logo" {{#if isMobile}}style="display:none; color: #0a0808"{{/if}}>
-                                <h style="font-size: 28px;">
-                                    <a href="/">
-                                        <strong><span style=" color: #0a0808">{{appTitle}}</span></strong>
-                                    </a>
-                                </h>
-                            </div>
 
                             <div id="cart-target" class="nav-cart ">
                                 <div class="cart-info-group">
