@@ -1,9 +1,11 @@
 <div>
     <h2 style="font-size: 15px;text-transform: uppercase">Sub Categories :</h2>                    
     {{#each subCategories}}
-        <div class="row" style="margin: 8px">
-            {{!-- <div style="float: left; min-width: 80px"><b style="">{{@key}}</b>:</div>  --}}
-             <li style="list-style-type: none;"><a href="/{{{cleanId subCategory.name}}}">{{{subCategory.name}}}</a></li>
+        <div >
+            <div style="float: left; min-width: 80px; padding-left: 10px;">
+                <a href="/{{{cleanId subCategory.name}}}">   {{{subCategory.name}}} | </a>
+            </div> 
+             
         </div>
     {{/each}}
 </div>
