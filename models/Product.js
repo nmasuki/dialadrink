@@ -101,7 +101,10 @@ Product.add({
     },
     grape: {
         type: Types.Relationship,
-        ref: 'Grape'
+        ref: 'Grape',
+        filters: {
+            product: ':category'
+        }
     },
     subCategory: {
         type: Types.Relationship,

@@ -12,5 +12,10 @@ Grape.add({
     modifiedDate: {type: Date, default: Date.now},
 });
 
+Grape.schema.pre('save', function (next) {
+    this.modifiedDate = new Date();
+    next();
+});
+
 Grape.relationship({ref: 'Product', path: 'product', refPath: 'grape'});
 Grape.register();
