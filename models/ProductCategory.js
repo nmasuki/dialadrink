@@ -32,6 +32,7 @@ ProductCategory.add({
 
 ProductCategory.relationship({ref: 'Product', refPath: 'category'});
 ProductCategory.relationship({ref: 'ProductSubCategory', refPath: 'category'});
+ProductCategory.relationship({ref: 'grape', refPath: 'category'});
 
 ProductCategory.defaultColumns = 'name, image, menus, pageTitle, priorityTags, description';
 

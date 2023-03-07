@@ -99,6 +99,10 @@ Product.add({
         type: Types.Relationship,
         ref: 'ProductCategory'
     },
+    grape: {
+        type: Types.Relationship,
+        ref: 'Grape'
+    },
     subCategory: {
         type: Types.Relationship,
         ref: 'ProductSubCategory',
