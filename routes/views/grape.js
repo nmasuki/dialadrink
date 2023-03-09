@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var router = keystone.express.Router();
 
-router.get("/:grape", function(req, res){
+router.get("/:grape", function(req, res, next){
     var view = new keystone.View(req, res);
     var locals = res.locals;
 
@@ -10,8 +10,8 @@ router.get("/:grape", function(req, res){
 
     //load grapes
     view.on('init', function (next){
-
-        Grape.model.find({
+        keystone.list('Grape').model
+        .find({
             key: locals.filters.grape.cleanId()
         });
 
@@ -19,6 +19,5 @@ router.get("/:grape", function(req, res){
         view.render('products');
     });;
 })
-
 
 exports = module.exports = router;

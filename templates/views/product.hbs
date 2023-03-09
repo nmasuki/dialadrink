@@ -252,6 +252,14 @@ input[type="radio"], input[type="checkbox"] {
                     </div>
                 {{/if}}
 
+                {{#if grape.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                           <b> Grape: </b>{{grape.name}}
+                        </div>
+                    </div>
+                {{/if}}
+
                 {{#if inStock}}
                     <b>Availability</b>: In Stock
                     {{else}}

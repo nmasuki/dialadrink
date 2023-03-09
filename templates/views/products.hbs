@@ -34,6 +34,13 @@
     border: 1px solid #2f93a3;
 }
 
+.float-child {
+    width: 50%;
+    float: left;
+    padding: 20px;
+    border: 2px solid red;
+} 
+
 .float-child2 {
     width: 80%;
     float: left;
@@ -179,11 +186,13 @@
         
 
     <div class="float-container">
-
         <div class="{{#if isMobile}}container{{else}}float-child1{{/if}}">
        
              {{>navbar}}
+             {{>nav_grape}}
         </div>
+
+    </div>
   
     
         {{!-- <div class="container">

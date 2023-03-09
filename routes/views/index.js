@@ -68,7 +68,8 @@ function search(req, res, next) {
             var grapes = products.filter(p => p.grape).distinctBy(p => p.grape.id || p.grape);
 
             locals.subCategories = subCategories;
-            if (categories.length > 2 || subCategories.length > 5)
+            locals.grapes = grapes;
+            if (categories.length > 2 || subCategories.length > 5 || grapes.length > 5)
                 return view.render('products');
 
             if (locals.page.h1.length <= 10) {
