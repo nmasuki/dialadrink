@@ -103,6 +103,10 @@ Product.add({
         type: Types.Relationship,
         ref: 'Grape'
     },
+    taste: {
+        type: Types.Relationship,
+        ref: 'Taste'
+    },
     subCategory: {
         type: Types.Relationship,
         ref: 'ProductSubCategory',
