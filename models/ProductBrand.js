@@ -14,6 +14,8 @@ ProductBrand.add({
     logo: {type: Types.CloudinaryImage, folder: "brands"},
     pageTitle: {type: String},
     country: {type: String},
+    metaDescription: {type: String},
+    tags: {type: Types.TextArray},
     category: {type: Types.Relationship, ref: 'ProductCategory', many: false},
     description: {type: Types.Html, wysiwyg: true, height: 150},
     modifiedDate: {type: Date, default: Date.now},
