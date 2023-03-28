@@ -213,41 +213,41 @@ input[type="radio"], input[type="checkbox"] {
  <tbody style="border: 5px solid #fff;">
     <tr>
          <th style="padding-left: 10px">Product Name</th>
-         <td style="border: 5px solid #fff;">{{name}}</td>
+         <td style="border: 5px solid #fff; text-align:left;">{{name}}</td>
     </tr>
 
     {{#if alcoholContent}}
     <tr>
          <th style="padding-left: 10px">Alcohol Content (ABV)</th>
-         <td style="border: 5px solid #fff;">{{alcoholContent}}%</td>
+         <td style="border: 5px solid #fff; text-align:left;">{{alcoholContent}}%</td>
     </tr>
     {{/if}}
 
     {{#if countryOfOrigin}}
     <tr>
          <th style="padding-left: 10px">Country Of Origin</th>
-         <td style="border: 5px solid #fff;"><a href="/product-origin/{{cleanId countryOfOrigin}}">{{countryOfOrigin}}</a></td>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/product-origin/{{cleanId countryOfOrigin}}">{{countryOfOrigin}}</a></td>
     </tr>
     {{/if}}
 
     {{#if howToOpen}}
     <tr>
          <th style="padding-left: 10px">How to Open</th>
-         <td style="border: 5px solid #fff;">{{howToOpen}}</td>
+         <td style="border: 5px solid #fff; text-align:left;">{{howToOpen}}</td>
     </tr>
     {{/if}}
 
     {{#if brand.name}}
     <tr>
          <th style="padding-left: 10px">Brand</th>
-         <td style="border: 5px solid #fff;"><a href="/brand/{{cleanId brand.name}}">{{brand.name}}</a></td>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId brand.name}}">{{brand.name}}</a></td>
     </tr>
     {{/if}}
 
     {{#if grape.name}}
     <tr>
          <th style="padding-left: 10px">Grape</th>
-         <td style="border: 5px solid #fff;"><a href="/brand/{{cleanId brand.name}}">{{grape.name}}</a></td>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId brand.name}}">{{grape.name}}</a></td>
     </tr>
     {{/if}}
 
@@ -255,19 +255,19 @@ input[type="radio"], input[type="checkbox"] {
 
     <tr>
          <th style="padding-left: 10px">Availability</th>
-         <td style="border: 5px solid #fff;">In Stock</a></td>
+         <td style="border: 5px solid #fff; text-align:left;">In Stock</a></td>
     </tr>
     {{else}}
         <tr>
          <th style="padding-left: 10px">Availability</th>
-         <td style="border: 5px solid #fff;">Out of Stock</a></td>
+         <td style="border: 5px solid #fff; text-align:left;">Out of Stock</a></td>
     </tr>
     {{/if}}
 
     {{#if subCategory.name}}
     <tr>
          <th style="padding-left: 10px">Sub Category</th>
-         <td style="border: 5px solid #fff;"><a href="/brand/{{cleanId subCategory.name}}">{{subCategory.name}}</a></td>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId subCategory.name}}">{{subCategory.name}}</a></td>
     </tr>
     {{/if}}
 
