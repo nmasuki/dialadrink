@@ -24,15 +24,16 @@
     }
     .float-container {
     border: 3px solid #fff;
-    padding: 20px;
+    padding: 10px;
 }
 
     .float-child1 {
-    width: 10%;
+    width: 13%;
     float: left;
-    padding: 20px;
-    font-family: Arial, Helvetica, sans-serif;
+    padding: 10px;
+    font-family: "Lucida Console", "Courier New", monospace;
     margin-bottom: 4px;
+    background-color: #eeeff3;
 
 }
 
@@ -191,7 +192,7 @@
         <div class="{{#if isMobile}}container{{else}}float-child1{{/if}}">
        
              {{>navbar}}
-             {{>nav_grape}}
+             {{!-- {{>nav_grape}} --}}
         </div>
 
     </div>
