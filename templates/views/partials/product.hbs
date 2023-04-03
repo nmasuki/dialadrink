@@ -33,10 +33,10 @@
             <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
             <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
             <div itemprop="name" class="drinks-name">
-                <a href="{{productUrl href}}" style="font-size: 15px; color: black; font-family:'Arial, Helvetica', sans-serif;">
+                <a href="{{productUrl href}}" style="font-size: 14px; color: black; font-family:'Arial, Helvetica', sans-serif;">
                     {{truncate name 25}}
                     {{#ifgt alcoholContent 0}}
-                    <br><p style="color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%)</p>
+                    <br><p style="font-size: 12px; color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%), {{{countryOfOrigin}}}</p>
                     {{/ifgt}}
                 </a>
             </div>            
