@@ -72,26 +72,24 @@
 {{!-- {{>navbar}} --}}
 
 {{#if offers.length}}
-    {{!-- <div class="container"> --}}
+    <div class="container">
         <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
             {{#each offers}}
-                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-2 col-lg-2 col-sm-12 single{{/if}}" 
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
                     itemscope itemtype="http://schema.org/Product"
                     style="box-shadow:3px 3px 3px 3px #fff; margin-bottom :15px;">                
                     {{>product}}
                 </div>
             {{/each}}
         </div>
-    {{!-- </div> --}}
+    </div>
 
-    <div>
-        <div class="container">
+    <div class="container">
         <div class="row">
             <a href="https://play.google.com/store/apps/details?id=com.dial.dialcustomer&pli=1">
                 <img class="mobile-only"  width="100%" src="https://res.cloudinary.com/dyc0ieeyu/image/upload/c_fit,w_350/pages/WhatsApp_Image_2021-01-28_at_20.45.24_eopi7x.jpg"/>
                 <img class="desktop-only" width="100%" src="https://res.cloudinary.com/dyc0ieeyu/image/upload/c_fit,w_700/pages/WhatsApp_Image_2021-01-28_at_17.13.47_d3fo7n.jpg"/>
             </a>
-        </div>
         </div>
 
         <div class="row">
@@ -113,7 +111,7 @@
         
         <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
             {{#each popular}}
-                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-2 col-lg-2 col-sm-12 single{{/if}}"
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}"
                     itemscope itemtype="http://schema.org/Product"
                     style="box-shadow:3px 3px 3px #fff; margin-bottom :15px;">                
                     {{>product}}
@@ -144,7 +142,7 @@
             
             <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                 {{#each brandFocus}}
-                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-2 col-lg-2 col-sm-12 single{{/if}}" 
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
                         itemscope itemtype="http://schema.org/Product"
                         style="box-shadow:3px 3px 3px #fff; margin-bottom :15px;">                
                         {{>product}}
