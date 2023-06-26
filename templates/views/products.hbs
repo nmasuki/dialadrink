@@ -1,7 +1,10 @@
 <style>
     .featured-image img.img-responsive {
-        min-height: 200px;
-        max-height: 200px;
+        min-height: 300px;
+        max-height: 300px;
+
+        min-height: 300px;
+        max-height: 300px;
     }
 
     a.more-link {
@@ -202,6 +205,8 @@
 
         {{>navbar}}
         </div> --}}
+
+        {{!-- Category Products START --}}
             <div class="container">
                 <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
@@ -214,6 +219,7 @@
                 </div>
             </div>
             </div>
+            {{!-- Category Products END --}}
 
         {{else}}
             <div class="container">
