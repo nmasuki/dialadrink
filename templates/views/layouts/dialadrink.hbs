@@ -240,6 +240,23 @@
                         {{{page.content}}}
                     {{/if}}                    
                 </div>
+
+                <div class="container shop-by-brand">
+                {{#if groupedBrands}}
+                    <h2 style="font-size: 15px;text-transform: uppercase">SHOP BY BRAND</h2>                    
+                    {{#each groupedBrands}}
+                        <div class="row" style="margin: 8px">
+                            <div style="float: left; min-width: 80px"><b style="">{{@key}}</b>:</div> 
+                            {{#each this}}
+                                <a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a>
+                                {{#unless @last}}<span style="color: #F44336"> | </span>{{/unless}}
+                            {{/each}}
+                        </div>
+                    {{/each}}
+                {{else}}
+
+                {{/if}}
+            </div>   
             {{/if}}      
 
             <div class="container inst-checkout" style="width:100%; display:none;">
