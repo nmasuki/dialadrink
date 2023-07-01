@@ -1,23 +1,65 @@
 var keystone = require('keystone');
+var Enquiry = keystone.list('Enquiry');
 var router = keystone.express.Router();
 
-router.get("/:mybrands", function(req, res, next){
-    var view = new keystone.View(req, res);
-    var locals = res.locals;
+router.post("/", function (req, res) {
+		var view = new keystone.View(req, res);
+		var locals = res.locals;
 
-    //set locals
-    locals.section = 'store';
+		// Set locals
+		locals.page = Object.assign({title: "Our Brands", h1: "Our Brands"}, locals.page || {});
+		locals.section = 'contact';
+		locals.enquiryTypes = Enquiry.fields.enquiryType.ops;
+		locals.formData = req.body || {};
+		locals.validationErrors = {};
+		locals.enquirySubmitted = false;
 
-    //load brands
-    view.on('init', function (next){
-        keystone.list('Mybrands').model
-        .find({
-            key: locals.filters.brand.cleanId()
-        });
+		locals.breadcrumbs.push({
+			href: "/mybrands",
+			label: "Our Brands"
+		});
 
-        //render view
-        view.render('mybrands');
-    });;
-})
+		var newEnquiry = new Enquiry.model();
+		var updater = newEnquiry.getUpdateHandler(req);
+
+		view.on("init", next =>{
+			updater.process(req.body, {
+				flashErrors: true,
+				fields: 'name, email, phone, enquiryType, message',
+				errorMessage: 'There was a problem submitting your enquiry:',
+			}, function (err) {
+				if (err) {
+					locals.validationErrors = err.errors;
+				} else {
+					locals.enquirySubmitted = true;
+				}
+				next();
+			});
+		});
+
+
+		view.render('mybrands');
+	});
+	
+router.get("/", function (req, res) {
+
+		var view = new keystone.View(req, res);
+		var locals = res.locals;
+
+		// Set locals
+		locals.page = Object.assign({title: "Our Brands", h1: "Our Brands"}, locals.page || {});
+		locals.section = 'contact';
+		locals.enquiryTypes = Enquiry.fields.enquiryType.ops;
+		locals.formData = req.body || {};
+		locals.validationErrors = {};
+		locals.enquirySubmitted = false;
+
+		locals.breadcrumbs.push({
+			href: "/mybrands",
+			label: "Our Brands"
+		});
+
+		view.render('mybrands');
+	});
 
 exports = module.exports = router;
