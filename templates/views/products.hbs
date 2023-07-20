@@ -28,8 +28,16 @@
     padding: 10px;
 }
 
+.side-container {
+    border: 3px solid #fff;
+    padding: 10px;
+    width: 80%;
+    float: right;
+
+}
+
     .float-child1 {
-    width: 13%;
+    width: 16%;
     float: left;
     padding: 10px;
     font-family: "Lucida Console", "Courier New", monospace;
@@ -193,19 +201,12 @@
         <div class="{{#if isMobile}}container{{else}}float-child1{{/if}}">
        
              {{>navbar}}
-             {{!-- {{>nav_grape}} --}}
+
         </div>
 
     </div>
-  
-    
-        {{!-- <div class="container">
-
-        {{>navbar}}
-        </div> --}}
-
         {{!-- Category Products START --}}
-            <div class="container">
+                <div class="{{#if isMobile}}container{{else}}side-container{{/if}}">
                 <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
                         <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
