@@ -87,6 +87,7 @@ exports = module.exports = function (app) {
 	app.use('/grape', middleware.globalCache, routes.views.grape);
 	app.use('/product', middleware.globalCache, routes.views.category);
 	app.use('/mybrands', middleware.globalCache, routes.views.mybrands);
+	app.use('/myproduct', middleware.globalCache, routes.views.myproduct);
 
 	app.use('/', middleware.globalCache, routes.views.products);
 	app.use('/', middleware.globalCache, routes.views.index);
