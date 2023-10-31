@@ -643,8 +643,7 @@ function onTouchStart(e) {
     console.log.apply(this, arguments);
 }
 
-function handleProductSorting() {
-
+function handleProductSorting() { 
     function getSortFn(property, expectedValue) {
         function getSize(qty) {
             if (!qty) return 0;
