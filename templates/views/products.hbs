@@ -22,6 +22,38 @@
         
 
     }
+    .float-container {
+    border: 3px solid #fff;
+    padding: 20px;
+}
+
+    .float-child1 {
+    width: 10%;
+    float: left;
+    padding: 20px;
+    border: 1px solid #2f93a3;
+}
+
+.float-child {
+    width: 50%;
+    float: left;
+    padding: 10px;
+    border: 2px solid red;
+} 
+
+.float-child2 {
+    width: 80%;
+    float: left;
+    padding: 20px;
+    
+}
+
+    .table-container{
+        display: grid;
+        grid-template-columns: auto auto;
+        
+
+    }
 </style>
 <div class="container">
     {{#if brand}}
@@ -30,6 +62,8 @@
         </div>
     {{/if}}
 </div>
+
+{{!-- {{>navbar}} --}}
 
 {{#if offers.length}}
     <div class="container">
@@ -149,6 +183,22 @@
         {{/each}}
     {{else}}
         {{#if products.length}}
+        
+
+    <div class="float-container">
+        <div class="{{#if isMobile}}container{{else}}float-child1{{/if}}">
+       
+             {{>navbar}}
+             {{>nav_grape}}
+        </div>
+
+    </div>
+  
+    
+        {{!-- <div class="container">
+
+        {{>navbar}}
+        </div> --}}
             <div class="container">
                 <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
@@ -160,6 +210,8 @@
                     {{/each}}
                 </div>
             </div>
+            </div>
+
         {{else}}
             <div class="container">
                 <div class="row">
@@ -174,3 +226,45 @@
         {{/if}}
     {{/ifgt}}
 {{/if}}
+
+<div class="container">
+    {{#if brand}}
+        <div class="row">
+            <div>
+                <div>
+                        <div  
+                            itemscope itemtype="http://schema.org/Product">
+    <table>
+ <thead>
+  <tr>
+
+    <th style="width:20%">Product Name</th>
+    <th style="width:10%">Size</th>
+    <th style="width:10%">Price</th>
+    <th style="width:10%">ABV</th>
+    <th style="width:15%">Country</th>
+    <th style="width:15%">Sub Category</th>
+     
+  </tr>
+ </thead>
+ <tbody>
+  {{#each products}}
+    <tr>
+    	<td><a href="/{{name}}">{{name}}</a></td>
+        <td>{{quantity}}</td>
+        <td>Ksh. {{formatNumber price}}</td>
+        <td>{{alcoholContent}} %</td>
+        <td>{{countryOfOrigin}}</td>
+        <td>{{subCategory.name}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+ </table>                                                 
+</div>
+                   
+                </div>
+            </div>
+            
+        </div>
+    {{/if}}
+</div>

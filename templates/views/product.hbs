@@ -56,7 +56,7 @@ input[type="radio"], input[type="checkbox"] {
 
             <div class="col-sm-4 col-12">
                 <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}})">
-                    <img itemprop="image" class="image-responsive" 
+                    <img loading="lazy" itemprop="image" class="image-responsive" 
                         src="{{cloudinaryUrl image width=380 height=380  crop='fit'}}" 
                         data-src="{{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}" alt="{{{name}}}"
                         style="min-height: 380px; max-height: 400px; margin: 0 auto" />
@@ -73,10 +73,10 @@ input[type="radio"], input[type="checkbox"] {
                        
                 </div>
 
-                <div class="col-md-8" style="padding-left: 10px !important; color: black; font-size: 16px">
+                {{!-- <div class="col-md-8" style="padding-left: 10px !important; color: black; font-size: 16px">
                     <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/delivery__2__ncdnk5-JF.png?ik-sdk-version=javascript-1.4.3&updatedAt=1666967423015" width="40px" alt="Whatsup to order">
                     <b>15 - 30 Min Express Delivery : KES.195</b>
-                    </div><br />
+                    </div><br /> --}}
 
                 <div class="row">
                     <div class="col-md-12">
@@ -176,11 +176,33 @@ input[type="radio"], input[type="checkbox"] {
                      
                          <a target="_blank" rel="noreferrer" href="https://api.whatsapp.com/send?l=en&phone='+254723688108'&text=I%20would%20like to%20order%201%20{{{name}}}%20{{quantity}}%20@%20{{price}} %20
                             https://www.dialadrinkkenya.com/{{{_id}}}" title="WhatsApp">
-                            <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/whatsapp.png" width="40px" alt="Whatsup to order"> Order by WhatsApp
+                            <img loading="lazy" src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/whatsapp.png" width="40px" alt="Whatsup to order"> Order by WhatsApp
                         </a>
 
                     </div>
-            </div>           
+            </div>
+            <div class="col-md-5">
+						<h4 class="my-0">
+							<a class="cart-product-link" href="/tonic-water">
+							<img loading="lazy" src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/tonic_ebnFJx_7Q.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1656410684685" alt="Tonic" height="90px">
+							</a>
+
+                            <a class="cart-product-link" href="/coca-cola-can">
+                            <img loading="lazy" src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/dial_products/coke_O4ezu53k7.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1675442934104" alt="Coke" height="90px">
+							</a>
+
+                            <a class="cart-product-link" href="/redbull-can">
+
+                            <img loading="lazy" src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/dial_products/redbull-can_ud2A3b9BWQ.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1661846859101" alt="Coke" height="80px">
+							</a>
+
+                            <a class="cart-product-link" href="/delmonte">
+
+                            <img loading="lazy" src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/dial_products/delmonte-passion_5FR4igMnQ.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1661844921079" alt="Delmonte" height="90px">
+							</a>
+						</h4>
+						 
+					</div>           
         </div>
         <br>
        
@@ -226,6 +248,14 @@ input[type="radio"], input[type="checkbox"] {
                     <div class="row" style="padding-bottom: 3px;">
                         <div class="col-md-12">
                            <b> Brand: </b><a href="/brand/{{cleanId brand.name}}">{{brand.name}}</a>
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if grape.name}}
+                    <div class="row" style="padding-bottom: 3px;">
+                        <div class="col-md-12">
+                           <b> Grape: </b>{{grape.name}}
                         </div>
                     </div>
                 {{/if}}

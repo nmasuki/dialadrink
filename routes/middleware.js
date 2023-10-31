@@ -229,7 +229,7 @@ exports.initBrandsLocals = function (req, res, next) {
         return Promise.resolve(cachedPage);
     }
 
-    return keystone.list('ProductBrand').findPopularBrands((err, brands, products) => {
+    return keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
         if (!err) {
             groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
 

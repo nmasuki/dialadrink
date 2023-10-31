@@ -2,15 +2,14 @@ const keystone = require('keystone');
 const Order = keystone.list('Order');
 const ClientNotification = keystone.list('ClientNotification');
 const WorkProcessor = require('../helpers/WorkProcessor');
-const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sartuday"];
+const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const daylyMessageCounts = [10, 10, 10, 10, 30, 40, 40];
 
 const messageTemplate = {
     intro: [
-        "Hi {firstName}!",
-        "Vipi {firstName}!",
+        "Hi {firstName}",
         "Happy {dayOfWeek} {firstName}!",
-        "Happy {dayOfWeek} to you {firstName}!",
+        "Happy {dayOfWeek} to you and to all out there!",
         "Hi {firstName} and a happy {dayOfWeek}!",
         "Happy {dayOfWeek} {firstName} and a lovely evening!",
     ],
@@ -51,7 +50,7 @@ const messageTemplate = {
     ],
     outro: [
         "Order a bottle right now!",
-        "Order now! We will deliver with 30 mins",
+        "Order now! We will deliver within 30 mins",
         "Order now and enjoy free delivery within Nairobi",
         "Call +254723688108 for quick delivery",
         "Call +254723688108 for swift delivery to your door",
@@ -96,7 +95,7 @@ async function getWork(next, done) {
     var groupedOrders = orders
         .filter(o => o.orderDate && o.client && (!o.client.lastNotificationDate || o.client.lastNotificationDate <= oneWeekAgo))
         .groupBy(o => o.client._id.toString());
-
+o
     var clientGroupedOrders = Object.values(groupedOrders).orderBy(o => -o.length);
 
     var clients = [];
@@ -152,7 +151,7 @@ function doWork(err, clients, next) {
             var index = 0;
             (function popNext() {
                 if (clients.length) {
-                    var client = clients[index++];                    
+                    var client = clients[index++];
                     if (client)
                         return createNotification(client).always(() => popNext());
                 }
@@ -176,6 +175,9 @@ function doWork(err, clients, next) {
 
 function randomInt(min, max) {
     return min + Math.round(Math.random() * (max - min));
+}
+
+function randomTrue(probability) {
 }
 
 function randomTrue(probability) {
@@ -232,8 +234,3 @@ async function createNotification(client) {
 
 var lastRun = new Date().addDays(-2);
 lastRun.setHours(15);
-
-var worker = new WorkProcessor(getWork, doWork);
-worker.runRequency = "daily";
-worker.lastRun = lastRun;
-module.exports = worker;

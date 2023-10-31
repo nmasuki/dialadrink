@@ -99,6 +99,10 @@ Product.add({
         type: Types.Relationship,
         ref: 'ProductCategory'
     },
+    grape: {
+        type: Types.Relationship,
+        ref: 'Grape'
+    },
     subCategory: {
         type: Types.Relationship,
         ref: 'ProductSubCategory',
@@ -363,6 +367,7 @@ Product.schema.methods.toAppObject = function () {
         company: d.brand && d.brand.company ? d.brand.company.name : null,
         subcategory: d.subCategory ? d.subCategory.name : null,
         brand: d.brand ? d.brand.name : null,
+        grape: d.grape ? d.grape.name : null,
 
         ratings: d.averageRatings,
         ratingCount: d.ratingCount,
@@ -395,14 +400,14 @@ Product.schema.methods.toAppObject = function () {
         }).distinctBy(o => o.quantity)
     });
 
-    ["__v", 'defaultOption', 'categories', 'priceOptions', 'subCategory', 'altImages', 'href'].forEach(i => {
+    ["__v", 'defaultOption', 'categories', 'priceOptions', 'subCategory', 'grape','altImages', 'href'].forEach(i => {
         delete obj[i];
     });
 
     return obj;
 };
 
-Product.defaultColumns = 'name, image, brand, category, state, onOffer';
+Product.defaultColumns = 'name, image, brand, category, state, grape, onOffer';
 
 keystone.deepPopulate(Product.schema);
 Product.schema.pre('save', async function (next) {
@@ -443,6 +448,8 @@ Product.schema.pre('save', async function (next) {
             tags.push(this.category.name);
         if (this.subCategory)
             tags.push(this.subCategory.name);
+        if (this.grape)
+            tags.push(this.grape.name);
         if (this.options)
             this.options.forEach(po => tags.push(po.quantity));
 
@@ -519,7 +526,7 @@ Product.schema.set('toObject', {
             'href', 'name', 'priceOptions', 'onOffer', 'inStock',
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
-            'subCategory', 'brand', 'ratings', 'popularityRatio', 'options', 'defaultOption',
+            'subCategory', 'brand', 'grape','ratings', 'popularityRatio', 'options', 'defaultOption',
             'quantity', 'currency', 'price', 'offerPrice',
             'averageRatings', 'ratingCount', 'tags',
             'priceValidUntil', 'percentOffer'
@@ -667,6 +674,7 @@ Product.findPublished = function (filter, callback) {
     var a = Product.model.find(filter)
         .sort({ isPopular: 1, popularity: -1 })
         .populate('brand')
+        .populate('grape')
         .populate('category')
         .populate('ratings')
         .deepPopulate("subCategory.category,priceOptions.option");
@@ -682,6 +690,7 @@ Product.findOnePublished = function (filter, callback) {
     var a = keystone.list('Product').model.findOne(filter)
         .sort({ popularity: -1 })
         .populate('brand')
+        .populate('grape')
         .populate('category')
         .populate('ratings')
         .deepPopulate("subCategory.category,priceOptions.option");
@@ -701,6 +710,21 @@ Product.findByBrand = function (filter, callback) {
             filter = {
                 brand: {
                     "$in": brands.map(b => b._id)
+                }
+            };
+            Product.findPublished(filter, callback);
+        });
+};
+
+Product.findByGrape = function (filter, callback) {
+    keystone.list('Grape').model.find(filter)
+        .exec((err, grapes) => {
+            if (err || !grapes)
+                return console.log(err);
+
+            filter = {
+                grape: {
+                    "$in": grapes.map(b => b._id)
                 }
             };
             Product.findPublished(filter, callback);
