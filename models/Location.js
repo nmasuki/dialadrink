@@ -19,8 +19,15 @@ Location.add({
 	href: { type: String, initial: true },
 	city: { type: String },
 	show: { type: Boolean },
+	image: {
+        type: Types.CloudinaryImage,
+        folder: "locations"
+    },
 
 	description: { type: Types.Html, wysiwyg: true, height: 250 },
+	tags: {
+        type: Types.TextArray
+    },
 	deliveryCharges: {type: Types.Number, default:300 },
 	modifiedDate: { type: Date, default: Date.now, noedit: true },
 	

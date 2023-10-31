@@ -1,7 +1,8 @@
 <style>
     .featured-image img.img-responsive {
-        min-height: 200px;
-        max-height: 200px;
+        min-height: 250px;
+        max-height: 250px;
+        
     }
 
     a.more-link {
@@ -16,22 +17,45 @@
         padding: 10px 0px 10px 39px;
     }
 
+.product-container{
+  border-color: #000;
+  left: 35px;
+}
+
     .grid-container{
         display: grid;
         grid-template-columns: auto auto;
         
 
     }
+
+    .containers{
+        max-width: 90%;
+        float: none;
+        margin: 0 auto;
+         
+    }
     .float-container {
     border: 3px solid #fff;
-    padding: 20px;
+    padding: 10px;
+}
+
+.side-container {
+    border: 3px solid #fff;
+    padding: 10px;
+    width: 80%;
+    float: right;
+
 }
 
     .float-child1 {
-    width: 10%;
+    width: 15%;
     float: left;
-    padding: 20px;
-    border: 1px solid #2f93a3;
+    padding: 10px;
+    font-family: "Lucida Console", "Courier New", monospace;
+    margin-bottom: 4px;
+    background-color: #eeeff3;
+
 }
 
 .float-child {
@@ -42,7 +66,7 @@
 } 
 
 .float-child2 {
-    width: 80%;
+    width: 85%;
     float: left;
     padding: 20px;
     
@@ -66,19 +90,19 @@
 {{!-- {{>navbar}} --}}
 
 {{#if offers.length}}
-    <div class="container">
+    <div class="containers">
         <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
             {{#each offers}}
-                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12{{/if}}" 
                     itemscope itemtype="http://schema.org/Product"
-                    style="box-shadow:3px 3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                    style="border: 1px outset #E5E4E2; border-radius: 15px; margin:4px;">                
                     {{>product}}
                 </div>
             {{/each}}
         </div>
     </div>
 
-    <div class="container">
+    <div class="containers">
         <div class="row">
             <a href="https://play.google.com/store/apps/details?id=com.dial.dialcustomer&pli=1">
                 <img class="mobile-only"  width="100%" src="https://res.cloudinary.com/dyc0ieeyu/image/upload/c_fit,w_350/pages/WhatsApp_Image_2021-01-28_at_20.45.24_eopi7x.jpg"/>
@@ -105,9 +129,9 @@
         
         <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
             {{#each popular}}
-                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}"
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12 single{{/if}}"
                     itemscope itemtype="http://schema.org/Product"
-                    style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                    style="border: 1px outset #E5E4E2; border-radius: 15px; margin:4px;">                
                     {{>product}}
                 </div>
             {{/each}}
@@ -136,9 +160,9 @@
             
             <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                 {{#each brandFocus}}
-                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12 single{{/if}}" 
                         itemscope itemtype="http://schema.org/Product"
-                        style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
+                        style="border: 1px outset #E5E4E2; border-radius: 15px; margin:4px;">                
                         {{>product}}
                     </div>
                 {{/each}}
@@ -189,28 +213,24 @@
         <div class="{{#if isMobile}}container{{else}}float-child1{{/if}}">
        
              {{>navbar}}
-             {{>nav_grape}}
+
         </div>
 
     </div>
-  
-    
-        {{!-- <div class="container">
-
-        {{>navbar}}
-        </div> --}}
-            <div class="container">
+        {{!-- Category Products START --}}
+        <div class="{{#if isMobile}}container{{else}}side-container{{/if}}">
                 <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
-                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
+                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12 single{{/if}}" 
                             itemscope itemtype="http://schema.org/Product"
-                            style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                        
+                             style="border: 1px outset #E5E4E2; border-radius: 15px; margin:4px;">                        
                             {{>product}}
                         </div>
                     {{/each}}
                 </div>
             </div>
             </div>
+            {{!-- Category Products END --}}
 
         {{else}}
             <div class="container">

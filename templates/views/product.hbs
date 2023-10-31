@@ -208,95 +208,97 @@ input[type="radio"], input[type="checkbox"] {
        
         <div class="row" style="border: 5px solid lightgray;">
 
-            <div class="col-md-8" style="padding-left: 10px !important; color: black; font-size: 16px">
-                        <div class="col-md-12">
-                            <b><u>Product Details</u></b>
-                        </div>
-            </div>
-            
-            <div class="col-md-8" style="padding-left: 10px !important; color: black; font-size: 16px">
-                    <div class="col-md-12">
+<div itemscope itemtype="http://schema.org/Product">
+<table style="width:50%" >
+ <tbody style="border: 5px solid #fff;">
+    <tr>
+         <th style="padding-left: 10px">Product Name</th>
+         <td style="border: 5px solid #fff; text-align:left;">{{name}}</td>
+    </tr>
 
-                         <b>Product Name </b> : {{name}}
-                        {{!-- <h4 style="margin: 0; color: black !important;" itemprop="name">{{{name}}}</h4 --}}
-                    </div>
-                {{#if alcoholContent}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            <b>Alcohol Content:</b> {{alcoholContent}}%
-                        </div>
-                    </div>
-                {{/if}}
+    {{#if alcoholContent}}
+    <tr>
+         <th style="padding-left: 10px">Alcohol Content (ABV)</th>
+         <td style="border: 5px solid #fff; text-align:left;">{{alcoholContent}}%</td>
+    </tr>
+    {{/if}}
 
-                {{#if countryOfOrigin}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                            <b>Country of Origin: </b> <a href="/product-origin/{{cleanId countryOfOrigin}}">{{countryOfOrigin}}</a>                  
-                        </div>
-                    </div>
-                {{/if}}
+    {{#if countryOfOrigin}}
+    <tr>
+         <th style="padding-left: 10px">Country Of Origin</th>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/product-origin/{{cleanId countryOfOrigin}}">{{countryOfOrigin}}</a></td>
+    </tr>
+    {{/if}}
 
-                {{#if howToOpen}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                           <b>How to open: </b>{{{howToOpen}}}
-                        </div>
-                    </div>
-                {{/if}}
-                
-                {{#if brand.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                           <b> Brand: </b><a href="/brand/{{cleanId brand.name}}">{{brand.name}}</a>
-                        </div>
-                    </div>
-                {{/if}}
+    {{#if howToOpen}}
+    <tr>
+         <th style="padding-left: 10px">How to Open</th>
+         <td style="border: 5px solid #fff; text-align:left;">{{howToOpen}}</td>
+    </tr>
+    {{/if}}
 
-                {{#if grape.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                           <b> Grape: </b>{{grape.name}}
-                        </div>
-                    </div>
-                {{/if}}
+    {{#if brand.name}}
+    <tr>
+         <th style="padding-left: 10px">Brand</th>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId brand.name}}">{{brand.name}}</a></td>
+    </tr>
+    {{/if}}
 
-                {{#if inStock}}
-                    <b>Availability</b>: In Stock
-                    {{else}}
-                    <b>Availability: </b> : Out of Stock
-                {{/if}}
-                
-                {{#if subCategory.name}}
-                    <div class="row" style="padding-bottom: 3px;">
-                        <div class="col-md-12">
-                           <b> Sub Category: </b><a href="/{{cleanId subCategory.name}}">{{subCategory.name}}</a>
-                        </div>
-                    </div>
-                {{/if}}
+    {{#if grape.name}}
+    <tr>
+         <th style="padding-left: 10px">Grape</th>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId brand.name}}">{{grape.name}}</a></td>
+    </tr>
+    {{/if}}
 
-                <div class="row">
-                    <div class="col-md-12 bottom-rule top-10">
-                        {{#if ../page.canonical}}	
-                            <!-- Facebook -->
-                            <a href="https://www.facebook.com/sharer.php?u={{../page.canonical}}" target="_blank">
-                                <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
-                            </a>
+    {{#if inStock}}
+
+    <tr>
+         <th style="padding-left: 10px">Availability</th>
+         <td style="border: 5px solid #fff; text-align:left;">In Stock</a></td>
+    </tr>
+    {{else}}
+        <tr>
+         <th style="padding-left: 10px">Availability</th>
+         <td style="border: 5px solid #fff; text-align:left;">Out of Stock</a></td>
+    </tr>
+    {{/if}}
+
+    {{#if subCategory.name}}
+    <tr>
+         <th style="padding-left: 10px">Sub Category</th>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="{{cleanId subCategory.name}}">{{subCategory.name}}</a></td>
+    </tr>
+    {{/if}}
+
+    {{#if ../page.canonical}}
+
+    <tr>
+        <th style="padding-left: 10px">	
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/sharer.php?u={{../page.canonical}}" target="_blank">
+        <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
+        </a>
                             
-                            <!-- Twitter -->
-                            <a href="https://twitter.com/share?url={{../page.canonical}}&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" target="_blank">
-                                <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
-                            </a>
+        <!-- Twitter -->
+        <a href="https://twitter.com/share?url={{../page.canonical}}&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" target="_blank">
+        <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
+        </a>
                              
-                            <!-- LinkedIn -->
-                            <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{../page.canonical}}" target="_blank">
-                                <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
-                            </a>
+        <!-- LinkedIn -->
+        <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{../page.canonical}}" target="_blank">
+        <img style="width: 32px;" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
+        </a>
+        </th>
+        </tr>
                              
-                        {{/if}}
-                    </div>
-                </div>
-        </div>
-        </div>
+    {{/if}}
+                
+
+  </tbody>
+ </table> 
+ </div>
+</div>
 
         <div class="row">        
             <div class="col-md-12 more-details">

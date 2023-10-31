@@ -11,6 +11,9 @@ ProductBrand.add({
     name: { type: String, required: true, initial: true },
     logo: { type: Types.CloudinaryImage, folder: "brands" },
     pageTitle: { type: String },
+    country: {type: String},
+    metaDescription: {type: String},
+    tags: {type: Types.TextArray},
     category: { type: Types.Relationship, ref: 'ProductCategory', many: false },
     description: { type: Types.Html, wysiwyg: true, height: 150 },
     modifiedDate: { type: Date, default: Date.now },
@@ -21,7 +24,7 @@ ProductBrand.add({
 });
 
 ProductBrand.relationship({ref: 'Product', path: 'product', refPath: 'brand'});
-ProductBrand.defaultColumns = 'name, logo, pageTitle, category';
+ProductBrand.defaultColumns = 'name, logo, pageTitle, category, country';
 
 ProductBrand.schema.pre('save', function (next) {
     this.modifiedDate = new Date();

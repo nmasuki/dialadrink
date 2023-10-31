@@ -17,7 +17,7 @@ function index(req, res) {
     if (!locals.page.bannerImages)
         locals.page.bannerImages = [];
 
-    var homeGroupSize = process.env.HOME_GROUP_SIZE || 12;
+    var homeGroupSize = process.env.HOME_GROUP_SIZE || 15;
 
     // Load Products
     view.on('init', function (next) {

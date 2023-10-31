@@ -1,0 +1,54 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 collg-12">
+            <div class="row">
+                <div>
+                {{#if groupedBrands}}                 
+                    {{#each groupedBrands}}
+                        <div class="row" style="margin: 8px">
+                            <div style="float: left; min-width: 80px">
+                                <h2 style="font-size: 15px;text-transform: uppercase; text-style:bold;">{{@key}}</h2>
+                                </div> <br>
+
+                                <table>
+ <thead>
+  <tr>
+
+    <th style="width:10%">Brand</th>
+    <th style="width:10%">Country</th>
+    
+  </tr>
+ </thead>
+ <tbody>
+  {{#each this}}
+    <tr>
+    	<td><a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a></td>
+        <td>{{{country}}}</td>
+        
+        
+    </tr>
+  {{/each}}
+  </tbody>
+ </table>     
+                            {{!-- {{#each this}}
+                                <a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a>
+                                {{#unless @last}}<span style="color: #F44336"> | </span>{{/unless}}
+                            {{/each}} --}}
+                        </div>
+                    {{/each}}
+                {{else}}
+
+                {{/if}}
+            </div>   
+
+               
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>

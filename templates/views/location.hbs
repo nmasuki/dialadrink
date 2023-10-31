@@ -1,13 +1,24 @@
 <div class="container">
     <div class="row">
-        <img class="col-md-6 col-lg-6" src="{{mapUrl}}" alt="{{name}}, {{city}} map!" />
-        <div class="col-md-6 col-lg-6" style="padding-left: 22px !important">
-            {{#each locations}}
 
+          
+        <div style="padding-left: 22px !important">
+            {{#each locations}}
             <h1>
-                <span class="category-name">{{name}}</span>
+                <span class="category-name">Alcohol Delivery in {{name}}</span>
+                
             </h1>
-                <strong>{{city}}</strong>
+            {{!-- <h3>Beer, Wine, Gin, Whisky Delivery in 30 Minutes.</h3> --}}
+            <h3><strong>{{city}}</strong></h3>
+
+            <img loading="lazy" itemprop="image" class="image-responsive" 
+                        src="{{cloudinaryUrl image width=380 height=380  crop='fit'}}" 
+                        data-src="{{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}" alt="{{{name}}}"
+                        style="min-height: 380px; max-height: 400px; margin: 0 auto" />
+                  
+            <img src="{{mapUrl}}" alt="{{name}}, {{city}} map!" />
+             
+                
                 <p>{{{description}}}</p>
             {{/each}}
         </div>

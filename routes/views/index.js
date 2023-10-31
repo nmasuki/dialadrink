@@ -339,6 +339,11 @@ router.get("/giftpacks", function (req, res, next) {
     search(req, res, next);
 });
 
+router.get("/mybrands", function (req, res, next) {
+    req.query = "mybrands";
+    search(req, res, next);
+});
+
 router.get("/pricelist", function (req, res) {
     var view = new keystone.View(req, res);
     var locals = res.locals;
@@ -556,6 +561,7 @@ async function sitemap(req, res) {
     var categories = await ProductCategory.model.find({}).exec();
     var grape = await Grape.model.find({}).exec();
     var blogs = await Blog.model.find({}).exec();
+    var mybrands = await Mybrands.model.find({}).exec();
 
     let links = linksFromMenus(menus)
         .concat(linksFromPages(pages))
