@@ -9,6 +9,7 @@ var intervalMap = {
     'every 5 hours': 5 * 60 * 60 * 1000,
     'every 12 hours': 12 * 60 * 60 * 1000,
     'daily': 24 * 60 * 60 * 1000,
+    'every 1.5 days': 1.5 * 24 * 60 * 60 * 1000,
     'every 2 days': 2 * 24 * 60 * 60 * 1000,
     'every 3 days': 3 * 24 * 60 * 60 * 1000,
     'every 5 days': 3 * 24 * 60 * 60 * 1000,
