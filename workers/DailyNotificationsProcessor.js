@@ -234,3 +234,8 @@ async function createNotification(client) {
 
 var lastRun = new Date().addDays(-2);
 lastRun.setHours(15);
+
+var worker = new WorkProcessor(getWork, doWork);
+worker.runRequency = "daily";
+worker.lastRun = lastRun;
+module.exports = worker;
