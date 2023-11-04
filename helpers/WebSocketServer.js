@@ -42,7 +42,7 @@ try{
         ws.on('pong', function heartbeat() { 
             this.isAlive = true; 
             this.lastPing = new Date();
-         });
+        });
 
         ws.on('message', function incoming(message) {
             if (typeof wss.processIncoming == "function")
@@ -52,8 +52,8 @@ try{
 
         ws.on('close', function(reasonCode, description) {
             console.log(
-                "WSS: Client disconnected ip:",
-                ws.clientIp, ws.user?.fullName || 'Unknown',
+                "WSS: Client disconnected ip:", ws.clientIp, 
+                "Client Name:", ws.user?.fullName || 'Unknown',
                 "ReasonCode:", reasonCode, description
             );
 
@@ -69,6 +69,7 @@ try{
         });
     });
 
+    // Ping every 30 seconds
     var interval = setInterval(function ping() {
         wss.clients.forEach(function each(ws) {
             if (ws.isAlive === false)
@@ -94,18 +95,19 @@ function isJSONString(text){
 function processIncoming(message) {
     try {
         if (isJSONString(message)) {
+            var client = this;
             var obj = JSON.parse(message);
             switch (obj.cmd || obj.info) {
                 case 'user':
                     var auth = new Buffer.from(obj.data, 'hex').toString().split(":");          
                     console.log("WSS: User details:", auth.join(', '));  
-                    this.phone = auth[0];
-                    this.pwd = auth[1];
+                    client.phone = auth[0];
+                    client.pwd = auth[1];
 
                     keystone.list('AppUser').model.findOne({phoneNumber: this.phone})
                         .exec((err, user) => {
                             console.log("WSS: Found user:", user.name.first, user.name.last);
-                            this.user = user;
+                            client.user = user;
 
                             var clients = Array.from(wss.clients);
                             var activeClients = clients.filter(c => c.readyState === WebSocket.OPEN);
@@ -120,7 +122,7 @@ function processIncoming(message) {
 
                     break;
                 case 'number':
-                    this.phone = obj.data;
+                    client.phone = obj.data;
                     break;
                 case 'send_message':
                     console.log("WSS: Sending Message:" + obj.status, obj.msgid || "", obj.msg);                    
@@ -145,7 +147,7 @@ function processIncoming(message) {
                     break;
             }
         }else{
-            console.log("WSS:", "Recieved message: " + message);
+            console.log("WSS:", "Recieved message: Handler not implimented " + message);
         }
     } catch (e) {
         console.error("WSS:", "Message Error!", message, e);
@@ -234,8 +236,9 @@ function sendWSMessage(dest, msg, msgid, attempts, status) {
     payload.status = "PROCESSING";
 
     if (!clients.length){
-        if (process.env.NODE_ENV != "production")
-            return Promise.reject("NON production environment. no retry!");
+
+        //if (process.env.NODE_ENV != "production")
+        //    return Promise.reject("NON production environment. no retry!");
         
         return retrySendWSMessage("No client found!");
     }

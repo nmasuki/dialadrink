@@ -9,10 +9,6 @@ function getWSS(){
     return wss || (wss = require('../WebSocketServer'))
 }
 
-function isReady(){
-    return getWSS().isReady();
-}
-
 function pickOneApiKey() {
     var allKeys = [
         '159eece6bd4f7fdc23916fd7778efa8c', 
@@ -117,10 +113,10 @@ function BaseSMS() {
         });
     };
 
-    self.isReady = isReady;
+    self.isReady = getWSS().isReady;
 
     self.init = function(){
-        return wss || (wss = require('../WebSocketServer'))
+        return getWSS()
     }
     
     return self;

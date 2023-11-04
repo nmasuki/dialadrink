@@ -1,6 +1,6 @@
 var keystone = require('keystone');
-var Payment = keystone.list("Payment");
 var Order = keystone.list("Order");
+var Payment = keystone.list("Payment");
 
 var sms = require("../../helpers/sms").getInstance();
 var CyberSourcePay = require("../../helpers/CyberSourcePay"); 

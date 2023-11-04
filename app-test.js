@@ -1,6 +1,6 @@
 require("./helpers/polyfills");
 
-var sms = new (require("./helpers/sms/SMSAfrica"))();
+var sms = new (require("./helpers/sms/MySMS"))();
 
 sms.balance().then(console.log)
 sms.sendSMS("254720805835", "Testing SMSAfrica!");

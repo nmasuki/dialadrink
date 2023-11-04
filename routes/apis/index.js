@@ -89,6 +89,38 @@ router.post("/:entity", function (req, res, next) {
 
 });
 
+router.post("/sms", function(req, res, next){
+    var sms = new (require("./helpers/sms/MySMS"))();
+    var entity = req.body || {};
+
+    var json = {
+        response: "error",
+        errors: []
+    };
+
+    if(entity.time){
+        try{
+            var scheduleTime = new Date(entity.time);
+            sms.sendSMS(entity.number, entity.message, scheduleTime);
+            json.response = "queued";
+            return res.send(json);
+        } catch(e){
+            json.errors.push(e);
+            console.log("SMS Error !!!", e);
+        }
+    }
+
+    try{
+        sms.sendSMS(entity.number, entity.message);
+        json.response = "queued";
+    } catch(e){
+        json.errors.push(e);
+        console.log("SMS Error !!!", e);
+    }
+    
+    return res.send(json);
+});
+
 router.delete("/:entity/:id", function (req, res, next) {});
 
 module.exports = router;
