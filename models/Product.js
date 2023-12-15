@@ -26,6 +26,9 @@ Product.add({
     countryOfOrigin: {
         type: String
     },
+    preferredVendor: {
+        type: String
+    },
 
     howToOpen: {
         type: String
@@ -300,6 +303,8 @@ Product.schema.methods.findSimilar = function (callback) {
         filter.$or.push({
             category: this.category._id || this.category
         });
+
+        //sort by popularity
 
     var product = this;
     return Product.findPublished(filter).exec((err, similar) => {
