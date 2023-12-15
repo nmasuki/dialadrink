@@ -36,7 +36,7 @@ var handlebars = require('express-handlebars').create({
 keystone.init({
 	'port': process.env.HTTP_PORT || 4000,
 	'name': process.env.SITE_NAME || 'Dial A Drink Kenya',
-	'url': process.env.SITE_URL || 'https://dialadrinkkenya.com',
+	'url': process.env.SITE_URL   || 'https://dialadrinkkenya.com',
 	'logo': process.env.SITE_LOGO || 'https://res.cloudinary.com/nmasuki/image/upload/logo.png',
 	'signin logo': process.env.ADMIN_LOGO || 'https://res.cloudinary.com/nmasuki/image/upload/logo-email.gif',
 	'less': 'public',

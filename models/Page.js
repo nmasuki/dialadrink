@@ -19,8 +19,8 @@ Page.add({
 	meta: {type: String },
 	h1: {type: String},
 	h1s: {type: Types.TextArray},
-    bannerImages: {type: Types.CloudinaryImages, folder: "pages" },
-    mobileBannerImages: {type: Types.CloudinaryImages, folder: "pages" },
+    bannerImages: {type: Types.CloudinaryImages, folder: "images" },
+    mobileBannerImages: {type: Types.CloudinaryImages, folder: "images" },
 	breafContent: { type: Types.Html, wysiwyg: true, height: 250, width: 500 },
 	content: { type: Types.Html, wysiwyg: true, height: 500, width: 500 },
 });

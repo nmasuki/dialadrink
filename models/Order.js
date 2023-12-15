@@ -219,13 +219,15 @@ Order.add({
 });
 
 Order.schema.pre('save', function (next) {
-    if(!this.cart && this.cart.length <= 0) return next("no cart items!");
+    if(!this.cart && this.cart.length <= 0) 
+        return next("No cart items!");
+
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sartuday"];
-
+    
     this.orderDay = days[new Date(this.orderDate).getDay()];
-
     this.orderAmount = this.payment.amount;
     this.modifiedDate = Date.now();
+
     if (!this.orderNumber)
         this.orderNumber = Order.getNextOrderId();
 

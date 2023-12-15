@@ -95,7 +95,7 @@ async function getWork(next, done) {
     var groupedOrders = orders
         .filter(o => o.orderDate && o.client && (!o.client.lastNotificationDate || o.client.lastNotificationDate <= oneWeekAgo))
         .groupBy(o => o.client._id.toString());
-o
+
     var clientGroupedOrders = Object.values(groupedOrders).orderBy(o => -o.length);
 
     var clients = [];
@@ -234,3 +234,8 @@ async function createNotification(client) {
 
 var lastRun = new Date().addDays(-2);
 lastRun.setHours(15);
+
+var worker = new WorkProcessor(getWork, doWork);
+worker.runRequency = "daily";
+worker.lastRun = lastRun;
+module.exports = worker;

@@ -39,6 +39,9 @@ Array.prototype.searchIndex = function (func) {
 }
 
 String.prototype.count = Array.prototype.count = function (func) {
+	if(typeof func != "function")
+		return this.length;
+
 	var c = 0;
 
 	for (var i = 0; i < this.length; i++)
