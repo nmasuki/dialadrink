@@ -9,6 +9,11 @@ var ProductBrand = new keystone.List('ProductBrand', { autokey: {from: '_id', pa
 
 ProductBrand.add({
     name: { type: String, required: true, initial: true },
+    href: {
+        type: String,
+        initial: true,
+        required: true
+    },
     logo: { type: Types.CloudinaryImage, folder: "brands" },
     pageTitle: { type: String },
     country: {type: String},
