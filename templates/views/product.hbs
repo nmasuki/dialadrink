@@ -226,7 +226,7 @@ input[type="radio"], input[type="checkbox"] {
     {{#if countryOfOrigin}}
     <tr>
          <th style="padding-left: 10px">Country Of Origin</th>
-         <td style="border: 5px solid #fff; text-align:left;"><a href="/product-origin/{{cleanId countryOfOrigin}}">{{countryOfOrigin}}</a></td>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/product-origin/{{countryOfOrigin}}">{{countryOfOrigin}}</a></td>
     </tr>
     {{/if}}
 
@@ -240,14 +240,14 @@ input[type="radio"], input[type="checkbox"] {
     {{#if brand.name}}
     <tr>
          <th style="padding-left: 10px">Brand</th>
-         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId brand.name}}">{{brand.name}}</a></td>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{brand.name}}">{{brand.name}}</a></td>
     </tr>
     {{/if}}
 
     {{#if grape.name}}
     <tr>
          <th style="padding-left: 10px">Grape</th>
-         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId brand.name}}">{{grape.name}}</a></td>
+         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{grape.name}}">{{grape.name}}</a></td>
     </tr>
     {{/if}}
 
