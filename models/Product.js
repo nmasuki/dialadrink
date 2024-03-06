@@ -41,6 +41,10 @@ Product.add({
         many: true,
         noedit: true,
     },
+    size: {
+        type: Types.Relationship,
+        ref: 'Size'
+    },
 
     onOffer: { type: Types.Boolean },
     isPopular: { type: Types.Boolean },
@@ -377,6 +381,7 @@ Product.schema.methods.toAppObject = function () {
         subcategory: d.subCategory ? d.subCategory.name : null,
         brand: d.brand ? d.brand.name : null,
         grape: d.grape ? d.grape.name : null,
+        size: d.size ? d.size.name : null,
 
         ratings: d.averageRatings,
         ratingCount: d.ratingCount,
@@ -535,7 +540,7 @@ Product.schema.set('toObject', {
             'href', 'name', 'priceOptions', 'onOffer', 'inStock',
             'state', 'image', 'altImages', 'pageTitle', 'description',
             'publishedDate', 'modifiedDate', 'popularity', 'category',
-            'subCategory', 'brand', 'grape','ratings', 'popularityRatio', 'options', 'defaultOption',
+            'subCategory', 'brand', 'grape','size','ratings', 'popularityRatio', 'options', 'defaultOption',
             'quantity', 'currency', 'price', 'offerPrice',
             'averageRatings', 'ratingCount', 'tags',
             'priceValidUntil', 'percentOffer'
@@ -684,6 +689,7 @@ Product.findPublished = function (filter, callback) {
         .sort({ isPopular: 1, popularity: -1 })
         .populate('brand')
         .populate('grape')
+        .populate('size')
         .populate('category')
         .populate('ratings')
         .deepPopulate("subCategory.category,priceOptions.option");
@@ -700,6 +706,7 @@ Product.findOnePublished = function (filter, callback) {
         .sort({ popularity: -1 })
         .populate('brand')
         .populate('grape')
+        .populate('size')
         .populate('category')
         .populate('ratings')
         .deepPopulate("subCategory.category,priceOptions.option");
@@ -765,6 +772,21 @@ Product.findBySubCategory = function (filter, callback) {
             filter = {
                 subCategory: {
                     "$in": subCategories.map(b => b._id)
+                }
+            };
+            Product.findPublished(filter, callback);
+        });
+};
+
+Product.findBySize = function (filter, callback) {
+    keystone.list('Size').model.find(filter)
+        .exec((err, size) => {
+            if (err || !size)
+                return console.log(err);
+
+            filter = {
+                size: {
+                    "$in": size.map(b => b._id)
                 }
             };
             Product.findPublished(filter, callback);
