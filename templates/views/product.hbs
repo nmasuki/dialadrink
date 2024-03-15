@@ -69,6 +69,7 @@ input[type="radio"], input[type="checkbox"] {
                     <h1>
                      <span class="category-name">{{name}}</span>
                     </h1>
+
                          {{!-- <b>{{name}}</b> --}}
                        
                 </div>
@@ -86,7 +87,43 @@ input[type="radio"], input[type="checkbox"] {
                                     <span class="monospaced label label-success">In Stock</span>
                                         {{else}}
                                     <span class="monospaced label label-danger">Out of Stock</span>
-                                    {{/if}}
+                                {{/if}}
+                            </div>
+                            <div class="col-md-4 text-left">
+                            </div>
+                        </div>
+
+                         <div class="row">
+                            <div class="col-md-4 text-left">
+                            {{#if category.name}}
+                             <tr>
+                            <th style="padding-left: 10px">Category: </th>
+                                <td style="border: 5px solid #fff; text-align:left;"><a href="{{cleanId category.name}}">{{category.name}}</a></td>
+                            </tr>
+                            {{/if}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 text-left">
+                            {{#if subCategory.name}}
+                             <tr>
+                            <th style="padding-left: 10px">Sub Category: </th>
+                                <td style="border: 5px solid #fff; text-align:left;"><a href="{{cleanId subCategory.name}}">{{subCategory.name}}</a></td>
+                            </tr>
+                            {{/if}}
+                            </div>
+                        </div>
+
+                         <div class="row">
+                            <div class="col-md-4 text-left">
+                            {{#if brand.name}}
+                             <tr>
+                            <tr>
+                                <th style="padding-left: 10px">Brand: </th>
+                                <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId brand.name}}">{{brand.name}}</a></td>
+                            </tr>
+                            {{/if}}
                             </div>
                         </div>
                     </div>
@@ -202,7 +239,7 @@ input[type="radio"], input[type="checkbox"] {
 							</a>
 						</h4>
 						 
-					</div>           
+			</div>          
         </div>
         <br>
        
@@ -240,7 +277,7 @@ input[type="radio"], input[type="checkbox"] {
     {{#if brand.name}}
     <tr>
          <th style="padding-left: 10px">Brand</th>
-         <td style="border: 5px solid #fff; text-align:left;"><a href="/brand/{{cleanId brand.href}}">{{brand.name}}</a></td>
+         <td style="border: 5px solid #fff; text-align:left;">{{brand.name}}</td>
     </tr>
     {{/if}}
 
@@ -263,13 +300,11 @@ input[type="radio"], input[type="checkbox"] {
          <td style="border: 5px solid #fff; text-align:left;">Out of Stock</a></td>
     </tr>
     {{/if}}
-
-    {{#if subCategory.name}}
-    <tr>
-         <th style="padding-left: 10px">Sub Category</th>
-         <td style="border: 5px solid #fff; text-align:left;"><a href="{{cleanId subCategory.name}}">{{subCategory.name}}</a></td>
+    
+     <tr>
+        
+         <td style="border: 5px solid #fff; text-align:left;">{{name}} price in Nairobi</td>
     </tr>
-    {{/if}}
 
     {{#if ../page.canonical}}
 

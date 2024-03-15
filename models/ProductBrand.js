@@ -20,6 +20,7 @@ ProductBrand.add({
     metaDescription: {type: String},
     tags: {type: Types.TextArray},
     category: { type: Types.Relationship, ref: 'ProductCategory', many: false },
+    categoryName: {type: String},
     description: { type: Types.Html, wysiwyg: true, height: 150 },
     modifiedDate: { type: Date, default: Date.now },
     company: {
