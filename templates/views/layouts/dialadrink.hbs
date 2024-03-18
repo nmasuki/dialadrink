@@ -69,7 +69,19 @@
             position: fixed;
             top: 0;
             z-index: -1;
-        }   
+        }  
+        .borb2{
+               background:#fff!important;
+               color:#dbcfcf;
+               border: 1px solid;
+               box-shadow: 5px 5px #e5e3e3;
+               border-radius:25px;
+               display:inline-block;
+               padding: 8px;
+               text-align:center;
+               justify-content: center;
+               overflow:hidden
+              } 
     </style>    
                             
     {{#if isMobile}}
@@ -247,11 +259,14 @@
                     <h2 style="font-size: 15px;text-transform: uppercase">SHOP BY BRAND</h2>                    
                     {{#each groupedBrands}}
                         <div class="row" style="margin: 8px">
-                            <div style="float: left; min-width: 80px"><b style="">{{@key}}</b>:</div> 
+                            <div style="float: left; min-width: 80px; font-size: 15px"><b style="">{{@key}}</b></div> <br/>   
                             {{#each this}}
+                             <div class="borb2">
                                 <a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a>
-                                {{#unless @last}}<span style="color: #F44336"> | </span>{{/unless}}
+                                
+                                </div>
                             {{/each}}
+                            
                         </div>
                     {{/each}}
                 {{else}}
