@@ -78,6 +78,7 @@
         
 
     }
+
 </style>
 <div class="container">
     {{#if brand}}
@@ -276,9 +277,30 @@
     <tr>
         <div class= "w-grid-json hidden">{{wGridJson}}</div>
        <article class="w-grid-item size_1x1 post-11534 product type-product status-publish has-post-thumbnail pwb-brand-{{{brand.name}}} product_cat-{{category.name}} pa_bottle-size-1l pa_country-of-origin-{{brand.country}} first instock shipping-taxable purchasable product-type-simple" data-id="{{_id}}">
-    	<td><a href="/{{name}}">{{name}}</a></td>
+    	<td>
+            <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
+            <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
+            <meta itemprop="offers" itemtype="http://schema.org/Offer"/>
+            <meta itemprop="description" content="{{cleanHtml description}}"/>
+            <meta itemprop="image" content="{{cloudinaryUrl image crop='fit' width='300'}}"/>
+            <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
+            <meta itemprop="priceCurrency" content="{{currency}}"/>
+            <img src="{{cloudinaryUrl image width="200" height="200" crop='fill' background_removal='cloudinary_ai'}}" 
+                data-src="{{cloudinaryUrl image width=500 height=500 crop='fill' background_removal='cloudinary_ai'}}" 
+                title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
+                itemprop="image" alt="{{{name}}}"
+                class="hidden" 
+            style="margin: auto"/>
+            <div itemprop="name" class="drinks-name">
+                <a href="{{productUrl href}}" style="font-size: 14px; color: black; font-family:'Arial, Helvetica', sans-serif;">
+                    {{name}}
+                </a>
+            </div> 
+            {{!-- <a href="/{{name}}">{{name}}</a></td> --}}
         <td>{{quantity}}</td>
-        <td>Ksh. {{formatNumber price}}</td>
+        <td itemprop="price" content="{{price}}">
+            Ksh. {{formatNumber price}}    
+        </td>
         <td>{{alcoholContent}} %</td>
         <td>{{countryOfOrigin}}</td>
         <td>{{subCategory.name}}</td>
