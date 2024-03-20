@@ -36,14 +36,12 @@
             <meta itemprop="name" content="{{name}}"/>
             <div class="drinks-name">
                 <a href="{{productUrl href}}" style="font-size: 14px; color: black; font-family:'Arial, Helvetica', sans-serif;">
-                    {{truncate name 30}}<br>
-                    <small>
+                    {{truncate name 25}}
                     {{#ifgt alcoholContent 0}}
-                    <p style="font-size: 12px; color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%), {{{countryOfOrigin}}}</p>
+                    <br><p style="font-size: 12px; color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%), {{{countryOfOrigin}}}</p>
                     {{/ifgt}}
-                    </small>
                 </a>
-            </div>        
+            </div>            
             <div style="font-size: 12px; font-family:'Arial, Helvetica', sans-serif; color: rgb(104, 95, 95);" >
                 {{#each stockOptions}}
                     <br> <a href="#" class="add-to-cart"
