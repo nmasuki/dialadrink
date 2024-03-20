@@ -33,16 +33,17 @@
             <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
             <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
             <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
-            <div itemprop="name" class="drinks-name">
+            <meta itemprop="name" content="{{name}}"/>
+            <div class="drinks-name">
                 <a href="{{productUrl href}}" style="font-size: 14px; color: black; font-family:'Arial, Helvetica', sans-serif;">
-                    {{truncate name 30}}
-                </a>
-            </div>  
-            {{!-- <div>
-                {{#ifgt alcoholContent 0}}
+                    {{truncate name 30}}<br>
+                    <small>
+                    {{#ifgt alcoholContent 0}}
                     <p style="font-size: 12px; color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%), {{{countryOfOrigin}}}</p>
                     {{/ifgt}}
-            </div>           --}}
+                    </small>
+                </a>
+            </div>        
             <div style="font-size: 12px; font-family:'Arial, Helvetica', sans-serif; color: rgb(104, 95, 95);" >
                 {{#each stockOptions}}
                     <br> <a href="#" class="add-to-cart"
