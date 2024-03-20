@@ -248,16 +248,20 @@
 {{/if}}
 
 <div class="container">
+    <div class= "w-grid-json hidden">{{wGridJson}}</div>
     {{#if brand}}
+    
         <div class="row">
             <div>
                 <div>
                         <div  
                             itemscope itemtype="http://schema.org/Product">
+
+                            
     <table>
+
  <thead>
   <tr>
-
     <th style="width:20%">Product Name</th>
     <th style="width:10%">Size</th>
     <th style="width:10%">Price</th>
@@ -270,6 +274,8 @@
  <tbody>
   {{#each products}}
     <tr>
+        <div class= "w-grid-json hidden">{{wGridJson}}</div>
+       <article class="w-grid-item size_1x1 post-11534 product type-product status-publish has-post-thumbnail pwb-brand-{{{brand.name}}} product_cat-{{category.name}} pa_bottle-size-1l pa_country-of-origin-{{brand.country}} first instock shipping-taxable purchasable product-type-simple" data-id="{{_id}}">
     	<td><a href="/{{name}}">{{name}}</a></td>
         <td>{{quantity}}</td>
         <td>Ksh. {{formatNumber price}}</td>
