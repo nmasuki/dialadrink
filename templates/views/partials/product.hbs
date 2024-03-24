@@ -30,6 +30,21 @@
                 itemprop="image" alt="{{{name}}}"
                 class="img-responsive" 
             style="margin: auto"/>
+        <div itemprop="aggregateRating" itemtype="https://schema.org/AggregateRating" itemscope>
+        <meta itemprop="bestRating" content="5" />
+        <meta itemprop="reviewCount" content="{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}" />
+        <meta itemprop="ratingValue" content="{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}" />
+        </div>
+
+         <div itemprop="review" itemtype="https://schema.org/Review" itemscope>
+        <div itemprop="author" itemtype="https://schema.org/Person" itemscope>
+          <meta itemprop="name" content="Dial A Drink" />
+        </div>
+        <div itemprop="reviewRating" itemtype="https://schema.org/Rating" itemscope>
+          <meta itemprop="ratingValue" content="4" />
+          <meta itemprop="bestRating" content="5" />
+        </div>
+        </div>
            
         <div itemscope itemprop="offers" itemtype="http://schema.org/Offer" class="price-details">
             <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
