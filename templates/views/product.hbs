@@ -35,7 +35,7 @@ input[type="radio"], input[type="checkbox"] {
 
 {{#with product}}
     <div class="container" id="product-section" 
-        data-product="{{_id}}" itemscope itemtype="http://schema.org/Product">
+        data-product="{{_id}}">
         
         <div class="row" style="border: 5px solid lightgray;">
             <div class="col-sm-1 col-12">
@@ -56,7 +56,7 @@ input[type="radio"], input[type="checkbox"] {
 
             <div class="col-sm-4 col-12">
                 <figure class="zoom" style="background-image: url({{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}})">
-                    <img loading="lazy" itemprop="image" class="image-responsive" 
+                    <img loading="lazy"class="image-responsive" 
                         src="{{cloudinaryUrl image width=380 height=380  crop='fit'}}" 
                         data-src="{{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}" alt="{{{name}}}"
                         style="min-height: 380px; max-height: 400px; margin: 0 auto" />
@@ -134,14 +134,13 @@ input[type="radio"], input[type="checkbox"] {
                             <div class="change-quantity">  
                                 {{#each options}}
                                     <label style="font-size: 16px;{{#unless inStock}}text-decoration: line-through;{{/unless}}" class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
-                                        style="margin-top:5px; white-space:nowrap;" 
-                                        itemscope="itemscope" itemprop="offers" itemtype="http://schema.org/Offer">
+                                        style="margin-top:5px; white-space:nowrap;">
                                         <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" 
                                             {{#if inStock}}{{#ifeq ../price price}}checked{{/ifeq}}{{else}}disabled{{/if}}
                                             value="{{quantity}}" data-value="{{price}}" data-option="{{../id}}|{{quantity}}"/>
-                                        <span itemprop="priceCurrency">{{currency}}</span>
+                                        <span>{{currency}}</span>
                                         {{#if percentOffer}}
-                                            <span itemprop="price" content="{{offerPrice}}" class="product-price">
+                                            <span class="product-price">
                                                 <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                                     <span>{{formatNumber price}}</span>
                                                 </span>
@@ -150,27 +149,27 @@ input[type="radio"], input[type="checkbox"] {
                                                 </span>
                                             </span>
                                         {{else}}
-                                            <span itemprop="price" content="{{price}}" class="product-price">{{formatNumber price}}</span>
+                                            <span class="product-price">{{formatNumber price}}</span>
                                         {{/if}}
-                                        <span itemprop="priceQuantity">{{quantity}}</span>                                        
+                                        <span>{{quantity}}</span>                                        
                                     </label>
                                 {{/each}}
                             </div>
                         {{else}}
-                            <h4 style="margin-top:5px; white-space:nowrap; color: orangered; padding-left: 10px;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">              
-                                <span itemprop="priceQuantity">{{quantity}} @</span>
-                                <span itemprop="priceCurrency">{{currency}}</span>
+                            <h4 style="margin-top:5px; white-space:nowrap; color: orangered; padding-left: 10px;">              
+                                <span>{{quantity}} @</span>
+                                <span>{{currency}}</span>
                                 {{#if percentOffer}}
                                     <span>
                                         <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                             <span>{{formatNumber price}}</span>
                                         </span>
-                                        <span itemprop="price" content="{{offerPrice}}" class="product-price" id="product-price">
+                                        <span class="product-price" id="product-price">
                                             {{formatNumber offerPrice}}
                                         </span>
                                     </span>
                                 {{else}}
-                                    <span itemprop="price" content="{{price}}" class="product-price" id="product-price">{{formatNumber price}}</span>
+                                    <span class="product-price" id="product-price">{{formatNumber price}}</span>
                                 {{/if}}  
                             </h4>
                         {{/ifgt}}
@@ -400,15 +399,15 @@ input[type="radio"], input[type="checkbox"] {
                                     aria-hidden="true">
                                 </span>
 
-                                <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                                <span>
                                     <span class="label label-success">
-                                        <span itemprop="ratingValue">{{formatNumber averageRatings 1}}</span> *
+                                        <span>{{formatNumber averageRatings 1}}</span> *
                                     </span>&nbsp;
 
                                     {{#if ratingCount}}
-                                        <span itemprop="ratingCount" class="monospaced">{{ratingCount}}</span> reviews.
+                                        <span class="monospaced">{{ratingCount}}</span> reviews.
                                     {{else}}
-                                        <span itemprop="ratingCount" class="monospaced">1</span> reviews.
+                                        <span class="monospaced">1</span> reviews.
                                     {{/if}}
 
                                     {{#unless ../userRating}}
