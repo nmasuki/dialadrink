@@ -16,11 +16,19 @@
                     </div>
                 </a>
                 <meta itemprop="name" content="{{name}}"/>
+                <meta itemprop="description" content="{{truncate (cleanHtml description) 155}}"/>  
                 <div style="font-size: 12px !important;">{{quantity}}</div>
                 <div style="font-size: 12px !important;" itemscope itemprop="offers" itemtype="http://schema.org/Offer">
                     <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
                     <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
                     <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
+                    <div itemprop="hasMerchantReturnPolicy" itemtype="https://schema.org/MerchantReturnPolicy" itemscope>
+                        <meta itemprop="applicableCountry" content="KE" />
+                        <meta itemprop="returnPolicyCategory" content="https://schema.org/MerchantReturnFiniteReturnWindow" />
+                        <meta itemprop="merchantReturnDays" content="7" />
+                        <meta itemprop="returnMethod" content="https://schema.org/ReturnByMail" />
+                        <meta itemprop="returnFees" content="https://schema.org/FreeReturn" />
+                    </div>
                     <span itemprop="priceCurrency" content="{{currency}}" >{{currency}}</span>
                     {{#if percentOffer}}
                         <span>

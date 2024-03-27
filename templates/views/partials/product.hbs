@@ -24,6 +24,7 @@
     <div class="item-name" style="text-align:center; justify-content :center; color: black">
         <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
         <meta itemprop="name" content="{{name}}"/>
+        <meta itemprop="description" content="{{truncate (cleanHtml description) 155}}"/>
         <img src="{{cloudinaryUrl image width="200" height="200" crop='fill' background_removal='cloudinary_ai'}}" 
                 data-src="{{cloudinaryUrl image width=500 height=500 crop='fill' background_removal='cloudinary_ai'}}" 
                 title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
@@ -49,7 +50,15 @@
         <div itemscope itemprop="offers" itemtype="http://schema.org/Offer" class="price-details">
             <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
             <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
+            <meta itemprop="description" content="{{truncate (cleanHtml description) 155}} "/>
             <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
+        <div itemprop="hasMerchantReturnPolicy" itemtype="https://schema.org/MerchantReturnPolicy" itemscope>
+          <meta itemprop="applicableCountry" content="KE" />
+          <meta itemprop="returnPolicyCategory" content="https://schema.org/MerchantReturnFiniteReturnWindow" />
+          <meta itemprop="merchantReturnDays" content="7" />
+          <meta itemprop="returnMethod" content="https://schema.org/ReturnByMail" />
+          <meta itemprop="returnFees" content="https://schema.org/FreeReturn" />
+        </div>
             <div>
                 <a href="{{productUrl href}}" style="font-size: 14px; color: black; font-family:'Arial, Helvetica', sans-serif;">
                     {{truncate name 25}}

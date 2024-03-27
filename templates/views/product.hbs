@@ -461,7 +461,7 @@ input[type="radio"], input[type="checkbox"] {
   "image": [
     "{{cloudinaryUrl image crop='fit' width='300'}}"
    ],
-  "description": "{{{truncate (cleanHtml description) 500 ' '}}}",
+  "description": "{{{truncate (cleanHtml description) 155 ' '}}}",
   "brand": {
     "@type": "Thing",
     "name": "{{{cleanHtml brand.name}}}"
@@ -486,7 +486,21 @@ input[type="radio"], input[type="checkbox"] {
     "seller": {
       "@type": "Organization",
       "name": "{{../title}}"
-    }
+    },
+    "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 7,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
+        },
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": 0,
+            "currency": "KES"
+          },}
   }{{/if}}
 }
 </script>
