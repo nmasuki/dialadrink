@@ -125,12 +125,11 @@
                         
                 </h2>
             </div>
-            <div class="col-sm-4"></div>
         </div>
         
         <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
             {{#each popular}}
-                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12 single{{/if}}"
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12{{/if}}" 
                     itemscope itemtype="http://schema.org/Product"
                     style="border: 1px outset #E5E4E2; border-radius: 15px; margin:4px;">                
                     {{>product}}
@@ -161,7 +160,7 @@
             
             <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                 {{#each brandFocus}}
-                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12 single{{/if}}" 
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12{{/if}}" 
                         itemscope itemtype="http://schema.org/Product"
                         style="border: 1px outset #E5E4E2; border-radius: 15px; margin:4px;">                
                         {{>product}}
@@ -188,7 +187,7 @@
 
                 <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
-                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12 single{{/if}}" 
+                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12{{/if}}" 
                             itemscope itemtype="http://schema.org/Product"
                             style="box-shadow:3px 3px 3px #CFD8DC; margin-bottom :15px;">                
                             {{>product}}
@@ -222,7 +221,7 @@
         <div class="{{#if isMobile}}container{{else}}side-container{{/if}}">
                 <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                     {{#each products}}
-                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12 single{{/if}}" 
+                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12{{/if}}" 
                             itemscope itemtype="http://schema.org/Product"
                              style="border: 1px outset #E5E4E2; border-radius: 15px; margin:4px;">                        
                             {{>product}}

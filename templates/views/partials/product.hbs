@@ -93,7 +93,7 @@
                     <br> <a href="#" class="add-to-cart"
                         data-qty="{{quantity}}" data-product="{{../_id}}">
                         <span>{{quantity}}</span>
-                        <span itemprop="priceCurrency">{{currency}}</span>
+                        <span itemprop="priceCurrency" content="{{currency}}">{{currency}}</span>
                         {{#if offerPrice}}
                             <span>
                                 <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
@@ -131,10 +131,10 @@
                                         <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                             <span>{{formatNumber price}}</span>
                                         </span>
-                                        <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
+                                        <span>{{formatNumber offerPrice}}</span>
                                     </span>
                                 {{else}}
-                                    <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
+                                    <span>{{formatNumber price}}</span>
                                 {{/if}}
                             </a>
                         {{/each}}
