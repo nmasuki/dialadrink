@@ -259,7 +259,7 @@ exports.initBrandsLocals = function (req, res, next) {
             res.locals.groupedBrand = group;
 
             if (memCache)
-                memCache.put("__popularbrands__", res.locals.groupedBrands, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+                memCache.put("__popularbrands__", res.locals.groupedBrands, res.locals.groupedBrand, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
         }
         if (typeof next == "function")
