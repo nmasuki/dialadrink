@@ -82,6 +82,19 @@
                justify-content: center;
                overflow:hidden
               } 
+
+              .borb3{
+               background:rgb(240, 5, 5)!important;
+               border: none;
+               border-radius:5px;
+               display:inline-block;
+               padding: 5px;
+               font-family: Cursive;
+               font-size: small;
+               text-align:center;
+               justify-content: center;
+               overflow:hidden
+              } 
     </style>    
                             
     {{#if isMobile}}
@@ -262,11 +275,14 @@
                             <div style="float: left; min-width: 80px; font-size: 15px"><b style="">{{@key}}</b></div> <br/>   
                             {{#each this}}
                              <div class="borb2">
-                                <a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a>
-                                
+                                <a href="{{brandUrl key}}" title="{{name}}" style="display: inline-block;">{{{name}}}</a>  
                                 
                                 </div>
                             {{/each}}
+                            <div class="borb3">
+                                <a href="/mybrands" title="{{name}}" style="color: white;">View More...</a>  
+                                
+                                </div>
                             
                         </div>
                     {{/each}}

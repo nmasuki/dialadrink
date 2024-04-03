@@ -232,19 +232,31 @@ exports.initBrandsLocals = function (req, res, next) {
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
         if (!err) {
             groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
 
             delete groups._delete;
             delete groups.Others;
             delete groups.Extras;
+
+            delete group._delete;
+            delete group.Others;
+            delete group.Extras;
 
             for (var i in groups)
                 groups[i] = groups[i]
                     //.orderByDescending(b => products
                     //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
                     //    .avg(p => p.popularity))
-                    .slice(0, 10);
+                    .slice(0, 6);
+            for (var i in group)
+                group[i] = group[i]
+                    //.orderByDescending(b => products
+                    //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
+                    //    .avg(p => p.popularity))
+                    .slice(0, 200);
 
             res.locals.groupedBrands = groups;
+            res.locals.groupedBrand = group;
 
             if (memCache)
                 memCache.put("__popularbrands__", res.locals.groupedBrands, ((process.env.CACHE_TIME || 10) * 60) * 1000);

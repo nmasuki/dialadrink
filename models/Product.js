@@ -152,8 +152,8 @@ Product.schema.virtual("keyWords").get(function () {
     }
     if (this.category)
         tags.push(this.category.name);
-    if (this.subCategory)
-        tags.push(this.subCategory.name);
+    // if (this.subCategory)
+    //     tags.push(this.subCategory.name);
     if (this.options)
         this.options.forEach(po => tags.push(po.quantity));
 
@@ -460,8 +460,8 @@ Product.schema.pre('save', async function (next) {
         }
         if (this.category)
             tags.push(this.category.name);
-        if (this.subCategory)
-            tags.push(this.subCategory.name);
+        // if (this.subCategory)
+        //     tags.push(this.subCategory.name);
         if (this.grape)
             tags.push(this.grape.name);
         if (this.options)
