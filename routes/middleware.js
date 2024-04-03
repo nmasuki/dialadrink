@@ -248,8 +248,8 @@ exports.initBrandsLocals = function (req, res, next) {
                     //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
                     //    .avg(p => p.popularity))
                     .slice(0, 6);
-            for (var i in group)
-                group[i] = group[i]
+            for (var j in group)
+                group[j] = group[j]
                     //.orderByDescending(b => products
                     //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
                     //    .avg(p => p.popularity))
