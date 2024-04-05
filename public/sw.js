@@ -1,4 +1,4 @@
-var CACHE_VERSION = 377;
+var CACHE_VERSION = 378;
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
