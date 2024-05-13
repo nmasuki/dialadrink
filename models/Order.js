@@ -255,7 +255,7 @@ Order.schema.virtual("discount").get(function () {
 });
 
 Order.schema.virtual("chargesAmt").get(function () {
-    var charges = 0;
+    var charges = 195;
 
     if (this.charges && this.charges.chargesAmount)
         charges = this.charges.chargesAmount.sum(c => parseFloat("" + c));
@@ -752,7 +752,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
             var charges = chargesKeys.sum(k => deliveryDetails[k]);
 
             var subtotal = cart.sum(function (c) {
-                var price = c.pieces * c.price;
+                var price = c.pieces * c.price + 195;
                 if (c.offerPrice && c.price > c.offerPrice)
                     price = c.pieces * c.offerPrice;
                 return price;
@@ -774,7 +774,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
                 payment: {
                     method: deliveryDetails.paymentMethod,
                     subtotal: subtotal,
-                    amount: subtotal + charges - discount
+                    amount: subtotal + 195 - discount
                 },
                 promo: promo,
                 clientIp: deliveryDetails.clientIp,
