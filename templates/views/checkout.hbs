@@ -88,14 +88,6 @@
                     <span class="text-info cart-amount">100.00</span>
                 </li>
 
-                <li class="delivery-charges list-group-item d-flex justify-content-between lh-condensed row">
-                    <div class="text-info">
-                        <h4 class="my-0">Delivery Charges</h4>
-                    </div>
-                    <span class="cart-currency">KES</span>
-                    <span class="text-info cart-amount">195.00</span>
-                </li>
-
                 <li {{#unless promocode}}style="display: none;" {{/unless}}
                     class="promo-code-wrapper list-group-item d-flex justify-content-between bg-light">
                     <div class="text-success">
@@ -104,6 +96,13 @@
                     </div>
                     <span class="cart-currency">KES</span>
                     (<span class="text-success promo-code-amount">{{formatNumber promocode.amount}}</span>)
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Delivery Charges (<span class="cart-currency">KES</span>)</span>
+                    <strong class="cart-total-2">
+                        195.00
+                    </strong>
                 </li>
 
                 <li class="list-group-item d-flex justify-content-between">
