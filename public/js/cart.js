@@ -344,7 +344,7 @@ var cartUtil = function () {
                 }
             }
 
-            return amount + totalCharges - self.discount(amount);
+            return amount + totalCharges - self.discount(amount) + 195;
         },
 
         discount: function (amount, promo) {
