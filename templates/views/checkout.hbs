@@ -99,16 +99,17 @@
                 </li>
 
                 <li class="list-group-item d-flex justify-content-between">
-                    <span>Sub Total (<span class="cart-currency">KES</span>)</span>
+                    <span>Delivery Charges <strong><span class="cart-currency">KES 195.00</span></span></strong>
+                     
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (<span class="cart-currency">KES</span>)</span>
                     <strong class="cart-total-2">
                         {{formatNumber (sumEvals cartItems 'c=>c.pieces*c.price')}}
                     </strong>
                 </li>
 
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Delivery Charges <strong><span class="cart-currency">KES 195.00</span></span></strong>
-                     
-                </li>
                 {{else}}
                 <li class="list-group-item d-flex justify-content-between">
                     <div class="loading cart-loading">
