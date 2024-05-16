@@ -106,7 +106,7 @@ router.post("/", function (req, res, next) {
 
 					africasTalking.processPayment(
 						order.delivery.phoneNumber, order.orderNumber,
-						order.orderNumber, order.payment.amount, 'KES'
+						order.orderNumber, order.payment.amount + 195, 'KES'
 					);
 				}
 
@@ -175,7 +175,7 @@ function okHiIntegration(req, res, order, cartItems, next) {
 
 	var data = {
 		user: user,
-		value: order.payment.amount,
+		value: order.payment.amount +195,
 		id: order.orderNumber.toString(),
 		use_case: "e-commerce",
 		location_id: req.body.location.id,
