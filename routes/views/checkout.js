@@ -175,7 +175,7 @@ function okHiIntegration(req, res, order, cartItems, next) {
 
 	var data = {
 		user: user,
-		value: order.payment.amount +195,
+		value: order.payment.amount,
 		id: order.orderNumber.toString(),
 		use_case: "e-commerce",
 		location_id: req.body.location.id,

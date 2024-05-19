@@ -559,9 +559,9 @@ Order.schema.methods.sendOrderNotification = function (next) {
             message = `DIALADRINK: Your order #${order.delivery.platform[0]}${order.orderNumber} has been received.`;
 
             if (order.payment.method == "PesaPal" || order.payment.method == "CyberSource")
-                message += ` Please proceed to pay ${order.currency || ''} ${order.total} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
+                message += ` Please proceed to pay ${order.currency || ''} ${order.total + 195} online ${order.payment.shortUrl?' via ' + order.payment.shortUrl:''}`;
             else
-                message += ` You will be required to pay ${order.currency || ''} ${order.total} ${order.payment.method? order.payment.method: 'on delivery'}`;
+                message += ` You will be required to pay ${order.currency || ''} ${order.total + 195} ${order.payment.method? order.payment.method: 'on delivery'}`;
 
             if (order.client && order.client._id) {
                 promise.then(() => order.client.sendSMSNotification(message).then(() => order.smsNotificationSent = true));
@@ -774,7 +774,7 @@ Order.checkOutCartItems = function (cart, promo, deliveryDetails, callback) {
                 payment: {
                     method: deliveryDetails.paymentMethod,
                     subtotal: subtotal,
-                    amount: subtotal + 195 - discount
+                    amount: subtotal - discount
                 },
                 promo: promo,
                 clientIp: deliveryDetails.clientIp,
