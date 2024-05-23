@@ -277,7 +277,7 @@ Order.schema.virtual("subtotal").get(function () {
 });
 
 Order.schema.virtual("total").get(function () {
-    return this.subtotal + this.chargesAmt - this.discount;
+    return this.subtotal + this.chargesAmt - this.discount + 195;
 });
 
 Order.schema.virtual("deliveryLocation").get(function () {

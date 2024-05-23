@@ -97,7 +97,7 @@ router.post("/", function (req, res, next) {
 
 					mpesa.onlineCheckout(
 						order.delivery.phoneNumber,
-						order.payment.amount,
+						order.payment.amount + 195,
 						order.orderNumber
 					);
 				} else if (order.payment.method == "Mpesa2") {
