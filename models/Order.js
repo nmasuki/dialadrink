@@ -276,6 +276,10 @@ Order.schema.virtual("subtotal").get(function () {
     return 0;
 });
 
+Order.schema.virtual("deliveryFee").get(function () {
+    return 195;
+});
+
 Order.schema.virtual("total").get(function () {
     return this.subtotal + this.chargesAmt - this.discount + 195;
 });
