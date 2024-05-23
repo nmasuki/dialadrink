@@ -1,4 +1,4 @@
-var CACHE_VERSION = 403;
+var CACHE_VERSION = 404;
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js');
 
