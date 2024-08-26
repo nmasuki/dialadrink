@@ -94,8 +94,8 @@
     <div class="containers">
         <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
             {{#each offers}}
-                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12{{/if}}" 
-                    itemscope itemtype="http://schema.org/Product" style="margin:4px;">                
+                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12{{/if}}" 
+                    itemscope itemtype="http://schema.org/Product">                
                     {{>product}}
                 </div>
             {{/each}}
@@ -125,15 +125,17 @@
                 </h2>
             </div>
         </div>
-        
-        <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
-            {{#each popular}}
-                <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12{{/if}}" 
-                    itemscope itemtype="http://schema.org/Product"
-                    style="margin:4px;">                
+    
+
+        <div class="containers">
+            <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
+                {{#each popular}}
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12{{/if}}" 
+                    itemscope itemtype="http://schema.org/Product">                
                     {{>product}}
-                </div>
-            {{/each}}
+                    </div>
+                {{/each}}
+            </div>
         </div>
         
         {{#if brandFocus.length}}
@@ -157,15 +159,16 @@
                 <div class="col-sm-4"></div>
             </div>
             
+            <div class="containers">
             <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
                 {{#each brandFocus}}
-                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12{{/if}}" 
-                        itemscope itemtype="http://schema.org/Product"
-                        style="margin:4px;">                
-                        {{>product}}
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12{{/if}}" 
+                    itemscope itemtype="http://schema.org/Product">                
+                    {{>product}}
                     </div>
                 {{/each}}
             </div>
+        </div>
         {{/if}}
     </div>
 {{else}}
@@ -184,15 +187,17 @@
                     </div>
                 {{/if}}
 
-                <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
-                    {{#each products}}
-                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12{{/if}}" 
-                            itemscope itemtype="http://schema.org/Product"
-                            style="box-shadow:3px 3px 3px white; margin-bottom :15px;">                
-                            {{>product}}
-                        </div>
-                    {{/each}}
-                </div>
+                <div class="containers">
+            <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
+                {{#each products}}
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12{{/if}}" 
+                    itemscope itemtype="http://schema.org/Product">                
+                    {{>product}}
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+                
 
                 
                 {{#if key}}
@@ -216,18 +221,20 @@
         </div>
 
     </div>
-        {{!-- Category Products START --}}
-        <div class="{{#if isMobile}}container{{else}}side-container{{/if}}">
-                <div class="{{#if isMobile}}grid-container{{else}}row products-grid{{/if}}">
-                    {{#each products}}
-                        <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-1 col-lg-2 col-sm-12{{/if}}" 
-                            itemscope itemtype="http://schema.org/Product"
-                             style="margin:4px;">                        
-                            {{>product}}
-                        </div>
-                    {{/each}}
-                </div>
+    
+
+            <div class="containers">
+            <div class="{{#if isMobile}}container{{else}}side-container{{/if}}">
+                {{#each products}}
+                    <div class="{{#if isMobile}}col-md-6 col-lg-6 col-sm-12 single{{else}}col-md-3 col-lg-3 col-sm-12{{/if}}" 
+                    itemscope itemtype="http://schema.org/Product">                
+                    {{>product}}
+                    </div>
+                {{/each}}
             </div>
+        </div>
+
+            
         </div>
             {{!-- Category Products END --}}
 
