@@ -562,9 +562,9 @@ async function sitemap(req, res) {
     var pages = await Page.model.find({}).exec();
     var products = await Product.findPublished({}).exec();
     var categories = await ProductCategory.model.find({}).exec();
-    var grape = await Grape.model.find({}).exec();
-    var size = await Size.model.find({}).exec();
     var blogs = await Blog.model.find({}).exec();
+    //var grape = await Grape.model.find({}).exec();
+    //var size = await Size.model.find({}).exec();
     //var mybrands = await Mybrands.model.find({}).exec();
 
     let links = linksFromMenus(menus)
