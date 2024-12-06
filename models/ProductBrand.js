@@ -12,7 +12,7 @@ ProductBrand.add({
     href: {
         type: String,
         initial: true,
-        required: true
+        required: false
     },
     logo: { type: Types.CloudinaryImage, folder: "brands" },
     pageTitle: { type: String },
