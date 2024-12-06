@@ -230,15 +230,15 @@ exports.initBrandsLocals = function (req, res, next) {
 
             return Promise.resolve(cachedPage);
         }
-        
+
     } catch (e) {
 
     }
 
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
         if (!err) {
-            groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
-            group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            var groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            var group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
 
             delete groups._delete;
             delete groups.Others;
@@ -263,7 +263,6 @@ exports.initBrandsLocals = function (req, res, next) {
 
             res.locals.groupedBrands = groups;
             res.locals.groupedBrand = group;
-
 
             if (memCache){
                 var toCache = {groupedBrands: res.locals.groupedBrands, groupedBrand: res.locals.groupedBrand};
