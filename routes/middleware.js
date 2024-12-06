@@ -218,15 +218,21 @@ exports.initPageLocals = function (req, res, next) {
 };
 
 exports.initBrandsLocals = function (req, res, next) {
-    var cachedPage = memCache ? memCache.get("__popularbrands__") : null;
+    try {
+        var cachedPage = memCache ? memCache.get("__popularbrands__") : null;
 
-    if (cachedPage) {
-        res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage || {});
+        if (cachedPage) {
+            res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage.groupedBrands || {});
+            res.locals.groupedBrand = Object.assign(res.locals.groupedBrand || {}, cachedPage.groupedBrand || {});
 
-        if (typeof next == "function")
-            next(err);
+            if (typeof next == "function")
+                next(err);
 
-        return Promise.resolve(cachedPage);
+            return Promise.resolve(cachedPage);
+        }
+        
+    } catch (e) {
+
     }
 
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
@@ -258,9 +264,11 @@ exports.initBrandsLocals = function (req, res, next) {
             res.locals.groupedBrands = groups;
             res.locals.groupedBrand = group;
 
-            if (memCache)
-                memCache.put("__popularbrands__", res.locals.groupedBrands, res.locals.groupedBrand, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
+            if (memCache){
+                var toCache = {groupedBrands: res.locals.groupedBrands, groupedBrand: res.locals.groupedBrand};
+                memCache.put("__popularbrands__", toCache, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+            }
         }
         if (typeof next == "function")
             next(err);
