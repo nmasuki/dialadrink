@@ -22,7 +22,7 @@ var handlebars = require('express-handlebars').create({
 	partialsDir: 'templates/views/partials',
 	layoutsDir: 'templates/views/layouts',
 	helpers: new require('./templates/views/helpers')(),
-	precompiled: require('./templates'),
+	// precompiled: require('./templates'),
 	extname: '.hbs',
 	allowedProtoProperties: true,
 	allowProtoProperties: true,

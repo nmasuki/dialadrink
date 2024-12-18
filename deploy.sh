@@ -8,6 +8,6 @@ if [ $RESULT -eq 0 ]; then
 
 #    pm2 reload workers --update-env --log-date-format 'DD-MM HH:mm:ss.SSS'
 
-    grunt build && git add . && git commit -m "$HOSTNAME deploy v$newnum" && git tag -a v$newnum -m v$newnum && git push && pm2 reload main --update-env --log-date-format 'DD-MM HH:mm:ss.SSS' && git push && pm2 log
-    pm2 reload workers --update-env --log-date-format 'DD-MM HH:mm:ss.SSS'
+    grunt build && git add . && git commit -m "$HOSTNAME deploy v$newnum" && git tag -a v$newnum -m v$newnum && git push && pm2 reload app --update-env --log-date-format 'DD-MM HH:mm:ss.SSS' && git push && pm2 log
+    pm2 reload app-workers --update-env --log-date-format 'DD-MM HH:mm:ss.SSS'
 fi
