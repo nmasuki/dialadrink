@@ -205,7 +205,7 @@ exports.initPageLocals = function (req, res, next) {
     return keystone.list('Page').model
         .find({ key: regex })
         .exec((err, pages) => {
-            var page = pages.orderBy(m => m.href.length - cleanId.length).first();
+            var page = (pages || []).orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
 
             if (memCache)
@@ -214,7 +214,6 @@ exports.initPageLocals = function (req, res, next) {
             if (typeof next == "function")
                 next(err);
         });
-
 };
 
 exports.initBrandsLocals = function (req, res, next) {

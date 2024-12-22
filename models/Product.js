@@ -325,10 +325,10 @@ Product.schema.methods.findRelated = function (callback) {
     return Product.findRelated([this.id || this._id], callback);
 };
 
-var saveDebounce = function(){ return this.save(); }.debounce();
+var saveThrottle = function(){ return this.save(); }.throttle();
 Product.schema.methods.addPopularity = function (factor) {
     this.popularity = (this.popularity || 0) + (factor || 1);
-    saveDebounce.apply(this);
+    saveThrottle.apply(this);
 };
 
 Product.schema.methods.toAppObject = function () {
