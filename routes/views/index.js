@@ -16,8 +16,8 @@ function search(req, res, next) {
     var locals = res.locals;
 
     // Skip to page if valid
-    //if (locals.page && locals.page._id && locals.page.content)
-    //    return next();
+    if (locals.page && locals.page._id && locals.page.content)
+        return next();
 
     req.params.query = req.params.query || req.query.q || req.query.query || "";
 

@@ -13,7 +13,7 @@ var isMobile = require('../helpers/isMobile');
 var memCache = require("memory-cache");
 
 function requestCache(duration, _key) {
-    duration = duration || 30;
+    duration = duration || 120;
     return (req, res, next) => {
         if (req.xhr)
             return next();
@@ -163,7 +163,7 @@ exports.initLocals = function (req, res, next) {
         res.locals.contactNumber = "+" + (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
 
         //Environment
-        //res.locals.env = process.env.NODE_ENV;
+        res.locals.env = process.env.NODE_ENV;
 
         //To use uglified files in production
         res.locals.dotmin = process.env.NODE_ENV == "production" ? ".min" : "";
@@ -180,10 +180,11 @@ exports.initLocals = function (req, res, next) {
             exports.initBrandsLocals(req, res),
             exports.initPageLocals(req, res)
         ]).then(function () {
-            next();
             var ms = new Date().getTime() - istart.getTime();
-            if (process.env.NODE_ENV == "development" || ms > 300)
+            if (process.env.NODE_ENV != "production" || ms > 300)
                 console.log("Initiated Locals in ", ms + "ms");
+
+            next();
         });
     }
 };
