@@ -29,10 +29,12 @@ function requestCache(duration, _key) {
         let sem = new Semaphore(1, key);
 
         try {
+            /*
             if (await sem.acquire(2000) != true) {   
                 console.warn("Semaphore timeout for key", key);
                 return next();
             }
+            */
             
             let cacheContent = await fileCache.get(key);
             if (cacheContent) {
