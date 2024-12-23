@@ -10,40 +10,51 @@
 var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
+var Semaphore = require('../helpers/Semaphore');
 var MemoryLRUCache = require('../helpers/MemoryLRUCache');
-var memCache = new MemoryLRUCache();
+var fileCache = new MemoryLRUCache();
+//var fileCache = require('memory-cache');
 
 function requestCache(duration, _key) {
-    duration = duration || 30;
-    return (req, res, next) => {
+    duration = duration || 120;
+    return async (req, res, next) => {
         if (req.xhr)
             return next();
 
         res.locals = res.locals || {};
 
-        try {
-            let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
-            let keyParts = ['__express__', (isMobile ? "__mobile__" : ""), (_key || req.session.id), (req.originalUrl || req.url)]
-            let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
+        let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
+        let keyParts = ['__express__', (isMobile ? "__mobile__" : ""), (_key || req.session.id), (req.originalUrl || req.url)]
+        let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
+        let sem = new Semaphore(1, key);
 
-            let cacheContent = memCache.get(key);
+        try {
+            if (await sem.acquire(2000) != true) {   
+                console.warn("Semaphore timeout for key", key);
+                return next();
+            }
+            
+            let cacheContent = await fileCache.get(key);
             if (cacheContent) {
                 console.log("Using cache: " + key);
                 return res.send(cacheContent);
             } else {
                 var resSend = res.send;
 
-                res.send = (body) => {
+                res.send = async (body) => {
                     if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
-                        memCache.put(key, body, duration * 1000);
-                    resSend.call(res, body);
+                        await fileCache.put(key, body, duration * 1000);
+
+                    await resSend.call(res, body);
+                    sem.release();
                 };
 
                 next();
             }
         } catch (e) {
             console.warn("Error while getting cached http response!", e);
-            memCache.clear();
+            fileCache.clear();
+            sem.release();
             next();
         }
     };
@@ -164,7 +175,7 @@ exports.initLocals = function (req, res, next) {
         res.locals.contactNumber = "+" + (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
 
         //Environment
-        //res.locals.env = process.env.NODE_ENV;
+        res.locals.env = process.env.NODE_ENV;
 
         //To use uglified files in production
         res.locals.dotmin = process.env.NODE_ENV == "production" ? ".min" : "";
@@ -181,17 +192,18 @@ exports.initLocals = function (req, res, next) {
             exports.initBrandsLocals(req, res),
             exports.initPageLocals(req, res)
         ]).then(function () {
-            next();
             var ms = new Date().getTime() - istart.getTime();
-            if (process.env.NODE_ENV == "development" || ms > 300)
+            if (process.env.NODE_ENV != "production" || ms > 300)
                 console.log("Initiated Locals in ", ms + "ms");
+
+            next();
         });
     }
 };
 
-exports.initPageLocals = function (req, res, next) {
+exports.initPageLocals = async function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = memCache ? memCache.get("__page__" + cleanId) : null;
+    var cachedPage = fileCache ? await fileCache.get("__page__" + cleanId) : null;
 
     if (cachedPage) {
         res.locals.page = Object.assign(res.locals.page || {}, cachedPage || {});
@@ -199,41 +211,46 @@ exports.initPageLocals = function (req, res, next) {
         if (typeof next == "function")
             next(err);
 
-        return Promise.resolve();
+        return;
     }
 
     var regex = new RegExp("(" + cleanId.escapeRegExp() + ")", "i");
     return keystone.list('Page').model
         .find({ key: regex })
-        .exec((err, pages) => {
-            var page = pages.orderBy(m => m.href.length - cleanId.length).first();
+        .exec(async (err, pages) => {
+            var page = (pages || []).orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
 
-            if (memCache)
-                memCache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+            if (fileCache)
+                await fileCache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
         });
-
 };
 
-exports.initBrandsLocals = function (req, res, next) {
-    var cachedPage = memCache ? memCache.get("__popularbrands__") : null;
+exports.initBrandsLocals = async function (req, res, next) {
+    try {
+        var cachedPage = fileCache ? await fileCache.get("__popularbrands__") : null;
 
-    if (cachedPage) {
-        res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage || {});
+        if (cachedPage) {
+            res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage.groupedBrands || {});
+            res.locals.groupedBrand = Object.assign(res.locals.groupedBrand || {}, cachedPage.groupedBrand || {});
 
-        if (typeof next == "function")
-            next(err);
+            if (typeof next == "function")
+                next(err);
 
-        return Promise.resolve(cachedPage);
+            return cachedPage;
+        }
+
+    } catch (e) {
+
     }
 
-    return keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
+    return await keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
         if (!err) {
-            groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
-            group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            var groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            var group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
 
             delete groups._delete;
             delete groups.Others;
@@ -259,18 +276,19 @@ exports.initBrandsLocals = function (req, res, next) {
             res.locals.groupedBrands = groups;
             res.locals.groupedBrand = group;
 
-            if (memCache)
-                memCache.put("__popularbrands__", res.locals.groupedBrands, res.locals.groupedBrand, ((process.env.CACHE_TIME || 10) * 60) * 1000);
-
+            if (fileCache){
+                var toCache = {groupedBrands: res.locals.groupedBrands, groupedBrand: res.locals.groupedBrand};
+                fileCache.put("__popularbrands__", toCache, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+            }
         }
         if (typeof next == "function")
             next(err);
     });
 };
 
-exports.initBreadCrumbsLocals = function (req, res, next) {
+exports.initBreadCrumbsLocals = async function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = memCache ? memCache.get("__breadcrumbs__" + cleanId) : null;
+    var cachedPage = fileCache ? await fileCache.get("__breadcrumbs__" + cleanId) : null;
 
     if (cachedPage) {
         res.locals.breadcrumbs = (cachedPage || []).filter(b => b.label).distinctBy(b => b.label);
@@ -284,7 +302,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     //Load breadcrumbs
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
-    return keystone.list('MenuItem').model
+    return await keystone.list('MenuItem').model
         .find({ key: regex })
         .sort({ index: 1 })
         .deepPopulate("parent.parent.parent")
@@ -314,15 +332,15 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
                     "href": "/"
                 }];
 
-            if (memCache)
-                memCache.put("__breadcrumbs__" + cleanId, res.locals.breadcrumbs, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+            if (fileCache)
+                fileCache.put("__breadcrumbs__" + cleanId, res.locals.breadcrumbs, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
         });
 };
 
-exports.initTopMenuLocals = function (req, res, next) {
+exports.initTopMenuLocals = async function (req, res, next) {
     res.locals.OrbCloudinaryOptions = {
         secure: true,
         transformation: [{
@@ -330,7 +348,7 @@ exports.initTopMenuLocals = function (req, res, next) {
         }]
     };
 
-    var cachedPage = memCache ? memCache.get("__topmenu__") : null;
+    var cachedPage = fileCache ? await fileCache.get("__topmenu__") : null;
 
     if (cachedPage) {
         res.locals.navLinks = Object.assign(res.locals.navLinks || {}, cachedPage || {});
@@ -338,11 +356,11 @@ exports.initTopMenuLocals = function (req, res, next) {
         if (typeof next == "function")
             next(err);
 
-        return Promise.resolve();
+        return;
     }
 
     //TopMenu
-    return keystone.list('MenuItem').model
+    return await keystone.list('MenuItem').model
         .find({ level: 1, type: "top" })
         .sort({ index: 1 })
         .populate('submenus')
@@ -359,8 +377,8 @@ exports.initTopMenuLocals = function (req, res, next) {
                 .distinctBy(m => m.label.cleanId());
 
 
-            if (memCache)
-                memCache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+            if (fileCache)
+                fileCache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
