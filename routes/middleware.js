@@ -26,7 +26,7 @@ function requestCache(duration, _key) {
         let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
         let keyParts = ['__express__', (isMobile ? "__mobile__" : ""), (_key || req.session.id), (req.originalUrl || req.url)]
         let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
-        let sem = new Semaphore(1, key);
+        let sem = new Semaphore(3, key);
 
         try {
             if (await sem.acquire(10000)) {   

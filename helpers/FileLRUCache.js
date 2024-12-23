@@ -3,9 +3,10 @@ const path = require("path");
 const os = require("os");
 
 class FileLRUCache {
-  constructor(maxEntries = 100) {
+  constructor(maxEntries = 100, defaultTTL = 3600000) {
     this.cacheDir = path.join(os.tmpdir(), "file_lru_cache");
     this.maxEntries = maxEntries;
+    this.defaultTTL = defaultTTL; // Default TTL in milliseconds
     this.cacheMap = new Map(); // In-memory map to track file usage
     this.init();
   }
@@ -51,7 +52,7 @@ class FileLRUCache {
     }
   }
 
-  async put(key, value, ttl) {
+  async set(key, value, ttl = this.defaultTTL) {
     const filePath = this._getFilePath(key);
     const expiry = Date.now() + ttl;
 
@@ -67,8 +68,8 @@ class FileLRUCache {
     }
   }
 
-  async set() {
-    return this.put(...arguments);
+  async put() {
+    return this.set(...arguments);
   }
 
   async clear() {
@@ -103,8 +104,8 @@ class FileLRUCache {
 }
 
 function sanitizeFilename(text) {
-    // Replace invalid filename characters with an empty string
-    return text.replace(/[^a-zA-Z0-9_\-\.]/g, "");
-  }
+  // Replace invalid filename characters with an empty string
+  return text.replace(/[^a-zA-Z0-9_\-\.]/g, "");
+}
 
 module.exports = FileLRUCache;
