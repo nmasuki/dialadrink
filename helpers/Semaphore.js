@@ -1,13 +1,12 @@
 
-var memCache = require("memory-cache");
+var FileLRUCache = require('../helpers/FileLRUCache');
+var fileCache = new FileLRUCache();
 
 const MIN_TIMEOUT = 100;
 const DEFAULT_TIMEOUT = 10000; // 10 seconds
 
-memCache.set = memCache.put;
-
 class Semaphore {
-    constructor(max = 1, name = 'Unnamed', shuffle = false, throwOnTimeout = false, cache = memCache, options = {}) {
+    constructor(max = 1, name = 'Unnamed', shuffle = false, throwOnTimeout = false, cache = fileCache, options = {}) {
         if (typeof max !== 'number' || max <= 0) {
             throw new Error('Max must be a positive number!');
         }
