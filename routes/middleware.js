@@ -11,10 +11,11 @@ var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
 var memCache = require("memory-cache");
+var sem = new (require('../helpers/Semaphore'))(1);
 
 function requestCache(duration, _key) {
     duration = duration || 120;
-    return (req, res, next) => {
+    return async (req, res, next) => {
         if (req.xhr)
             return next();
 
@@ -25,25 +26,31 @@ function requestCache(duration, _key) {
             let keyParts = ['__express__', (isMobile ? "__mobile__" : ""), (_key || req.session.id), (req.originalUrl || req.url)]
             let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
 
-            let cacheContent = memCache.get(key);
-            if (cacheContent) {
-                console.log("Using cache: " + key);
-                return res.send(cacheContent);
+            if (await sem.acquire(key)) {   
+                let cacheContent = memCache.get(key);
+                if (cacheContent) {
+                    console.log("Using cache: " + key);
+                    return res.send(cacheContent);
+                } else {
+                    var resSend = res.send;
+
+                    res.send = (body) => {
+                        if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
+                            memCache.put(key, body, duration * 1000);
+                        resSend.call(res, body);
+                    };
+
+                    next();
+                }
             } else {
-                var resSend = res.send;
-
-                res.send = (body) => {
-                    if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
-                        memCache.put(key, body, duration * 1000);
-                    resSend.call(res, body);
-                };
-
                 next();
             }
         } catch (e) {
             console.warn("Error while getting cached http response!", e);
             memCache.clear();
             next();
+        } finally {
+            sem.release();
         }
     };
 }

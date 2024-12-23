@@ -1,7 +1,6 @@
 var keystone = require('keystone');
 var extractor = require("keyword-extractor");
 var cloudinary = require('cloudinary');
-const { add } = require('lodash');
 var Types = keystone.Field.Types;
 
 var Product = new keystone.List('Product', {
@@ -686,7 +685,6 @@ Product.offerAndPopular = function(size, callback){
                         });
                 });
         });
-
 };
 
 Product.findPublished = function (filter, callback) {
