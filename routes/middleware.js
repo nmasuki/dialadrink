@@ -12,7 +12,8 @@ var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
 var Semaphore = require('../helpers/Semaphore');
 var FileLRUCache = require('../helpers/FileLRUCache');
-var fileCache = new FileLRUCache();
+//var fileCache = new FileLRUCache();
+var fileCache = require('memory-cache');
 
 function requestCache(duration, _key) {
     duration = duration || 120;
