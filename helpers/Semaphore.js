@@ -1,5 +1,5 @@
 
-var FileLRUCache = require('../helpers/FileLRUCache');
+var FileLRUCache = require('./MemoryLRUCache');
 var fileCache = new FileLRUCache();
 
 const MIN_TIMEOUT = 100;
