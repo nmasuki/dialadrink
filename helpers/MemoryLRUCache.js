@@ -5,7 +5,7 @@ class MemoryLRUCache {
         this.cacheMap = new Map(); // In-memory map to track key-value pairs and expiry
     }
 
-    async get(key) {
+    get(key) {
         const entry = this.cacheMap.get(key);
 
         if (!entry) {
@@ -25,7 +25,7 @@ class MemoryLRUCache {
         return value;
     }
 
-    async set(key, value, ttl = this.defaultTTL) {
+    set(key, value, ttl = this.defaultTTL) {
         const expiry = Date.now() + ttl;
 
         // Add or update the cache entry
@@ -41,7 +41,7 @@ class MemoryLRUCache {
         }
     }
 
-    async put(key, value, ttl) {
+    put(key, value, ttl) {
         return this.set(key, value, ttl);
     }
 

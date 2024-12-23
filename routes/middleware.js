@@ -17,7 +17,7 @@ var dataCache = new MemoryLRUCache();
 
 function requestCache(duration, _key) {
     duration = duration || 120;
-    return async (req, res, next) => {
+    return (req, res, next) => {
         if (req.xhr)
             return next();
 
@@ -26,7 +26,6 @@ function requestCache(duration, _key) {
         let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
         let keyParts = ['__express__', (isMobile ? "__mobile__" : ""), (_key || req.session.id), (req.originalUrl || req.url)]
         let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
-        let sem = new Semaphore(1, key);
 
         try {
             /*
@@ -36,7 +35,7 @@ function requestCache(duration, _key) {
             }
             */
             
-            let cacheContent = await dataCache.get(key);
+            let cacheContent = dataCache.get(key);
             if (cacheContent) {
                 console.log("Using cache: " + key);
                 return res.send(cacheContent);
@@ -45,10 +44,9 @@ function requestCache(duration, _key) {
 
                 res.send = async (body) => {
                     if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
-                        await dataCache.put(key, body, duration * 1000);
+                        dataCache.put(key, body, duration * 1000);
 
-                    await resSend.call(res, body);
-                    sem.release();
+                    return await resSend.call(res, body);
                 };
 
                 next();
@@ -56,7 +54,6 @@ function requestCache(duration, _key) {
         } catch (e) {
             console.warn("Error while getting cached http response!", e);
             dataCache.clear();
-            sem.release();
             next();
         }
     };
