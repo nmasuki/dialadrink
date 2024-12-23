@@ -98,8 +98,13 @@ class FileLRUCache {
   }
 
   _getFilePath(key) {
-    return path.join(this.cacheDir, `${key}.json`);
+    return path.join(this.cacheDir, `${sanitizeFilename(key)}.json`);
   }
 }
+
+function sanitizeFilename(text) {
+    // Replace invalid filename characters with an empty string
+    return text.replace(/[^a-zA-Z0-9_\-\.]/g, "");
+  }
 
 module.exports = FileLRUCache;
