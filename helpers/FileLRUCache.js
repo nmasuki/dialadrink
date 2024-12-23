@@ -1,4 +1,5 @@
-const fs = require("fs");
+const fs = require("fs").promises;
+const _fs = require("fs");
 const path = require("path");
 const os = require("os");
 
@@ -36,7 +37,7 @@ class FileLRUCache {
             const { value, expiry } = JSON.parse(data);
 
             if (Date.now() > expiry) {
-                if (fs.existsSync(filePath))
+                if (_fs.existsSync(filePath))
                     await fs.unlink(filePath).catch(console.warn); // Ignore errors
                 this.cacheMap.delete(key);
                 return null; // Cache expired
@@ -79,7 +80,7 @@ class FileLRUCache {
             for (const file of files) {
                 const filePath = path.join(this.cacheDir, file);
                 // delete if it exists
-                if (fs.existsSync(filePath))
+                if (_fs.existsSync(filePath))
                     await fs.unlink(filePath).catch(console.warn); // Ignore errors
             }
             this.cacheMap.clear();
@@ -93,7 +94,7 @@ class FileLRUCache {
         const filePath = this._getFilePath(oldestKey);
 
         try {
-            if (fs.existsSync(filePath))
+            if (_fs.existsSync(filePath))
                 await fs.unlink(filePath);
         } catch (err) {
             console.warn(`Failed to delete expired cache file: ${filePath}`, err);
