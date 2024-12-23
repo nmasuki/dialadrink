@@ -11,7 +11,7 @@ var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
 var memCache = require("memory-cache");
-var sem = new (require('../helpers/Semaphore'))(1);
+var Semaphore = require('../helpers/Semaphore');
 
 function requestCache(duration, _key) {
     duration = duration || 120;
@@ -25,8 +25,9 @@ function requestCache(duration, _key) {
             let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
             let keyParts = ['__express__', (isMobile ? "__mobile__" : ""), (_key || req.session.id), (req.originalUrl || req.url)]
             let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
+            let sem = new Semaphore(1, key);
 
-            if (await sem.acquire(key)) {   
+            if (await sem.acquire(10000)) {   
                 let cacheContent = memCache.get(key);
                 if (cacheContent) {
                     console.log("Using cache: " + key);
