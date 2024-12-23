@@ -88,7 +88,7 @@ class Semaphore {
         if (await this.canAcquire(currentCount)) {
             const acquired = await this.cache.set(this.name, currentCount + 1, lockTimeout);
             if (acquired) {
-                console.debug(`Semaphore '${this.name}' acquired ${this.getMetricsStr()}`);
+                //console.debug(`Semaphore '${this.name}' acquired ${this.getMetricsStr()}`);
                 return true;
             } else {
                 console.warn(`Failed to acquire semaphore ${this.getMetricsStr()}`);
@@ -117,7 +117,7 @@ class Semaphore {
 
                 const acquired = await this.cache.set(this.name, currentCount + 1, lockTimeout);
                 if (acquired) {
-                    console.debug(`Semaphore '${this.name}' acquired in ${Date.now() - startTime}ms, ${this.getMetricsStr()}`);
+                    //console.debug(`Semaphore '${this.name}' acquired in ${Date.now() - startTime}ms, ${this.getMetricsStr()}`);
                     
                     this.metrics.currentCount = currentCount + 1;
                     this.metrics.acquisitions += 1;
@@ -136,7 +136,7 @@ class Semaphore {
                 const randomizedBackoff = this.shuffle ? backoff + jitter : backoff;
 
                 await new Promise(resolve => setTimeout(resolve, randomizedBackoff));
-                console.debug(`Waiting for semaphore '${this.name}' to be released. Timeout: ${(timeout - (Date.now() - startTime)) / 1000} seconds, ${this.getMetricsStr()}`);
+                //console.debug(`Waiting for semaphore '${this.name}' to be released. Timeout: ${(timeout - (Date.now() - startTime)) / 1000} seconds, ${this.getMetricsStr()}`);
             }
         }
 
@@ -154,8 +154,9 @@ class Semaphore {
     }
 
     async release() {
-        if (this.metrics.lastLockTime == null) 
-            return console.debug(`Cannot release semaphore '${this.name}' without acquiring it first. ${this.getMetricsStr()}`);
+        if (this.metrics.lastLockTime == null) {
+            //return console.debug(`Cannot release semaphore '${this.name}' without acquiring it first. ${this.getMetricsStr()}`);
+        }
 
         await this.awaitInit();
 
@@ -167,7 +168,7 @@ class Semaphore {
         if(currentCount - 1 <= 0)
             this.metrics.lastLockTime = null;
                 
-        console.debug(`Semaphore '${this.name}' released after holding for ${lockDuration}ms, ${this.getMetricsStr()}`);
+        //console.debug(`Semaphore '${this.name}' released after holding for ${lockDuration}ms, ${this.getMetricsStr()}`);
     }
 
     async getCounter() {
