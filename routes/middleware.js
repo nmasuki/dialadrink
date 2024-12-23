@@ -14,7 +14,7 @@ var MemoryLRUCache = require('../helpers/MemoryLRUCache');
 var memCache = new MemoryLRUCache();
 
 function requestCache(duration, _key) {
-    duration = duration || 120;
+    duration = duration || 30;
     return (req, res, next) => {
         if (req.xhr)
             return next();
@@ -164,7 +164,7 @@ exports.initLocals = function (req, res, next) {
         res.locals.contactNumber = "+" + (process.env.CONTACT_PHONE_NUMBER || "0723688108").cleanPhoneNumber();
 
         //Environment
-        res.locals.env = process.env.NODE_ENV;
+        //res.locals.env = process.env.NODE_ENV;
 
         //To use uglified files in production
         res.locals.dotmin = process.env.NODE_ENV == "production" ? ".min" : "";
@@ -181,11 +181,10 @@ exports.initLocals = function (req, res, next) {
             exports.initBrandsLocals(req, res),
             exports.initPageLocals(req, res)
         ]).then(function () {
-            var ms = new Date().getTime() - istart.getTime();
-            if (process.env.NODE_ENV != "production" || ms > 300)
-                console.log("Initiated Locals in ", ms + "ms");
-
             next();
+            var ms = new Date().getTime() - istart.getTime();
+            if (process.env.NODE_ENV == "development" || ms > 300)
+                console.log("Initiated Locals in ", ms + "ms");
         });
     }
 };
@@ -207,7 +206,7 @@ exports.initPageLocals = function (req, res, next) {
     return keystone.list('Page').model
         .find({ key: regex })
         .exec((err, pages) => {
-            var page = (pages || []).orderBy(m => m.href.length - cleanId.length).first();
+            var page = pages.orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
 
             if (memCache)
@@ -216,30 +215,25 @@ exports.initPageLocals = function (req, res, next) {
             if (typeof next == "function")
                 next(err);
         });
+
 };
 
 exports.initBrandsLocals = function (req, res, next) {
-    try {
-        var cachedPage = memCache ? memCache.get("__popularbrands__") : null;
+    var cachedPage = memCache ? memCache.get("__popularbrands__") : null;
 
-        if (cachedPage) {
-            res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage.groupedBrands || {});
-            res.locals.groupedBrand = Object.assign(res.locals.groupedBrand || {}, cachedPage.groupedBrand || {});
+    if (cachedPage) {
+        res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage || {});
 
-            if (typeof next == "function")
-                next(err);
+        if (typeof next == "function")
+            next(err);
 
-            return Promise.resolve(cachedPage);
-        }
-
-    } catch (e) {
-
+        return Promise.resolve(cachedPage);
     }
 
     return keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
         if (!err) {
-            var groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
-            var group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
+            group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
 
             delete groups._delete;
             delete groups.Others;
@@ -265,10 +259,9 @@ exports.initBrandsLocals = function (req, res, next) {
             res.locals.groupedBrands = groups;
             res.locals.groupedBrand = group;
 
-            if (memCache){
-                var toCache = {groupedBrands: res.locals.groupedBrands, groupedBrand: res.locals.groupedBrand};
-                memCache.put("__popularbrands__", toCache, ((process.env.CACHE_TIME || 10) * 60) * 1000);
-            }
+            if (memCache)
+                memCache.put("__popularbrands__", res.locals.groupedBrands, res.locals.groupedBrand, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+
         }
         if (typeof next == "function")
             next(err);
