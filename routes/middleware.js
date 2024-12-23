@@ -35,10 +35,11 @@ function requestCache(duration, _key) {
                 } else {
                     var resSend = res.send;
 
-                    res.send = (body) => {
+                    res.send = async (body) => {
                         if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
                             memCache.put(key, body, duration * 1000);
-                        resSend.call(res, body);
+                        await resSend.call(res, body);
+                        sem.release();
                     };
 
                     next();
@@ -49,9 +50,8 @@ function requestCache(duration, _key) {
         } catch (e) {
             console.warn("Error while getting cached http response!", e);
             memCache.clear();
-            next();
-        } finally {
             sem.release();
+            next();
         }
     };
 }
