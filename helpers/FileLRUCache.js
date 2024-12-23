@@ -67,6 +67,10 @@ class FileLRUCache {
     }
   }
 
+  async set() {
+    return this.put(...arguments);
+  }
+
   async clear() {
     try {
       const files = await fs.readdir(this.cacheDir);
