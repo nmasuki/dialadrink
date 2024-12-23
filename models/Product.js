@@ -1,6 +1,7 @@
 var keystone = require('keystone');
 var extractor = require("keyword-extractor");
 var cloudinary = require('cloudinary');
+const { add } = require('lodash');
 var Types = keystone.Field.Types;
 
 var Product = new keystone.List('Product', {
@@ -325,10 +326,15 @@ Product.schema.methods.findRelated = function (callback) {
     return Product.findRelated([this.id || this._id], callback);
 };
 
-var saveThrottle = function(){ return this.save(); }.throttle();
+var addPopularityTimeout = null;
 Product.schema.methods.addPopularity = function (factor) {
     this.popularity = (this.popularity || 0) + (factor || 1);
-    saveThrottle.apply(this);
+    
+    if (addPopularityTimeout)
+        clearTimeout(addPopularityTimeout);
+
+    let that = this;
+    addPopularityTimeout = setTimeout(() => that.save().finally(() => { addPopularityTimeout = null; }), 100);
 };
 
 Product.schema.methods.toAppObject = function () {
