@@ -28,7 +28,7 @@ function requestCache(duration, _key) {
 
         try {
             if (await sem.acquire(10000)) {   
-                let cacheContent = memCache.get(key);
+                let cacheContent = await memCache.get(key);
                 if (cacheContent) {
                     console.log("Using cache: " + key);
                     return res.send(cacheContent);
@@ -37,7 +37,8 @@ function requestCache(duration, _key) {
 
                     res.send = async (body) => {
                         if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
-                            memCache.put(key, body, duration * 1000);
+                            await memCache.put(key, body, duration * 1000);
+                        
                         await resSend.call(res, body);
                         sem.release();
                     };
