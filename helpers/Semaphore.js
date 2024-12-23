@@ -56,17 +56,17 @@ class Semaphore {
 
                         if (existing >= this.max) {
                             await this.cache.set(this.name, 0, MIN_TIMEOUT);
-                            logger.warn(`Semaphore '${this.name}' counter reset after ${timeout / 1000} seconds. ${this.getMetricsStr()}`);
+                            console.warn(`Semaphore '${this.name}' counter reset after ${timeout / 1000} seconds. ${this.getMetricsStr()}`);
                         }
                     } catch (err) {
-                        logger.error(`Error during semaphore ${this.getMetricsStr()}`, err);
+                        console.error(`Error during semaphore ${this.getMetricsStr()}`, err);
                     }
                 }, timeout);
             }
 
             this.initialized = true;
         } catch (err) {
-            logger.error(`Failed to initialize semaphore ${this.getMetricsStr()}`, err);
+            console.error(`Failed to initialize semaphore ${this.getMetricsStr()}`, err);
             this.initialized = false;
             throw err;
         }
@@ -88,13 +88,13 @@ class Semaphore {
         if (await this.canAcquire(currentCount)) {
             const acquired = await this.cache.set(this.name, currentCount + 1, lockTimeout);
             if (acquired) {
-                logger.debug(`Semaphore '${this.name}' acquired ${this.getMetricsStr()}`);
+                console.debug(`Semaphore '${this.name}' acquired ${this.getMetricsStr()}`);
                 return true;
             } else {
-                logger.warn(`Failed to acquire semaphore ${this.getMetricsStr()}`);
+                console.warn(`Failed to acquire semaphore ${this.getMetricsStr()}`);
             }
         } else {
-            logger.warn(`Semaphore '${this.name}' is full, cannot acquire lock! ${this.getMetricsStr()}`);
+            console.warn(`Semaphore '${this.name}' is full, cannot acquire lock! ${this.getMetricsStr()}`);
         }
     }
 
@@ -117,7 +117,7 @@ class Semaphore {
 
                 const acquired = await this.cache.set(this.name, currentCount + 1, lockTimeout);
                 if (acquired) {
-                    logger.debug(`Semaphore '${this.name}' acquired in ${Date.now() - startTime}ms, ${this.getMetricsStr()}`);
+                    console.debug(`Semaphore '${this.name}' acquired in ${Date.now() - startTime}ms, ${this.getMetricsStr()}`);
                     
                     this.metrics.currentCount = currentCount + 1;
                     this.metrics.acquisitions += 1;
@@ -126,7 +126,7 @@ class Semaphore {
 
                     return true;
                 } else {
-                    logger.warn(`Failed to acquire semaphore '${this.name}' after ${Date.now() - startTime}ms. timeout: ${lockTimeout}ms ${this.getMetricsStr()}`);
+                    console.warn(`Failed to acquire semaphore '${this.name}' after ${Date.now() - startTime}ms. timeout: ${lockTimeout}ms ${this.getMetricsStr()}`);
                     this.metrics.failures += 1;
                 }
             } else {
@@ -136,7 +136,7 @@ class Semaphore {
                 const randomizedBackoff = this.shuffle ? backoff + jitter : backoff;
 
                 await new Promise(resolve => setTimeout(resolve, randomizedBackoff));
-                logger.debug(`Waiting for semaphore '${this.name}' to be released. Timeout: ${(timeout - (Date.now() - startTime)) / 1000} seconds, ${this.getMetricsStr()}`);
+                console.debug(`Waiting for semaphore '${this.name}' to be released. Timeout: ${(timeout - (Date.now() - startTime)) / 1000} seconds, ${this.getMetricsStr()}`);
             }
         }
 
@@ -147,7 +147,7 @@ class Semaphore {
         if (this.throwOnTimeout) {
             throw new Error(`Timeout acquiring semaphore '${this.name}' after ${timeout}ms, ${this.getMetricsStr()}`);
         } else {
-            logger.warn(`Timeout acquiring semaphore '${this.name}' after ${timeout}ms, ${this.getMetricsStr()}`);
+            console.warn(`Timeout acquiring semaphore '${this.name}' after ${timeout}ms, ${this.getMetricsStr()}`);
         }
 
         return false;
@@ -155,7 +155,7 @@ class Semaphore {
 
     async release() {
         if (this.metrics.lastLockTime == null) 
-            return logger.debug(`Cannot release semaphore '${this.name}' without acquiring it first. ${this.getMetricsStr()}`);
+            return console.debug(`Cannot release semaphore '${this.name}' without acquiring it first. ${this.getMetricsStr()}`);
 
         await this.awaitInit();
 
@@ -167,7 +167,7 @@ class Semaphore {
         if(currentCount - 1 <= 0)
             this.metrics.lastLockTime = null;
                 
-        logger.debug(`Semaphore '${this.name}' released after holding for ${lockDuration}ms, ${this.getMetricsStr()}`);
+        console.debug(`Semaphore '${this.name}' released after holding for ${lockDuration}ms, ${this.getMetricsStr()}`);
     }
 
     async getCounter() {
@@ -183,7 +183,7 @@ class Semaphore {
 
                 return count;
             } catch (err) {
-                logger.error(`Attempt ${attempt}: Error fetching semaphore! ${this.getMetricsStr()}`, err);
+                console.error(`Attempt ${attempt}: Error fetching semaphore! ${this.getMetricsStr()}`, err);
                 if (attempt === retryCount) {
                     throw err;
                 }
