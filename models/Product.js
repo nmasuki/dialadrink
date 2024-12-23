@@ -334,7 +334,7 @@ Product.schema.methods.addPopularity = function (factor) {
         clearTimeout(addPopularityTimeout);
 
     let that = this;
-    addPopularityTimeout = setTimeout(() => that.save().finally(() => { addPopularityTimeout = null; }), 100);
+    addPopularityTimeout = setTimeout(() => that.save().catch(() => { }).finally(() => { addPopularityTimeout = null; }), 100);
 };
 
 Product.schema.methods.toAppObject = function () {
