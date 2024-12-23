@@ -104,7 +104,7 @@ class FileLRUCache {
     }
 
     _getFilePath(key) {
-        return path.join(this.cacheDir, `${sanitizeFilename(key)}.json`);
+        return path.join(this.cacheDir, `${sanitizeFilename(key.split("?")[0])}.json`);
     }
 }
 
