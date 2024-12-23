@@ -51,7 +51,7 @@ class FileLRUCache {
     }
   }
 
-  async set(key, value, ttl) {
+  async put(key, value, ttl) {
     const filePath = this._getFilePath(key);
     const expiry = Date.now() + ttl;
 
@@ -64,6 +64,19 @@ class FileLRUCache {
     // Enforce LRU policy
     if (this.cacheMap.size > this.maxEntries) {
       await this._enforceLRU();
+    }
+  }
+
+  async clear() {
+    try {
+      const files = await fs.readdir(this.cacheDir);
+      for (const file of files) {
+        const filePath = path.join(this.cacheDir, file);
+        await fs.unlink(filePath);
+      }
+      this.cacheMap.clear();
+    } catch (err) {
+      console.error("Failed to clear cache directory:", err);
     }
   }
 

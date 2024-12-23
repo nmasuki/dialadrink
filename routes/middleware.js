@@ -12,8 +12,8 @@ var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
 var Semaphore = require('../helpers/Semaphore');
 var FileLRUCache = require('../helpers/FileLRUCache');
-//var fileCache = new FileLRUCache();
-var fileCache = require('memory-cache');
+var fileCache = new FileLRUCache();
+//var fileCache = require('memory-cache');
 
 function requestCache(duration, _key) {
     duration = duration || 120;
@@ -200,9 +200,9 @@ exports.initLocals = function (req, res, next) {
     }
 };
 
-exports.initPageLocals = function (req, res, next) {
+exports.initPageLocals = async function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = fileCache ? fileCache.get("__page__" + cleanId) : null;
+    var cachedPage = fileCache ? await fileCache.get("__page__" + cleanId) : null;
 
     if (cachedPage) {
         res.locals.page = Object.assign(res.locals.page || {}, cachedPage || {});
@@ -210,27 +210,27 @@ exports.initPageLocals = function (req, res, next) {
         if (typeof next == "function")
             next(err);
 
-        return Promise.resolve();
+        return;
     }
 
     var regex = new RegExp("(" + cleanId.escapeRegExp() + ")", "i");
     return keystone.list('Page').model
         .find({ key: regex })
-        .exec((err, pages) => {
+        .exec(async (err, pages) => {
             var page = (pages || []).orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
 
             if (fileCache)
-                fileCache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+                await fileCache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
         });
 };
 
-exports.initBrandsLocals = function (req, res, next) {
+exports.initBrandsLocals = async function (req, res, next) {
     try {
-        var cachedPage = fileCache ? fileCache.get("__popularbrands__") : null;
+        var cachedPage = fileCache ? await fileCache.get("__popularbrands__") : null;
 
         if (cachedPage) {
             res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage.groupedBrands || {});
@@ -239,14 +239,14 @@ exports.initBrandsLocals = function (req, res, next) {
             if (typeof next == "function")
                 next(err);
 
-            return Promise.resolve(cachedPage);
+            return cachedPage;
         }
 
     } catch (e) {
 
     }
 
-    return keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
+    return await keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
         if (!err) {
             var groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
             var group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
@@ -285,9 +285,9 @@ exports.initBrandsLocals = function (req, res, next) {
     });
 };
 
-exports.initBreadCrumbsLocals = function (req, res, next) {
+exports.initBreadCrumbsLocals = async function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = fileCache ? fileCache.get("__breadcrumbs__" + cleanId) : null;
+    var cachedPage = fileCache ? await fileCache.get("__breadcrumbs__" + cleanId) : null;
 
     if (cachedPage) {
         res.locals.breadcrumbs = (cachedPage || []).filter(b => b.label).distinctBy(b => b.label);
@@ -301,7 +301,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
     //Load breadcrumbs
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
-    return keystone.list('MenuItem').model
+    return await keystone.list('MenuItem').model
         .find({ key: regex })
         .sort({ index: 1 })
         .deepPopulate("parent.parent.parent")
@@ -339,7 +339,7 @@ exports.initBreadCrumbsLocals = function (req, res, next) {
         });
 };
 
-exports.initTopMenuLocals = function (req, res, next) {
+exports.initTopMenuLocals = async function (req, res, next) {
     res.locals.OrbCloudinaryOptions = {
         secure: true,
         transformation: [{
@@ -347,7 +347,7 @@ exports.initTopMenuLocals = function (req, res, next) {
         }]
     };
 
-    var cachedPage = fileCache ? fileCache.get("__topmenu__") : null;
+    var cachedPage = fileCache ? await fileCache.get("__topmenu__") : null;
 
     if (cachedPage) {
         res.locals.navLinks = Object.assign(res.locals.navLinks || {}, cachedPage || {});
@@ -355,11 +355,11 @@ exports.initTopMenuLocals = function (req, res, next) {
         if (typeof next == "function")
             next(err);
 
-        return Promise.resolve();
+        return;
     }
 
     //TopMenu
-    return keystone.list('MenuItem').model
+    return await keystone.list('MenuItem').model
         .find({ level: 1, type: "top" })
         .sort({ index: 1 })
         .populate('submenus')
