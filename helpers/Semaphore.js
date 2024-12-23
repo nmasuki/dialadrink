@@ -265,6 +265,10 @@ function generateShortHand(obj) {
     return result;
 }
 
+let intervalId = null; // Shared across all calls
+let pendingConditions = []; // List of all condition functions across calls
+let currentCheckInterval = null; // The currently active check interval (lowest interval)
+
 function awaitFor(
     checkCondition,                   // Function to check if condition is met
     timeoutInterval = 10 * 60 * 1000, // Default: 10 minutes
