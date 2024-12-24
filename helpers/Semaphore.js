@@ -1,6 +1,6 @@
-
-var FileLRUCache = require('./MemoryLRUCache');
-var fileCache = new FileLRUCache();
+const { start } = require('keystone');
+const MemoryLRUCache = require('./MemoryLRUCache');
+const fileCache = new MemoryLRUCache();
 
 const MIN_TIMEOUT = 100;
 const DEFAULT_TIMEOUT = 10000; // 10 seconds
@@ -77,7 +77,7 @@ class Semaphore {
                 () => this.initialized,
                 DEFAULT_TIMEOUT,
                 MIN_TIMEOUT,
-                `Semaphore '${this.name}' not initialized after 10 seconds waiting...`
+                `Semaphore '${this.name}' not initialized after ${DEFAULT_TIMEOUT / 1000} seconds waiting...`
             );
         }
     }
@@ -98,14 +98,14 @@ class Semaphore {
     }
 
     async acquire(timeout = DEFAULT_TIMEOUT) {
+        await this.awaitInit();
+
         const startTime = Date.now();
         let counter = 0;
         let lockTimeout = Math.max(MIN_TIMEOUT, timeout - (Date.now() - startTime));
         let currentCount = 0;
-
-        await this.awaitInit();
-
-        while (Date.now() - startTime < timeout) {
+        
+        while ((Date.now() - startTime) < timeout) {
             currentCount = await this.getCounter();
 
             if (this.initialized && !isNaN(currentCount) && currentCount < this.max) {
@@ -125,7 +125,6 @@ class Semaphore {
 
                     return true;
                 } else {
-                    console.warn(`Failed to acquire semaphore '${this.name}' after ${Date.now() - startTime}ms. timeout: ${lockTimeout}ms ${this.getMetricsStr()}`);
                     this.metrics.failures += 1;
                 }
             } else {
@@ -141,6 +140,7 @@ class Semaphore {
 
         // Update metrics for timeout
         this.metrics.lastLockTime = null;
+        this.metrics.failures += 1;
         this.metrics.timeouts += 1;
 
         if (this.throwOnTimeout) {
