@@ -1,7 +1,7 @@
 var ls = require('../helpers/LocalStorage').getInstance('cacheMap');
 
 class MemoryLRUCache {
-    constructor(maxEntries = 100, defaultTTL = 3600000) {
+    constructor(maxEntries = 10, defaultTTL = 3600000) {
         this.maxEntries = maxEntries;
         this.defaultTTL = defaultTTL; // Default TTL in milliseconds
         this.cacheMap = new Map(Object.entries(ls.getAll())); // In-memory map to track key-value pairs and expiry        

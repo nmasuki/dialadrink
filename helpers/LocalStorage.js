@@ -4,19 +4,19 @@ var lockFile = require('lockfile');
 var dataDir = path.resolve("../data/");
 var { mongoFilterToFn } = require('./filters');
 
-try{
+try {
     console.log("LocalStorage dir:", dataDir);
     if (!fs.existsSync(dataDir)) fs.mkdir(dataDir);
     //TODO unlock any pending locks
     /* entities.forEach(entityName => lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));); /**/
-} catch(e){
+} catch (e) {
     console.error(e);
 }
 
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, 
+        var r = Math.random() * 16 | 0,
             v = (c == 'x' ? r : (r & 0x3 | 0x8));
         return v.toString(16);
     });
@@ -24,20 +24,20 @@ function uuidv4() {
 
 function getAll(entityName) {
     var all = {};
-    
+
     try {
-        if (fs.existsSync(path.resolve(dataDir, entityName + ".json"))){
+        if (fs.existsSync(path.resolve(dataDir, entityName + ".json"))) {
             var jsonStr = (fs.readFileSync(path.resolve(dataDir, entityName + ".json")) || "{}").toString();
             var startIndex = Math.min(
-                jsonStr.contains("[")? jsonStr.indexOf("["): 0,
-                jsonStr.contains("{")? jsonStr.indexOf("{"): 0
+                jsonStr.contains("[") ? jsonStr.indexOf("[") : 0,
+                jsonStr.contains("{") ? jsonStr.indexOf("{") : 0
             );
 
             all = JSON.tryParse(jsonStr.substr(startIndex)) || {};
             if (all.data && all.response)
                 all = all.data;
-            
-            if(Array.isArray(all)){
+
+            if (Array.isArray(all)) {
                 var obj = {};
                 all.forEach(a => {
                     var id = a._id || a.id || a.Id || (a._id = entityName.toLowerCase() + "-" + uuidv4());
@@ -46,17 +46,17 @@ function getAll(entityName) {
 
                 all = obj;
             }
-            
-            for(var i in all){
-                if(all.hasOwnProperty(i)){
-                    for(var j in all[i])
-                        if (all[i].hasOwnProperty(j) && /^date|date$/i.test(j.toString())){
+
+            for (var i in all) {
+                if (all.hasOwnProperty(i)) {
+                    for (var j in all[i])
+                        if (all[i].hasOwnProperty(j) && /^date|date$/i.test(j.toString())) {
                             var parseDate = Date.tryParse(all[i][j]);
-                            all[i][j] = parseDate? parseDate.toISOString(): undefined; 
+                            all[i][j] = parseDate ? parseDate.toISOString() : undefined;
                         }
                 }
             }
-        } 
+        }
     } catch (e) {
         console.error(entityName + ".json", e);
     }
@@ -75,21 +75,21 @@ function saveAll(entityName, all) {
 
         console.log("Aquiring lock ", lockFilePath);
         lockFile.lock(lockFilePath, function (err) {
-            if (err){
+            if (err) {
                 console.warn("Could not aquire lock.", err);
-                setTimeout(function(){ 
+                setTimeout(function () {
                     console.log("Retrying save..");
-                    saveAll(entityName, all).then(resolve).catch(reject); 
+                    saveAll(entityName, all).then(resolve).catch(reject);
                 }, 100);
             }
-            
+
             fs.writeFile(filePath, JSON.stringify(all, null, 2), function (err) {
                 console.log("Saved to file", filePath, "Releasing lock", lockFilePath);
                 savePromises[entityName] = null;
                 lockFile.unlock(lockFilePath);
 
-                if (err){
-                    console.error("Error savinging to '" +entityName + ".json'", err);
+                if (err) {
+                    console.error("Error saving to '" + entityName + ".json'", err);
                     return reject(err);
                 }
 
@@ -111,9 +111,9 @@ function LocalStorage(entityName) {
 
         var setEntiry = function (entity) {
             var id = (entity._id || entity.id || entity.Id || entity.public_id || (entity._id = entityName.toLowerCase() + "-" + uuidv4())).toString();
-            entity._rev = entity._rev || entity.__v;      
-            
-            if(id && id.startsWith("temp:")){
+            entity._rev = entity._rev || entity.__v;
+
+            if (id && id.startsWith("temp:")) {
                 entity._id = id = id.split(":")[1] || (entityName.toLowerCase() + "-" + uuidv4());
                 delete entity._rev;
             }
@@ -124,10 +124,10 @@ function LocalStorage(entityName) {
             var curRevGuid = (all[id] && all[id]._rev || "").toString().split('-').splice(1).join('-');
             var docRevGuid = (entity._rev || "0").toString().split('-').splice(1).join('-');
 
-            if(!docRev || curRevGuid == docRevGuid)
+            if (!docRev || curRevGuid == docRevGuid)
                 entity._rev = parseInt(1 + curRev) + "-" + uuidv4();
-            else if(docRev > curRev){
-                if(Math.abs(docRev - curRev) < 1)
+            else if (docRev > curRev) {
+                if (Math.abs(docRev - curRev) < 1)
                     entity._rev = parseInt(1 + docRev) + "-" + uuidv4();
                 else
                     entity._rev = parseInt(docRev) + "-" + uuidv4();
@@ -137,37 +137,37 @@ function LocalStorage(entityName) {
                 errors.push({ _id: id, _rev: all[id]._rev, error: msg });
                 return console.error(msg);
             }
-            
-            if (entity.__v) delete entity.__v;       
-            
-            if(all[id] && entityName != "appuser"){
+
+            if (entity.__v) delete entity.__v;
+
+            if (all[id] && entityName != "appuser") {
                 console.log(
-                    "Updating " + entityName + "..\n\t _id:" + id + ",", 
+                    "Updating " + entityName + "..\n\t _id:" + id + ",",
                     "_rev:" + all[id]._rev + " ---> " + entity._rev
                 );
             }
 
             all[id] = all[id] || { _id: id, _rev: curRev, createdDate: new Date() };
-            
+
             var userId = global.appUser && global.appUser._id || null;
-            if(all[id].createdBy && all[id].createdBy._id)
+            if (all[id].createdBy && all[id].createdBy._id)
                 all[id].createdBy = all[id].createdBy._id;
-            
+
             entity.createdBy = all[id].createdBy || userId;
             entity.lastModifiedBy = userId;
 
             entity.modifiedDate = new Date();
-            for (var i in entity){
-                if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false)){
-                    if(/^phone|^mobile/i.test(i) && /^[\d\s]+$/.test(entity[i] || ""))
+            for (var i in entity) {
+                if (entity.hasOwnProperty(i) && (entity[i] || entity[i] === false)) {
+                    if (/^phone|^mobile/i.test(i) && /^[\d\s]+$/.test(entity[i] || ""))
                         entity[i] = entity[i].cleanPhoneNumber();
-                    else if(/^password/i.test(i)){
-                        if(entity[i] && !/^(\$\w\w){3}/.test(entity[i] || ""))//Reset password
+                    else if (/^password/i.test(i)) {
+                        if (entity[i] && !/^(\$\w\w){3}/.test(entity[i] || ""))//Reset password
                             entity[i] = (entity[i] || "").toString().encryptPassword().encryptedPassword;
-                        else if(all[id][i])
+                        else if (all[id][i])
                             continue;//Don't change password
-                    } 
-                    
+                    }
+
                     all[id][i] = entity[i];
                 }
             }
@@ -176,12 +176,12 @@ function LocalStorage(entityName) {
         }
 
         return new Promise((resolve, reject) => {
-            if (entity){
-                if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i)){
+            if (entity) {
+                if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i)) {
                     var list = Object.keys(entity).map(k => entity[k]);
                     list.forEach(setEntiry);
                     console.log(`Saving ${list.length} ${entityName} items..`);
-                } else{
+                } else {
                     setEntiry(entity);
                     console.log(`Saving ${entityName}..`);
                 }
@@ -198,16 +198,16 @@ function LocalStorage(entityName) {
     self.getAll = function (filter, sortBy) {
         sortBy = sortBy || "";
         var filtered = Object.values(getAll(entityName)).filter(mongoFilterToFn(filter));
-        var dir = /(^|\s)DESC($|\s)/i.test(sortBy)? -1: 1;        
+        var dir = /(^|\s)DESC($|\s)/i.test(sortBy) ? -1 : 1;
 
-        var sortByFxns = sortBy.split(/[^\w\s]/).filter(s => !!s).map(sort =>{
+        var sortByFxns = sortBy.split(/[^\w\s]/).filter(s => !!s).map(sort => {
             var parts = sort.split(" ");
             return (u => u[parts[0]]);
         });
 
         var sorted = filtered;
-        if(sortByFxns.length){
-            if(dir == -1)
+        if (sortByFxns.length) {
+            if (dir == -1)
                 sorted = sorted.orderByDescending(sortByFxns);
             else
                 sorted = sorted.orderBy(sortByFxns);
@@ -216,7 +216,7 @@ function LocalStorage(entityName) {
         return sorted;
     };
 
-    self.getOne = function(filter, sortBy){
+    self.getOne = function (filter, sortBy) {
         return (self.getAll(filter, sortBy) || [])[0];
     };
 
@@ -227,9 +227,9 @@ function LocalStorage(entityName) {
         return getAll(entityName)[id];
     };
 
-    self.delete = function (id) {   
+    self.delete = function (id) {
         var all = getAll(entityName);
-        if (all[id]){
+        if (all[id]) {
             delete all[id];
             saveAll(entityName, all);
         }

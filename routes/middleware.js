@@ -10,8 +10,8 @@
 var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
-var LRUCache = require('../helpers/MemoryLRUCache');
-var fileCache = new LRUCache();
+var LRUCache = require('../helpers/LocalStorageLRUCache');
+var cache = new LRUCache();
 //var fileCache = require('memory-cache');
 
 function requestCache(duration, _key) {
@@ -28,7 +28,7 @@ function requestCache(duration, _key) {
         let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
 
         try {
-            let cacheContent = fileCache.get(key);
+            let cacheContent = cache.get(key);
             if (cacheContent) {
                 console.log("Using cache: " + key);
                 return res.send(cacheContent);
@@ -38,7 +38,7 @@ function requestCache(duration, _key) {
                 res.send = async (body) => {
                     if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300){
                         console.log("Caching response: " + key, "duration:", duration * 1000);
-                        fileCache.put(key, body, duration * 1000);
+                        cache.put(key, body);
                     }
 
                     await resSend.call(res, body);
@@ -48,7 +48,7 @@ function requestCache(duration, _key) {
             }
         } catch (e) {
             console.warn("Error while getting cached http response!", e);
-            fileCache.clear();
+            cache.clear();
             sem.release();
             next();
         }
@@ -198,7 +198,7 @@ exports.initLocals = function (req, res, next) {
 
 exports.initPageLocals = async function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = fileCache ? await fileCache.get("__page__" + cleanId) : null;
+    var cachedPage = cache ? await cache.get("__page__" + cleanId) : null;
 
     if (cachedPage) {
         console.log("Using cached locals for page..");
@@ -217,8 +217,8 @@ exports.initPageLocals = async function (req, res, next) {
             var page = (pages || []).orderBy(m => m.href.length - cleanId.length).first();
             res.locals.page = Object.assign(res.locals.page, (page && page.toObject()) || {});
 
-            if (fileCache)
-                await fileCache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+            if (cache)
+                await cache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
@@ -227,7 +227,7 @@ exports.initPageLocals = async function (req, res, next) {
 
 exports.initBrandsLocals = async function (req, res, next) {
     try {
-        var cachedPage = fileCache ? await fileCache.get("__popularbrands__") : null;
+        var cachedPage = cache ? await cache.get("__popularbrands__") : null;
 
         if (cachedPage) {
             console.log("Using cached locals for popular brands..");
@@ -273,9 +273,9 @@ exports.initBrandsLocals = async function (req, res, next) {
             res.locals.groupedBrands = groups;
             res.locals.groupedBrand = group;
 
-            if (fileCache){
+            if (cache){
                 var toCache = {groupedBrands: res.locals.groupedBrands, groupedBrand: res.locals.groupedBrand};
-                fileCache.put("__popularbrands__", toCache, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+                cache.put("__popularbrands__", toCache, ((process.env.CACHE_TIME || 10) * 60) * 1000);
             }
         }
         if (typeof next == "function")
@@ -285,7 +285,7 @@ exports.initBrandsLocals = async function (req, res, next) {
 
 exports.initBreadCrumbsLocals = async function (req, res, next) {
     var cleanId = req.originalUrl.cleanId();
-    var cachedPage = fileCache ? await fileCache.get("__breadcrumbs__" + cleanId) : null;
+    var cachedPage = cache ? await cache.get("__breadcrumbs__" + cleanId) : null;
 
     if (cachedPage) {
         console.log("Using cached locals for breadcrumbs..");
@@ -330,8 +330,8 @@ exports.initBreadCrumbsLocals = async function (req, res, next) {
                     "href": "/"
                 }];
 
-            if (fileCache)
-                fileCache.put("__breadcrumbs__" + cleanId, res.locals.breadcrumbs, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+            if (cache)
+                cache.put("__breadcrumbs__" + cleanId, res.locals.breadcrumbs, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
@@ -346,7 +346,7 @@ exports.initTopMenuLocals = async function (req, res, next) {
         }]
     };
 
-    var cachedPage = fileCache ? await fileCache.get("__topmenu__") : null;
+    var cachedPage = cache ? await cache.get("__topmenu__") : null;
 
     if (cachedPage) {
         console.log("Using cached locals for top menu..");
@@ -376,8 +376,8 @@ exports.initTopMenuLocals = async function (req, res, next) {
                 .distinctBy(m => m.label.cleanId());
 
 
-            if (fileCache)
-                fileCache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 10) * 60) * 1000);
+            if (cache)
+                cache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
             if (typeof next == "function")
                 next(err);
