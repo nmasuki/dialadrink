@@ -8,9 +8,7 @@ try{
     console.log("LocalStorage dir:", dataDir);
     if (!fs.existsSync(dataDir)) fs.mkdir(dataDir);
     //TODO unlock any pending locks
-    /* entities.forEach(entityName => {
-        lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));
-    }); /**/
+    /* entities.forEach(entityName => lockFile.unlock(path.resolve(dataDir, entityName + ".lock"));); /**/
 } catch(e){
     console.error(e);
 }
@@ -87,9 +85,8 @@ function saveAll(entityName, all) {
             
             fs.writeFile(filePath, JSON.stringify(all, null, 2), function (err) {
                 console.log("Saved to file", filePath, "Releasing lock", lockFilePath);
-                lockFile.unlock(lockFilePath);
-
                 savePromises[entityName] = null;
+                lockFile.unlock(lockFilePath);
 
                 if (err){
                     console.error("Error savinging to '" +entityName + ".json'", err);
@@ -179,13 +176,15 @@ function LocalStorage(entityName) {
         }
 
         return new Promise((resolve, reject) => {
-            if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i)){
-                var list = Object.keys(entity).map(k => entity[k]);
-                list.forEach(setEntiry);
-                console.log(`Saving ${list.length} items..`);
-            } else{
-                setEntiry(entity);
-                console.log(`Saving..`);
+            if (entity){
+                if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i)){
+                    var list = Object.keys(entity).map(k => entity[k]);
+                    list.forEach(setEntiry);
+                    console.log(`Saving ${list.length} items..`);
+                } else{
+                    setEntiry(entity);
+                    console.log(`Saving..`);
+                }
             }
 
             saveAll(entityName, all);

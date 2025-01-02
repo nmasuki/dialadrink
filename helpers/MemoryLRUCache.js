@@ -1,8 +1,12 @@
+var ls = require('../helpers/LocalStorage').getInstance('cacheMap');
+
 class MemoryLRUCache {
     constructor(maxEntries = 100, defaultTTL = 3600000) {
         this.maxEntries = maxEntries;
         this.defaultTTL = defaultTTL; // Default TTL in milliseconds
-        this.cacheMap = new Map(); // In-memory map to track key-value pairs and expiry
+        this.cacheMap = new Map(Object.entries(ls.getAll())); // In-memory map to track key-value pairs and expiry        
+        
+        setInterval(() => ls.saveAll(Object.fromEntries(this.cacheMap)), 1000 * 60); // Save every 1 minutes
     }
 
     get(key) {
@@ -22,6 +26,7 @@ class MemoryLRUCache {
 
         // Update access time for LRU
         entry.lastAccess = Date.now();
+        
         return value;
     }
 

@@ -10,8 +10,8 @@
 var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
-var LocalStorageLRUCache = require('../helpers/LocalStorageLRUCache');
-var fileCache = new LocalStorageLRUCache();
+var MemoryLRUCache = require('../helpers/MemoryLRUCache');
+var fileCache = new MemoryLRUCache();
 //var fileCache = require('memory-cache');
 
 function requestCache(duration, _key) {
@@ -28,7 +28,7 @@ function requestCache(duration, _key) {
         let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
 
         try {
-            let cacheContent = await fileCache.get(key);
+            let cacheContent = fileCache.get(key);
             if (cacheContent) {
                 console.log("Using cache: " + key);
                 return res.send(cacheContent);
@@ -37,7 +37,7 @@ function requestCache(duration, _key) {
 
                 res.send = async (body) => {
                     if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
-                        await fileCache.put(key, body, duration * 1000);
+                        fileCache.put(key, body, duration * 1000);
 
                     await resSend.call(res, body);
                 };
@@ -199,6 +199,7 @@ exports.initPageLocals = async function (req, res, next) {
     var cachedPage = fileCache ? await fileCache.get("__page__" + cleanId) : null;
 
     if (cachedPage) {
+        console.log("Using cached locals for page..");
         res.locals.page = Object.assign(res.locals.page || {}, cachedPage || {});
 
         if (typeof next == "function")
@@ -227,6 +228,7 @@ exports.initBrandsLocals = async function (req, res, next) {
         var cachedPage = fileCache ? await fileCache.get("__popularbrands__") : null;
 
         if (cachedPage) {
+            console.log("Using cached locals for popular brands..");
             res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage.groupedBrands || {});
             res.locals.groupedBrand = Object.assign(res.locals.groupedBrand || {}, cachedPage.groupedBrand || {});
 
@@ -284,6 +286,7 @@ exports.initBreadCrumbsLocals = async function (req, res, next) {
     var cachedPage = fileCache ? await fileCache.get("__breadcrumbs__" + cleanId) : null;
 
     if (cachedPage) {
+        console.log("Using cached locals for breadcrumbs..");
         res.locals.breadcrumbs = (cachedPage || []).filter(b => b.label).distinctBy(b => b.label);
 
         if (typeof next == "function")
@@ -344,6 +347,7 @@ exports.initTopMenuLocals = async function (req, res, next) {
     var cachedPage = fileCache ? await fileCache.get("__topmenu__") : null;
 
     if (cachedPage) {
+        console.log("Using cached locals for top menu..");
         res.locals.navLinks = Object.assign(res.locals.navLinks || {}, cachedPage || {});
 
         if (typeof next == "function")
