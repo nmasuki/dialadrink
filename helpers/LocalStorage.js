@@ -68,9 +68,8 @@ function getAll(entityName) {
 
 var savePromises = {};
 function saveAll(entityName, all) {
-    var savePromise = savePromises[entityName];
-    if (savePromise)
-        return savePromise;
+    if (savePromises[entityName])
+        return savePromises[entityName];
 
     savePromises[entityName] = new Promise((resolve, reject) => {
         var filePath = path.resolve(dataDir, entityName + ".json");
@@ -92,13 +91,17 @@ function saveAll(entityName, all) {
 
                 savePromises[entityName] = null;
 
-                if (err)
+                if (err){
+                    console.error("Error savinging to '" +entityName + ".json'", err);
                     return reject(err);
-    
-                resolve();
+                }
+
+                return resolve();
             });
         });
-    }).catch(console.error);
+    });
+
+    return savePromises[entityName];
 }
 
 function LocalStorage(entityName) {
