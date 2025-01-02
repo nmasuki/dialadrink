@@ -17,7 +17,7 @@ var fileCache = new LocalStorageLRUCache();
 function requestCache(duration, _key) {
     duration = duration || 120;
     return async (req, res, next) => {
-        
+
         if (req.xhr)
             return next();
 
@@ -40,7 +40,6 @@ function requestCache(duration, _key) {
                         await fileCache.put(key, body, duration * 1000);
 
                     await resSend.call(res, body);
-                    sem.release();
                 };
 
                 next();
