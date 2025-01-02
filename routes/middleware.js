@@ -10,8 +10,8 @@
 var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
-var MemoryLRUCache = require('../helpers/MemoryLRUCache');
-var fileCache = new MemoryLRUCache();
+var LRUCache = require('../helpers/MemoryLRUCache');
+var fileCache = new LRUCache();
 //var fileCache = require('memory-cache');
 
 function requestCache(duration, _key) {
