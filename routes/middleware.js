@@ -36,8 +36,10 @@ function requestCache(duration, _key) {
                 var resSend = res.send;
 
                 res.send = async (body) => {
-                    if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300)
+                    if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300){
+                        console.log("Caching response: " + key, "duration:", duration * 1000);
                         fileCache.put(key, body, duration * 1000);
+                    }
 
                     await resSend.call(res, body);
                 };
