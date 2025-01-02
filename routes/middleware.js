@@ -11,8 +11,8 @@ var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
 var Semaphore = require('../helpers/Semaphore');
-var MemoryLRUCache = require('../helpers/MemoryLRUCache');
-var fileCache = new MemoryLRUCache();
+var LocalStorageLRUCache = require('../helpers/LocalStorageLRUCache');
+var fileCache = new LocalStorageLRUCache();
 //var fileCache = require('memory-cache');
 
 function requestCache(duration, _key) {
@@ -386,7 +386,7 @@ exports.initTopMenuLocals = async function (req, res, next) {
 };
 
 /****
- Fetches and clears the flashMessages before a view is rendered
+ **** Fetches and clears the flashMessages before a view is rendered
  ****/
 exports.flashMessages = function (req, res, next) {
     var flashMessages = {

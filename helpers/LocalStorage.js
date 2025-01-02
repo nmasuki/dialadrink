@@ -15,6 +15,7 @@ try{
     console.error(e);
 }
 
+
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, 
@@ -65,8 +66,13 @@ function getAll(entityName) {
     return all;
 }
 
-var saveAll = function (entityName, all) {
-    return new Promise((resolve, reject) => {
+var savePromises = {};
+function saveAll(entityName, all) {
+    var savePromise = savePromises[entityName];
+    if (savePromise)
+        return savePromise;
+
+    savePromises[entityName] = new Promise((resolve, reject) => {
         var filePath = path.resolve(dataDir, entityName + ".json");
         var lockFilePath = path.resolve(dataDir, entityName + ".lock");
 
@@ -84,14 +90,16 @@ var saveAll = function (entityName, all) {
                 console.log("Saved to file", filePath, "Releasing lock", lockFilePath);
                 lockFile.unlock(lockFilePath);
 
-                if(err)
+                savePromises[entityName] = null;
+
+                if (err)
                     return reject(err);
     
                 resolve();
             });
         });
     }).catch(console.error);
-}.debounce(10);
+}
 
 function LocalStorage(entityName) {
     var self = this;
@@ -216,7 +224,16 @@ function LocalStorage(entityName) {
 
         return getAll(entityName)[id];
     };
+
+    self.delete = function (id) {   
+        var all = getAll(entityName);
+        if (all[id]){
+            delete all[id];
+            saveAll(entityName, all);
+        }
+    };
 }
 
 LocalStorage.getInstance = (e => new LocalStorage(e));
+
 module.exports = LocalStorage;
