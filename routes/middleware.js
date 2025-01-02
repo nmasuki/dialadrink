@@ -11,8 +11,8 @@ var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
 var LRUCache = require('../helpers/LocalStorageLRUCache');
-var cache = new LRUCache();
-//var fileCache = require('memory-cache');
+//var cache = new LRUCache();
+var cache = require('memory-cache');
 
 function requestCache(duration, _key) {
     duration = duration || 120;
@@ -29,16 +29,16 @@ function requestCache(duration, _key) {
 
         try {
             let cacheContent = cache.get(key);
-            if (cacheContent) {
+            if (cacheContent?.body) {
                 console.log("Using cache: " + key);
-                return res.send(cacheContent);
+                return res.send(cacheContent.body);
             } else {
                 var resSend = res.send;
 
                 res.send = async (body) => {
                     if (res.method == "GET" && res.statusCode >= 200 && res.statusCode < 300){
                         console.log("Caching response: " + key, "duration:", duration * 1000);
-                        cache.put(key, body);
+                        cache.put(key, { body }, duration * 1000);
                     }
 
                     await resSend.call(res, body);
