@@ -23,7 +23,7 @@ function requestCache(duration, _key) {
 
         res.locals = res.locals || {};
 
-        let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = mobile(req));
+        let isMobile = (res.locals.isMobile != undefined) ? res.locals.isMobile : (res.locals.isMobile = isMobile(req));
         let keyParts = ['__express__', (isMobile ? "__mobile__" : ""), (_key || req.session.id), (req.originalUrl || req.url)]
         let key = keyParts.map(s => (s || '').toString().trim('/')).filter(x => x).join('/');
 
