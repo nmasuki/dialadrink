@@ -91,8 +91,8 @@ var cartUtil = function () {
             .orderByDescending(function(l) { return 0.01 * distanceFromNai(l.location) + area(l.viewport); });
 
         window.regionData = Object.assign({
-            deliveryDistance: deliveryDistance,
             freeDeliveryThreashold: 1000,
+            deliveryDistance: deliveryDistance,
             deliveryCharges: deliveryDistance * 200
         }, matches.last() || {});
 
