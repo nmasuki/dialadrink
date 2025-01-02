@@ -6,9 +6,7 @@ class MemoryLRUCache {
         this.defaultTTL = defaultTTL; // Default TTL in milliseconds
         this.cacheMap = new Map(Object.entries(ls.getAll())); // In-memory map to track key-value pairs and expiry        
         
-        setInterval(() => {            
-            ls.saveAll(Object.fromEntries(this.cacheMap));
-        }, 1000 * 60); // Save every 1 minutes
+        setInterval(() => ls.saveAll(Object.fromEntries(this.cacheMap)), 1000 * 60); // Save every 1 minutes
     }
 
     get(key) {
@@ -21,6 +19,7 @@ class MemoryLRUCache {
         if (Date.now() > expiry) {
             // Cache expired
             this.cacheMap.delete(key);
+            ls.delete(key);
             return null;
         }
 
@@ -63,6 +62,7 @@ class MemoryLRUCache {
         // Remove the oldest entry
         if (oldestKey !== null) {
             this.cacheMap.delete(oldestKey);
+            ls.delete(oldestKey);
         }
     }
 }
