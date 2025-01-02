@@ -180,10 +180,10 @@ function LocalStorage(entityName) {
                 if (Array.isArray(entity) || Object.keys(entity).every((x, i) => x == i)){
                     var list = Object.keys(entity).map(k => entity[k]);
                     list.forEach(setEntiry);
-                    console.log(`Saving ${list.length} items..`);
+                    console.log(`Saving ${list.length} ${entityName} items..`);
                 } else{
                     setEntiry(entity);
-                    console.log(`Saving..`);
+                    console.log(`Saving ${entityName}..`);
                 }
             }
 
