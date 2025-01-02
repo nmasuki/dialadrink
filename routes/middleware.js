@@ -10,7 +10,7 @@
 var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
-var LRUCache = require('../helpers/MemoryLRUCache');
+var LRUCache = require('../helpers/LocalStorageLRUCache');
 var cache = new LRUCache();
 //var fileCache = require('memory-cache');
 
