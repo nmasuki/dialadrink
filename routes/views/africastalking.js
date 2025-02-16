@@ -155,9 +155,7 @@ router.get("/:orderNo", function (req, res) {
 	if (!locals.page)
 		return res.status(404).render('errors\\404');
 
-	Order.model.findOne({
-			orderNumber: req.params.orderNo
-		})
+	Order.model.findOne({ orderNumber: req.params.orderNo })
 		.deepPopulate('client,cart.product.priceOptions.option')
 		.exec((err, order) => {
 			if (!order)

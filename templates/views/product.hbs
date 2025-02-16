@@ -136,8 +136,8 @@
                     <label style="font-size: 16px;{{#unless inStock}}text-decoration: line-through;{{/unless}}"
                         class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
                         style="margin-top:5px; white-space:nowrap;">
-                        <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" {{#if
-                            inStock}}{{#ifeq ../price price}}checked{{/ifeq}}{{else}}disabled{{/if}}
+                        <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" 
+                            {{#if inStock}}{{#ifeq ../price price}}checked{{/ifeq}}{{else}}disabled{{/if}}
                             value="{{quantity}}" data-value="{{price}}" data-option="{{../id}}|{{quantity}}" />
                         <span>{{currency}}</span>
                         {{#if percentOffer}}
