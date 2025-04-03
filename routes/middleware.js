@@ -103,9 +103,10 @@ exports.initLocals = function (req, res, next) {
         : process.env.OKHI_DEV_SERVER_KEY;
 
     //OKHi Client Key
-    res.locals.OkHiClientKey = process.env.NODE_ENV == "production"
-        ? process.env.OKHI_CLIENT_KEY
-        : process.env.OKHI_DEV_CLIENT_KEY;
+    if (process.env.OKHI_CLIENT_ENABLE == "true")
+        res.locals.OkHiClientKey = process.env.NODE_ENV == "production"
+                ? process.env.OKHI_CLIENT_KEY
+                : process.env.OKHI_DEV_CLIENT_KEY;
 
     //OKHi Branch
     res.locals.OkHiBranch = process.env.NODE_ENV == "production"
