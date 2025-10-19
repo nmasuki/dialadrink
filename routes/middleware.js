@@ -67,7 +67,6 @@ exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
  or replace it with your own templates / logic.
  ***/
 exports.initLocals = function (req, res, next) {
-
     //App Logo
     res.locals.appLogo = keystone.get("logo");
 
@@ -103,9 +102,10 @@ exports.initLocals = function (req, res, next) {
         : process.env.OKHI_DEV_SERVER_KEY;
 
     //OKHi Client Key
-    res.locals.OkHiClientKey = process.env.NODE_ENV == "production"
-        ? process.env.OKHI_CLIENT_KEY
-        : process.env.OKHI_DEV_CLIENT_KEY;
+    if (process.env.OKHI_CLIENT_ENABLE == "true")
+        res.locals.OkHiClientKey = process.env.NODE_ENV == "production"
+            ? process.env.OKHI_CLIENT_KEY
+            : process.env.OKHI_DEV_CLIENT_KEY;
 
     //OKHi Branch
     res.locals.OkHiBranch = process.env.NODE_ENV == "production"

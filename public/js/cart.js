@@ -65,7 +65,7 @@ var cartUtil = function () {
             });
 
         if (!location)
-            location = window.addressData && window.addressData.location || {"lat":-1,"lng":36};
+            location = window.addressData && window.addressData.location || { "lat": -1.2921, "lng": 36.8219 };
 
         var deliveryDistance = Math.round(10 * distanceFromNai(location))/10;
         
