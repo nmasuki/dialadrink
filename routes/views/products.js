@@ -30,7 +30,7 @@ function index(req, res) {
             locals.products = popularProducts;
             locals.featuredProducts = featuredProducts;
             
-            var products = popularProducts;                 
+            var products = popularProducts || [];                 
             var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
             if (brands.length == 1) locals.brand = brands.first();
 
@@ -54,7 +54,7 @@ function index(req, res) {
                 locals.groupedBrands[lastRemovedKey] = lastRemoved;
             
             //locals.groupedProducts = keystone.list('Product').groupProducts(products, homeGroupSize); 
-            locals.uifilters = keystone.list('Product').getUIFilters(products);
+            locals.uifilters = keystone.list('Product').getUIFilters(products || []);
             
             if (!Object.keys(locals.groupedBrands).length)
                 delete locals.groupedBrands;

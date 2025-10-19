@@ -97,6 +97,7 @@ exports = module.exports = function (app) {
 	app.use('/product-origin', middleware.globalCache, routes.views['product-origin']);
 	app.use('/blog', middleware.globalCache, routes.views.blog);
 	app.use('/contact-us', middleware.globalCache, routes.views.contact);
+	app.use('/faq', middleware.globalCache, routes.views.faq);
 	app.use('/gallery', middleware.globalCache, routes.views.gallery);
 
 	app.use('/product', SEOMetadataEnhancer.enhanceProductSEO, middleware.globalCache, routes.views.product);
@@ -111,6 +112,9 @@ exports = module.exports = function (app) {
 	const { enhancedSitemap } = require('../helpers/EnhancedSitemapGenerator');
 	app.get('/sitemap', enhancedSitemap);
 	app.get('/sitemap.xml', enhancedSitemap);
+	
+	// Service area pages for local SEO
+	app.get('/delivery/:area', routes.views['service-area']);
 	
 	// Enhanced robots.txt with proper sitemap reference
 	app.get('/robots.txt', (req, res) => {

@@ -1,0 +1,200 @@
+{{!< default}}
+
+{{#contentFor 'seo'}}
+    <title>{{pageTitle}}</title>
+    <meta name="description" content="{{metaDescription}}">
+    <meta name="keywords" content="alcohol delivery FAQ, Nairobi delivery questions, M-Pesa alcohol payment, age verification Kenya, alcohol delivery times, dial a drink FAQ">
+    
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+        {{{json faqSchema}}}
+    </script>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{pageTitle}}">
+    <meta property="og:description" content="{{metaDescription}}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.dialadrinkkenya.com/faq">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.dialadrinkkenya.com/faq">
+{{/contentFor}}
+
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary mb-3">
+            ❓ Frequently Asked Questions
+        </h1>
+        <p class="lead text-muted">
+            Get instant answers about alcohol delivery in Nairobi, payment methods, and our services
+        </p>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">🚀 Quick Help</h5>
+                        <p class="card-text mb-3">
+                            Can't find what you're looking for? Our team is ready to help!
+                        </p>
+                        <div class="d-flex gap-3 justify-content-center">
+                            <a href="tel:+254723688108" class="btn btn-primary">
+                                📞 Call +254723688108
+                            </a>
+                            <a href="/contact-us" class="btn btn-outline-primary">
+                                💬 Contact Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Categories -->
+    {{#each faqCategories}}
+    <div class="mb-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h4 mb-0">
+                            <span class="me-2">{{icon}}</span>
+                            {{name}}
+                        </h2>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="accordion" id="faq{{@index}}">
+                            {{#each faqs}}
+                            <div class="accordion-item border-0">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button {{#unless @first}}collapsed{{/unless}}" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#faq{{../@index}}_{{@index}}"
+                                            aria-expanded="{{#if @first}}true{{else}}false{{/if}}">
+                                        <strong>{{question}}</strong>
+                                    </button>
+                                </h3>
+                                <div id="faq{{../@index}}_{{@index}}" 
+                                     class="accordion-collapse collapse {{#if @first}}show{{/if}}" 
+                                     data-bs-parent="#faq{{../@index}}">
+                                    <div class="accordion-body">
+                                        <p class="mb-0">{{answer}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+
+    <!-- Quick Links Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h3 class="card-title">🔗 Quick Links</h3>
+                    <p class="card-text mb-4">
+                        Still have questions? Check out these helpful resources:
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="/products" class="btn btn-outline-primary w-100">
+                                🛒 Browse Products
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="/delivery/westlands" class="btn btn-outline-primary w-100">
+                                📍 Check Delivery Areas
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="/contact-us" class="btn btn-outline-primary w-100">
+                                📧 Contact Support
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="tel:+254723688108" class="btn btn-primary w-100">
+                                📞 Call Us Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Questions Summary -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">🌟 Most Popular Questions</h3>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-success">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">💳 Payment Methods</h5>
+                            <p class="card-text">
+                                We accept M-Pesa (most popular), cash on delivery, Visa, and Mastercard for all alcohol orders in Nairobi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-info">
+                        <div class="card-body">
+                            <h5 class="card-title text-info">🚚 Delivery Times</h5>
+                            <p class="card-text">
+                                Typical delivery: 30-60 minutes across Nairobi. Central areas faster, Karen/Lavington may take longer.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-warning">
+                        <div class="card-body">
+                            <h5 class="card-title text-warning">🆔 Age Verification</h5>
+                            <p class="card-text">
+                                Must be 18+ with valid Kenyan ID. Our delivery team checks ID before handing over alcohol orders.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">📱 How to Order</h5>
+                            <p class="card-text">
+                                Order online at dialadrinkkenya.com or call +254723688108. Both methods available 24/7.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-5">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h3 class="card-title">Ready to Order Alcohol Delivery in Nairobi?</h3>
+                <p class="card-text lead">
+                    Over 10,000 satisfied customers across Nairobi trust Dial A Drink Kenya
+                </p>
+                <div class="d-flex gap-3 justify-content-center mt-4">
+                    <a href="/products" class="btn btn-light btn-lg">
+                        🛒 Start Shopping
+                    </a>
+                    <a href="tel:+254723688108" class="btn btn-outline-light btn-lg">
+                        📞 Order by Phone
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -587,7 +587,7 @@ Product.findRelated = function (products, callback) {
         : [(products.id || products._id || products || "").toString()];
 
     return new Promise((resolve, reject) => {
-        keystone.list("CartItem").model.find({ product: { $in: productIds } })
+        return keystone.list("CartItem").model.find({ product: { $in: productIds } })
             .exec((err, cartItems) => {
                 if(err || !cartItems)
                     return console.warn("No related cartItems found!");
@@ -738,7 +738,7 @@ Product.findOnePublished = function (filter, callback) {
 };
 
 Product.findByBrand = function (filter, callback) {
-    keystone.list('ProductBrand').model.find(filter)
+    return keystone.list('ProductBrand').model.find(filter)
         .exec((err, brands) => {
             if (err || !brands)
                 return console.log(err);
@@ -753,7 +753,7 @@ Product.findByBrand = function (filter, callback) {
 };
 
 Product.findByGrape = function (filter, callback) {
-    keystone.list('Grape').model.find(filter)
+    return keystone.list('Grape').model.find(filter)
         .exec((err, grapes) => {
             if (err || !grapes)
                 return console.log(err);
@@ -768,7 +768,7 @@ Product.findByGrape = function (filter, callback) {
 };
 
 Product.findByCategory = function (filter, callback) {
-    keystone.list('ProductCategory').model.find(filter)
+    return keystone.list('ProductCategory').model.find(filter)
         .exec((err, categories) => {
             if (err || !categories)
                 return console.log(err);
@@ -784,7 +784,7 @@ Product.findByCategory = function (filter, callback) {
 };
 
 Product.findBySubCategory = function (filter, callback) {
-    keystone.list('ProductSubCategory').model.find(filter)
+    return keystone.list('ProductSubCategory').model.find(filter)
         .exec((err, subCategories) => {
             if (err || !subCategories)
                 return console.log(err);
@@ -799,7 +799,7 @@ Product.findBySubCategory = function (filter, callback) {
 };
 
 Product.findBySize = function (filter, callback) {
-    keystone.list('Size').model.find(filter)
+    return keystone.list('Size').model.find(filter)
         .exec((err, size) => {
             if (err || !size)
                 return console.log(err);
@@ -814,7 +814,7 @@ Product.findBySize = function (filter, callback) {
 };
 
 Product.findByOption = function (filter, callback) {
-    keystone.list('ProductOption').model.find(filter)
+    return keystone.list('ProductOption').model.find(filter)
         .exec((err, options) => {
             if (err || !options)
                 return console.log(err);
@@ -825,7 +825,7 @@ Product.findByOption = function (filter, callback) {
                 }
             };
 
-            keystone.list('ProductPriceOption').model.find(filter)
+            return keystone.list('ProductPriceOption').model.find(filter)
                 .exec((err, options) => {
                     if (err || !options)
                         return console.log(err, options);
@@ -937,7 +937,7 @@ Product.groupProducts = function(products, maxGroupSize){
 Product.getUIFilters = function (products, limit) {
     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
     var subCategoryGroups = Object.values(products.filter(p => p.subCategory).groupBy(p => p.subCategory._id));
-    var tagsGroups = Object.values(products.filter(p => p.tags.length)
+    var tagsGroups = Object.values(products.filter(p => p.tags?.length)
         .selectMany(p => p.tags.map(t => {
             return {
                 t: t,

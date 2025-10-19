@@ -71,6 +71,42 @@ class EnhancedSitemapGenerator {
                 loc: '/contact-us', 
                 priority: 0.6, 
                 changefreq: 'monthly' 
+            },
+            { 
+                loc: '/faq', 
+                priority: 0.8, 
+                changefreq: 'monthly' 
+            },
+            // Service area pages for local SEO
+            { 
+                loc: '/delivery/westlands', 
+                priority: 0.8, 
+                changefreq: 'weekly' 
+            },
+            { 
+                loc: '/delivery/karen', 
+                priority: 0.8, 
+                changefreq: 'weekly' 
+            },
+            { 
+                loc: '/delivery/kilimani', 
+                priority: 0.8, 
+                changefreq: 'weekly' 
+            },
+            { 
+                loc: '/delivery/kileleshwa', 
+                priority: 0.8, 
+                changefreq: 'weekly' 
+            },
+            { 
+                loc: '/delivery/lavington', 
+                priority: 0.8, 
+                changefreq: 'weekly' 
+            },
+            { 
+                loc: '/delivery/upperhill', 
+                priority: 0.8, 
+                changefreq: 'weekly' 
             }
         ];
 
