@@ -1,178 +1,176 @@
 <link rel="preload" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
-<style type='text/css'>
-    .price-options {
-        width: 50%;
-        margin-top: 5px;
-        white-space: nowrap;
-        padding: 5px;
-        margin: 2px;
-        border: 1px solid black;
-        border-radius: 5px;
-        cursor: pointer;
-        color: black;
-    }
-
-    .card {
-        width: 50%;
-        margin-top: 5px;
-        white-space: nowrap;
-        padding: 5px;
-        margin: 2px;
-        border: 1px solid black;
-        border-radius: 5px;
-        cursor: pointer;
-        color: black;
-    }
-
-    input[type="radio"],
-    input[type="checkbox"] {
-        margin: 2px 0 0;
-        margin-top: 1px \9;
-        line-height: normal;
-        height: 20px;
-        width: 12px;
-    }
-</style>
 
 {{#with product}}
-<div class="container" id="product-section" data-product="{{_id}}">
+<div class="container-fluid" id="product-section" data-product="{{_id}}">
 
-    <div class="row" style="border: 5px solid lightgray;">
-        <div class="col-sm-1 col-12">
-            {{#each altImages}}
-            <div class="thumbnail" style="width: 48px;">
-                <img alt="{{{../name}}}" height="42" width="42"
-                    data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
-                    src="{{cloudinaryUrl this width=42 height=42 crop='fit'}}" />
+    <div class="row border border-light shadow-sm bg-white rounded p-3 mb-4">
+        <!-- Product Image Thumbnails -->
+        <div class="col-lg-1 col-md-2 col-sm-3 col-4 order-1 order-md-1">
+            <div class="d-flex flex-column">
+                {{#each altImages}}
+                <div class="card mb-2 border-0 shadow-sm">
+                    <img alt="{{{../name}}}" class="card-img-top img-fluid rounded"
+                        style="height: 60px; object-fit: cover; cursor: pointer;"
+                        data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
+                        src="{{cloudinaryUrl this width=60 height=60 crop='fit'}}" />
+                </div>
+                {{else}}
+                <div class="card mb-2 border-0 shadow-sm">
+                    <img alt="{{{../name}}}" class="card-img-top img-fluid rounded"
+                        style="height: 60px; object-fit: cover; cursor: pointer;"
+                        data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
+                        src="{{cloudinaryUrl image width=60 height=60 crop='fit' background_removal='cloudinary_ai'}}" />
+                </div>
+                {{/each}}
             </div>
-            {{else}}
-            <div class="thumbnail" style="width: 48px;">
-                <img alt="{{{../name}}}" height="42" width="42"
-                    data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
-                    src="{{cloudinaryUrl image width=42 height=42 crop='fit' background_removal='cloudinary_ai'}}" />
-            </div>
-            {{/each}}
         </div>
 
-        <div class="col-sm-4 col-12">
-            <figure class="zoom"
+        <!-- Main Product Image -->
+        <div class="col-lg-5 col-md-6 col-sm-9 col-8 order-2 order-md-2">
+            <figure class="zoom text-center"
                 style="background-image: url({{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}})">
-                <img loading="lazy" class="image-responsive"
-                    src="{{cloudinaryUrl image width=380 height=380  crop='fit'}}"
+                <img loading="lazy" class="img-fluid rounded shadow"
+                    src="{{cloudinaryUrl image width=400 height=400 crop='fit'}}"
                     data-src="{{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
-                    alt="{{{name}}}" style="min-height: 380px; max-height: 400px; margin: 0 auto" />
+                    alt="{{{name}}}" style="max-height: 450px; object-fit: contain;" />
             </figure>
         </div>
 
-        <div class="col-sm-7 col-12">
-
-            <div class="col-md-8" style="font-size: 20px; color: #2f93A3; padding: 12px;">
-                <h1>
-                    <span class="category-name">{{name}}</span>
+        <!-- Product Details -->
+        <div class="col-lg-6 col-md-12 order-3 order-md-3">
+            
+            <!-- Product Title -->
+            <div class="mb-4">
+                <h1 class="display-4 text-primary font-weight-bold mb-2">
+                    {{name}}
                 </h1>
-
-                {{!-- <b>{{name}}</b> --}}
-
             </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-4 text-left">
-                            {{#if inStock}}
-                            <span class="monospaced label label-success">In Stock</span>
-                            {{else}}
-                            <span class="monospaced label label-danger">Out of Stock</span>
-                            {{/if}}
-                        </div>
-                        <div class="col-md-4 text-left">
-                        </div>
+            <!-- Stock Status and Category -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    {{#if inStock}}
+                    <span class="badge badge-success p-2 mb-2">
+                        <i class="fa fa-check-circle"></i> In Stock
+                    </span>
+                    {{else}}
+                    <span class="badge badge-danger p-2 mb-2">
+                        <i class="fa fa-times-circle"></i> Out of Stock
+                    </span>
+                    {{/if}}
+                </div>
+                <div class="col-md-6">
+                    {{#if category.name}}
+                    <div class="mb-2">
+                        <strong class="text-muted">Category:</strong>
+                        <a href="{{cleanId category.name}}" class="btn btn-outline-secondary btn-sm ml-2">
+                            {{category.name}}
+                        </a>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-4 text-left">
-                            {{#if category.name}}
-                            <tr>
-                                <th style="padding-left: 10px">Category: </th>
-                                <td style="border: 5px solid #fff; text-align:left;"><a
-                                        href="{{cleanId category.name}}">{{category.name}}</a></td>
-                            </tr>
-                            {{/if}}
-                        </div>
+                    {{/if}}
+                </div>
+            </div>
+            <!-- Additional Product Info -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    {{#if subCategory.name}}
+                    <div class="mb-2">
+                        <strong class="text-muted">Sub Category:</strong>
+                        <a href="{{cleanId subCategory.name}}" class="btn btn-outline-info btn-sm ml-2">
+                            {{subCategory.name}}
+                        </a>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-4 text-left">
-                            {{#if subCategory.name}}
-                            <tr>
-                                <th style="padding-left: 10px">Sub Category: </th>
-                                <td style="border: 5px solid #fff; text-align:left;"><a
-                                        href="{{cleanId subCategory.name}}">{{subCategory.name}}</a></td>
-                            </tr>
-                            {{/if}}
-                        </div>
+                    {{/if}}
+                </div>
+                <div class="col-md-6">
+                    {{#if brand.name}}
+                    <div class="mb-2">
+                        <strong class="text-muted">Brand:</strong>
+                        <a href="/brand/{{cleanId brand.href}}" class="btn btn-outline-primary btn-sm ml-2">
+                            {{brand.name}}
+                        </a>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-4 text-left">
-                            {{#if brand.name}}
-                            <tr>
-                            <tr>
-                                <th style="padding-left: 10px">Brand: </th>
-                                <td style="border: 5px solid #fff; text-align:left;"><a
-                                        href="/brand/{{cleanId brand.href}}">{{brand.name}}</a></td>
-                            </tr>
-                            {{/if}}
-                        </div>
-                    </div>
+                    {{/if}}
                 </div>
             </div>
 
-            <div class="col-md-12 bottom-rule">
+            <!-- Price Options -->
+            <div class="mb-4">
                 {{#ifgt options.length 1}}
-                <div class="change-quantity">
+                <h5 class="text-muted mb-3">Choose Size & Price:</h5>
+                <div class="row">
                     {{#each options}}
-                    <label style="font-size: 16px;{{#unless inStock}}text-decoration: line-through;{{/unless}}"
-                        class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
-                        style="margin-top:5px; white-space:nowrap;">
-                        <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" {{#if
-                            inStock}}{{#ifeq ../price price}}checked{{/ifeq}}{{else}}disabled{{/if}}
-                            value="{{quantity}}" data-value="{{price}}" data-option="{{../id}}|{{quantity}}" />
-                        <span>{{currency}}</span>
-                        {{#if percentOffer}}
-                        <span class="product-price">
-                            <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                <span>{{formatNumber price}}</span>
-                            </span>
-                            <span>
-                                {{formatNumber offerPrice}}
-                            </span>
-                        </span>
-                        {{else}}
-                        <span class="product-price">{{formatNumber price}}</span>
-                        {{/if}}
-                        <span>{{quantity}}</span>
-                    </label>
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <div class="card border {{#unless inStock}}border-muted{{else}}border-primary{{/unless}} h-100">
+                            <div class="card-body p-3">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" 
+                                           class="custom-control-input option" 
+                                           id="option-{{@index}}"
+                                           name="priceOption" 
+                                           {{#if inStock}}{{#ifeq ../price price}}checked{{/ifeq}}{{else}}disabled{{/if}}
+                                           value="{{quantity}}" 
+                                           data-value="{{price}}" 
+                                           data-option="{{../id}}|{{quantity}}"
+                                           data-qty="{{quantity}}" 
+                                           data-product="{{../_id}}">
+                                    <label class="custom-control-label w-100 {{#unless inStock}}text-muted{{/unless}}" 
+                                           for="option-{{@index}}">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong class="h6 mb-0">{{quantity}}</strong>
+                                                {{#unless inStock}}
+                                                <span class="badge badge-warning ml-2">Out of Stock</span>
+                                                {{/unless}}
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="text-muted small">{{currency}}</span>
+                                                {{#if percentOffer}}
+                                                <div>
+                                                    <small class="text-muted">
+                                                        <s>{{formatNumber price}}</s>
+                                                    </small>
+                                                    <div class="h5 text-success mb-0">{{formatNumber offerPrice}}</div>
+                                                    <small class="badge badge-success">{{percentOffer}}% OFF</small>
+                                                </div>
+                                                {{else}}
+                                                <div class="h5 text-dark mb-0">{{formatNumber price}}</div>
+                                                {{/if}}
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {{/each}}
                 </div>
                 {{else}}
-                <h4 style="margin-top:5px; white-space:nowrap; color: orangered; padding-left: 10px;">
-                    <span>{{quantity}} @</span>
-                    <span>{{currency}}</span>
-                    {{#if percentOffer}}
-                    <span>
-                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                            <span>{{formatNumber price}}</span>
-                        </span>
-                        <span class="product-price" id="product-price">
-                            {{formatNumber offerPrice}}
-                        </span>
-                    </span>
-                    {{else}}
-                    <span class="product-price" id="product-price">{{formatNumber price}}</span>
-                    {{/if}}
-                </h4>
+                <div class="card border-primary">
+                    <div class="card-body text-center">
+                        <h4 class="card-title text-primary mb-3">
+                            {{quantity}}
+                        </h4>
+                        <div class="mb-2">
+                            <span class="text-muted">{{currency}}</span>
+                            {{#if percentOffer}}
+                            <div>
+                                <h3 class="text-muted">
+                                    <s>{{formatNumber price}}</s>
+                                </h3>
+                                <h2 class="text-success" id="product-price">
+                                    {{formatNumber offerPrice}}
+                                </h2>
+                                <span class="badge badge-success p-2">{{percentOffer}}% OFF</span>
+                            </div>
+                            {{else}}
+                            <h2 class="text-primary" id="product-price">{{formatNumber price}}</h2>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
                 {{/ifgt}}
+            </div>
             </div>
 
             <div class="add-to-cart-wrapper">

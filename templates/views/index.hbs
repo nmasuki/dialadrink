@@ -1,21 +1,116 @@
 {{!< default}}
-<div class="container">
-	<div class="jumbotron"><img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/logo.svg" width="160">
-		<h1>Welcome</h1>
-		<p>This is your new <a href='http://keystonejs.com' target='_blank'>KeystoneJS</a> website.</p>
+
+<!-- Hero Section -->
+<section class="hero-section bg-gradient-primary text-white py-5 mb-5">
+	<div class="container">
+		<div class="row align-items-center">
+			<div class="col-lg-8 col-md-12">
+				<h1 class="display-3 font-weight-bold mb-4">Welcome to {{{appTitle}}}</h1>
+				<p class="lead mb-4">Quality drinks delivered to your door. Discover our premium selection of wines, spirits, and beverages.</p>
+				<div class="d-flex flex-wrap">
+					<a href="/products" class="btn btn-light btn-lg mr-3 mb-2">
+						<i class="fa fa-shopping-cart"></i> Shop Now
+					</a>
+					<a href="/about" class="btn btn-outline-light btn-lg mb-2">
+						<i class="fa fa-info-circle"></i> Learn More
+					</a>
+				</div>
+			</div>
+			<div class="col-lg-4 col-md-12 text-center">
+				<img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/logo.svg" 
+					 alt="{{{appTitle}}} Logo" 
+					 class="img-fluid" 
+					 style="max-width: 200px;">
+			</div>
+		</div>
 	</div>
+</section>
+
+<!-- Features Section -->
+<div class="container">
+	<div class="row mb-5">
+		<div class="col-12 text-center mb-4">
+			<h2 class="display-4 font-weight-bold text-dark">Why Choose Us?</h2>
+			<p class="lead text-muted">Experience the best in quality, service, and convenience</p>
+		</div>
+	</div>
+	
+	<div class="row mb-5">
+		<div class="col-lg-4 col-md-6 mb-4">
+			<div class="card h-100 border-0 shadow-sm">
+				<div class="card-body text-center p-4">
+					<div class="feature-icon mb-3">
+						<i class="fa fa-shipping-fast fa-3x text-primary"></i>
+					</div>
+					<h4 class="card-title font-weight-bold">Fast Delivery</h4>
+					<p class="card-text text-muted">Get your favorite drinks delivered quickly to your doorstep with our reliable delivery service.</p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-lg-4 col-md-6 mb-4">
+			<div class="card h-100 border-0 shadow-sm">
+				<div class="card-body text-center p-4">
+					<div class="feature-icon mb-3">
+						<i class="fa fa-award fa-3x text-success"></i>
+					</div>
+					<h4 class="card-title font-weight-bold">Premium Quality</h4>
+					<p class="card-text text-muted">We source only the finest beverages from trusted suppliers to ensure exceptional quality.</p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-lg-4 col-md-6 mb-4">
+			<div class="card h-100 border-0 shadow-sm">
+				<div class="card-body text-center p-4">
+					<div class="feature-icon mb-3">
+						<i class="fa fa-lock fa-3x text-info"></i>
+					</div>
+					<h4 class="card-title font-weight-bold">Secure Shopping</h4>
+					<p class="card-text text-muted">Shop with confidence knowing your personal and payment information is always protected.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Call to Action Section -->
 	<div class="row">
-		<div class="col-md-4 col-lg-4">
-			<h3>Lorem Ipsum</h3>
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		</div>
-		<div class="col-md-4 col-lg-4">
-			<h3>Lorem Ipsum</h3>
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-		</div>
-		<div class="col-md-4 col-lg-4">
-			<h3>Lorem Ipsum</h3>
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+		<div class="col-12">
+			<div class="card bg-dark text-white">
+				<div class="card-body text-center py-5">
+					<h3 class="card-title display-4 font-weight-bold mb-3">Ready to Start Shopping?</h3>
+					<p class="card-text lead mb-4">Explore our extensive collection of premium beverages</p>
+					<a href="/products" class="btn btn-primary btn-lg">
+						<i class="fa fa-arrow-right"></i> Browse Products
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
+
+<style>
+.hero-section {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-primary {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+	transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+	transform: translateY(-5px);
+}
+
+.feature-icon {
+	transition: transform 0.3s ease-in-out;
+}
+
+.card:hover .feature-icon {
+	transform: scale(1.1);
+}
+</style>
