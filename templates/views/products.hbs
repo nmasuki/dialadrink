@@ -295,64 +295,6 @@
         <td>{{subCategory.name}}</td>
     </tr>
 
-    <script type="application/ld+json">
-{
-  "@context": "http://schema.org/",
-  "@type": "Product",
-  "name": "{{{name}}}",
-  "image": [
-    "{{cloudinaryUrl image crop='fit' width='300'}}"
-   ],
-  "description": "{{{truncate (cleanHtml description) 155 ' '}}}",
-  "brand": {
-    "@type": "Thing",
-    "name": "{{{cleanHtml brand.name}}}"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "bestRating": "5",
-    "ratingValue": "{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}",
-    "ratingCount": "{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}"
-  },
-  "reviewRating": {
-    "@type": "Rating",
-    "ratingValue": "4",
-    "bestRating": "5"
-  } 
-  {{#if price}},
-  "offers": {
-    "@type": "Offer",
-    "priceCurrency": "{{currency}}",
-    "price": "{{price}}",     
-    {{#if percentOffer}}
-    "highPrice": "{{price}}",
-    "lowPrice": "{{offerPrice}}",  
-    {{/if}}
-    "priceValidUntil": "{{priceValidUntil}}",
-    "availability": "http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}",
-    "seller": {
-      "@type": "Organization",
-      "name": "{{../title}}"
-    },
-    "hasMerchantReturnPolicy": {
-          "@type": "MerchantReturnPolicy",
-          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-          "merchantReturnDays": 7,
-          "returnMethod": "https://schema.org/ReturnByMail",
-          "returnFees": "https://schema.org/FreeReturn"
-        },
-    "shippingDetails": {
-          "@type": "OfferShippingDetails",
-          "shippingRate": {
-            "@type": "MonetaryAmount",
-            "value": 0,
-            "currency": "KES"
-          }
-          }
-}
-{{/if}}
-}
-</script>
   {{/each}}
   </tbody>
  </table>                                                 
@@ -362,4 +304,48 @@
             
         </div>
     {{/if}}
+
+{{!-- Category-level structured data for SEO --}}
+{{#if products}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "CollectionPage",
+  "name": "{{#if page.h1}}{{page.h1}}{{else}}{{page.title}}{{/if}}",
+  "description": "{{#if page.meta}}{{page.meta}}{{else}}Shop our collection of quality products with fast delivery across Kenya{{/if}}",
+  "url": "{{#if page.canonical}}{{page.canonical}}{{else}}{{appUrl}}{{/if}}",
+  "mainEntity": {
+    "@type": "ItemList",
+    "numberOfItems": {{products.length}},
+    "itemListElement": [
+      {{#each products}}
+      {
+        "@type": "Product",
+        "position": {{@index}},
+        "name": "{{{name}}}",
+        "image": "{{cloudinaryUrl image crop='fit' width='300'}}",
+        "description": "{{{truncate (cleanHtml description) 100 ' '}}}",
+        {{#if brand}}
+        "brand": {
+          "@type": "Brand",
+          "name": "{{{cleanHtml brand.name}}}"
+        },
+        {{/if}}
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "{{#if currency}}{{currency}}{{else}}KES{{/if}}",
+          "price": "{{#if price}}{{price}}{{else}}1000{{/if}}",
+          "availability": "https://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}",
+          "seller": {
+            "@type": "Organization",
+            "name": "Dial A Drink Kenya"
+          }
+        }
+      }{{#unless @last}},{{/unless}}
+      {{/each}}
+    ]
+  }
+}
+</script>
+{{/if}}
 </div>

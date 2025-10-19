@@ -5,23 +5,30 @@
 <script src="//cdn.jsdelivr.net/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
-<!-- Loading header script for {{env}} -->
-<script>var app = {};</script>
-<script src="/js/modernizr.min.js" async></script>
-{{!--
-    //- jQuery 1.11.3 is included by default, and required by both Bootstrap
-    //- and the KeystoneJS Content Editor. If you are not targeting IE8,
-    //- you can upgrade to 2.1.4 (also bundled) for better performance.
---}}
+<!-- Optimized script loading for LCP performance -->
+<script>
+    var app = {};
+    // Critical path optimization - preload key resources
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js');
+        });
+    }
+</script>
+
+<!-- Critical JavaScript loaded synchronously -->
 <script src="/js/jquery/jquery-2.1.4.min.js"></script>
-<script src="/js/jquery/jquery-ui.min.js" async></script>
-{{!--
-    //- Customise which Bootstrap javascript files are served by including
-    //- them specifically here, instead of bootstrap-3.3.5.min.js
---}}
-<script src="/js/bootstrap/bootstrap-3.3.5.min.js" async></script>
-{{!-- 
-    //InterSectionObserver polyfill 
---}}
-<script src="/js/intersection-observer{{dotmin}}.js" async></script>
-<!-- /Loading header script for {{env}} -->
+
+<!-- Non-critical JavaScript deferred -->
+<script src="/js/modernizr.min.js" defer></script>
+<script src="/js/jquery/jquery-ui.min.js" defer></script>
+<script src="/js/bootstrap/bootstrap-3.3.5.min.js" defer></script>
+<script src="/js/intersection-observer{{dotmin}}.js" defer></script>
+
+<!-- Resource hints for better performance -->
+<link rel="dns-prefetch" href="//res.cloudinary.com">
+<link rel="dns-prefetch" href="//ik.imagekit.io">
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+<link rel="preconnect" href="https://ik.imagekit.io" crossorigin>
+
+<!-- /Optimized script loading for {{env}} -->

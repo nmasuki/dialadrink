@@ -20,12 +20,12 @@ function index(req, res) {
 
     var homeGroupSize = process.env.HOME_GROUP_SIZE || 15;
 
-    // Load Products - Optimized
+    // Load Products - Optimized for LCP
     view.on('init', function (next) {
-        // Use optimized query instead of slow offerAndPopular
+        // Prioritize above-the-fold content for faster LCP
         Promise.all([
-            QueryOptimizer.getPopularProducts(homeGroupSize),
-            QueryOptimizer.getFeaturedProducts(6)
+            QueryOptimizer.getPopularProducts(Math.min(homeGroupSize, 8)), // Reduce initial load
+            QueryOptimizer.getFeaturedProducts(4) // Fewer featured products for faster render
         ]).then(([popularProducts, featuredProducts]) => {
             locals.products = popularProducts;
             locals.featuredProducts = featuredProducts;

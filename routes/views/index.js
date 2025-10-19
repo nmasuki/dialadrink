@@ -60,9 +60,9 @@ function search(req, res, next) {
 
             renderSingleResults(products.first());
         } else {            
-            locals.products = products.slice(0, homeGroupSize * 10);            
-            //locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
+            locals.products = products.slice(0, homeGroupSize * 10);
             locals.uifilters = Product.getUIFilters(locals.products);
+            locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
 
             var categories = products.filter(p => p.category).distinctBy(p => p.category.id || p.category);
             var subCategories = products.filter(p => p.subCategory).distinctBy(p => p.subCategory.id || p.subCategory);

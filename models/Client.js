@@ -741,7 +741,7 @@ Client.schema.methods.getOrders = function(){
         return new Promise(resolve => {
             keystone.list("Order").model.find(findOption)
                 .sort({ orderDate: -1 })
-                .deepPopulate('client,cart.product.priceOptions.option,cart.product.brand,,cart.product.category')
+                .deepPopulate('client,cart.product.priceOptions.option,cart.product.brand,cart.product.category')
                 .exec((err, orders) => {
                     if (err)
                         return resolve(null);

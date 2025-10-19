@@ -3,7 +3,7 @@
 <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 <head>
     <!-- Enhanced SEO Title -->
-    <title>{{#if page.title}}{{page.title}}{{else}}{{titleReplacePipe page.title}}{{/if}}</title>
+    <title>{{#if page.title}}{{titleReplacePipe page.title}}{{else}}{{titleReplacePipe appTitle}}{{/if}}</title>
 
     <meta charset="utf-8"/>
     <meta name="_csrf" content="{{csrf_token_value}}"/>
@@ -18,6 +18,10 @@
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Performance optimizations for LCP -->
+    <link rel="preload" href="/js/jquery/jquery-2.1.4.min.js" as="script">
+    <link rel="preload" href="https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png" as="image">
     
     <!-- Enhanced SEO Meta Description -->
     {{#if page.description}}
@@ -42,7 +46,6 @@
     <meta property="og:url" content="{{openGraph.url}}"/>
     {{#if openGraph.image}}
     <meta property="og:image" content="{{openGraph.image}}"/>
-    <meta property="og:image:alt" content="{{openGraph.title}}"/>
     {{/if}}
     <meta property="og:site_name" content="Dial A Drink Kenya"/>
     {{else}}
@@ -50,7 +53,6 @@
     <meta property="og:site_name" content="{{appTitle}}"/>
     <meta property="og:description" content="{{#if page.description}}{{page.description}}{{else if page.meta}}{{{truncate (cleanHtml page.meta) 160}}}{{else}}Kenya's leading online alcohol delivery service{{/if}}"/>
     {{/if}}
-    
     <!-- Product-specific Open Graph (Legacy Support) -->
     {{#if product}}
     <meta property='product:price:amount' content='{{#if product.seoPrice}}{{product.seoPrice.price}}{{else}}{{product.price}}{{/if}}'/>
@@ -202,21 +204,62 @@
     {{!-- This file provides the default styling for the KeystoneJS Content Editor only renders when user is logged in and admin--}}
     {{{isAdminEditorCSS user}}}
 
-    <link rel="alternate stylesheet" onload="if(this.rel != 'stylesheet') this.rel='stylesheet'; return true" type="text/css" href="//fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Open+Sans:400,700,300"/>
-    <link rel="alternate stylesheet" onload="if(this.rel != 'stylesheet') this.rel='stylesheet'; return true" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
-    <link rel="alternate stylesheet" onload="if(this.rel != 'stylesheet') this.rel='stylesheet'; return true" type="text/css" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <!-- Optimized font loading for LCP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
     
+    <!-- Non-critical CSS loaded asynchronously -->
+    <link rel="preload" as="style" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" as="style" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- Fallback for no-JS -->
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;700&display=swap">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    </noscript>
+    
+    <!-- Critical CSS for LCP optimization -->
+    <style>
+        /* Critical Above-the-Fold Styles for LCP */
+        body { margin: 0; font-family: Arial, sans-serif; }
+        .main-content { min-height: 400px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .row { display: flex; flex-wrap: wrap; margin: 0 -15px; }
+        .col-md-3 { flex: 0 0 25%; max-width: 25%; padding: 0 15px; }
+        .col-md-4 { flex: 0 0 33.333%; max-width: 33.333%; padding: 0 15px; }
+        .col-md-6 { flex: 0 0 50%; max-width: 50%; padding: 0 15px; }
+        .col-md-12 { flex: 0 0 100%; max-width: 100%; padding: 0 15px; }
+        img { max-width: 100%; height: auto; }
+        .home_featured_title { text-align: center; margin: 20px 0; font-size: 24px; }
+        .product-card { background: #fff; border: 1px solid #ddd; margin-bottom: 20px; padding: 15px; }
+        @media (max-width: 768px) {
+            .col-md-3, .col-md-4, .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+        }
+    </style>
+
     {{#ifeq env 'production'}}
-        <link rel="preload stylesheet" as="style" type="text/css" href="/styles/site{{dotmin}}.css">
+        <link rel="preload" as="style" href="/styles/site{{dotmin}}.css" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/styles/site{{dotmin}}.css"></noscript>
     {{else}}
-        <link rel="stylesheet" type="text/css" href="/styles/bootstrap/bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="/js/social-buttons.min.css">
-        <link rel="stylesheet" type="text/css" href="/js/owlcarousel/assets/owl.carousel.min.css">
-        <link rel="stylesheet" type="text/css" href="/js/owlcarousel/assets/owl.theme.default.min.css">
-        <link rel="stylesheet" type="text/css" href="/styles/site/global.css">
-        <link rel="stylesheet" type="text/css" href="/styles/site/layout.css">
-        <link rel="stylesheet" type="text/css" href="/styles/site/styles.css">
-        <!--script src="//cdn.jsdelivr.net/npm/less@3.13"></script-->
+        <!-- Critical CSS loaded inline above, non-critical CSS loaded async -->
+        <link rel="preload" as="style" href="/styles/bootstrap/bootstrap.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" as="style" href="/styles/site/global.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" as="style" href="/styles/site/layout.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" as="style" href="/styles/site/styles.css" onload="this.onload=null;this.rel='stylesheet'">
+        
+        <!-- Non-critical CSS loaded async -->
+        <link rel="preload" as="style" href="/js/social-buttons.min.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" as="style" href="/js/owlcarousel/assets/owl.carousel.min.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" as="style" href="/js/owlcarousel/assets/owl.theme.default.min.css" onload="this.onload=null;this.rel='stylesheet'">
+        
+        <!-- Fallbacks for no-JS -->
+        <noscript>
+            <link rel="stylesheet" href="/styles/bootstrap/bootstrap.css">
+            <link rel="stylesheet" href="/styles/site/global.css">
+            <link rel="stylesheet" href="/styles/site/layout.css">
+            <link rel="stylesheet" href="/styles/site/styles.css">
+        </noscript>
     {{/ifeq}}
 
     {{>jsscripts1}}
@@ -416,25 +459,25 @@
         <li class="mobile-only">
             <a href="/cart" title="My cart">
                 <span class="badge badge-secondary badge-pill cart-total-pieces" style="position: absolute;left: 18px;background-color: red;">0</span>
-                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart-2.png" width="48px" alt="My cart">
+                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/empty-cart-2.png" style="width: 48px;" alt="My cart">
             </a>
         </li>
 
         <li class="mobile-only">
             <a href="https://play.google.com/store/apps/details?id=com.dial.dialcustomer&pli=1" title="Play Store">
-                <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/playstore_WU0YJrwAY.png?ik-sdk-version=javascript-1.4.3&updatedAt=1668080685429" alt="Youtube" height="48px">                                    
+                <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/playstore_WU0YJrwAY.png?ik-sdk-version=javascript-1.4.3&updatedAt=1668080685429" alt="Youtube" style="height: 48px;">                                    
             </a>
         </li>
 
         <li class="mobile-only">
             <a href="tel:{{contactNumber}}" title="Call to order">
-                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/phoneicon.png" width="48px" alt="Call to order">
+                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/phoneicon.png" style="width: 48px;" alt="Call to order">
             </a>
         </li>  
 
         <li class="mobile-only">
             <a target="_blank" rel="noreferrer" href="https://api.whatsapp.com/send?l=en&phone={{{contactNumber}}}&text=I%20am%20interested%20in%20a%20drink%20from%20your%20site.%20{{urlencode page.canonical}}" title="Whatsup">
-                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/whatsapp.png" width="48px" alt="Whatsup to order">
+                <img src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/whatsapp.png" style="width: 48px;" alt="Whatsup to order">
             </a>
         </li> 
     </ul>
@@ -451,5 +494,44 @@
 </div>
 
 {{>jsscripts2}}
+
+<!-- Lazy loading script for images -->
+    <script>
+        // Lightweight lazy loading for LCP optimization
+        document.addEventListener('DOMContentLoaded', function() {
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                // If img.dataset.src ends with double extension like .jpg.jpg, .png.png, correct it
+                                if(/\.(jpg|jpeg|png|gif|webp|svg)\.(jpg|jpeg|png|gif|webp|svg)$/i.test(img.dataset.src)) {
+                                    img.dataset.src = img.dataset.src.replace(/\.(jpg|jpeg|png|gif|webp|svg)\.(jpg|jpeg|png|gif|webp|svg)$/i, '.$1');
+                                }
+                                img.src = img.dataset.src;
+
+                                img.classList.remove('lazyload');
+                                img.classList.add('lazyloaded');
+                                observer.unobserve(img);
+                            }
+                        }
+                    });
+                });
+
+                // Observe all images with lazyload class
+                document.querySelectorAll('.lazyload').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            } else {
+                // Fallback for browsers without IntersectionObserver
+                document.querySelectorAll('.lazyload').forEach(img => {
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

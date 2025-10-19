@@ -135,10 +135,9 @@ Product.add({
     },
 
     relatedProducts: {
-        type: Types.Relationship,
-        ref: 'Product',
-        many: true,
-        hidden: true
+        type: Types.Text,
+        hidden: true,
+        noedit: true
     },
 });
 
@@ -341,15 +340,41 @@ Product.schema.methods.findRelated = function (callback) {
     return Product.findRelated([this.id || this._id], callback);
 };
 
-var addPopularityTimeout = null;
+// Map to store document-specific timeouts
+var popularityTimeouts = new Map();
+
 Product.schema.methods.addPopularity = function (factor) {
     this.popularity = (this.popularity || 0) + (factor || 1);
     
-    if (addPopularityTimeout)
-        clearTimeout(addPopularityTimeout);
+    const docId = this._id.toString();
+    
+    // Clear existing timeout for this document
+    if (popularityTimeouts.has(docId)) {
+        clearTimeout(popularityTimeouts.get(docId));
+    }
 
-    let that = this;
-    addPopularityTimeout = setTimeout(() => that.save().catch(() => { }).finally(() => { addPopularityTimeout = null; }), 100);
+    // Set new timeout for this specific document
+    const timeout = setTimeout(async () => {
+        try {
+            // Use findByIdAndUpdate to avoid version conflicts
+            await Product.model.findByIdAndUpdate(
+                docId,
+                { 
+                    $inc: { popularity: factor || 1 },
+                    $set: { modifiedDate: new Date() }
+                },
+                { new: true }
+            );
+        } catch (error) {
+            // Log error but don't throw to avoid breaking the application
+            console.warn(`Failed to update popularity for product ${docId}:`, error.message);
+        } finally {
+            // Clean up timeout reference
+            popularityTimeouts.delete(docId);
+        }
+    }, 100);
+    
+    popularityTimeouts.set(docId, timeout);
 };
 
 Product.schema.methods.toAppObject = function () {
@@ -450,7 +475,8 @@ Product.schema.pre('save', async function (next) {
     if(this.priceOptions.every(p => p.inStock != product.inStock))
         this.priceOptions.forEach(p => p.inStock = product.inStock);
 
-    this.relatedProducts = (await this.findRelated()).slice(0, 20);
+    const relatedProducts = (await this.findRelated()).slice(0, 20);
+    this.relatedProducts = JSON.stringify(relatedProducts.map(p => p._id || p.id));
 
     this.modifiedDate = new Date();
     var defaultOption = this.defaultOption || this.priceOptions.first();
@@ -594,7 +620,7 @@ Product.findRelated = function (products, callback) {
 
                 var cartIds = cartItems.map(c => c._id);
                 return keystone.list("Order").model.find({ cart: { $in: cartIds } })
-                    .deepPopulate("cart.product.category,cart.product.relatedProducts")
+                    .deepPopulate("cart.product.category")
                     .exec((err, orders) => {
                         if (err)
                             return console.log(err, orders);
@@ -620,8 +646,16 @@ Product.findRelated = function (products, callback) {
                                 }
 
                                 incrementCounts(item.product);
-                                if (item.product.relatedProducts)
-                                    item.product.relatedProducts.forEach(incrementCounts);
+                                if (item.product.relatedProducts) {
+                                    try {
+                                        const relatedIds = JSON.parse(item.product.relatedProducts);
+                                        if (Array.isArray(relatedIds)) {
+                                            relatedIds.forEach(id => incrementCounts({ _id: id }));
+                                        }
+                                    } catch (e) {
+                                        // Ignore parsing errors for legacy data
+                                    }
+                                }
                             });
                         });
 
@@ -920,6 +954,7 @@ Product.groupProducts = function(products, maxGroupSize){
     maxGroupSize = maxGroupSize || 12;
     var groupedProducts = products.groupBy(p => p.subCategory && p.subCategory.name || p.subCategory || '');
     var hasMore = {};
+
     for(var i in groupedProducts){
         if(groupedProducts[i].length < 4)
             delete groupedProducts[i];

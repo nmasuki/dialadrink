@@ -48,12 +48,16 @@
         <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
         <meta itemprop="name" content="{{name}}"/>
         <meta itemprop="description" content="{{truncate (cleanHtml description) 155}}"/>
-        <img src="{{cloudinaryUrl image width="500" height="500" crop='fill' background_removal='cloudinary_ai'}}" 
-                data-src="{{cloudinaryUrl image width=500 height=500 crop='fill' background_removal='cloudinary_ai'}}" 
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23f5f5f5'/%3E%3C/svg%3E" 
+                data-src="{{cloudinaryUrl image width=300 height=300 crop='fill' format='webp' quality='auto:good'}}" 
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="300"
                 title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
                 itemprop="image" alt="{{{name}}}"
-                class="img-responsive desktop-image"
-            style="margin: auto"/>
+                class="img-responsive desktop-image lazyload"
+            style="margin: auto; aspect-ratio: 1/1; object-fit: cover;"/>
         <div itemprop="aggregateRating" itemtype="https://schema.org/AggregateRating" itemscope>
         <meta itemprop="bestRating" content="5" />
         <meta itemprop="reviewCount" content="{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}" />
