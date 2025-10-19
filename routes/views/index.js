@@ -582,8 +582,10 @@ async function sitemap(req, res) {
     });    
 }
 
-router.get('/sitemap', sitemap);
-router.get('/sitemap.xml', sitemap);
+// Enhanced sitemap with better SEO
+const { enhancedSitemap } = require('../../helpers/EnhancedSitemapGenerator');
+router.get('/sitemap', enhancedSitemap);
+router.get('/sitemap.xml', enhancedSitemap);
 router.get('/google81a0290a139b9339.html', function (req, res) {
     res.send('google-site-verification: google81a0290a139b9339.html');
 });

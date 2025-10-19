@@ -257,6 +257,22 @@ Product.schema.virtual('percentOffer').get(function () {
     return null;
 });
 
+// SEO Fix: Single consistent price for search engines
+Product.schema.virtual('seoPrice').get(function () {
+    // Return the most relevant single price for SEO
+    const defaultOption = this.defaultOption || this.priceOptions.first() || {};
+    return {
+        price: defaultOption.offerPrice > 0 && defaultOption.offerPrice < defaultOption.price 
+            ? defaultOption.offerPrice 
+            : defaultOption.price,
+        currency: (defaultOption.currency || "KES").replace('Ksh', "KES"),
+        originalPrice: defaultOption.price,
+        discount: defaultOption.offerPrice > 0 && defaultOption.offerPrice < defaultOption.price 
+            ? Math.round(100 * (defaultOption.price - defaultOption.offerPrice) / defaultOption.price)
+            : null
+    };
+});
+
 Product.schema.virtual('priceValidUntil').get(function () {
     var today = new Date();
 

@@ -40,6 +40,12 @@ var routes = {
 exports = module.exports = function (app) {
 	app.enable('view cache');
 
+	// SEO Enhancements
+	const { SEOMetadataEnhancer, enhanceSEOMiddleware } = require('../helpers/SEOMetadataEnhancer');
+	app.use(enhanceSEOMiddleware);
+	app.use(SEOMetadataEnhancer.addRobotsMetaTags);
+	app.use(SEOMetadataEnhancer.addCanonicalURL);
+
 	if (process.env.NODE_ENV != "production") {
 		var publicPath = path.resolve(__dirname + '/../public');
 			
@@ -82,13 +88,36 @@ exports = module.exports = function (app) {
 	app.use('/contact-us', middleware.globalCache, routes.views.contact);
 	app.use('/gallery', middleware.globalCache, routes.views.gallery);
 
-	app.use('/product', middleware.globalCache, routes.views.product);
-	app.use('/category', middleware.globalCache, routes.views.category);
+	app.use('/product', SEOMetadataEnhancer.enhanceProductSEO, middleware.globalCache, routes.views.product);
+	app.use('/category', SEOMetadataEnhancer.enhanceCategorySEO, middleware.globalCache, routes.views.category);
 	app.use('/grape', middleware.globalCache, routes.views.grape);
 	app.use('/size', middleware.globalCache, routes.views.size);
 	app.use('/product', middleware.globalCache, routes.views.category);
 	app.use('/mybrands', middleware.globalCache, routes.views.mybrands);
 	app.use('/myproduct', middleware.globalCache, routes.views.myproduct);
+
+	// Enhanced sitemap routes
+	const { enhancedSitemap } = require('../helpers/EnhancedSitemapGenerator');
+	app.get('/sitemap', enhancedSitemap);
+	app.get('/sitemap.xml', enhancedSitemap);
+	
+	// Enhanced robots.txt with proper sitemap reference
+	app.get('/robots.txt', (req, res) => {
+		const robotsTxt = `User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkout/success/
+Disallow: /checkout/cancel/
+Allow: /
+
+Sitemap: ${process.env.SITE_URL || 'https://dialadrinkkenya.com'}/sitemap.xml
+
+# Crawl-delay for better server performance
+Crawl-delay: 1`;
+		
+		res.setHeader('Content-Type', 'text/plain');
+		res.send(robotsTxt);
+	});
 
 	app.use('/', middleware.globalCache, routes.views.products);
 	app.use('/', middleware.globalCache, routes.views.index);
