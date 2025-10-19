@@ -4,20 +4,22 @@
  */
 
 const keystone = require('keystone');
+const mongoose = keystone.get('mongoose');
 const memCache = require("memory-cache");
 const Product = keystone.list('Product');
 const ProductCategory = keystone.list('ProductCategory');
-const DEFAULT_USE_CACHE = process.env.USE_QUERY_CACHE_DEFAULT != 'false';
+const DEFAULT_USE_CACHE = process.env.USE_QUERY_CACHE_DEFAULT === 'true';
 const DEFAULT_TTL = parseInt(process.env.QUERY_CACHE_TTL_MS) || 10 * 60 * 1000; // 10 minutes
 
 // Helper to safely parse JSON
-JSON.tryParse ??= function (str) {
-    try {
-        return JSON.parse(str);
-    } catch {
-        return null;
+if(!JSON.tryParse)
+    JSON.tryParse = function (str) {
+        try {
+            return JSON.parse(str);
+        } catch {
+            return null;
+        }
     }
-}
 
 // helper to build a stable cache key for the query
 function buildKey(query) {
@@ -37,13 +39,13 @@ const exec = mongoose.Query.prototype.exec;
 
 // add cache() chainable to queries
 mongoose.Query.prototype.cache = function (options = {}) {
-  this._useCache = true;
+  this._useCache = false;
   this._cacheKey = options.key ? String(options.key) : ''; // optional namespace
   this._cacheTTL = typeof options.ttl === 'number' ? options.ttl : DEFAULT_TTL;
   return this;
 };
 
-mongoose.Query.prototype.exec = async function (...args) {
+mongoose.Query.prototype._exec = async function (...args) {
   // if caching not enabled, run original exec
   if (!this._useCache && DEFAULT_USE_CACHE === false) {
     return exec.apply(this, args);
