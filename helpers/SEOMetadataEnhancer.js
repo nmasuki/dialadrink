@@ -159,21 +159,88 @@ class SEOMetadataEnhancer {
     static generateOrganizationSchema() {
         return {
             "@context": "https://schema.org",
-            "@type": "Organization",
+            "@type": ["Organization", "LocalBusiness", "Store"],
             "name": "Dial A Drink Kenya",
+            "alternateName": "Dial A Drink",
             "url": keystone.get('url'),
-            "logo": keystone.get('logo'),
-            "contactPoint": {
+            "logo": keystone.get('logo') || "https://res.cloudinary.com/nmasuki/image/upload/c_fit,w_207,h_50/logo.png",
+            "description": "Kenya's leading online alcohol delivery service. Fast, reliable delivery of beer, wine, whisky and spirits across Nairobi and major cities.",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Nairobi Central Business District",
+                "addressLocality": "Nairobi",
+                "addressCountry": "Kenya",
+                "addressCountryCode": "KE"
+            },
+            "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": -1.2921,
+                "longitude": 36.8219
+            },
+            "contactPoint": [{
                 "@type": "ContactPoint",
                 "telephone": process.env.CONTACT_PHONE_NUMBER || "+254723688108",
                 "contactType": "customer service",
-                "availableLanguage": "English"
+                "availableLanguage": ["English", "Swahili"],
+                "areaServed": "Nairobi"
+            }],
+            "areaServed": {
+                "@type": "City",
+                "name": "Nairobi",
+                "containedInPlace": {
+                    "@type": "Country",
+                    "name": "Kenya"
+                }
             },
+            "serviceArea": {
+                "@type": "GeoCircle",
+                "geoMidpoint": {
+                    "@type": "GeoCoordinates",
+                    "latitude": -1.2921,
+                    "longitude": 36.8219
+                },
+                "geoRadius": "30000"
+            },
+            "priceRange": "$$",
+            "paymentAccepted": ["Cash", "M-Pesa", "Credit Card", "Debit Card"],
+            "currenciesAccepted": "KES",
+            "openingHours": "Mo-Su 09:00-23:00",
+            "serviceType": "Alcohol Delivery",
             "sameAs": [
-                // Add social media URLs here
                 "https://www.facebook.com/dialadrinkkenya",
-                "https://www.twitter.com/dialadrinkke"
-            ]
+                "https://www.twitter.com/dialadrinkke",
+                "https://www.instagram.com/dialadrinkkenya"
+            ],
+            "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "Alcohol Delivery Catalog",
+                "itemListElement": [
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Beer Delivery Nairobi",
+                            "description": "Fast beer delivery across Nairobi"
+                        }
+                    },
+                    {
+                        "@type": "Offer", 
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Wine Delivery Nairobi",
+                            "description": "Premium wine delivery service"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Service", 
+                            "name": "Whisky Delivery Nairobi",
+                            "description": "Whisky and spirits delivery"
+                        }
+                    }
+                ]
+            }
         };
     }
 }

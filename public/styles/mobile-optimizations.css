@@ -1,0 +1,244 @@
+/* Mobile UX Critical Optimizations */
+
+/* Mobile-first button styles for better touch targets */
+.btn-mobile-primary,
+.btn-mobile-secondary,
+.btn-mobile-cart {
+    min-height: 48px !important;
+    min-width: 48px !important;
+    padding: 12px 24px !important;
+    font-size: 16px !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.btn-mobile-primary {
+    background-color: #f44336 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-mobile-primary:hover,
+.btn-mobile-primary:active {
+    background-color: #d32f2f !important;
+    transform: scale(0.98) !important;
+}
+
+.btn-mobile-cart {
+    background-color: #4caf50 !important;
+    color: white !important;
+    border: none !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+}
+
+/* Mobile product cards optimization */
+.mobile-product-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.mobile-product-card:active {
+    transform: scale(0.98);
+}
+
+.product-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.product-image.lazy-load {
+    opacity: 0;
+}
+
+.product-image.loaded {
+    opacity: 1;
+}
+
+.out-of-stock-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,0,0,0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.product-info {
+    padding: 16px;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+    color: #333;
+}
+
+.product-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #f44336;
+    margin-bottom: 12px;
+}
+
+.original-price {
+    font-size: 14px;
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 8px;
+}
+
+.mobile-add-to-cart {
+    width: 100%;
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.mobile-add-to-cart:active {
+    background: #45a049;
+}
+
+/* Mobile breadcrumbs */
+.mobile-breadcrumbs {
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #666;
+    background: #f5f5f5;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+
+.mobile-breadcrumbs a {
+    color: #f44336;
+    text-decoration: none;
+}
+
+.breadcrumb-ellipsis {
+    color: #999;
+    margin-right: 4px;
+}
+
+.current-page {
+    color: #333;
+    font-weight: 600;
+}
+
+/* Improved mobile navigation */
+@media (max-width: 768px) {
+    /* Larger touch targets for mobile menu */
+    .navbar-nav li a {
+        padding: 16px 20px !important;
+        font-size: 16px !important;
+    }
+    
+    /* Better mobile search */
+    .search-input {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 12px 16px !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Mobile cart optimization */
+    .cart-summary {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: white !important;
+        padding: 16px !important;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important;
+        z-index: 1000 !important;
+    }
+    
+    /* Better form inputs */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    select {
+        font-size: 16px !important; /* Prevents zoom */
+        padding: 12px !important;
+        border-radius: 6px !important;
+        border: 2px solid #ddd !important;
+    }
+    
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: #f44336 !important;
+        outline: none !important;
+    }
+    
+    /* Loading states */
+    .loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid #f44336;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s ease-in-out infinite;
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Performance optimizations */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Reduce animations on low-end devices */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

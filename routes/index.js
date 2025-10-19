@@ -40,8 +40,19 @@ var routes = {
 exports = module.exports = function (app) {
 	app.enable('view cache');
 
-	// SEO Enhancements
+	// SEO and Performance Enhancements
 	const { SEOMetadataEnhancer, enhanceSEOMiddleware } = require('../helpers/SEOMetadataEnhancer');
+	const ImageOptimizer = require('../helpers/ImageOptimizer');
+	const MobileUXEnhancer = require('../helpers/MobileUXEnhancer');
+	
+	// Apply performance and mobile optimizations first
+	app.use(ImageOptimizer.optimizeCloudinaryUrls);
+	app.use(ImageOptimizer.addLazyLoadingSupport);
+	app.use(MobileUXEnhancer.detectMobileAndEnhance);
+	app.use(MobileUXEnhancer.addMobileHelpers);
+	app.use(MobileUXEnhancer.optimizeForSlowConnections);
+	
+	// Apply SEO middleware
 	app.use(enhanceSEOMiddleware);
 	app.use(SEOMetadataEnhancer.addRobotsMetaTags);
 	app.use(SEOMetadataEnhancer.addCanonicalURL);

@@ -112,6 +112,16 @@
     
     {{#if appUrl}}{{#ifeq env 'production'}}<base href="{{appUrl}}"/>{{/ifeq}}{{/if}}
 
+    <!-- DNS Prefetch for Performance -->
+    <link rel="dns-prefetch" href="//res.cloudinary.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/styles/mobile-optimizations.css" as="style">
+    
+    <!-- Critical CSS for Mobile Performance -->
+    <link rel="stylesheet" href="/styles/mobile-optimizations.css">
+
     <style>
         @media (max-width: 991px) {
             .collection-heading-inner.heading-group.item {
