@@ -135,9 +135,10 @@ Product.add({
     },
 
     relatedProducts: {
-        type: Types.Text,
-        hidden: true,
-        noedit: true
+        type: Types.Relationship,
+        ref: 'Product',
+        many: true,
+        hidden: true
     },
 });
 
@@ -256,22 +257,6 @@ Product.schema.virtual('percentOffer').get(function () {
     return null;
 });
 
-// SEO Fix: Single consistent price for search engines
-Product.schema.virtual('seoPrice').get(function () {
-    // Return the most relevant single price for SEO
-    const defaultOption = this.defaultOption || this.priceOptions.first() || {};
-    return {
-        price: defaultOption.offerPrice > 0 && defaultOption.offerPrice < defaultOption.price 
-            ? defaultOption.offerPrice 
-            : defaultOption.price,
-        currency: (defaultOption.currency || "KES").replace('Ksh', "KES"),
-        originalPrice: defaultOption.price,
-        discount: defaultOption.offerPrice > 0 && defaultOption.offerPrice < defaultOption.price 
-            ? Math.round(100 * (defaultOption.price - defaultOption.offerPrice) / defaultOption.price)
-            : null
-    };
-});
-
 Product.schema.virtual('priceValidUntil').get(function () {
     var today = new Date();
 
@@ -340,41 +325,15 @@ Product.schema.methods.findRelated = function (callback) {
     return Product.findRelated([this.id || this._id], callback);
 };
 
-// Map to store document-specific timeouts
-var popularityTimeouts = new Map();
-
+var addPopularityTimeout = null;
 Product.schema.methods.addPopularity = function (factor) {
     this.popularity = (this.popularity || 0) + (factor || 1);
     
-    const docId = this._id.toString();
-    
-    // Clear existing timeout for this document
-    if (popularityTimeouts.has(docId)) {
-        clearTimeout(popularityTimeouts.get(docId));
-    }
+    if (addPopularityTimeout)
+        clearTimeout(addPopularityTimeout);
 
-    // Set new timeout for this specific document
-    const timeout = setTimeout(async () => {
-        try {
-            // Use findByIdAndUpdate to avoid version conflicts
-            await Product.model.findByIdAndUpdate(
-                docId,
-                { 
-                    $inc: { popularity: factor || 1 },
-                    $set: { modifiedDate: new Date() }
-                },
-                { new: true }
-            );
-        } catch (error) {
-            // Log error but don't throw to avoid breaking the application
-            console.warn(`Failed to update popularity for product ${docId}:`, error.message);
-        } finally {
-            // Clean up timeout reference
-            popularityTimeouts.delete(docId);
-        }
-    }, 100);
-    
-    popularityTimeouts.set(docId, timeout);
+    let that = this;
+    addPopularityTimeout = setTimeout(() => that.save().catch(() => { }).finally(() => { addPopularityTimeout = null; }), 100);
 };
 
 Product.schema.methods.toAppObject = function () {
@@ -475,8 +434,7 @@ Product.schema.pre('save', async function (next) {
     if(this.priceOptions.every(p => p.inStock != product.inStock))
         this.priceOptions.forEach(p => p.inStock = product.inStock);
 
-    const relatedProducts = (await this.findRelated()).slice(0, 20);
-    this.relatedProducts = JSON.stringify(relatedProducts.map(p => p._id || p.id));
+    this.relatedProducts = (await this.findRelated()).slice(0, 20);
 
     this.modifiedDate = new Date();
     var defaultOption = this.defaultOption || this.priceOptions.first();
@@ -613,14 +571,14 @@ Product.findRelated = function (products, callback) {
         : [(products.id || products._id || products || "").toString()];
 
     return new Promise((resolve, reject) => {
-        return keystone.list("CartItem").model.find({ product: { $in: productIds } })
+        keystone.list("CartItem").model.find({ product: { $in: productIds } })
             .exec((err, cartItems) => {
                 if(err || !cartItems)
                     return console.warn("No related cartItems found!");
 
                 var cartIds = cartItems.map(c => c._id);
                 return keystone.list("Order").model.find({ cart: { $in: cartIds } })
-                    .deepPopulate("cart.product.category")
+                    .deepPopulate("cart.product.category,cart.product.relatedProducts")
                     .exec((err, orders) => {
                         if (err)
                             return console.log(err, orders);
@@ -646,16 +604,8 @@ Product.findRelated = function (products, callback) {
                                 }
 
                                 incrementCounts(item.product);
-                                if (item.product.relatedProducts) {
-                                    try {
-                                        const relatedIds = JSON.parse(item.product.relatedProducts);
-                                        if (Array.isArray(relatedIds)) {
-                                            relatedIds.forEach(id => incrementCounts({ _id: id }));
-                                        }
-                                    } catch (e) {
-                                        // Ignore parsing errors for legacy data
-                                    }
-                                }
+                                if (item.product.relatedProducts)
+                                    item.product.relatedProducts.forEach(incrementCounts);
                             });
                         });
 
@@ -772,7 +722,7 @@ Product.findOnePublished = function (filter, callback) {
 };
 
 Product.findByBrand = function (filter, callback) {
-    return keystone.list('ProductBrand').model.find(filter)
+    keystone.list('ProductBrand').model.find(filter)
         .exec((err, brands) => {
             if (err || !brands)
                 return console.log(err);
@@ -787,7 +737,7 @@ Product.findByBrand = function (filter, callback) {
 };
 
 Product.findByGrape = function (filter, callback) {
-    return keystone.list('Grape').model.find(filter)
+    keystone.list('Grape').model.find(filter)
         .exec((err, grapes) => {
             if (err || !grapes)
                 return console.log(err);
@@ -802,7 +752,7 @@ Product.findByGrape = function (filter, callback) {
 };
 
 Product.findByCategory = function (filter, callback) {
-    return keystone.list('ProductCategory').model.find(filter)
+    keystone.list('ProductCategory').model.find(filter)
         .exec((err, categories) => {
             if (err || !categories)
                 return console.log(err);
@@ -818,7 +768,7 @@ Product.findByCategory = function (filter, callback) {
 };
 
 Product.findBySubCategory = function (filter, callback) {
-    return keystone.list('ProductSubCategory').model.find(filter)
+    keystone.list('ProductSubCategory').model.find(filter)
         .exec((err, subCategories) => {
             if (err || !subCategories)
                 return console.log(err);
@@ -833,7 +783,7 @@ Product.findBySubCategory = function (filter, callback) {
 };
 
 Product.findBySize = function (filter, callback) {
-    return keystone.list('Size').model.find(filter)
+    keystone.list('Size').model.find(filter)
         .exec((err, size) => {
             if (err || !size)
                 return console.log(err);
@@ -848,7 +798,7 @@ Product.findBySize = function (filter, callback) {
 };
 
 Product.findByOption = function (filter, callback) {
-    return keystone.list('ProductOption').model.find(filter)
+    keystone.list('ProductOption').model.find(filter)
         .exec((err, options) => {
             if (err || !options)
                 return console.log(err);
@@ -859,7 +809,7 @@ Product.findByOption = function (filter, callback) {
                 }
             };
 
-            return keystone.list('ProductPriceOption').model.find(filter)
+            keystone.list('ProductPriceOption').model.find(filter)
                 .exec((err, options) => {
                     if (err || !options)
                         return console.log(err, options);
@@ -954,7 +904,6 @@ Product.groupProducts = function(products, maxGroupSize){
     maxGroupSize = maxGroupSize || 12;
     var groupedProducts = products.groupBy(p => p.subCategory && p.subCategory.name || p.subCategory || '');
     var hasMore = {};
-
     for(var i in groupedProducts){
         if(groupedProducts[i].length < 4)
             delete groupedProducts[i];
@@ -972,7 +921,7 @@ Product.groupProducts = function(products, maxGroupSize){
 Product.getUIFilters = function (products, limit) {
     var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
     var subCategoryGroups = Object.values(products.filter(p => p.subCategory).groupBy(p => p.subCategory._id));
-    var tagsGroups = Object.values(products.filter(p => p.tags?.length)
+    var tagsGroups = Object.values(products.filter(p => p.tags.length)
         .selectMany(p => p.tags.map(t => {
             return {
                 t: t,

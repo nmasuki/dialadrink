@@ -7,7 +7,7 @@ var Types = keystone.Field.Types;
  */
 var ProductPriceOption = new keystone.List('ProductPriceOption', {
     singular: 'Product Price',
-    plural: 'Product Prices',
+    prural: 'Product Prices',
     map: {name: 'label'},
 });
 
@@ -35,7 +35,7 @@ ProductPriceOption.schema.virtual('percentOffer').get(function () {
 });
 
 ProductPriceOption.relationship({ref: 'Product', path: 'product', refPath: 'priceOptions'});
-ProductPriceOption.relationship({ref: 'ProductOption', path: 'option', refPath: 'priceOptions'});
+ProductPriceOption.relationship({ref: 'ProductOption', path: 'priceOptions', refPath: 'priceOptions'});
 
 ProductPriceOption.schema.virtual('label').get(function () {
     return `${this.optionText || ''} (${this.currency || 'KES'} ${this.price || ''})`;
