@@ -506,9 +506,10 @@
                             const img = entry.target;
                             if (img.dataset.src) {
                                 // If img.dataset.src ends with double extension like .jpg.jpg, .png.png, correct it
-                                if(/\.(jpg|jpeg|png|gif|webp|svg)\.(jpg|jpeg|png|gif|webp|svg)$/i.test(img.dataset.src)) {
-                                    img.dataset.src = img.dataset.src.replace(/\.(jpg|jpeg|png|gif|webp|svg)\.(jpg|jpeg|png|gif|webp|svg)$/i, '.$1');
-                                }
+                                let dblRegex = /\.(\w{3,})\.(\w{3,})$/i
+                                if (dblRegex.test(img.dataset.src)) 
+                                    img.dataset.src = img.dataset.src.replace(dblRegex, '.$2');
+                                
                                 img.src = img.dataset.src;
 
                                 img.classList.remove('lazyload');

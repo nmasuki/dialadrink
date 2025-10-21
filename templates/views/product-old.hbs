@@ -24,7 +24,7 @@
                     {{else}}
                         <div class="col-md-1 col-xs-1 col-sm-1">
                             <div class="thumbnail">
-                                <img height="24" width="24" data-img="{{cloudinaryUrl image crop='fit'}}"
+                                <img style="width: 24px; height: 24px;" data-img="{{cloudinaryUrl image crop='fit'}}"
                                      src="{{cloudinaryUrl image width=24 height=24 crop='fit'}}"/>
                             </div>
                         </div>
@@ -232,13 +232,13 @@
                     {{#if youtubeUrl}}
                         <div role="tabpanel" class="tab-pane top-10" id="youtube">
                             {{#if ../isMobile}}
-                                <iframe width="320" height="180" 
+                                <iframe style="width: 320px; height: 180px;" 
                                     src="{{youtubeUrl}}" 
                                     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                     frameborder="0" allowfullscreen>
                                 </iframe>
                             {{else}}
-                                <iframe width="560" height="315" 
+                                <iframe style="width: 560px; height: 315px;" 
                                     src="{{youtubeUrl}}" 
                                     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                     frameborder="0" allowfullscreen>

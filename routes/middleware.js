@@ -131,6 +131,9 @@ exports.initLocals = function (req, res, next) {
     //Image placeholder
     res.locals.placeholderImg = "https://uploads-ssl.webflow.com/57e5747bd0ac813956df4e96/5aebae14c6d254621d81f826_placeholder.png";
 
+    //Bottle placeholder image
+    res.locals.bottlePlaceholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3E%3Cdefs%3E%3ClinearGradient id='bottleGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23f8f9fa'/%3E%3Cstop offset='100%25' stop-color='%23e9ecef'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform='translate(50,20)'%3E%3Crect x='35' y='0' width='30' height='15' rx='5' fill='%23dee2e6'/%3E%3Crect x='25' y='15' width='50' height='30' rx='8' fill='url(%23bottleGrad)' stroke='%23adb5bd' stroke-width='1'/%3E%3Crect x='20' y='45' width='60' height='200' rx='15' fill='url(%23bottleGrad)' stroke='%23adb5bd' stroke-width='1'/%3E%3Cellipse cx='50' cy='55' rx='25' ry='8' fill='%23ffffff' opacity='0.6'/%3E%3Ctext x='50' y='150' text-anchor='middle' font-family='Arial,sans-serif' font-size='12' fill='%23868e96'%3ENo Image%3C/text%3E%3C/g%3E%3C/svg%3E";
+
     //Client IP
     var possibleIps = [req.ip, (req.headers['x-forwarded-for'] || '').split(',').pop(), req.connection.remoteAddress, req.socket.remoteAddress];
     res.locals.clientIp = possibleIps.find(ip => ip && ip != '127.0.0.1' && ip != '::1');

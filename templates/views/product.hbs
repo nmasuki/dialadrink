@@ -41,13 +41,13 @@
         <div class="col-sm-1 col-12">
             {{#each altImages}}
             <div class="thumbnail" style="width: 48px;">
-                <img alt="{{{../name}}}" height="42" width="42"
+                <img alt="{{{../name}}}" style="width: 42px; height: 42px;"
                     data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
                     src="{{cloudinaryUrl this width=42 height=42 crop='fit'}}" />
             </div>
             {{else}}
             <div class="thumbnail" style="width: 48px;">
-                <img alt="{{{../name}}}" height="42" width="42"
+                <img alt="{{{../name}}}" style="width: 42px; height: 42px;"
                     data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
                     src="{{cloudinaryUrl image width=42 height=42 crop='fit' background_removal='cloudinary_ai'}}" />
             </div>
@@ -384,12 +384,12 @@
                 {{#if youtubeUrl}}
                 <div role="tabpanel" class="tab-pane top-10" id="youtube">
                     {{#if ../isMobile}}
-                    <iframe width="320" height="180" src="{{youtubeUrl}}"
+                    <iframe style="width: 320px; height: 180px;" src="{{youtubeUrl}}"
                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" frameborder="0"
                         allowfullscreen>
                     </iframe>
                     {{else}}
-                    <iframe width="560" height="315" src="{{youtubeUrl}}"
+                    <iframe style="width: 560px; height: 315px;" src="{{youtubeUrl}}"
                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" frameborder="0"
                         allowfullscreen>
                     </iframe>
