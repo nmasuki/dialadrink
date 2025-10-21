@@ -1,6 +1,5 @@
 var keystone = require('keystone');
 var router = keystone.express.Router();
-var QueryOptimizer = require('../../helpers/QueryOptimizer');
 
 function index(req, res) {
     var view = new keystone.View(req, res);
@@ -20,27 +19,17 @@ function index(req, res) {
 
     var homeGroupSize = process.env.HOME_GROUP_SIZE || 15;
 
-    // Load Products - Optimized for LCP
+    // Load Products
     view.on('init', function (next) {
-        // Prioritize above-the-fold content for faster LCP
-        Promise.all([
-            QueryOptimizer.getPopularProducts(Math.min(homeGroupSize, 8)), // Reduce initial load
-            QueryOptimizer.getFeaturedProducts(4) // Fewer featured products for faster render
-        ]).then(([popularProducts, featuredProducts]) => {
-            locals.products = popularProducts;
-            locals.featuredProducts = featuredProducts;
-            
-            var products = popularProducts || [];                 
-            var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
+        keystone.list('Product').offerAndPopular(homeGroupSize, (err, data) => {
+            locals = Object.assign(locals, data || {});
+
+            var products = data.products;                 
+           var brands = products.map(p => p.brand).filter(b => !!b).distinctBy(b => b.name);
             if (brands.length == 1) locals.brand = brands.first();
 
             var categories = products.map(p => p.category).filter(b => !!b).distinctBy(b => b.name);
             var lastRemovedKey, lastRemoved;
-
-            // Initialize groupedBrands if not exists
-            if (!locals.groupedBrands) {
-                locals.groupedBrands = {};
-            }
 
             Object.keys(locals.groupedBrands).forEach(k => {
                 if (!categories.find(c => k == c.name)) {
@@ -54,7 +43,7 @@ function index(req, res) {
                 locals.groupedBrands[lastRemovedKey] = lastRemoved;
             
             //locals.groupedProducts = keystone.list('Product').groupProducts(products, homeGroupSize); 
-            locals.uifilters = keystone.list('Product').getUIFilters(products || []);
+            locals.uifilters = keystone.list('Product').getUIFilters(products);
             
             if (!Object.keys(locals.groupedBrands).length)
                 delete locals.groupedBrands;

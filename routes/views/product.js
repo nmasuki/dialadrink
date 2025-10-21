@@ -1,7 +1,6 @@
 var keystone = require('keystone');
 var router = keystone.express.Router();
 var ProductRating = keystone.list('ProductRating');
-var QueryOptimizer = require('../../helpers/QueryOptimizer');
 
 router.get("/:product", function (req, res) {
     var view = new keystone.View(req, res);
@@ -22,9 +21,7 @@ router.get("/:product", function (req, res) {
     };
 
     view.on('init', function (next) {
-        // Optimized product query
-        keystone.list('Product').findOnePublished(filter)
-            .exec(function (err, product) {
+        keystone.list('Product').findOnePublished(filter, function (err, product) {
             if (product) {
                 locals.product = product;
 
