@@ -201,7 +201,7 @@ exports.initPageLocals = async function (req, res, next) {
     var cachedPage = cache ? await cache.get("__page__" + cleanId) : null;
 
     if (cachedPage) {
-        console.log("Using cached locals for page..");
+        // console.debug("Using cached locals for page..");
         res.locals.page = Object.assign(res.locals.page || {}, cachedPage || {});
 
         if (typeof next == "function")
@@ -230,7 +230,7 @@ exports.initBrandsLocals = async function (req, res, next) {
         var cachedPage = cache ? await cache.get("__popularbrands__") : null;
 
         if (cachedPage) {
-            console.log("Using cached locals for popular brands..");
+            // console.debug("Using cached locals for popular brands..");
             res.locals.groupedBrands = Object.assign(res.locals.groupedBrands || {}, cachedPage.groupedBrands || {});
             res.locals.groupedBrand = Object.assign(res.locals.groupedBrand || {}, cachedPage.groupedBrand || {});
 
@@ -288,7 +288,7 @@ exports.initBreadCrumbsLocals = async function (req, res, next) {
     var cachedPage = cache ? await cache.get("__breadcrumbs__" + cleanId) : null;
 
     if (cachedPage) {
-        console.log("Using cached locals for breadcrumbs..");
+        // console.debug("Using cached locals for breadcrumbs..");
         res.locals.breadcrumbs = (cachedPage || []).filter(b => b.label).distinctBy(b => b.label);
 
         if (typeof next == "function")
@@ -303,7 +303,7 @@ exports.initBreadCrumbsLocals = async function (req, res, next) {
     return await keystone.list('MenuItem').model
         .find({ key: regex })
         .sort({ index: 1 })
-        .deepPopulate("parent.parent.parent")
+        .deepPopulate('parent.parent.parent')
         .exec((err, menus) => {
             if (err || !menus)
                 return next(err || "Unknow error reading menus!");
@@ -349,7 +349,7 @@ exports.initTopMenuLocals = async function (req, res, next) {
     var cachedPage = cache ? await cache.get("__topmenu__") : null;
 
     if (cachedPage) {
-        console.log("Using cached locals for top menu..");
+        // console.debug("Using cached locals for top menu..");
         res.locals.navLinks = Object.assign(res.locals.navLinks || {}, cachedPage || {});
 
         if (typeof next == "function")
@@ -592,4 +592,56 @@ exports.requireUser = function (req, res, next) {
     } else {
         next();
     }
+};
+
+/**
+ * Set up navigation filters with active states
+ * This middleware loads filter options and marks currently active filters
+ */
+exports.setNavigationFilters = function(req, res, next) {
+    const locals = res.locals;
+    
+    // Get current route parameters to determine active filters
+    const currentPath = req.path;
+    const currentCategory = req.params.category;
+    const currentSubCategory = req.params.subcategory;
+    const currentGrape = req.params.grape;
+    
+    // Load filter data from database
+    const keystone = require('keystone');
+    const Product = keystone.list('Product');
+    
+    // Get all products to extract filter options
+    Product.findPublished({}, (err, products) => {
+        if (err) {
+            console.error('Error loading products for navigation filters:', err);
+            return next();
+        }
+
+        // Extract unique subcategories
+        const subCategories = products
+            .filter(p => p.subCategory)
+            .map(p => p.subCategory)
+            .distinctBy(sc => sc.id || sc._id)
+            .map(sc => ({
+                subCategory: sc,
+                isActive: currentSubCategory && (currentSubCategory === sc.key || currentSubCategory === sc.name.cleanId())
+            }));
+
+        // Extract unique grapes
+        const grapes = products
+            .filter(p => p.grape)
+            .map(p => p.grape)
+            .distinctBy(g => g.id || g._id)
+            .map(g => ({
+                grape: g,
+                isActive: currentGrape && (currentGrape === g.key || currentGrape === g.name.cleanId())
+            }));
+
+        // Set locals for templates
+        locals.subCategories = subCategories;
+        locals.grapes = grapes;
+        
+        next();
+    });
 };

@@ -109,4 +109,5 @@ ProductCategory.schema.methods.toAppObject = function(){
     };
 };
 
+keystone.deepPopulate(ProductCategory.schema);
 ProductCategory.register();

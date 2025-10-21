@@ -540,5 +540,29 @@ module.exports = function () {
         return obj._[underscoreMethod].format();
     };
 
+    // ### ContentFor Helper
+    // Used for content sections in layouts
+    // Allows templates to define content that should be rendered in specific sections
+    _helpers.contentFor = function (name, options) {
+        if (!this._contentFor) {
+            this._contentFor = {};
+        }
+        
+        // Handle different call patterns
+        if (!options || typeof options !== 'object' || typeof options.fn !== 'function') {
+            // Return the content for this section (getter mode)
+            // This happens when called as {{contentFor 'seo'}} or {{{contentFor 'seo'}}}
+            return new hbs.SafeString(this._contentFor[name] || '');
+        } else {
+            // Set the content for this section (setter mode with block)
+            // This happens when called as {{#contentFor 'seo'}}...{{/contentFor}}
+            this._contentFor[name] = options.fn(this);
+            return '';
+        }
+    };
+
+    // ### Section Helper (alias for contentFor)
+    _helpers.section = _helpers.contentFor;
+
     return _helpers;
 };

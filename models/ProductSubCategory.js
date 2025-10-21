@@ -90,4 +90,5 @@ ProductSubCategory.schema.methods.updateMenu = function(next){
 };
 
 ProductSubCategory.relationship({ref: 'Product', path: 'product', refPath: 'subCategory'});
+keystone.deepPopulate(ProductSubCategory.schema);
 ProductSubCategory.register();

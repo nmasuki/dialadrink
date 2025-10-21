@@ -117,8 +117,8 @@ class EnhancedSitemapGenerator {
 
     async addProducts() {
         try {
-            const products = await Product.findPublished({})
-                .populate('category brand')
+            const products = await Product.model.find({ state: 'published'  })
+                .populate('category').populate('brand')
                 .exec();
 
             products.forEach(product => {

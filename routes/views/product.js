@@ -23,12 +23,7 @@ router.get("/:product", function (req, res) {
 
     view.on('init', function (next) {
         // Optimized product query
-        keystone.list('Product').model.findOne(filter)
-            .populate('category', 'name key href')
-            .populate('brand', 'name key href')
-            .populate('priceOptions')
-            .populate('defaultOption')
-            .lean()
+        keystone.list('Product').findOnePublished(filter)
             .exec(function (err, product) {
             if (product) {
                 locals.product = product;

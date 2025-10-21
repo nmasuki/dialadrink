@@ -19,4 +19,5 @@ ProductOption.add({
 ProductOption.relationship({ref: 'ProductPriceOption', path: 'option', refPath: 'option'});
 
 ProductOption.defaultColumns = 'quantity, description';
+keystone.deepPopulate(ProductOption.schema);
 ProductOption.register();

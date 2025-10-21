@@ -19,7 +19,24 @@ router.get("/:id", async function (req, res, next) {
     var json = { response: "error", message: "", data: [] };
 
     try {
-        var product = await Product.model.findOne({_id: id })
+        // Check if id is a valid ObjectId or a slug
+        var query;
+        if (/^[0-9a-fA-F]{24}$/.test(id)) {
+            // Valid ObjectId format
+            query = { _id: id };
+        } else {
+            // Assume it's a slug/href
+            var regex = new RegExp(id.replace(/[^a-zA-Z0-9-]/g, '').trim(), "i");
+            query = { 
+                $or: [
+                    { href: regex },
+                    { href: id },
+                    { slug: id }
+                ]
+            };
+        }
+
+        var product = await Product.model.findOne(query)
             .populate('brand').populate('category').populate('ratings')
             .deepPopulate("subCategory.category,priceOptions.option")
             .exec();
@@ -42,7 +59,26 @@ router.get("/:id", async function (req, res, next) {
 });
 
 router.get("/related/:productId", function(req, res, next){
-    Product.model.findOne({_id: req.params.productId})
+    var productId = req.params.productId;
+    
+    // Check if productId is a valid ObjectId or a slug
+    var query;
+    if (/^[0-9a-fA-F]{24}$/.test(productId)) {
+        // Valid ObjectId format
+        query = { _id: productId };
+    } else {
+        // Assume it's a slug/href
+        var regex = new RegExp(productId.replace(/[^a-zA-Z0-9-]/g, '').trim(), "i");
+        query = { 
+            $or: [
+                { href: regex },
+                { href: productId },
+                { slug: productId }
+            ]
+        };
+    }
+
+    Product.model.findOne(query)
         .exec((err, product) => {
             var json = {
                 response: "error",

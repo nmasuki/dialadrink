@@ -65,7 +65,8 @@ router.get("/", function (req, res) {
             },
         })
             .sort('-publishedDate')            
-            .populate('author categories');
+            .populate('author')
+            .populate('categories');
 
         if (locals.data.category) {
             q.where('categories').in([locals.data.category]);
@@ -125,7 +126,8 @@ router.get("/:post", function (req, res) {
     view.on('init', function (next) {
         keystone.list('Blog').model
             .findOne({href: req.params.post})
-            .populate('author categories')
+            .populate('author')
+            .populate('categories')
             .exec((err, post) => {
                 
                 if (post) {
@@ -201,7 +203,8 @@ router.get("/cat/:category", function (req, res) {
             },
         })
             .sort('-publishedDate')
-            .populate('author categories');
+            .populate('author')
+            .populate('categories');
 
         if (locals.data.category) {
             q.where('categories').in([locals.data.category]);

@@ -1,43 +1,99 @@
 <style>
     .borb {
-    width: 50%;
-    float: left;
-    padding: 10px;
-    background-color: #c5c6D0;
-    border: 2px solid red;
-} 
+        width: 50%;
+        float: left;
+        padding: 10px;
+        background-color: #c5c6D0;
+        border: 2px solid red;
+    }
 
-    
+    .filter-item {
+        float: left;
+        min-width: 80px;
+        padding-left: 10px;
+        font-size: 13px;
+        margin-bottom: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .filter-item a {
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        align-items: center;
+        padding: 3px 5px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .filter-item a:hover {
+        background-color: #f0f0f0;
+        color: #2f93a3;
+    }
+
+    .filter-item.active a {
+        background-color: #2f93a3;
+        color: white;
+        font-weight: bold;
+    }
+
+    .filter-item img {
+        height: 15px;
+        margin-right: 5px;
+        transition: opacity 0.3s ease;
+    }
+
+    .filter-item.active img {
+        opacity: 0.9;
+    }
+
+    .filter-section {
+        margin-bottom: 20px;
+    }
+
+    .filter-section h2 {
+        font-size: 13px;
+        margin-bottom: 10px;
+        color: #2f93a3;
+        font-weight: bold;
+    }
 </style>
-<div>
-    <h2 style="font-size: 13px;">Filter Selection: </h2>                    
+<div class="filter-section">
+    <h2>Filter Selection:</h2>                    
     {{#each subCategories}}
-        <div >
-            <div style="float: left; min-width: 80px; padding-left: 10px; font-size: 13px;">      
-                <a href="/{{{cleanId subCategory.name}}}">
-                <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/unchecked__1__265HFKNlC.png?updatedAt=1680081970350" alt="Check" style="height: 15px;">
-                 {{{subCategory.name}}} </a>
-   
-            </div> <br>
+        <div class="filter-item {{#if subCategory.isActive}}active{{/if}}">
+            <a href="/{{{cleanId subCategory.name}}}">
+                {{#if subCategory.isActive}}
+                    <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/check_icon.png?updatedAt=1680081970350" 
+                         alt="Selected" title="Currently selected"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUiIGhlaWdodD0iMTUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTkgMTZMMTMgMTJNMTMgMTJMOSA4TTEzIDEySDEiIHN0cm9rZT0iIzJmOTNhMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+'">
+                {{else}}
+                    <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/unchecked__1__265HFKNlC.png?updatedAt=1680081970350" 
+                         alt="Not selected" title="Click to select">
+                {{/if}}
+                {{{subCategory.name}}}
+            </a>
         </div>
     {{/each}}
 </div>
 
-<br>
-<div>
-    <h2 style="font-size: 13px;">Grapes : </h2>                    
+<div class="filter-section">
+    <h2>Grapes:</h2>                    
     {{#each grapes}}
-        <div >
-            <div style="float: left; min-width: 80px; padding-left: 10px; font-size: 13px;">
-                <a href="/{{{cleanId grape.name}}}">
-                <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/unchecked__1__265HFKNlC.png?updatedAt=1680081970350" alt="Check" style="height: 15px;">
-                   {{{grape.name}}} </a>
-   
-            </div> <br>
-             
+        <div class="filter-item {{#if grape.isActive}}active{{/if}}">
+            <a href="/{{{cleanId grape.name}}}">
+                {{#if grape.isActive}}
+                    <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/check_icon.png?updatedAt=1680081970350" 
+                         alt="Selected" title="Currently selected"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUiIGhlaWdodD0iMTUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTkgMTZMMTMgMTJNMTMgMTJMOSA4TTEzIDEySDEiIHN0cm9rZT0iIzJmOTNhMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+'">
+                {{else}}
+                    <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/unchecked__1__265HFKNlC.png?updatedAt=1680081970350" 
+                         alt="Not selected" title="Click to select">
+                {{/if}}
+                {{{grape.name}}}
+            </a>
         </div>
     {{/each}}
-
 </div>
 {{!-- <div>
     <h2 style="font-size: 13px;">Size : </h2>                    

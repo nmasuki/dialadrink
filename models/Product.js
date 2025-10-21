@@ -434,8 +434,6 @@ Product.schema.pre('save', async function (next) {
     if(this.priceOptions.every(p => p.inStock != product.inStock))
         this.priceOptions.forEach(p => p.inStock = product.inStock);
 
-    this.relatedProducts = (await this.findRelated()).slice(0, 20);
-
     this.modifiedDate = new Date();
     var defaultOption = this.defaultOption || this.priceOptions.first();
 
@@ -578,7 +576,7 @@ Product.findRelated = function (products, callback) {
 
                 var cartIds = cartItems.map(c => c._id);
                 return keystone.list("Order").model.find({ cart: { $in: cartIds } })
-                    .deepPopulate("cart.product.category,cart.product.relatedProducts")
+                    .deepPopulate("cart.product.category")
                     .exec((err, orders) => {
                         if (err)
                             return console.log(err, orders);
@@ -609,10 +607,24 @@ Product.findRelated = function (products, callback) {
                             });
                         });
 
-                        var relatedProdIds = Object.keys(productCounts);
+                        var relatedProdIds = Object.keys(productCounts).filter(id => id && /[0-9a-fA-F]{24}$/.test(id.toString()));
+                        var relatedProdSlugs = Object.keys(productCounts).filter(id => id && !/[0-9a-fA-F]{24}$/.test(id.toString()));
+
+                        if (relatedProdIds.length <= 0 && relatedProdSlugs.length <= 0){
+                            if (typeof callback == "function")
+                                return callback(null, []);
+                            return resolve([]);
+                        }
+
+                        var filter = { $or: [] };
+
+                        if (relatedProdIds.length > 0)
+                            filter.$or.push({ _id: { $in: relatedProdIds } });
+                        if (relatedProdSlugs.length > 0)
+                            filter.$or.push({ key: { $in: relatedProdSlugs } });
 
                         //Get products that where ordered together
-                        return Product.findPublished({ _id: { $in: relatedProdIds } })
+                        return Product.findPublished(filter)
                             .exec((err, related) => {
                                 if (err) {
                                     if (typeof callback == "function")
@@ -648,19 +660,19 @@ Product.findRelated = function (products, callback) {
 
 Product.offerAndPopular = function(size, callback){
     size = size || 8;
-    Product.findPublished({inStock: true, onOffer: true})
+    return Product.findPublished({inStock: true, onOffer: true})
         .exec(function(err, offers){
             if (err || !offers)
                 return callback(err);
 
-            Product.findPublished({inStock: true, isBrandFocus: true, onOffer: false})
+            return Product.findPublished({inStock: true, isBrandFocus: true, onOffer: false})
                 .exec((err, brandFocus) => {
-                    if (err)
+                    if (err || !brandFocus)
                         return callback(err);
 
-                    Product.findPublished({inStock: true})
+                    return Product.findPublished({inStock: true})
                         .exec((err, popular) => {
-                            if (err || !offers)
+                            if (err || !popular)
                                 return callback(err);
                             
                             if(brandFocus.length == 0)
@@ -680,8 +692,12 @@ Product.offerAndPopular = function(size, callback){
                                 brandFocus: brandFocus.slice(0, size),
                             };
 
-                            data.products = data.popular.concat(data.offers).concat(data.brandFocus);        
-                            callback(err, data);
+                            data.products = data.popular.concat(data.offers).concat(data.brandFocus); 
+                            
+                            if (typeof callback == "function")
+                                callback(err, data);
+
+                            return data;
                         });
                 });
         });
@@ -722,7 +738,7 @@ Product.findOnePublished = function (filter, callback) {
 };
 
 Product.findByBrand = function (filter, callback) {
-    keystone.list('ProductBrand').model.find(filter)
+    return keystone.list('ProductBrand').model.find(filter)
         .exec((err, brands) => {
             if (err || !brands)
                 return console.log(err);
@@ -732,12 +748,12 @@ Product.findByBrand = function (filter, callback) {
                     "$in": brands.map(b => b._id)
                 }
             };
-            Product.findPublished(filter, callback);
+            return Product.findPublished(filter, callback);
         });
 };
 
 Product.findByGrape = function (filter, callback) {
-    keystone.list('Grape').model.find(filter)
+    return keystone.list('Grape').model.find(filter)
         .exec((err, grapes) => {
             if (err || !grapes)
                 return console.log(err);
@@ -747,12 +763,13 @@ Product.findByGrape = function (filter, callback) {
                     "$in": grapes.map(b => b._id)
                 }
             };
-            Product.findPublished(filter, callback);
+            
+            return Product.findPublished(filter, callback);
         });
 };
 
 Product.findByCategory = function (filter, callback) {
-    keystone.list('ProductCategory').model.find(filter)
+    return keystone.list('ProductCategory').model.find(filter)
         .exec((err, categories) => {
             if (err || !categories)
                 return console.log(err);
@@ -763,12 +780,12 @@ Product.findByCategory = function (filter, callback) {
                 }
             };
             
-            Product.findPublished(filter, callback);
+            return Product.findPublished(filter, callback);
         });
 };
 
 Product.findBySubCategory = function (filter, callback) {
-    keystone.list('ProductSubCategory').model.find(filter)
+    return keystone.list('ProductSubCategory').model.find(filter)
         .exec((err, subCategories) => {
             if (err || !subCategories)
                 return console.log(err);
@@ -778,12 +795,13 @@ Product.findBySubCategory = function (filter, callback) {
                     "$in": subCategories.map(b => b._id)
                 }
             };
-            Product.findPublished(filter, callback);
+            
+            return Product.findPublished(filter, callback);
         });
 };
 
 Product.findBySize = function (filter, callback) {
-    keystone.list('Size').model.find(filter)
+    return keystone.list('Size').model.find(filter)
         .exec((err, size) => {
             if (err || !size)
                 return console.log(err);
@@ -793,12 +811,13 @@ Product.findBySize = function (filter, callback) {
                     "$in": size.map(b => b._id)
                 }
             };
-            Product.findPublished(filter, callback);
+            
+            return Product.findPublished(filter, callback);
         });
 };
 
 Product.findByOption = function (filter, callback) {
-    keystone.list('ProductOption').model.find(filter)
+    return keystone.list('ProductOption').model.find(filter)
         .exec((err, options) => {
             if (err || !options)
                 return console.log(err);
@@ -809,7 +828,7 @@ Product.findByOption = function (filter, callback) {
                 }
             };
 
-            keystone.list('ProductPriceOption').model.find(filter)
+            return keystone.list('ProductPriceOption').model.find(filter)
                 .exec((err, options) => {
                     if (err || !options)
                         return console.log(err, options);
@@ -819,7 +838,8 @@ Product.findByOption = function (filter, callback) {
                             "$in": options.map(b => b._id)
                         }
                     };
-                    Product.findPublished(filter, callback);
+
+                    return Product.findPublished(filter, callback);
                 });
 
         });

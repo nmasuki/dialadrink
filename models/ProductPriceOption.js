@@ -106,4 +106,5 @@ ProductPriceOption.schema.pre('save', function (next) {
 });
 
 ProductPriceOption.defaultColumns = 'option, product, currency, price, offerPrice';
+keystone.deepPopulate(ProductPriceOption.schema);
 ProductPriceOption.register();

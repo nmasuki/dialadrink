@@ -56,6 +56,9 @@ exports = module.exports = function (app) {
 	app.use(enhanceSEOMiddleware);
 	app.use(SEOMetadataEnhancer.addRobotsMetaTags);
 	app.use(SEOMetadataEnhancer.addCanonicalURL);
+	
+	// Add navigation filters middleware
+	app.use(middleware.setNavigationFilters);
 
 	if (process.env.NODE_ENV != "production") {
 		var publicPath = path.resolve(__dirname + '/../public');
