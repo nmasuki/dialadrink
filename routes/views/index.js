@@ -565,7 +565,7 @@ async function sitemap(req, res) {
     var grape = await Grape.model.find({}).exec();
     var size = await Size.model.find({}).exec();
     var blogs = await Blog.model.find({}).exec();
-    var mybrands = await Mybrands.model.find({}).exec();
+    //var mybrands = await Mybrands.model.find({}).exec();
 
     let links = linksFromMenus(menus)
         .concat(linksFromPages(pages))
