@@ -255,7 +255,7 @@ async function main() {
         // Check if data already exists
         const ProductSchema = new mongoose.Schema({}, { strict: false });
         const Product = mongoose.model('TempProduct', ProductSchema, 'products');
-        const existingCount = await Product.countDocuments();
+        const existingCount = await Product.count();
         
         if (existingCount > 0) {
             console.log(`Found ${existingCount} existing products. Skipping data creation.`);

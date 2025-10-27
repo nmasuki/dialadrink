@@ -999,7 +999,7 @@ class MetricsService {
       newCustomers,
       topProducts
     ] = await Promise.all([
-      Order.countDocuments({
+      Order.count({
         orderDate: { $gte: startOfDay, $lte: endOfDay }
       }),
       
@@ -1011,17 +1011,17 @@ class MetricsService {
         { $group: { _id: null, total: { $sum: '$payment.amount' } }}
       ]),
       
-      Order.countDocuments({
+      Order.count({
         orderDate: { $gte: startOfDay, $lte: endOfDay },
         'payment.state': 'Paid'
       }),
       
-      Order.countDocuments({
+      Order.count({
         orderDate: { $gte: startOfDay, $lte: endOfDay },
         state: 'cancelled'
       }),
       
-      Client.countDocuments({
+      Client.count({
         registrationDate: { $gte: startOfDay, $lte: endOfDay }
       }),
       

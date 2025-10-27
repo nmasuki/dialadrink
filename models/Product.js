@@ -325,15 +325,12 @@ Product.schema.methods.findRelated = function (callback) {
     return Product.findRelated([this.id || this._id], callback);
 };
 
-var addPopularityTimeout = null;
 Product.schema.methods.addPopularity = function (factor) {
-    this.popularity = (this.popularity || 0) + (factor || 1);
+    const db = keystone.mongoose.connection;
+    const collection = db.collection('products');
     
-    if (addPopularityTimeout)
-        clearTimeout(addPopularityTimeout);
-
-    let that = this;
-    addPopularityTimeout = setTimeout(() => that.save().catch(() => { }).finally(() => { addPopularityTimeout = null; }), 100);
+    this.popularity = (this.popularity || 0) + (factor || 1);
+    return collection.updateOne({ _id: this._id }, { $set: { popularity: this.popularity } });
 };
 
 Product.schema.methods.toAppObject = function () {
@@ -1018,5 +1015,6 @@ Product.getUIFilters = function (products, limit) {
 
 var topHitsPerWeek = 100;
 Product.model.find().exec((err, data) => { 
-    topHitsPerWeek = data.max(p => p?.hitsPerWeek);
+    if (data)
+        topHitsPerWeek = data.max(p => p?.hitsPerWeek);
 });

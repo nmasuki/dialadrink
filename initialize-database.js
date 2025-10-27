@@ -41,7 +41,7 @@ async function cleanExistingData() {
         
         for (const collectionName of collections) {
             try {
-                await mongoose.connection.db.dropCollection(collectionName);
+                await mongoose.connection.dropCollection(collectionName);
                 console.log(`✅ Dropped collection: ${collectionName}`);
             } catch (error) {
                 if (error.message.includes('ns not found')) {

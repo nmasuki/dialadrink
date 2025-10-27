@@ -1,185 +1,185 @@
 <style>
-  /* Default mobile image size */
-  .img-responsive {
-    width: 200px;
-    height: 200px;
-  }
-
-  /* Increase image size on desktop */
-  @media (min-width: 700px) {
-    .desktop-image {
-      width: 400px;
-      height: 400px;
+    /* Default mobile image size */
+    .img-responsive {
+        width: 200px;
+        height: 200px;
     }
-  }
 
-  /* Decrease image size on mobile */
-  @media (max-width: 767px) {
-    .desktop-image {
-      width: 250px;
-      height: 250px;
+    /* Increase image size on desktop */
+    @media (min-width: 700px) {
+        .desktop-image {
+            width: 400px;
+            height: 400px;
+        }
     }
-  }
+
+    /* Decrease image size on mobile */
+    @media (max-width: 767px) {
+        .desktop-image {
+            width: 250px;
+            height: 250px;
+        }
+    }
 </style>
 
 
 <div>
     <div style="float: left;">
-{{#if percentOffer}}
-    <a href="{{productUrl href}}" aria-label="{{{percentOffer}}}% off on {{{name}}}" style="position: absolute; display :block; color: black;">
-        <div class="product-promo">
-            <span>
-                {{{percentOffer}}}%
-            </span>
-        </div>
-    </a>
-{{/if}}
-</div>
+        {{#if percentOffer}}
+        <a href="{{productUrl href}}" aria-label="{{{percentOffer}}}% off on {{{name}}}"
+            style="position: absolute; display :block; color: black;">
+            <div class="product-promo">
+                <span>
+                    {{{percentOffer}}}%
+                </span>
+            </div>
+        </a>
+        {{/if}}
+    </div>
 </div>
 
 <div class="featured-imagess" style="text-align :center;" aria-label="Access product {{{name}}}" id="product{{_id}}">
     <div class="product-hover-blind"></div>
-    
+
     {{!-- <a class="product-hover" href="myproduct{{productUrl href}}"> --}}
         <a href="{{productUrl href}}">
-        
+            <div class="item-name" style="text-align:center; justify-content :center; color: black">
+                <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}" />
+                <meta itemprop="name" content="{{name}}" />
+                <meta itemprop="description" content="{{truncate (cleanHtml description) 155}}" />
+                <img src="{{bottlePlaceholder}}"
+                    data-src="{{cloudinaryUrl image width=300 height=300 crop='fill' format='webp' quality='auto:good'}}"
+                    loading="lazy" decoding="async" width="300" height="300"
+                    title="{{{name}}}..{{truncate (cleanHtml description) 100}}" itemprop="image" alt="{{{name}}}"
+                    class="img-responsive desktop-image lazyload"
+                    style="margin: auto; aspect-ratio: 1/1; object-fit: cover;" />
+                <div itemprop="aggregateRating" itemtype="https://schema.org/AggregateRating" itemscope>
+                    <meta itemprop="bestRating" content="5" />
+                    <meta itemprop="reviewCount" content="{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}" />
+                    <meta itemprop="ratingValue" content="{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}" />
+                </div>
 
-    <div class="item-name" style="text-align:center; justify-content :center; color: black">
-        <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
-        <meta itemprop="name" content="{{name}}"/>
-        <meta itemprop="description" content="{{truncate (cleanHtml description) 155}}"/>
-        <img src="{{bottlePlaceholder}}" 
-                data-src="{{cloudinaryUrl image width=300 height=300 crop='fill' format='webp' quality='auto:good'}}" 
-                loading="lazy"
-                decoding="async"
-                width="300"
-                height="300"
-                title="{{{name}}}..{{truncate (cleanHtml description) 100}}"
-                itemprop="image" alt="{{{name}}}"
-                class="img-responsive desktop-image lazyload"
-            style="margin: auto; aspect-ratio: 1/1; object-fit: cover;"/>
-        <div itemprop="aggregateRating" itemtype="https://schema.org/AggregateRating" itemscope>
-        <meta itemprop="bestRating" content="5" />
-        <meta itemprop="reviewCount" content="{{#if ratingCount}}{{ratingCount}}{{else}}0{{/if}}" />
-        <meta itemprop="ratingValue" content="{{#if averageRatings}}{{averageRatings}}{{else}}4{{/if}}" />
-        </div>
-
-         <div itemprop="review" itemtype="https://schema.org/Review" itemscope>
-        <div itemprop="author" itemtype="https://schema.org/Person" itemscope>
-          <meta itemprop="name" content="Dial A Drink" />
-        </div>
-        <div itemprop="reviewRating" itemtype="https://schema.org/Rating" itemscope>
-          <meta itemprop="ratingValue" content="4" />
-          <meta itemprop="bestRating" content="5" />
-        </div>
-        </div>
-           
-        <div itemscope itemprop="offers" itemtype="http://schema.org/Offer" class="price-details">
-            <meta itemprop="availability" content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}"/>
-            <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}"/>
-            <meta itemprop="description" content="{{truncate (cleanHtml description) 155}} "/>
-            <meta itemprop="priceValidUntil" content="{{priceValidUntil}}"/>
-        <div itemprop="hasMerchantReturnPolicy" itemtype="https://schema.org/MerchantReturnPolicy" itemscope>
-          <meta itemprop="applicableCountry" content="KE" />
-          <meta itemprop="returnPolicyCategory" content="https://schema.org/MerchantReturnFiniteReturnWindow" />
-          <meta itemprop="merchantReturnDays" content="7" />
-          <meta itemprop="returnMethod" content="https://schema.org/ReturnByMail" />
-          <meta itemprop="returnFees" content="https://schema.org/FreeReturn" />
-        </div>
-        <div itemprop="shippingDetails" itemtype="https://schema.org/OfferShippingDetails" itemscope>
-                    <div itemprop="shippingRate" itemtype="https://schema.org/MonetaryAmount" itemscope>
-                        <meta itemprop="value" content="0" />
-                        <meta itemprop="currency" content="KES" />
+                <div itemprop="review" itemtype="https://schema.org/Review" itemscope>
+                    <div itemprop="author" itemtype="https://schema.org/Person" itemscope>
+                        <meta itemprop="name" content="Dial A Drink" />
                     </div>
-                    <div itemprop="shippingDestination" itemtype="https://schema.org/DefinedRegion" itemscope>
-                        <meta itemprop="addressCountry" content="KE" />
-                    </div>
-                    <div itemprop="deliveryTime" itemtype="https://schema.org/ShippingDeliveryTime" itemscope>
-                     <div itemprop="handlingTime" itemtype="https://schema.org/QuantitativeValue" itemscope>
-                        <meta itemprop="minValue" content="0" />
-                        <meta itemprop="maxValue" content="1" />
-                        <meta itemprop="unitCode" content="DAY" />
-                    </div>
-                    <div itemprop="transitTime" itemtype="https://schema.org/QuantitativeValue" itemscope>
-                         <meta itemprop="minValue" content="1" />
-                        <meta itemprop="maxValue" content="5" />
-                        <meta itemprop="unitCode" content="DAY" />
-                     </div>
+                    <div itemprop="reviewRating" itemtype="https://schema.org/Rating" itemscope>
+                        <meta itemprop="ratingValue" content="4" />
+                        <meta itemprop="bestRating" content="5" />
                     </div>
                 </div>
-            <div>
-                <a href="{{productUrl href}}" style="font-size: 14px; color: black; font-family:'Arial, Helvetica', sans-serif;">
-                    {{truncate name 25}}
-                    {{#ifgt alcoholContent 0}}
-                    <br><p style="font-size: 12px; color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%), {{{countryOfOrigin}}}</p>
-                    {{/ifgt}}
-                </a>
-            </div>            
-            <div style="font-size: 12px; font-family:'Arial, Helvetica', sans-serif; color: rgb(104, 95, 95);" >
-                {{#each stockOptions}}
-                    <br> <a href="#" class="add-to-cart"
-                        data-qty="{{quantity}}" data-product="{{../_id}}">
-                        <span>{{quantity}}</span>
-                        <span itemprop="priceCurrency" content="{{currency}}">{{currency}}</span>
-                        {{#if offerPrice}}
+
+                <div itemscope itemprop="offers" itemtype="http://schema.org/Offer" class="price-details">
+                    <meta itemprop="availability"
+                        content="http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}" />
+                    <meta itemprop="url" content="{{{appUrl}}}{{productUrl href}}" />
+                    <meta itemprop="description" content="{{truncate (cleanHtml description) 155}} " />
+                    <meta itemprop="priceValidUntil" content="{{priceValidUntil}}" />
+                    <div itemprop="hasMerchantReturnPolicy" itemtype="https://schema.org/MerchantReturnPolicy"
+                        itemscope>
+                        <meta itemprop="applicableCountry" content="KE" />
+                        <meta itemprop="returnPolicyCategory"
+                            content="https://schema.org/MerchantReturnFiniteReturnWindow" />
+                        <meta itemprop="merchantReturnDays" content="7" />
+                        <meta itemprop="returnMethod" content="https://schema.org/ReturnByMail" />
+                        <meta itemprop="returnFees" content="https://schema.org/FreeReturn" />
+                    </div>
+                    <div itemprop="shippingDetails" itemtype="https://schema.org/OfferShippingDetails" itemscope>
+                        <div itemprop="shippingRate" itemtype="https://schema.org/MonetaryAmount" itemscope>
+                            <meta itemprop="value" content="0" />
+                            <meta itemprop="currency" content="KES" />
+                        </div>
+                        <div itemprop="shippingDestination" itemtype="https://schema.org/DefinedRegion" itemscope>
+                            <meta itemprop="addressCountry" content="KE" />
+                        </div>
+                        <div itemprop="deliveryTime" itemtype="https://schema.org/ShippingDeliveryTime" itemscope>
+                            <div itemprop="handlingTime" itemtype="https://schema.org/QuantitativeValue" itemscope>
+                                <meta itemprop="minValue" content="0" />
+                                <meta itemprop="maxValue" content="1" />
+                                <meta itemprop="unitCode" content="DAY" />
+                            </div>
+                            <div itemprop="transitTime" itemtype="https://schema.org/QuantitativeValue" itemscope>
+                                <meta itemprop="minValue" content="1" />
+                                <meta itemprop="maxValue" content="5" />
+                                <meta itemprop="unitCode" content="DAY" />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{{productUrl href}}"
+                            style="font-size: 14px; color: black; font-family:'Arial, Helvetica', sans-serif;">
+                            {{truncate name 25}}
+                            {{#ifgt alcoholContent 0}}
+                            <br>
+                            <p style="font-size: 12px; color: rgb(104, 95, 95);">(ABV {{{alcoholContent}}}%),
+                                {{{countryOfOrigin}}}</p>
+                            {{/ifgt}}
+                        </a>
+                    </div>
+                    <div style="font-size: 12px; font-family:'Arial, Helvetica', sans-serif; color: rgb(104, 95, 95);">
+                        {{#each stockOptions}}
+                        <br> <a href="#" class="add-to-cart" data-qty="{{quantity}}" data-product="{{../_id}}">
+                            <span>{{quantity}}</span>
+                            <span itemprop="priceCurrency" content="{{currency}}">{{currency}}</span>
+                            {{#if offerPrice}}
                             <span>
                                 <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
                                     <span>{{formatNumber price}}</span>
                                 </span>
                                 <span itemprop="price" content="{{offerPrice}}">{{formatNumber offerPrice}}</span>
                             </span>
-                        {{else}}
+                            {{else}}
                             <span itemprop="price" content="{{price}}">{{formatNumber price}}</span>
-                        {{/if}}
-                    </a>
-                {{/each}}
-            </div>
-        </div>
-        
-        <div class="dropdown zindex2">
-            {{#if inStock}}
-                {{#ifgt stockOptions.length 1}}
-                    <image src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/cart_qAUSkm_Fr.jpeg?ik-sdk-version=javascript-1.4.3&updatedAt=1644052524419" 
-                        alt="Add to Cart" class="add-to-cart-2" data-qty="{{quantity}}" data-product="{{_id}}" 
-                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
-                        {{#ifgt options.length 1}}
-                            <span class="dropdown zindex2" style="left: -39px;">
-                                <i style="color: white;" class="fa fa-angle-down"></i>
-                            </span>
-                        {{/ifgt}}
-                    </image>                        
-                    <div class="dropdown-content">
-                        {{#each stockOptions}}
-                            <a href="#" class="add-to-cart"
-                                data-qty="{{quantity}}" data-product="{{../_id}}">
-                                <span>{{quantity}}</span>
-                                {{#if percentOffer}}
-                                    <span>
-                                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                            <span>{{formatNumber price}}</span>
-                                        </span>
-                                        <span>{{formatNumber offerPrice}}</span>
-                                    </span>
-                                {{else}}
-                                    <span>{{formatNumber price}}</span>
-                                {{/if}}
-                            </a>
+                            {{/if}}
+                        </a>
                         {{/each}}
                     </div>
-                {{else}}
-                    <image src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/cart_qAUSkm_Fr.jpeg?ik-sdk-version=javascript-1.4.3&updatedAt=1644052524419" 
-                        alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="{{_id}}" 
+                </div>
+
+                <div class="dropdown zindex2">
+                    {{#if inStock}}
+                    {{#ifgt stockOptions.length 1}}
+                    <image
+                        src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/cart_qAUSkm_Fr.jpeg?ik-sdk-version=javascript-1.4.3&updatedAt=1644052524419"
+                        alt="Add to Cart" class="add-to-cart-2" data-qty="{{quantity}}" data-product="{{_id}}"
                         style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: pointer;">
+                        {{#ifgt options.length 1}}
+                        <span class="dropdown zindex2" style="left: -39px;">
+                            <i style="color: white;" class="fa fa-angle-down"></i>
+                        </span>
+                        {{/ifgt}}
                     </image>
-                {{/ifgt}}
-            {{else}}
-                <image src="https://res.cloudinary.com/nmasuki/image/upload/soldout.png"
-                    alt="Sold out!"
-                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;max-width: 170px;cursor: text;">
-                </image>
-            {{/if}}
-        </div>
-    </div>
+                    <div class="dropdown-content">
+                        {{#each stockOptions}}
+                        <a href="#" class="add-to-cart" data-qty="{{quantity}}" data-product="{{../_id}}">
+                            <span>{{quantity}}</span>
+                            {{#if percentOffer}}
+                            <span>
+                                <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
+                                    <span>{{formatNumber price}}</span>
+                                </span>
+                                <span>{{formatNumber offerPrice}}</span>
+                            </span>
+                            {{else}}
+                            <span>{{formatNumber price}}</span>
+                            {{/if}}
+                        </a>
+                        {{/each}}
+                    </div>
+                    {{else}}
+                    <image
+                        src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/cart_qAUSkm_Fr.jpeg?ik-sdk-version=javascript-1.4.3&updatedAt=1644052524419"
+                        alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="{{_id}}"
+                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;height: 29px;cursor: pointer;">
+                    </image>
+                    {{/ifgt}}
+                    {{else}}
+                    <image src="https://res.cloudinary.com/nmasuki/image/upload/soldout.png" alt="Sold out!"
+                        style="font-size: 14px !important; padding: 0 15px; text-transform: none;height: 29px;cursor: text;">
+                    </image>
+                    {{/if}}
+                </div>
+            </div>
         </a>
 </div>
 

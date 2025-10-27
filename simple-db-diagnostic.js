@@ -30,7 +30,7 @@ async function checkCollections() {
     console.log('\n=== Checking Collections ===');
     
     try {
-        const collections = await mongoose.connection.db.listCollections().toArray();
+        const collections = await mongoose.connection.listCollections().toArray();
         console.log('Available collections:');
         collections.forEach(col => {
             console.log(`  - ${col.name}`);
@@ -50,7 +50,7 @@ async function checkProductDocuments() {
         const ProductSchema = new mongoose.Schema({}, { strict: false });
         const Product = mongoose.model('Product', ProductSchema, 'products');
         
-        const count = await Product.countDocuments();
+        const count = await Product.count();
         console.log(`Total products: ${count}`);
         
         if (count > 0) {
@@ -63,7 +63,7 @@ async function checkProductDocuments() {
             console.log('\nRelationship field analysis:');
             
             for (const field of fieldsToCheck) {
-                const withField = await Product.countDocuments({ [field]: { $exists: true, $ne: null } });
+                const withField = await Product.count({ [field]: { $exists: true, $ne: null } });
                 console.log(`  ${field}: ${withField}/${count} documents have this field`);
                 
                 if (withField > 0) {
@@ -96,7 +96,7 @@ async function checkPriceOptions() {
         const PriceOptionSchema = new mongoose.Schema({}, { strict: false });
         const PriceOption = mongoose.model('ProductPriceOption', PriceOptionSchema, 'productpriceoptions');
         
-        const count = await PriceOption.countDocuments();
+        const count = await PriceOption.count();
         console.log(`Total price options: ${count}`);
         
         if (count > 0) {
@@ -105,8 +105,8 @@ async function checkPriceOptions() {
             console.log(JSON.stringify(sample, null, 2));
             
             // Check for orphaned references
-            const withProduct = await PriceOption.countDocuments({ product: { $exists: true, $ne: null } });
-            const withOption = await PriceOption.countDocuments({ option: { $exists: true, $ne: null } });
+            const withProduct = await PriceOption.count({ product: { $exists: true, $ne: null } });
+            const withOption = await PriceOption.count({ option: { $exists: true, $ne: null } });
             
             console.log(`Price options with product reference: ${withProduct}/${count}`);
             console.log(`Price options with option reference: ${withOption}/${count}`);

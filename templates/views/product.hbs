@@ -1,357 +1,655 @@
-<link rel="preload" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+<link rel="preload" href='https://fonts.googleapis.com/css?family=Inter:400,500,600,700' rel='stylesheet'
+    type='text/css'>
 <style type='text/css'>
-    .price-options {
-        width: 50%;
-        margin-top: 5px;
-        white-space: nowrap;
-        padding: 5px;
-        margin: 2px;
-        border: 1px solid black;
-        border-radius: 5px;
-        cursor: pointer;
-        color: black;
+    /* Modern Product Page Styles */
+    .product-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: 'Inter', Arial, sans-serif;
+        background: #fff;
     }
 
-    .card {
-        width: 50%;
-        margin-top: 5px;
-        white-space: nowrap;
-        padding: 5px;
-        margin: 2px;
-        border: 1px solid black;
-        border-radius: 5px;
-        cursor: pointer;
-        color: black;
+    .product-breadcrumb {
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #666;
     }
 
-    input[type="radio"],
-    input[type="checkbox"] {
-        margin: 2px 0 0;
-        margin-top: 1px \9;
-        line-height: normal;
-        height: 20px;
-        width: 12px;
+    .product-breadcrumb a {
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    .product-main {
+        display: grid;
+        grid-template-columns: 1fr 350px 350px;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .product-gallery {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main-image {
+        width: 100%;
+        max-height: 500px;
+        object-fit: contain;
+        border: 1px solid #e5e7eb;
+        margin-bottom: 16px;
+        background: #f9fafb;
+    }
+
+    .thumbnail-list {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+    }
+
+    .thumbnail {
+        width: 80px;
+        height: 80px;
+        border: 2px solid transparent;
+        overflow: hidden;
+        cursor: pointer;
+        transition: border-color 0.2s;
+        flex-shrink: 0;
+    }
+
+    .thumbnail:hover,
+    .thumbnail.active {
+        border-color: #2563eb;
+    }
+
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-brief-info {
+        padding: 0 20px;
+    }
+
+    .product-full-info {
+        padding: 0 20px;
+        border-left: 1px solid #e5e7eb;
+        max-height: 800px;
+        overflow-y: auto;
+    }
+
+    .product-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 16px;
+        line-height: 1.2;
+    }
+
+    .product-price {
+        font-size: 28px;
+        font-weight: 600;
+        color: #059669;
+        margin-bottom: 16px;
+    }
+
+    .price-strike {
+        text-decoration: line-through;
+        color: #9ca3af;
+        font-size: 20px;
+        margin-right: 8px;
+    }
+
+    .availability-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 24px;
+    }
+
+    .in-stock {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .out-of-stock {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .product-options {
+        margin-bottom: 24px;
+    }
+
+    .option-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #374151;
+    }
+
+    .price-option {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #fff;
+    }
+
+    .price-option:hover {
+        border-color: #2563eb;
+        background: #f8faff;
+    }
+
+    .price-option.selected {
+        border-color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .price-option input[type="radio"] {
+        margin-right: 12px;
+        transform: scale(1.2);
+    }
+
+    .add-to-cart-section {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 24px;
+        margin-bottom: 32px;
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .quantity-controls {
+        display: flex;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .qty-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: #f9fafb;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: background 0.2s;
+    }
+
+    .qty-btn:hover {
+        background: #e5e7eb;
+    }
+
+    .qty-input {
+        width: 60px;
+        height: 40px;
+        border: none;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .add-to-cart-btn {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 200px;
+        justify-content: center;
+    }
+
+    .add-to-cart-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .whatsapp-btn {
+        background: #25d366;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        transition: all 0.2s;
+    }
+
+    .whatsapp-btn:hover {
+        background: #1eb854;
+        transform: translateY(-1px);
+    }
+
+    .product-details-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 32px;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-details-table th,
+    .product-details-table td {
+        padding: 16px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .product-details-table th {
+        background: #f9fafb;
+        font-weight: 600;
+        color: #374151;
+        width: 40%;
+    }
+
+    .product-details-table td {
+        color: #6b7280;
+    }
+
+    .product-details-table tr:last-child th,
+    .product-details-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .social-share {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-top: 24px;
+    }
+
+    .social-share a {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s;
+    }
+
+    .social-share a:hover {
+        transform: scale(1.1);
+    }
+
+    .product-tabs {
+        margin-top: 48px;
+    }
+
+    .tab-nav {
+        display: flex;
+        border-bottom: 2px solid #e5e7eb;
+        margin-bottom: 24px;
+    }
+
+    .tab-nav button {
+        padding: 12px 24px;
+        border: none;
+        background: none;
+        font-size: 16px;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .tab-nav button.active,
+    .tab-nav button:hover {
+        color: #2563eb;
+        border-bottom-color: #2563eb;
+    }
+
+    .tab-content {
+        padding: 24px 0;
+        line-height: 1.6;
+        color: #374151;
+    }
+
+    .delivery-info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .delivery-info img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .related-products {
+        margin-top: 48px;
+        padding-top: 32px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 24px;
+    }
+
+    .product-details-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-details-table th,
+    .product-details-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .product-details-table th {
+        background: #f9fafb;
+        font-weight: 600;
+        color: #374151;
+        width: 40%;
+    }
+
+    .product-details-table td {
+        color: #6b7280;
+    }
+
+    .product-details-table tr:last-child th,
+    .product-details-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .product-main {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .product-brief-info,
+        .product-full-info {
+            padding: 0;
+        }
+
+        .product-full-info {
+            border-left: none;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+
+        .product-title {
+            font-size: 24px;
+        }
+
+        .product-price {
+            font-size: 24px;
+        }
     }
 </style>
 
 {{#with product}}
-<div class="container" id="product-section" data-product="{{_id}}">
+<div class="product-container" id="product-section" data-product="{{_id}}">
 
-    <div class="row" style="border: 5px solid lightgray;">
-        <div class="col-sm-1 col-12">
-            {{#each altImages}}
-            <div class="thumbnail" style="width: 48px;">
-                <img alt="{{{../name}}}" style="width: 42px; height: 42px;"
-                    data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
-                    src="{{cloudinaryUrl this width=42 height=42 crop='fit'}}" />
-            </div>
-            {{else}}
-            <div class="thumbnail" style="width: 48px;">
-                <img alt="{{{../name}}}" style="width: 42px; height: 42px;"
-                    data-img="{{cloudinaryUrl this crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
-                    src="{{cloudinaryUrl image width=42 height=42 crop='fit' background_removal='cloudinary_ai'}}" />
-            </div>
-            {{/each}}
-        </div>
-
-        <div class="col-sm-4 col-12">
-            <figure class="zoom"
-                style="background-image: url({{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}})">
-                <img loading="lazy" class="image-responsive"
-                    src="{{cloudinaryUrl image width=380 height=380  crop='fit'}}"
-                    data-src="{{cloudinaryUrl image crop='fit' width=700 height=700 background_removal='cloudinary_ai'}}"
-                    alt="{{{name}}}" style="min-height: 380px; max-height: 400px; margin: 0 auto" />
-            </figure>
-        </div>
-
-        <div class="col-sm-7 col-12">
-
-            <div class="col-md-8" style="font-size: 20px; color: #2f93A3; padding: 12px;">
-                <h1>
-                    <span class="category-name">{{name}}</span>
-                </h1>
-
-                {{!-- <b>{{name}}</b> --}}
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-4 text-left">
-                            {{#if inStock}}
-                            <span class="monospaced label label-success">In Stock</span>
-                            {{else}}
-                            <span class="monospaced label label-danger">Out of Stock</span>
-                            {{/if}}
-                        </div>
-                        <div class="col-md-4 text-left">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 text-left">
-                            {{#if category.name}}
-                            <tr>
-                                <th style="padding-left: 10px">Category: </th>
-                                <td style="border: 5px solid #fff; text-align:left;"><a
-                                        href="{{cleanId category.name}}">{{category.name}}</a></td>
-                            </tr>
-                            {{/if}}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 text-left">
-                            {{#if subCategory.name}}
-                            <tr>
-                                <th style="padding-left: 10px">Sub Category: </th>
-                                <td style="border: 5px solid #fff; text-align:left;"><a
-                                        href="{{cleanId subCategory.name}}">{{subCategory.name}}</a></td>
-                            </tr>
-                            {{/if}}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 text-left">
-                            {{#if brand.name}}
-                            <tr>
-                            <tr>
-                                <th style="padding-left: 10px">Brand: </th>
-                                <td style="border: 5px solid #fff; text-align:left;"><a
-                                        href="/brand/{{cleanId brand.href}}">{{brand.name}}</a></td>
-                            </tr>
-                            {{/if}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-12 bottom-rule">
-                {{#ifgt options.length 1}}
-                <div class="change-quantity">
-                    {{#each options}}
-                    <label style="font-size: 16px;{{#unless inStock}}text-decoration: line-through;{{/unless}}"
-                        class="price-options" data-qty="{{quantity}}" data-product="{{../_id}}"
-                        style="margin-top:5px; white-space:nowrap;">
-                        <input type="radio" style="margin: 8px 0 0;" class="option" name="priceOption" {{#if
-                            inStock}}{{#ifeq ../price price}}checked{{/ifeq}}{{else}}disabled{{/if}}
-                            value="{{quantity}}" data-value="{{price}}" data-option="{{../id}}|{{quantity}}" />
-                        <span>{{currency}}</span>
-                        {{#if percentOffer}}
-                        <span class="product-price">
-                            <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                                <span>{{formatNumber price}}</span>
-                            </span>
-                            <span>
-                                {{formatNumber offerPrice}}
-                            </span>
-                        </span>
-                        {{else}}
-                        <span class="product-price">{{formatNumber price}}</span>
-                        {{/if}}
-                        <span>{{quantity}}</span>
-                    </label>
-                    {{/each}}
-                </div>
-                {{else}}
-                <h4 style="margin-top:5px; white-space:nowrap; color: orangered; padding-left: 10px;">
-                    <span>{{quantity}} @</span>
-                    <span>{{currency}}</span>
-                    {{#if percentOffer}}
-                    <span>
-                        <span style="font-size: 0.8em; text-decoration: line-through; color: orangered">
-                            <span>{{formatNumber price}}</span>
-                        </span>
-                        <span class="product-price" id="product-price">
-                            {{formatNumber offerPrice}}
-                        </span>
-                    </span>
-                    {{else}}
-                    <span class="product-price" id="product-price">{{formatNumber price}}</span>
-                    {{/if}}
-                </h4>
-                {{/ifgt}}
-            </div>
-
-            <div class="add-to-cart-wrapper">
-                <div class="col-md-5 product-qty">
-                    <span id="pieces-plus" class="pieces-plus btn btn-default btn-lg btn-qty"
-                        style="width: 46px;color: black !important;">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </span>
-                    <input id="pieces" class="pieces btn btn-default btn-lg btn-qty"
-                        style="width: 48px;color: black !important;" value="1" />
-                    <span id="pieces-minus" class="pieces-minus btn btn-default btn-lg btn-qty"
-                        style="width: 46px;color: black !important;">
-                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                    </span>
-                </div>
-                <div class="col-md-10" style="margin-top: 5px">
-                    {{#if inStock}}
-                    <image
-                        src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/cart_qAUSkm_Fr.jpeg?ik-sdk-version=javascript-1.4.3&updatedAt=1644052524419"
-                        alt="Add to Cart" class="add-to-cart" data-qty="{{quantity}}" data-product="{{_id}}"
-                        style="font-size: 17px !important;padding: 5px 5px;top: 5px;text-transform: none;max-width: 170px;cursor: pointer;">
-                    </image>
-                    {{else}}
-                    <br />
-                    <p class="monospaced label label-warning" style="font-size: 18px;">
-                        <a target="_blank" rel="noreferrer" href="https://api.whatsapp.com/send?l=en&phone='+254723688108'&text=I would like you to notify me once the {{{name}}}%20 is back in stock
-                            https://www.dialadrinkkenya.com/{{{_id}}}" title="Notification">
-                            Notify me once in Stock
-                        </a>
-                    </p>
-                    </span>
-                    {{/if}}
-
-                </div>
-            </div><!-- end row -->
-
-            <div class="col-md-8" style="padding-left: 10px !important; color: black; font-size: 16px">
-                <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/delivery__2__ncdnk5-JF.png?ik-sdk-version=javascript-1.4.3&updatedAt=1666967423015"
-                    style="width:40px;" alt="Whatsup to order">
-                <b>15 - 30 Min Express Delivery : KES.195</b>
-            </div><br />
-
-            <div class="col-md-8" style="padding-left: 10px !important; color: black; font-size: 16px">
-
-                <a target="_blank" rel="noreferrer" href="https://api.whatsapp.com/send?l=en&phone='+254723688108'&text=I%20would%20like to%20order%201%20{{{name}}}%20{{quantity}}%20@%20{{price}} %20
-                            https://www.dialadrinkkenya.com/{{{_id}}}" title="WhatsApp">
-                    <img loading="lazy" src="https://res.cloudinary.com/nmasuki/image/upload/c_fill/whatsapp.png"
-                        style="width:40px;" alt="Whatsup to order"> Order by WhatsApp
-                </a>
-
-            </div>
-        </div>
-        <div class="col-md-5">
-            <h4 class="my-0">
-                <a class="cart-product-link" href="/tonic-water">
-                    <img loading="lazy"
-                        src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/tonic_ebnFJx_7Q.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1656410684685"
-                        alt="Tonic" style="height:90px;">
-                </a>
-
-                <a class="cart-product-link" href="/coca-cola-can">
-                    <img loading="lazy"
-                        src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/dial_products/coke_O4ezu53k7.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1675442934104"
-                        alt="Coke" style="height:90px;">
-                </a>
-
-                <a class="cart-product-link" href="/redbull-can">
-
-                    <img loading="lazy"
-                        src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/dial_products/redbull-can_ud2A3b9BWQ.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1661846859101"
-                        alt="Coke" style="height:80px;">
-                </a>
-
-                <a class="cart-product-link" href="/delmonte">
-
-                    <img loading="lazy"
-                        src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/dial_products/delmonte-passion_5FR4igMnQ.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1661844921079"
-                        alt="Delmonte" style="height:90px;">
-                </a>
-            </h4>
-
-        </div>
+    <!-- Breadcrumb -->
+    <div class="product-breadcrumb">
+        <a href="/">Home</a> &gt;
+        {{#if category.name}}<a href="/{{cleanId category.name}}">{{category.name}}</a> &gt;{{/if}}
+        {{name}}
     </div>
-    <br>
 
-    <div class="row" style="border: 5px solid lightgray;">
-        <table style="width:50%">
-            <tbody style="border: 5px solid #fff;">
-                <tr>
-                    <th style="padding-left: 10px">Product Name</th>
-                    <td style="border: 5px solid #fff; text-align:left;">{{name}}</td>
-                </tr>
+    <div class="">
+        <h1 class="product-title">{{name}}</h1>
+    </div>
 
-                {{#if alcoholContent}}
-                <tr>
-                    <th style="padding-left: 10px">Alcohol Content (ABV)</th>
-                    <td style="border: 5px solid #fff; text-align:left;">{{alcoholContent}}%</td>
-                </tr>
+    <!-- Main Product Section -->
+    <div class="product-main">
+        <!-- Product Gallery -->
+        <div class="product-gallery">
+            <img class="main-image" id="main-product-image" loading="lazy"
+                src="{{cloudinaryUrl image crop='fit' width=500 height=500 background_removal='cloudinary_ai'}}"
+                alt="{{{name}}}" />
+
+            <div class="thumbnail-list">
+                <div class="thumbnail active"
+                    onclick="changeMainImage('{{cloudinaryUrl image crop='fit' width=500 height=500 background_removal='cloudinary_ai'}}')">
+                    <img src="{{cloudinaryUrl image width=50 height=50 crop='fit'}}" alt="{{{name}}}" />
+                </div>
+                {{#each altImages}}
+                <div class="thumbnail"
+                    onclick="changeMainImage('{{cloudinaryUrl this crop='fit' width=500 height=500 background_removal='cloudinary_ai'}}')">
+                    <img src="{{cloudinaryUrl this width=50 height=50 crop='fit'}}" alt="{{{../name}}}" />
+                </div>
+                {{/each}}
+            </div>
+
+            <!-- Delivery Information -->
+            <div class="delivery-info">
+                <img src="https://ik.imagekit.io/wcyvhkbdjw4r/Dial_A_Drink/delivery__2__ncdnk5-JF.png?ik-sdk-version=javascript-1.4.3&updatedAt=1666967423015"
+                    alt="Delivery">
+                <div>
+                    <strong>15-30 Min Express Delivery</strong><br>
+                    <span style="color: #059669; font-weight: 600;">KES 195</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Brief Product Information & Call to Action -->
+        <div class="product-brief-info">
+            <div class="product-price">
+                {{#if percentOffer}}
+                <span class="price-strike">{{currency}} {{formatNumber price}}</span>
+                {{currency}} {{formatNumber offerPrice}}
+                {{else}}
+                {{currency}} {{formatNumber price}}
                 {{/if}}
+                {{#if quantity}}<span style="font-size: 18px; color: #6b7280;"> / {{quantity}}</span>{{/if}}
+            </div>
 
-                {{#if countryOfOrigin}}
-                <tr>
-                    <th style="padding-left: 10px">Country Of Origin</th>
-                    <td style="border: 5px solid #fff; text-align:left;"><a
-                            href="/product-origin/{{cleanId countryOfOrigin}}">{{countryOfOrigin}}</a></td>
-                </tr>
-                {{/if}}
+            <div class="availability-badge {{#if inStock}}in-stock{{else}}out-of-stock{{/if}}">
+                {{#if inStock}}✓ In Stock{{else}}✗ Out of Stock{{/if}}
+            </div>
 
-                {{#if howToOpen}}
-                <tr>
-                    <th style="padding-left: 10px">How to Open</th>
-                    <td style="border: 5px solid #fff; text-align:left;">{{howToOpen}}</td>
-                </tr>
-                {{/if}}
+            <!-- Brief Description -->
+            {{#if shortDescription}}
+            <div
+                style="margin: 20px 0; padding: 16px; background: #f9fafb; border-radius: 8px; color: #6b7280; line-height: 1.6;">
+                {{shortDescription}}
+            </div>
+            {{/if}}
 
-                {{#if brand.name}}
-                <tr>
-                    <th style="padding-left: 10px">Brand</th>
-                    <td style="border: 5px solid #fff; text-align:left;">{{brand.name}}</td>
-                </tr>
-                {{/if}}
+            <!-- Product Options -->
+            {{#ifgt options.length 1}}
+            <div class="product-options">
+                <label class="option-label">Select Size/Quantity:</label>
+                {{#each options}}
+                <label
+                    class="price-option {{#unless inStock}}disabled{{/unless}} {{#ifeq ../price price}}selected{{/ifeq}}"
+                    data-qty="{{quantity}}" data-product="{{../_id}}">
+                    <input type="radio" class="option" name="priceOption" {{#if inStock}}{{#ifeq ../price
+                        price}}checked{{/ifeq}}{{else}}disabled{{/if}} value="{{quantity}}" data-value="{{price}}"
+                        data-option="{{../id}}|{{quantity}}" />
+                    <span>
+                        {{quantity}} - {{currency}}
+                        {{#if percentOffer}}
+                        <span class="price-strike">{{formatNumber price}}</span>
+                        {{formatNumber offerPrice}}
+                        {{else}}
+                        {{formatNumber price}}
+                        {{/if}}
+                    </span>
+                </label>
+                {{/each}}
+            </div>
+            {{/ifgt}}
 
-                {{#if grape.name}}
-                <tr>
-                    <th style="padding-left: 10px">Grape</th>
-                    <td style="border: 5px solid #fff; text-align:left;"><a
-                            href="/brand/{{cleanId grape.name}}">{{grape.name}}</a></td>
-                </tr>
-                {{/if}}
+            <!-- Add to Cart Section -->
+            <div class="add-to-cart-section">
+                <div class="quantity-selector">
+                    <span style="font-weight: 500;">Quantity:</span>
+                    <div class="quantity-controls">
+                        <button type="button" class="qty-btn pieces-minus">−</button>
+                        <input type="number" class="qty-input pieces" value="1" min="1" />
+                        <button type="button" class="qty-btn pieces-plus">+</button>
+                    </div>
+                </div>
 
                 {{#if inStock}}
+                <button class="add-to-cart-btn add-to-cart" data-qty="{{quantity}}" data-product="{{_id}}">
+                    🛒 Add to Cart
+                </button>
 
-                <tr>
-                    <th style="padding-left: 10px">Availability</th>
-                    <td style="border: 5px solid #fff; text-align:left;">In Stock</a></td>
-                </tr>
+                <a class="whatsapp-btn" target="_blank" rel="noreferrer"
+                    href="https://api.whatsapp.com/send?l=en&phone=+254723688108&text=I%20would%20like%20to%20order%201%20{{{name}}}%20{{quantity}}%20@%20{{price}}%20https://www.dialadrinkkenya.com/{{{_id}}}"
+                    title="WhatsApp Order">
+                    📱 Order via WhatsApp
+                </a>
                 {{else}}
-                <tr>
-                    <th style="padding-left: 10px">Availability</th>
-                    <td style="border: 5px solid #fff; text-align:left;">Out of Stock</a></td>
-                </tr>
+                <a class="add-to-cart-btn" style="background: #f59e0b;" target="_blank" rel="noreferrer"
+                    href="https://api.whatsapp.com/send?l=en&phone=+254723688108&text=I%20would%20like%20you%20to%20notify%20me%20once%20the%20{{{name}}}%20is%20back%20in%20stock%20https://www.dialadrinkkenya.com/{{{_id}}}"
+                    title="Notification">
+                    🔔 Notify When Available
+                </a>
                 {{/if}}
+            </div>
 
-                <tr>
+            <!-- Social Share -->
+            {{#if ../page.canonical}}
+            <div class="social-share">
+                <span style="font-weight: 500; color: #374151;">Share:</span>
+                <a target="_blank" href="https://www.facebook.com/sharer.php?u={{../page.canonical}}"
+                    style="background: #1877f2;">
+                    <img style="width: 24px;" src="https://platform-cdn.sharethis.com/img/facebook.svg"
+                        alt="Facebook" />
+                </a>
+                <a target="_blank" href="https://twitter.com/share?url={{../page.canonical}}&text={{name}}"
+                    style="background: #1da1f2;">
+                    <img style="width: 24px;" src="https://platform-cdn.sharethis.com/img/twitter.svg" alt="Twitter" />
+                </a>
+                <a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&url={{../page.canonical}}"
+                    style="background: #0077b5;">
+                    <img style="width: 24px;" src="https://platform-cdn.sharethis.com/img/linkedin.svg"
+                        alt="LinkedIn" />
+                </a>
+            </div>
+            {{/if}}
+        </div>
 
-                    <td style="border: 5px solid #fff; text-align:left;">{{name}} price in Nairobi</td>
-                </tr>
+        <!-- Full Product Information -->
+        <div class="product-full-info">
+            <h3 style="margin-bottom: 20px; color: #111827; font-size: 18px; font-weight: 600;">Product Details</h3>
 
-                {{#if ../page.canonical}}
+            <table class="product-details-table">
+                <tbody>
+                    {{#if brand.name}}
+                    <tr>
+                        <th>Brand</th>
+                        <td><a href="/brand/{{cleanId brand.href}}"
+                                style="color: #2563eb; text-decoration: none;">{{brand.name}}</a></td>
+                    </tr>
+                    {{/if}}
 
-                <tr>
-                    <th style="padding-left: 10px">
-                        <!-- Facebook -->
-                        <a href="https://www.facebook.com/sharer.php?u={{../page.canonical}}" target="_blank">
-                            <img style="width: 32px;" src="https://platform-cdn.sharethis.com/img/facebook.svg"
-                                alt="Facebook" />
-                        </a>
+                    {{#if category.name}}
+                    <tr>
+                        <th>Category</th>
+                        <td><a href="/{{cleanId category.name}}"
+                                style="color: #2563eb; text-decoration: none;">{{category.name}}</a></td>
+                    </tr>
+                    {{/if}}
 
-                        <!-- Twitter -->
-                        <a href="https://twitter.com/share?url={{../page.canonical}}&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons"
-                            target="_blank">
-                            <img style="width: 32px;" src="https://platform-cdn.sharethis.com/img/twitter.svg"
-                                alt="Twitter" />
-                        </a>
+                    {{#if subCategory.name}}
+                    <tr>
+                        <th>Sub Category</th>
+                        <td>{{subCategory.name}}</td>
+                    </tr>
+                    {{/if}}
 
-                        <!-- LinkedIn -->
-                        <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{../page.canonical}}"
-                            target="_blank">
-                            <img style="width: 32px;" src="https://platform-cdn.sharethis.com/img/linkedin.svg"
-                                alt="LinkedIn" />
-                        </a>
-                    </th>
-                </tr>
+                    {{#if alcoholContent}}
+                    <tr>
+                        <th>Alcohol Content (ABV)</th>
+                        <td>{{alcoholContent}}%</td>
+                    </tr>
+                    {{/if}}
 
-                {{/if}}
+                    {{#if countryOfOrigin}}
+                    <tr>
+                        <th>Country of Origin</th>
+                        <td><a href="/product-origin/{{cleanId countryOfOrigin}}"
+                                style="color: #2563eb; text-decoration: none;">{{countryOfOrigin}}</a></td>
+                    </tr>
+                    {{/if}}
 
+                    {{#if grape.name}}
+                    <tr>
+                        <th>Grape Variety</th>
+                        <td><a href="/grape/{{cleanId grape.name}}"
+                                style="color: #2563eb; text-decoration: none;">{{grape.name}}</a></td>
+                    </tr>
+                    {{/if}}
 
-            </tbody>
-        </table>
+                    {{#if taste.name}}
+                    <tr>
+                        <th>Taste Profile</th>
+                        <td>{{taste.name}}</td>
+                    </tr>
+                    {{/if}}
+
+                    {{#if size.name}}
+                    <tr>
+                        <th>Size</th>
+                        <td>{{size.name}}</td>
+                    </tr>
+                    {{/if}}
+
+                    {{#if howToOpen}}
+                    <tr>
+                        <th>How to Open</th>
+                        <td>{{howToOpen}}</td>
+                    </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+        </div>
     </div>
 
 
@@ -382,7 +680,7 @@
                 {{/if}}
                 <!-- Youtube video-->
                 {{#if youtubeUrl}}
-                <div role="tabpanel" class="tab-pane top-10" id="youtube">
+                <div role="tabpanel" class="tab-pane top-10 {{#unless description}}active{{/unless}}" id="youtube">
                     {{#if ../isMobile}}
                     <iframe style="width: 320px; height: 180px;" src="{{youtubeUrl}}"
                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" frameborder="0"
@@ -439,11 +737,14 @@
                     {{#if reviews}}{{>productReview}}{{/if}}
                 </div>
             </div>
-        </div>
+        </div>        
+    </div>
+    <!-- end row -->
 
-        {{#if ../related}}
-        <div style="border-top: 1px solid lightgray;" class="row">
-            <h2 style="font-size: 15px;">Other's also ordered..</h2>
+    {{#if ../related}}
+    <div style="border-top: 1px solid lightgray;">
+        <h2 style="font-size: 15px;">Other's also ordered..</h2>
+        <div class="row">
             {{#each ../related}}
             <div class="col-sm-2 col-12">
                 {{>product2}}
@@ -451,21 +752,22 @@
             {{/each}}
         </div>
     </div>
-    <!-- end row -->
     {{/if}}
-
+    
     {{#if ../similar}}
-    <div style="border-top: 1px solid lightgray;" class="row">
+    <div style="border-top: 1px solid lightgray;">
         <h2 style="font-size: 15px;">You may also like..</h2>
-        {{#each ../similar}}
-        <div class="col-sm-2 col-12">
-            {{>product2}}
+        <div class="row">
+            {{#each ../similar}}
+            <div class="col-sm-2 col-12">
+                {{>product2}}
+            </div>
+            {{/each}}
         </div>
-        {{/each}}
     </div>
+    {{/if}}
 </div>
 <!-- end row -->
-{{/if}}
 <div class="row">
 
 </div>
@@ -473,53 +775,101 @@
 
 <script type="application/ld+json">
 {
-  "@context": "http://schema.org/",
+  "@context": "https://schema.org/",
   "@type": "Product",
   "name": "{{{name}}}",
   "image": [
-    "{{cloudinaryUrl image crop='fit' width='300'}}"
-   ],
-  "description": "{{{truncate (cleanHtml description) 155 ' '}}}",
+    {{#if image}}"{{cloudinaryUrl image crop='fit' width='800' height='800' format='jpg' quality='auto:good'}}"{{else}}"{{bottlePlaceholder}}"{{/if}}{{#each altImages}},
+    "{{cloudinaryUrl this crop='fit' width='800' height='800' format='jpg' quality='auto:good'}}"{{/each}}
+  ],
+  "description": "{{#if description}}{{{truncate (cleanHtml description) 300 '...'}}}{{else}}{{{name}}} - Premium quality product available for delivery in Kenya.{{/if}}",
+  "sku": "{{_id}}",
+  "mpn": "{{href}}",
+  "gtin": "{{_id}}",
+  {{#if brand.name}}
   "brand": {
     "@type": "Brand",
     "name": "{{{cleanHtml brand.name}}}"
   },
+  {{else}}
+  "brand": {
+    "@type": "Brand",
+    "name": "Dial A Drink Kenya"
+  },
+  {{/if}}
+  {{#if category.name}}
+  "category": "{{{category.name}}}",
+  {{/if}}
   "aggregateRating": {
     "@type": "AggregateRating",
-    "bestRating": "5",
     "ratingValue": "{{#if averageRatings}}{{averageRatings}}{{else}}4.5{{/if}}",
-    "ratingCount": "{{#if ratingCount}}{{#ifgt ratingCount 0}}{{ratingCount}}{{else}}1{{/ifgt}}{{else}}1{{/if}}"
+    "bestRating": "5",
+    "worstRating": "1",
+    "ratingCount": "{{#if ratingCount}}{{#ifgt ratingCount 0}}{{ratingCount}}{{else}}5{{/ifgt}}{{else}}5{{/if}}"
   },
   "offers": {
     "@type": "Offer",
+    "url": "https://www.dialadrinkkenya.com/{{href}}",
     "priceCurrency": "{{#if currency}}{{currency}}{{else}}KES{{/if}}",
-    "price": "{{#if price}}{{price}}{{else}}1000{{/if}}",     
+    "price": "{{#if offerPrice}}{{offerPrice}}{{else}}{{#if price}}{{price}}{{else}}1000{{/if}}{{/if}}",
     {{#if percentOffer}}
-    "highPrice": "{{price}}",
-    "lowPrice": "{{offerPrice}}",  
+    "priceSpecification": {
+      "@type": "PriceSpecification",
+      "price": "{{offerPrice}}",
+      "priceCurrency": "{{#if currency}}{{currency}}{{else}}KES{{/if}}"
+    },
     {{/if}}
     "priceValidUntil": "{{#if priceValidUntil}}{{priceValidUntil}}{{else}}2025-12-31{{/if}}",
-    "availability": "http://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}",
+    "availability": "https://schema.org/{{#if inStock}}InStock{{else}}OutOfStock{{/if}}",
+    "itemCondition": "https://schema.org/NewCondition",
     "seller": {
       "@type": "Organization",
-      "name": "{{../title}}"
+      "name": "Dial A Drink Kenya",
+      "url": "https://www.dialadrinkkenya.com"
+    },
+    "deliveryLeadTime": {
+      "@type": "QuantitativeValue",
+      "minValue": 15,
+      "maxValue": 30,
+      "unitCode": "MIN"
     },
     "hasMerchantReturnPolicy": {
-          "@type": "MerchantReturnPolicy",
-          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-          "merchantReturnDays": 7,
-          "returnMethod": "https://schema.org/ReturnByMail",
-          "returnFees": "https://schema.org/FreeReturn"
-        },
+      "@type": "MerchantReturnPolicy",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 7,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/FreeReturn"
+    },
     "shippingDetails": {
-          "@type": "OfferShippingDetails",
-          "shippingRate": {
-            "@type": "MonetaryAmount",
-            "value": 0,
-            "currency": "KES"
-          }
-          }
-  }
+      "@type": "OfferShippingDetails",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": "195",
+        "currency": "KES"
+      },
+      "shippingDestination": {
+        "@type": "DefinedRegion",
+        "addressCountry": "KE"
+      }
+    }
+  }{{#if reviews}},
+  "review": [
+    {{#each reviews}}
+    {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "{{rating}}",
+        "bestRating": "5"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "{{author.name}}"
+      },
+      "reviewBody": "{{{comment}}}"
+    }{{#unless @last}},{{/unless}}
+    {{/each}}
+  ]{{/if}}
 }
 </script>
 
@@ -532,10 +882,35 @@
         //$('.tab-content .tab-pane').scrollbar();
         //$(".similar-products").owlCarousel({items:12})
 
-        {{#if userRating}}
-        var index = Math.min(5, {{userRating.rating}});
+        { { #if userRating } }
+        var index = Math.min(5, {{ userRating.rating }});
     for (var i = 0; i < index; i++)
         $(".rated .glyphicon").eq(i).css("color", "orange");
-    {{/if}}
+    { {/if } }
     });
+
+    // Function to change main product image
+    function changeMainImage(newImageUrl) {
+        const mainImage = document.getElementById('main-product-image');
+        if (mainImage && newImageUrl) {
+            // Update the main image src with smooth transition
+            mainImage.style.opacity = '0.5';
+
+            // Preload the new image to ensure smooth transition
+            const img = new Image();
+            img.onload = function () {
+                mainImage.src = newImageUrl;
+                mainImage.style.opacity = '1';
+            };
+            img.src = newImageUrl;
+
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+
+            // Find and activate the clicked thumbnail
+            event.target.closest('.thumbnail').classList.add('active');
+        }
+    }
 </script>

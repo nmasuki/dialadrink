@@ -11,8 +11,8 @@ var _ = require('lodash');
 var keystone = require('keystone');
 var isMobile = require('../helpers/isMobile');
 var LRUCache = require('../helpers/LocalStorageLRUCache');
-//var cache = new LRUCache();
-var cache = require('memory-cache');
+var cache = new LRUCache();
+//var cache = require('memory-cache');
 
 function requestCache(duration, _key) {
     duration = duration || 120;
@@ -66,6 +66,7 @@ exports.sessionCache = requestCache((process.env.CACHE_TIME || 30 * 60) * 60);
  the navigation in the header, you may wish to change this array
  or replace it with your own templates / logic.
  ***/
+const localPromises = {}
 exports.initLocals = function (req, res, next) {
     //App Logo
     res.locals.appLogo = keystone.get("logo");
@@ -184,11 +185,26 @@ exports.initLocals = function (req, res, next) {
             canonical: [res.locals.appUrl, req.originalUrl].filter(p => p).map(p => p.trim('/')).join('/')
         };
 
+        res.locals.OrbCloudinaryOptions = {
+            secure: true,
+            transformation: [{
+                width: 68, height: 68, radius: "15", crop: "fill"
+            }]
+        };
+
+        res.locals.navLinks = [];
+        res.locals.breadcrumbs = [];
+        res.locals.groupedBrands = {};
+        res.locals.groupedBrand = {};
+        res.locals.page = {};
+
+        // return typeof next == "function" ? next() : Promise.resolve();
+
         Promise.all([
             exports.initTopMenuLocals(req, res),
-            exports.initBreadCrumbsLocals(req, res),
+            // exports.initBreadCrumbsLocals(req, res),
             exports.initBrandsLocals(req, res),
-            exports.initPageLocals(req, res)
+            // exports.initPageLocals(req, res)
         ]).then(function () {
             var ms = new Date().getTime() - istart.getTime();
             if (process.env.NODE_ENV != "production" || ms > 300)
@@ -200,6 +216,14 @@ exports.initLocals = function (req, res, next) {
 };
 
 exports.initPageLocals = async function (req, res, next) {
+    if (localPromises["__page__" + req.originalUrl.cleanId()]) {
+        return localPromises["__page__" + req.originalUrl.cleanId()].then(() => {
+            if (typeof next == "function")
+                next();
+        });
+    }
+
+    const istart = new Date();
     var cleanId = req.originalUrl.cleanId();
     var cachedPage = cache ? await cache.get("__page__" + cleanId) : null;
 
@@ -214,7 +238,7 @@ exports.initPageLocals = async function (req, res, next) {
     }
 
     var regex = new RegExp("(" + cleanId.escapeRegExp() + ")", "i");
-    return keystone.list('Page').model
+    return (localPromises["__page__" + req.originalUrl.cleanId()] = keystone.list('Page').model
         .find({ key: regex })
         .exec(async (err, pages) => {
             var page = (pages || []).orderBy(m => m.href.length - cleanId.length).first();
@@ -223,12 +247,25 @@ exports.initPageLocals = async function (req, res, next) {
             if (cache)
                 await cache.put("__page__" + cleanId, res.locals.page, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
+            var ms = new Date().getTime() - istart.getTime();
+            if (process.env.NODE_ENV != "production" || ms > 300)
+                console.log("Initiated Page Locals in ", ms + "ms");
+
             if (typeof next == "function")
                 next(err);
-        });
+        }));
 };
 
 exports.initBrandsLocals = async function (req, res, next) {
+    if (localPromises["__popularbrands__"]) {
+        return localPromises["__popularbrands__"].then(() => {
+            if (typeof next == "function")
+                next();
+        });
+    }
+
+    const istart = new Date();
+
     try {
         var cachedPage = cache ? await cache.get("__popularbrands__") : null;
 
@@ -247,7 +284,7 @@ exports.initBrandsLocals = async function (req, res, next) {
 
     }
 
-    return await keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
+    return await (localPromises["__popularbrands__"] = keystone.list('ProductBrand').findPopularBrands((err, brands, products, subcategories) => {
         if (!err) {
             var groups = brands.groupBy(b => (b.category && b.category.name) || "_delete");
             var group = brands.groupBy(b => (b.category && b.category.name) || "_delete");
@@ -266,6 +303,7 @@ exports.initBrandsLocals = async function (req, res, next) {
                     //    .filter(p => p.brand && b._id == (p.brand._id || p.brand))
                     //    .avg(p => p.popularity))
                     .slice(0, 6);
+
             for (var j in group)
                 group[j] = group[j]
                     //.orderByDescending(b => products
@@ -281,12 +319,25 @@ exports.initBrandsLocals = async function (req, res, next) {
                 cache.put("__popularbrands__", toCache, ((process.env.CACHE_TIME || 10) * 60) * 1000);
             }
         }
+        
+        var ms = new Date().getTime() - istart.getTime();
+        if (process.env.NODE_ENV != "production" || ms > 300)
+            console.log("Initiated Brands Locals in ", ms + "ms");
+        
         if (typeof next == "function")
             next(err);
-    });
+    }));
 };
 
 exports.initBreadCrumbsLocals = async function (req, res, next) {
+    if (localPromises["__breadcrumbs__" + req.originalUrl.cleanId()]) {
+        return localPromises["__breadcrumbs__" + req.originalUrl.cleanId()].then(() => {
+            if (typeof next == "function")
+                next();
+        });
+    }
+
+    const istart = new Date()
     var cleanId = req.originalUrl.cleanId();
     var cachedPage = cache ? await cache.get("__breadcrumbs__" + cleanId) : null;
 
@@ -303,7 +354,7 @@ exports.initBreadCrumbsLocals = async function (req, res, next) {
     //Load breadcrumbs
     var regex = new RegExp("(" + req.originalUrl.cleanId().escapeRegExp() + ")", "i");
 
-    return await keystone.list('MenuItem').model
+    return await (localPromises["__menu__" + req.originalUrl.cleanId()] = keystone.list('MenuItem').model
         .find({ key: regex })
         .sort({ index: 1 })
         .deepPopulate('parent.parent.parent')
@@ -336,18 +387,25 @@ exports.initBreadCrumbsLocals = async function (req, res, next) {
             if (cache)
                 cache.put("__breadcrumbs__" + cleanId, res.locals.breadcrumbs, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
+            
+            var ms = new Date().getTime() - istart.getTime();
+            if (process.env.NODE_ENV != "production" || ms > 300)
+                console.log("Initiated Breadcrumb Locals in ", ms + "ms");
+            
             if (typeof next == "function")
                 next(err);
-        });
+        }));
 };
 
 exports.initTopMenuLocals = async function (req, res, next) {
-    res.locals.OrbCloudinaryOptions = {
-        secure: true,
-        transformation: [{
-            width: 68, height: 68, radius: "15", crop: "fill"
-        }]
-    };
+    if(localPromises["__topmenu__"]){
+        return localPromises["__topmenu__"].then(() => {
+            if (typeof next == "function")
+                next();
+        });
+    }
+
+    const istart = new Date()
 
     var cachedPage = cache ? await cache.get("__topmenu__") : null;
 
@@ -362,11 +420,12 @@ exports.initTopMenuLocals = async function (req, res, next) {
     }
 
     //TopMenu
-    return await keystone.list('MenuItem').model
+    return await (localPromises["__topmenu__"] = keystone.list('MenuItem').model
         .find({ level: 1, type: "top" })
         .sort({ index: 1 })
         .populate('submenus')
         .exec((err, menu) => {
+
             if (err)
                 throw err;
 
@@ -378,13 +437,16 @@ exports.initTopMenuLocals = async function (req, res, next) {
                 })
                 .distinctBy(m => m.label.cleanId());
 
-
             if (cache)
                 cache.put("__topmenu__", res.locals.navLinks, ((process.env.CACHE_TIME || 10) * 60) * 1000);
 
+            var ms = new Date().getTime() - istart.getTime();
+            if (process.env.NODE_ENV != "production" || ms > 300)
+                console.log("Initiated TopMenu Locals in ", ms + "ms");
+            
             if (typeof next == "function")
                 next(err);
-        });
+        }));
 };
 
 /****

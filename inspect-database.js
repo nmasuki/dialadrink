@@ -33,7 +33,7 @@ async function inspectCollection(collectionName, limit = 5) {
         const Schema = new mongoose.Schema({}, { strict: false });
         const Model = mongoose.model(collectionName + 'Temp', Schema, collectionName);
         
-        const count = await Model.countDocuments();
+        const count = await Model.count();
         console.log(`Total documents: ${count}`);
         
         if (count > 0) {

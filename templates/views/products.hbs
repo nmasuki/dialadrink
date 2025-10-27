@@ -328,8 +328,8 @@
         "@type": "Product",
         "position": {{@index}},
         "name": "{{{name}}}",
-        "image": "{{cloudinaryUrl image crop='fit' width='300'}}",
-        "description": "{{{truncate (cleanHtml description) 100 ' '}}}",
+        "image": {{#if image}}"{{cloudinaryUrl image crop='fit' width='800' height='800' format='jpg' quality='auto:good'}}"{{else}}"{{bottlePlaceholder}}"{{/if}},
+        "description": "{{#if description}}{{{truncate (cleanHtml description) 100 ' '}}}{{else}}{{{name}}} - Premium quality product available for delivery in Kenya{{/if}}",
         {{#if brand}}
         "brand": {
           "@type": "Brand",

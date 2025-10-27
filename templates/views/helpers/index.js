@@ -318,6 +318,12 @@ module.exports = function () {
         prod: function (v1, v2) {
             return v1 * v2;
         },
+        add: function (v1, v2) {
+            return (parseInt(v1) || 0) + (parseInt(v2) || 0);
+        },
+        subtract: function (v1, v2) {
+            return (parseInt(v1) || 0) - (parseInt(v2) || 0);
+        },
         div: function (v1, v2) {
             return v1 % v2 === 0;
         },

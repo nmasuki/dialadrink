@@ -93,6 +93,7 @@ class SEOMetadataEnhancer {
                 "@type": "Offer",
                 "price": seoPrice.price || 0,
                 "priceCurrency": seoPrice.currency || "KES",
+                "priceValidUntil": seoPrice.validUntil || new Date().addDays(30).toISOString().split('T')[0],
                 "availability": product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
                 "seller": {
                     "@type": "Organization",

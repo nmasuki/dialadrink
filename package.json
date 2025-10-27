@@ -72,6 +72,10 @@
   },
   "scripts": {
     "start": "node app.js",
-    "work": "node app-workers.js"
+    "work": "node app-workers.js",
+    "cleanup": "node scripts/cleanup-mongodb.js",
+    "cleanup:dry-run": "node scripts/cleanup-mongodb.js --dry-run",
+    "optimize-db": "node scripts/optimize-indexes.js",
+    "health-check": "node scripts/mongodb-health-check.js"
   }
 }

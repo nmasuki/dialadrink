@@ -62,7 +62,7 @@ function search(req, res, next) {
         } else {            
             locals.products = products.slice(0, homeGroupSize * 10);
             locals.uifilters = Product.getUIFilters(locals.products);
-            locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
+            //locals.groupedProducts = Product.groupProducts(products, homeGroupSize);
 
             var categories = products.filter(p => p.category).distinctBy(p => p.category.id || p.category);
             var subCategories = products.filter(p => p.subCategory).distinctBy(p => p.subCategory.id || p.subCategory);
@@ -113,7 +113,7 @@ function search(req, res, next) {
                         }
                         
                         if (subCategories.length == 1) {
-                            var subCat = categories[0].subCategory;
+                            var subCat = subCategories[0];
                             if (subCat && subCat.name && !locals.breadcrumbs.find(b => b.label == subCat.name))
                                 locals.breadcrumbs.push({
                                     label: subCat.name,
