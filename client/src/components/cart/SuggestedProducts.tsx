@@ -27,14 +27,32 @@ export default function SuggestedProducts({ cartProductIds, cartCategoryIds }: S
         const categoryParam = cartCategoryIds.length > 0 ? cartCategoryIds.join(",") : "";
         const excludeParam = cartProductIds.join(",");
 
-        const res = await axios.get(`/api/products?limit=8&inStock=true${categoryParam ? `&categories=${categoryParam}` : ""}&exclude=${excludeParam}`);
+        // Fetch category suggestions and force-included products in parallel
+        const forceIncludeNames = ["Schweppes", "Coca-Cola"];
+        const [res, ...forceResults] = await Promise.all([
+          axios.get(`/api/products?limit=8&inStock=true${categoryParam ? `&categories=${categoryParam}` : ""}&exclude=${excludeParam}`),
+          ...forceIncludeNames.map(name =>
+            axios.get(`/api/products?search=${encodeURIComponent(name)}&limit=1&inStock=true`).catch(() => null)
+          ),
+        ]);
+
+        // Collect force-included products not already in cart
+        const forceProducts: IProduct[] = [];
+        for (const r of forceResults) {
+          if (r?.data?.response === "success" && r.data.data.length > 0) {
+            const p = r.data.data[0];
+            if (!cartProductIds.includes(p._id)) {
+              forceProducts.push(p);
+            }
+          }
+        }
 
         if (res.data.response === "success") {
-          // Filter out products already in cart and limit to 8
+          const forceIds = new Set(forceProducts.map((p: IProduct) => p._id));
           const filtered = res.data.data
-            .filter((p: IProduct) => !cartProductIds.includes(p._id))
-            .slice(0, 8);
-          setProducts(filtered);
+            .filter((p: IProduct) => !cartProductIds.includes(p._id) && !forceIds.has(p._id))
+            .slice(0, 8 - forceProducts.length);
+          setProducts([...forceProducts, ...filtered]);
         }
       } catch (error) {
         console.error("Error fetching suggestions:", error);
