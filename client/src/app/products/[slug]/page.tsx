@@ -62,12 +62,29 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     return { title: "Product Not Found" };
   }
 
+  const brand = typeof product.brand === "object" ? product.brand : null;
+  const plainDescription = (product.description || "")
+    .replace(/<[^>]*>/g, "")
+    .slice(0, 160);
+  const description =
+    plainDescription || `Order ${product.name} online with fast delivery across Nairobi.`;
+
   return {
     title: `${product.name} | Buy Online | Dial A Drink Kenya`,
-    description: product.description || `Order ${product.name} online with fast delivery across Nairobi.`,
+    description,
+    alternates: {
+      canonical: `/products/${slug}`,
+    },
     openGraph: {
+      type: "website",
+      title: `${product.name}${brand ? ` by ${brand.name}` : ""} | Buy Online`,
+      description,
+      images: product.image?.secure_url ? [product.image.secure_url] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
       title: product.name,
-      description: product.description || `Order ${product.name} online`,
+      description,
       images: product.image?.secure_url ? [product.image.secure_url] : [],
     },
   };
@@ -107,8 +124,52 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     }).format(p);
   };
 
+  const siteUrl = "https://www.dialadrinkkenya.com";
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: (product.description || "").replace(/<[^>]*>/g, "").slice(0, 500),
+    image: imageUrl,
+    ...(brand && { brand: { "@type": "Brand", name: brand.name } }),
+    ...(category && { category: category.name }),
+    ...(product.countryOfOrigin && { countryOfOrigin: product.countryOfOrigin }),
+    offers: {
+      "@type": "Offer",
+      price: hasOffer ? offerPrice : price,
+      priceCurrency: currency,
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: { "@type": "Organization", name: "Dial A Drink Kenya" },
+      url: `${siteUrl}/products/${product.href}`,
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Products", item: `${siteUrl}/products` },
+      ...(category
+        ? [{ "@type": "ListItem", position: 3, name: category.name, item: `${siteUrl}/products?category=${category.key}` }]
+        : []),
+      { "@type": "ListItem", position: category ? 4 : 3, name: product.name },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto px-4">
         {/* Breadcrumb */}
         <nav className="mb-6 text-sm">

@@ -16,7 +16,7 @@ export interface IMenuItemDocument extends Omit<IMenuItem, "_id" | "submenus">, 
   submenus?: mongoose.Types.ObjectId[];
 }
 
-const MenuItemSchema = new Schema<IMenuItemDocument>(
+const MenuItemSchema = new Schema(
   {
     href: { type: String },
     label: { type: String },
@@ -32,6 +32,6 @@ const MenuItemSchema = new Schema<IMenuItemDocument>(
 
 const MenuItem: Model<IMenuItemDocument> =
   mongoose.models.MenuItem ||
-  mongoose.model<IMenuItemDocument>("MenuItem", MenuItemSchema);
+  mongoose.model("MenuItem", MenuItemSchema);
 
 export default MenuItem;

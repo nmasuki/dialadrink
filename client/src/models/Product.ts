@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import { IProduct, ICloudinaryImage } from "@/types";
 
 // Cloudinary image sub-schema
-const CloudinaryImageSchema = new Schema<ICloudinaryImage>(
+const CloudinaryImageSchema = new Schema(
   {
     public_id: String,
     version: Number,
@@ -19,7 +19,7 @@ const CloudinaryImageSchema = new Schema<ICloudinaryImage>(
 
 export interface IProductDocument extends Omit<IProduct, "_id">, Document {}
 
-const ProductSchema = new Schema<IProductDocument>(
+const ProductSchema = new Schema(
   {
     href: { type: String, required: true, unique: true },
     name: { type: String, required: true },
@@ -81,6 +81,6 @@ ProductSchema.set("toJSON", { virtuals: true });
 ProductSchema.set("toObject", { virtuals: true });
 
 const Product: Model<IProductDocument> =
-  mongoose.models.Product || mongoose.model<IProductDocument>("Product", ProductSchema);
+  mongoose.models.Product || mongoose.model("Product", ProductSchema);
 
 export default Product;

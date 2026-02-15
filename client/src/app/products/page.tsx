@@ -268,7 +268,7 @@ export default async function ProductsPage({
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <aside className="lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-xl shadow-sm p-5 sticky top-24">
+            <div className="bg-white rounded-xl shadow-sm p-5 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
               {/* Free Delivery Banner */}
               <div className="bg-teal/10 rounded-lg p-3 mb-5 flex items-center gap-3">
                 <FiTruck className="w-8 h-8 text-teal" />

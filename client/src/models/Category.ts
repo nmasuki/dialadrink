@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { ICategory, ICloudinaryImage } from "@/types";
 
-const CloudinaryImageSchema = new Schema<ICloudinaryImage>(
+const CloudinaryImageSchema = new Schema(
   {
     public_id: String,
     version: Number,
@@ -18,7 +18,7 @@ const CloudinaryImageSchema = new Schema<ICloudinaryImage>(
 
 export interface ICategoryDocument extends Omit<ICategory, "_id">, Document {}
 
-const CategorySchema = new Schema<ICategoryDocument>(
+const CategorySchema = new Schema(
   {
     name: { type: String, required: true },
     key: { type: String, required: true, unique: true },
@@ -35,6 +35,6 @@ const CategorySchema = new Schema<ICategoryDocument>(
 
 const Category: Model<ICategoryDocument> =
   mongoose.models.ProductCategory ||
-  mongoose.model<ICategoryDocument>("ProductCategory", CategorySchema);
+  mongoose.model("ProductCategory", CategorySchema);
 
 export default Category;

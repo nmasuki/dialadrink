@@ -13,7 +13,7 @@ export interface IProductCategory {
 
 export interface IProductCategoryDocument extends Omit<IProductCategory, "_id">, Document {}
 
-const ProductCategorySchema = new Schema<IProductCategoryDocument>(
+const ProductCategorySchema = new Schema(
   {
     name: { type: String, required: true },
     key: { type: String },
@@ -28,6 +28,6 @@ const ProductCategorySchema = new Schema<IProductCategoryDocument>(
 
 const ProductCategory: Model<IProductCategoryDocument> =
   mongoose.models.ProductCategory || 
-  mongoose.model<IProductCategoryDocument>("ProductCategory", ProductCategorySchema);
+  mongoose.model("ProductCategory", ProductCategorySchema);
 
 export default ProductCategory;

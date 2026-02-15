@@ -189,7 +189,7 @@ export default function Header() {
               className={`w-auto transition-all duration-300 ${isMinified ? 'h-8' : 'h-10'}`}
             />
             <span className={`font-bold text-teal transition-all duration-300 hidden sm:block ${isMinified ? 'text-sm' : 'text-lg'}`}>
-              Dial a Drink Kenya
+              Dial A Drink Kenya
             </span>
           </Link>
 

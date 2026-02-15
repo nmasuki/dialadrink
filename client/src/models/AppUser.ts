@@ -13,7 +13,7 @@ export interface IAppUser {
 
 export interface IAppUserDocument extends Omit<IAppUser, "_id">, Document {}
 
-const AppUserSchema = new Schema<IAppUserDocument>(
+const AppUserSchema = new Schema(
   {
     name: {
       first: { type: String },
@@ -31,6 +31,6 @@ const AppUserSchema = new Schema<IAppUserDocument>(
 
 const AppUser: Model<IAppUserDocument> =
   mongoose.models.AppUser ||
-  mongoose.model<IAppUserDocument>("AppUser", AppUserSchema);
+  mongoose.model("AppUser", AppUserSchema);
 
 export default AppUser;

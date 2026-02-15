@@ -13,7 +13,7 @@ export interface IProductPriceOption {
 
 export interface IProductPriceOptionDocument extends Omit<IProductPriceOption, "_id">, Document {}
 
-const ProductPriceOptionSchema = new Schema<IProductPriceOptionDocument>(
+const ProductPriceOptionSchema = new Schema(
   {
     optionText: { type: String },
     option: { type: Schema.Types.ObjectId, ref: "ProductOption" },
@@ -40,6 +40,6 @@ ProductPriceOptionSchema.set("toObject", { virtuals: true });
 
 const ProductPriceOption: Model<IProductPriceOptionDocument> =
   mongoose.models.ProductPriceOption ||
-  mongoose.model<IProductPriceOptionDocument>("ProductPriceOption", ProductPriceOptionSchema);
+  mongoose.model("ProductPriceOption", ProductPriceOptionSchema);
 
 export default ProductPriceOption;

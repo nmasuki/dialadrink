@@ -16,6 +16,8 @@ const statusColors: Record<string, string> = {
   Pending: "bg-yellow-100 text-yellow-700",
   Paid: "bg-green-100 text-green-700",
   Cancelled: "bg-red-100 text-red-700",
+  Inactive: "bg-gray-100 text-gray-600",
+  Suspended: "bg-red-100 text-red-700",
 };
 
 export default function StatusBadge({ status }: { status: string }) {

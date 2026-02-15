@@ -1,10 +1,23 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { Montserrat, Open_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { Header, Footer } from "@/components/layout";
 import StickyCartBar from "@/components/cart/StickyCartBar";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import "./globals.css";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  variable: "--font-opensans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -95,6 +108,18 @@ const organizationJsonLd = {
   },
 };
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Dial A Drink Kenya",
+  url: "https://www.dialadrinkkenya.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://www.dialadrinkkenya.com/products?q={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
+};
+
 const localBusinessJsonLd = {
   "@context": "https://schema.org",
   "@type": "LiquorStore",
@@ -136,15 +161,9 @@ export default async function RootLayout({
   const isAdmin = pathname.startsWith("/admin");
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${montserrat.variable} ${openSans.variable}`}>
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap"
-          rel="stylesheet"
-        />
         {!isAdmin && (
           <>
             <script
@@ -154,6 +173,10 @@ export default async function RootLayout({
             <script
               type="application/ld+json"
               dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
             />
           </>
         )}

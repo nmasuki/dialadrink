@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHome, FiPackage, FiTag, FiGrid, FiList, FiShoppingBag, FiExternalLink } from "react-icons/fi";
+import { FiHome, FiPackage, FiTag, FiGrid, FiList, FiShoppingBag, FiUsers, FiExternalLink, FiCode } from "react-icons/fi";
 
 interface NavItem {
   label: string;
@@ -18,6 +18,8 @@ const navItems: NavItem[] = [
   { label: "Categories", href: "/admin/categories", icon: FiGrid, countKey: "categories" },
   { label: "Sub-Categories", href: "/admin/subcategories", icon: FiList, countKey: "subcategories" },
   { label: "Orders", href: "/admin/orders", icon: FiShoppingBag, countKey: "orders" },
+  { label: "Users", href: "/admin/users", icon: FiUsers, countKey: "users" },
+  { label: "API Docs", href: "/admin/api-docs", icon: FiCode },
 ];
 
 interface SidebarProps {

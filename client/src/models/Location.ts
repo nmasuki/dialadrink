@@ -15,7 +15,7 @@ export interface ILocation {
 
 export interface ILocationDocument extends Omit<ILocation, "_id">, Document {}
 
-const LocationSchema = new Schema<ILocationDocument>(
+const LocationSchema = new Schema(
   {
     name: { type: String, required: true },
     href: { type: String },
@@ -32,6 +32,6 @@ const LocationSchema = new Schema<ILocationDocument>(
 
 const Location: Model<ILocationDocument> =
   mongoose.models.Location ||
-  mongoose.model<ILocationDocument>("Location", LocationSchema);
+  mongoose.model("Location", LocationSchema);
 
 export default Location;

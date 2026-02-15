@@ -11,7 +11,7 @@ export interface IProductSubCategory {
 
 export interface IProductSubCategoryDocument extends Omit<IProductSubCategory, "_id">, Document {}
 
-const ProductSubCategorySchema = new Schema<IProductSubCategoryDocument>(
+const ProductSubCategorySchema = new Schema(
   {
     name: { type: String, required: true },
     key: { type: String },
@@ -24,6 +24,6 @@ const ProductSubCategorySchema = new Schema<IProductSubCategoryDocument>(
 
 const ProductSubCategory: Model<IProductSubCategoryDocument> =
   mongoose.models.ProductSubCategory ||
-  mongoose.model<IProductSubCategoryDocument>("ProductSubCategory", ProductSubCategorySchema);
+  mongoose.model("ProductSubCategory", ProductSubCategorySchema);
 
 export default ProductSubCategory;

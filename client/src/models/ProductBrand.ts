@@ -9,7 +9,7 @@ export interface IProductBrand {
 
 export interface IProductBrandDocument extends Omit<IProductBrand, "_id">, Document {}
 
-const ProductBrandSchema = new Schema<IProductBrandDocument>(
+const ProductBrandSchema = new Schema(
   {
     name: { type: String, required: true },
     href: { type: String },
@@ -20,6 +20,6 @@ const ProductBrandSchema = new Schema<IProductBrandDocument>(
 
 const ProductBrand: Model<IProductBrandDocument> =
   mongoose.models.ProductBrand || 
-  mongoose.model<IProductBrandDocument>("ProductBrand", ProductBrandSchema);
+  mongoose.model("ProductBrand", ProductBrandSchema);
 
 export default ProductBrand;

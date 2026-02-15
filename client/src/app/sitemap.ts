@@ -1,13 +1,13 @@
 import { MetadataRoute } from "next";
 import { connectDB } from "@/lib/db";
-import { Product, ProductCategory } from "@/models";
+import { Product, ProductCategory, ProductSubCategory, ProductBrand } from "@/models";
 
 const BASE_URL = "https://www.dialadrinkkenya.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connectDB();
 
-  // Static pages
+  // Static pages (no cart/checkout - they have no SEO value)
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
@@ -22,34 +22,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/cart`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/checkout`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
-    },
-    {
       url: `${BASE_URL}/contact`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.4,
+      priority: 0.5,
     },
     {
       url: `${BASE_URL}/faq`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.4,
+      priority: 0.5,
     },
     {
       url: `${BASE_URL}/delivery`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.4,
+      priority: 0.5,
     },
     {
       url: `${BASE_URL}/terms`,
@@ -65,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Get all published products
+  // Published products with actual modifiedDate
   const products = await Product.find({ state: "published" })
     .select("href modifiedDate")
     .lean();
@@ -77,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // Get all categories
+  // Categories
   const categories = await ProductCategory.find({})
     .select("key modifiedDate")
     .lean();
@@ -89,5 +77,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...categoryPages, ...productPages];
+  // Subcategories
+  const subcategories = await ProductSubCategory.find({})
+    .select("key modifiedDate")
+    .lean();
+
+  const subcategoryPages: MetadataRoute.Sitemap = subcategories.map((sc: any) => ({
+    url: `${BASE_URL}/products?subcategory=${sc.key}`,
+    lastModified: sc.modifiedDate || new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  // Brands
+  const brands = await ProductBrand.find({})
+    .select("href modifiedDate")
+    .lean();
+
+  const brandPages: MetadataRoute.Sitemap = brands.map((brand: any) => ({
+    url: `${BASE_URL}/products?brand=${brand.href}`,
+    lastModified: brand.modifiedDate || new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  return [
+    ...staticPages,
+    ...categoryPages,
+    ...subcategoryPages,
+    ...brandPages,
+    ...productPages,
+  ];
 }

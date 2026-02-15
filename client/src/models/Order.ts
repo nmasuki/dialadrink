@@ -45,7 +45,7 @@ export interface IOrder {
 
 export interface IOrderDocument extends Omit<IOrder, "_id">, Document {}
 
-const OrderSchema = new Schema<IOrderDocument>(
+const OrderSchema = new Schema(
   {
     key: { type: String, required: true, unique: true },
     orderNumber: { type: Number, required: true },
@@ -97,13 +97,12 @@ const OrderSchema = new Schema<IOrderDocument>(
 );
 
 // Update modified date on save
-OrderSchema.pre("save", function (next) {
+OrderSchema.pre("save", function () {
   this.modifiedDate = new Date();
-  next();
 });
 
 const Order: Model<IOrderDocument> =
   mongoose.models.Order ||
-  mongoose.model<IOrderDocument>("Order", OrderSchema);
+  mongoose.model("Order", OrderSchema);
 
 export default Order;
