@@ -159,7 +159,7 @@ SMTP_HOST=smtp.zoho.com
 SMTP_PORT=587
 SMTP_USER=order@dialadrinkkenya.com
 SMTP_PASS=your_email_password
-EMAIL_FROM=order@dialadrinkkenya.com
+EMAIL_FROM=Dial A Drink Kenya <order@dialadrinkkenya.com>
 
 # Payment Gateway Configuration
 

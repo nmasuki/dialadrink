@@ -27,7 +27,7 @@ export async function sendEmail(to: string, subject: string, html: string) {
     return;
   }
 
-  const from = process.env.EMAIL_FROM || process.env.SMTP_USER;
+  const from = process.env.EMAIL_FROM || `Dial A Drink Kenya <${process.env.SMTP_USER}>`;
   const cc = process.env.NODE_ENV === "production" ? "simonkimari@gmail.com" : undefined;
 
   if (process.env.NODE_ENV === "development") {
@@ -132,8 +132,13 @@ export async function notifyOrderPlaced(order: OrderForNotification) {
         ? `You will be required to pay ${formattedTotal} cash on delivery.`
         : `You will be required to pay ${formattedTotal} ${paymentMethod || "on delivery"}.`;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.dialadrinkkenya.com";
+  const paymentLink = `${siteUrl}/checkout/payment?order=${order.key}`;
+  const shortPayLink = `${siteUrl}/pay/${order.key}`;
+
   const customerSms =
     `DIALADRINK: Your order #W${orderNumber} has been received. ${paymentNote} ` +
+    `Pay online: ${shortPayLink} ` +
     `Thank you for using dialadrinkkenya.com`;
 
   const smsPromise = sendSMS(phone, customerSms);
@@ -170,6 +175,10 @@ export async function notifyOrderPlaced(order: OrderForNotification) {
               <td style="padding:8px">${paymentMethod || "Cash on Delivery"}</td>
             </tr>
             <tr style="background:#f7f7f7">
+              <td style="padding:8px"><strong>Phone</strong></td>
+              <td style="padding:8px">${phone}</td>
+            </tr>
+            <tr>
               <td style="padding:8px"><strong>Delivery To</strong></td>
               <td style="padding:8px">${delivery.address || ""}${delivery.location ? ", " + delivery.location : ""}</td>
             </tr>
@@ -189,6 +198,9 @@ export async function notifyOrderPlaced(order: OrderForNotification) {
             ${order.subtotal ? `<p style="margin:4px 0">Subtotal: <strong>KES ${order.subtotal.toLocaleString()}</strong></p>` : ""}
             ${order.deliveryFee ? `<p style="margin:4px 0">Delivery: <strong>KES ${order.deliveryFee.toLocaleString()}</strong></p>` : ""}
             <p style="margin:4px 0;font-size:18px">Total: <strong style="color:#f44336">${formattedTotal}</strong></p>
+          </div>
+          <div style="margin-top:20px;text-align:center">
+            <a href="${paymentLink}" style="display:inline-block;padding:14px 32px;background:#f44336;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px">Pay Now Online</a>
           </div>
           <p style="margin-top:20px">We'll have your order delivered shortly. For any queries, call us at ${process.env.NEXT_PUBLIC_CONTACT_PHONE || "+254723688108"}.</p>
         </div>
@@ -225,12 +237,15 @@ export async function notifyOrderPlaced(order: OrderForNotification) {
 export async function notifyPaymentFailed(order: OrderForNotification) {
   const { delivery, orderNumber, total } = order;
   const formattedTotal = `KES ${total.toLocaleString()}`;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.dialadrinkkenya.com";
+  const paymentLink = `${siteUrl}/checkout/payment?order=${order.key}`;
+  const shortPayLink = `${siteUrl}/pay/${order.key}`;
 
   // --- Customer SMS ---
   const customerSms =
     `DIALADRINK: Payment for your order #W${orderNumber} (${formattedTotal}) was unsuccessful. ` +
-    `Please try again or choose cash/M-Pesa on delivery. ` +
-    `Call ${process.env.NEXT_PUBLIC_CONTACT_PHONE || "+254723688108"} for help.`;
+    `Try again: ${shortPayLink} ` +
+    `Or call ${process.env.NEXT_PUBLIC_CONTACT_PHONE || "+254723688108"} for help.`;
 
   const smsPromise = sendSMS(delivery.phoneNumber, customerSms);
 
@@ -245,12 +260,10 @@ export async function notifyPaymentFailed(order: OrderForNotification) {
         <div style="padding:20px">
           <p>Hi ${delivery.firstName},</p>
           <p>Unfortunately, the payment for your order <strong>#${orderNumber}</strong> (${formattedTotal}) was not successful.</p>
-          <p>You can:</p>
-          <ul>
-            <li>Try paying again online</li>
-            <li>Choose Cash on Delivery or M-Pesa on Delivery</li>
-            <li>Contact us for assistance</li>
-          </ul>
+          <div style="margin:20px 0;text-align:center">
+            <a href="${paymentLink}" style="display:inline-block;padding:14px 32px;background:#2f93a3;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px">Try Again — Pay Now</a>
+          </div>
+          <p>Or choose Cash on Delivery / M-Pesa on Delivery instead.</p>
           <p>Call us at <strong>${process.env.NEXT_PUBLIC_CONTACT_PHONE || "+254723688108"}</strong> if you need help.</p>
         </div>
         <div style="background:#f7f7f7;padding:16px;text-align:center;font-size:12px;color:#666">

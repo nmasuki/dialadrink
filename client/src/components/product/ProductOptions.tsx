@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FiShoppingCart, FiMinus, FiPlus, FiCheck } from "react-icons/fi";
 import { useCartStore } from "@/store/cartStore";
 import { IProduct, IPriceOption } from "@/types";
@@ -21,6 +22,7 @@ export default function ProductOptions({ product, priceOptions: rawPriceOptions,
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
+  const router = useRouter();
 
   const currentOption = priceOptions[selectedOption];
   const optionText = currentOption?.optionText || "";
@@ -136,26 +138,37 @@ export default function ProductOptions({ product, priceOptions: rawPriceOptions,
         </div>
       </div>
 
-      {/* Add to Cart Button */}
-      <button
-        onClick={handleAddToCart}
-        disabled={isAdded}
-        className={`w-full py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 transition-all ${
-          isAdded ? "bg-green-500 text-white" : "bg-success text-white hover:bg-success/90"
-        }`}
-      >
-        {isAdded ? (
-          <>
-            <FiCheck className="w-6 h-6" />
-            Added to Cart!
-          </>
-        ) : (
-          <>
-            <FiShoppingCart className="w-6 h-6" />
-            Add to Cart
-          </>
-        )}
-      </button>
+      {/* Add to Cart & Instant Checkout */}
+      <div className="flex rounded-xl overflow-hidden shadow-sm">
+        <button
+          onClick={handleAddToCart}
+          disabled={isAdded}
+          className={`flex-1 py-4 font-semibold text-lg flex items-center justify-center gap-2 transition-all ${
+            isAdded ? "bg-green-500 text-white" : "bg-success text-white hover:bg-success/90"
+          }`}
+        >
+          {isAdded ? (
+            <>
+              <FiCheck className="w-5 h-5" />
+              Added!
+            </>
+          ) : (
+            <>
+              <FiShoppingCart className="w-5 h-5" />
+              Add to Cart
+            </>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            addItem(product, optionText, quantity);
+            router.push("/checkout");
+          }}
+          className="flex-1 py-4 bg-primary text-white font-semibold text-lg hover:bg-primary/90 transition-all"
+        >
+          Instant Checkout
+        </button>
+      </div>
     </div>
   );
 }

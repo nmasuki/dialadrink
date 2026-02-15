@@ -7,6 +7,7 @@ import Location from "./Location";
 import Order from "./Order";
 import MenuItem from "./MenuItem";
 import AppUser from "./AppUser";
+import Promo from "./Promo";
 
 export {
   Product,
@@ -20,4 +21,5 @@ export {
   Order,
   MenuItem,
   AppUser,
+  Promo,
 };

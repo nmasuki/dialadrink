@@ -223,7 +223,16 @@ export const spec = {
       },
     },
   },
+  security: [{ cookieAuth: [] }],
   components: {
+    securitySchemes: {
+      cookieAuth: {
+        type: "apiKey",
+        in: "cookie",
+        name: "admin_session",
+        description: "JWT session cookie. Set automatically when you log in at /admin/login. Since Swagger UI runs under /admin/, the browser sends this cookie with every 'Try it out' request automatically.",
+      },
+    },
     schemas: {
       ErrorResponse: {
         type: "object",

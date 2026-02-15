@@ -28,7 +28,17 @@
       "Bash(npm run build:*)",
       "Bash(rsync:*)",
       "Bash(scp:*)",
-      "Bash(ssh:*)"
+      "Bash(ssh:*)",
+      "Bash(tar czf:*)",
+      "Bash(ls:*)",
+      "Bash(npm ls:*)",
+      "Bash(npx next build:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_dsa\" git push:*)",
+      "Bash(tar:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []
