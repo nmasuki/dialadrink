@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #f44336;
+  --color-teal: #2f93a3;
+  --color-success: #4caf50;
+  --color-dark: #0c1a1e;
+  --font-heading: "Montserrat", "Helvetica Neue", sans-serif;
+  --font-sans: "Helvetica Neue", "Open Sans", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: #111827;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Force theme font on product description (overrides inline styles from CMS) */
+.prose.product-description,
+.prose.product-description * {
+  font-family: var(--font-sans) !important;
+  font-size: inherit !important;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 font-semibold rounded-lg transition-all;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-600;
+  }
+
+  .btn-teal {
+    @apply bg-teal text-white hover:bg-teal-700;
+  }
+
+  .btn-success {
+    @apply bg-success text-white hover:bg-success-600;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md transition-shadow hover:shadow-lg;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}

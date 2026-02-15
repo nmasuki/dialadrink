@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash:*)",
+      "Bash(dos2unix:*)",
+      "Bash(git add:*)",
+      "Bash(git push)",
+      "Bash(find:*)",
+      "Bash(git rev-list:*)",
+      "Bash(git cat-file:*)",
+      "Bash(sort:*)",
+      "Bash(numfmt:*)",
+      "Bash(xargs ls:*)",
+      "Bash(cat:*)",
+      "Bash(git count-objects:*)",
+      "Bash(git verify-pack:*)",
+      "Bash(xargs -I{} git rev-list --all --objects)",
+      "Bash(FILTER_BRANCH_SQUELCH_WARNING=1 bash:*)",
+      "Bash(git stash pop:*)",
+      "Bash(chmod:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(git rm:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

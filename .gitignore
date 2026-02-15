@@ -12,3 +12,4 @@ locks/
 /updates/0.0.1-products-images-remove-background.js
 *.tar
 *.bz2
+backups/
