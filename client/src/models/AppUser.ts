@@ -26,7 +26,7 @@ const AppUserSchema = new Schema<IAppUserDocument>(
     accountType: { type: String },
     receivesOrders: { type: Boolean, default: false },
   },
-  { collection: "app_users" }
+  { collection: "appusers" }
 );
 
 const AppUser: Model<IAppUserDocument> =

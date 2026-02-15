@@ -1,8 +1,9 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { TextField, SelectField, TextAreaField } from "@/components/admin/FormFields";
+import { TextField, SelectField } from "@/components/admin/FormFields";
+import { RichTextField } from "@/components/admin/RichTextField";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -30,6 +31,7 @@ export default function CategoryForm({ category }: CategoryFormProps) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
     setValue,
     watch,
@@ -119,10 +121,17 @@ export default function CategoryForm({ category }: CategoryFormProps) {
           ]}
         />
 
-        <TextAreaField
-          label="Description"
-          registration={register("description")}
-          error={errors.description?.message}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field, fieldState }) => (
+            <RichTextField
+              label="Description"
+              value={field.value}
+              onChange={field.onChange}
+              error={fieldState.error?.message}
+            />
+          )}
         />
 
         <TextField

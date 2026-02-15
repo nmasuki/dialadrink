@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import {
   TextField,
   NumberField,
-  TextAreaField,
   SelectField,
   CheckboxField,
   TagsField,
 } from "@/components/admin/FormFields";
+import { RichTextField } from "@/components/admin/RichTextField";
 import ImageUpload from "@/components/admin/ImageUpload";
 import PriceOptionsEditor from "@/components/admin/PriceOptionsEditor";
 import axios from "axios";
@@ -227,11 +227,16 @@ export default function ProductForm({
               </button>
             </div>
 
-            <TextAreaField
-              label="Description"
-              registration={register("description")}
-              rows={5}
-              placeholder="Product description (HTML supported)"
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <RichTextField
+                  label="Description"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
             />
 
             <SelectField

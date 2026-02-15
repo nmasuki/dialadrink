@@ -29,7 +29,7 @@ export async function loginAction(
       return { error: "Account is not active" };
     }
 
-    const isValid = await comparePassword(password, user.password);
+    let isValid = await comparePassword(password, user.password);
     if (!isValid) {
       return { error: "Invalid email or password" };
     }
