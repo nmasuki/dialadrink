@@ -69,6 +69,12 @@ export const metadata: Metadata = {
     site: "@liqourdelivery",
     creator: "@liqourdelivery",
   },
+  icons: {
+    icon: "/favicon.ico",
+    apple: [
+      { url: "https://res.cloudinary.com/nmasuki/image/upload/c_fill,w_180,h_180/icons/apple-icon-152x152.png", sizes: "180x180" },
+    ],
+  },
   robots: {
     index: true,
     follow: true,
@@ -142,8 +148,8 @@ const localBusinessJsonLd = {
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-    opens: "09:00",
-    closes: "22:00",
+    opens: "00:00",
+    closes: "23:59",
   },
   areaServed: {
     "@type": "City",

@@ -2,15 +2,17 @@ import { Metadata } from "next";
 import { FiPhone, FiMail, FiMapPin, FiClock } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import ContactForm from "./ContactForm";
+import { getPageData } from "@/lib/getPageData";
 
-export const metadata: Metadata = {
-  title: "Contact Us",
-  description:
-    "Get in touch with Dial A Drink Kenya. Call +254 723 688 108, WhatsApp us, or send a message. We deliver alcohol across Nairobi daily 10AM-10PM.",
-  alternates: {
-    canonical: "/contact",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getPageData("/contact-us");
+  return {
+    title: pageData?.title || "Contact Us",
+    description: pageData?.meta ||
+      "Get in touch with Dial A Drink Kenya. Call +254 723 688 108, WhatsApp us, or send a message. We deliver alcohol across Nairobi 24 hours, 7 days a week.",
+    alternates: { canonical: "/contact" },
+  };
+}
 
 const contactJsonLd = {
   "@context": "https://schema.org",
@@ -93,8 +95,8 @@ export default function ContactPage() {
               <div className="flex items-start gap-4">
                 <FiClock className="w-5 h-5 text-teal mt-1" />
                 <div>
-                  <p className="text-gray-800 font-medium">Daily: 10:00 AM - 10:00 PM</p>
-                  <p className="text-gray-600 text-sm">Including weekends & holidays</p>
+                  <p className="text-gray-800 font-medium">24 Hours, 7 Days a Week</p>
+                  <p className="text-gray-600 text-sm">Including weekends & public holidays</p>
                 </div>
               </div>
             </div>

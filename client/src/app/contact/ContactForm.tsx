@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FiSend, FiMessageCircle } from "react-icons/fi";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -13,14 +16,47 @@ export default function ContactForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
+    if (SITE_KEY && !token) {
+      setError("Please complete the CAPTCHA verification.");
+      return;
+    }
+
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
-    setSubmitted(true);
-    setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, token }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Please try again.");
+        turnstileRef.current?.reset();
+        setToken(null);
+        return;
+      }
+
+      setSubmitted(true);
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      setToken(null);
+    } catch {
+      setError("Failed to send message. Please try again.");
+      turnstileRef.current?.reset();
+      setToken(null);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -124,6 +160,20 @@ export default function ContactForm() {
               placeholder="How can we help you?"
             />
           </div>
+
+          {SITE_KEY && (
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={SITE_KEY}
+              onSuccess={setToken}
+              onError={() => setToken(null)}
+              onExpire={() => setToken(null)}
+            />
+          )}
+
+          {error && (
+            <p className="text-red-600 text-sm">{error}</p>
+          )}
 
           <button
             type="submit"

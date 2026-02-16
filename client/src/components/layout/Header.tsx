@@ -313,7 +313,7 @@ export default function Header() {
       }`}>
         <div className="max-w-7xl mx-auto px-4">
           <ul className="flex items-center gap-1 py-0">
-            {menuItems.slice(0, 10).map((item) => (
+            {menuItems.slice(0, 14).map((item) => (
               <li
                 key={item._id}
                 className="relative group"

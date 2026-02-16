@@ -42,7 +42,7 @@ const faqs = [
       },
       {
         q: "What are your delivery hours?",
-        a: "We deliver from 10:00 AM to 10:00 PM daily, including weekends and public holidays."
+        a: "We deliver 24 hours a day, 7 days a week, including weekends and public holidays."
       },
       {
         q: "How much does delivery cost?",

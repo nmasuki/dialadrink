@@ -129,7 +129,7 @@ export interface IPromo {
   code: string;
   name: string;
   discount: number;
-  discountType: "percentage" | "fixed";
+  discountType: "percent" | "percentage" | "fixed";
   isRunning: boolean;
 }
 

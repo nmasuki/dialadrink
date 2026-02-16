@@ -4,6 +4,11 @@ import { Product, ProductCategory, ProductSubCategory, ProductBrand } from "@/mo
 
 const BASE_URL = "https://www.dialadrinkkenya.com";
 
+function sanitizeUrl(url: string): string {
+  // Encode any & in URL paths/params that would break XML
+  return url.replace(/&/g, "%26");
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connectDB();
 
@@ -59,7 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .lean();
 
   const productPages: MetadataRoute.Sitemap = products.map((product: any) => ({
-    url: `${BASE_URL}/products/${product.href}`,
+    url: sanitizeUrl(`${BASE_URL}/products/${product.href}`),
     lastModified: product.modifiedDate || new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.8,
@@ -71,7 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .lean();
 
   const categoryPages: MetadataRoute.Sitemap = categories.map((category: any) => ({
-    url: `${BASE_URL}/products?category=${category.key}`,
+    url: sanitizeUrl(`${BASE_URL}/products?category=${category.key}`),
     lastModified: category.modifiedDate || new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
@@ -83,7 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .lean();
 
   const subcategoryPages: MetadataRoute.Sitemap = subcategories.map((sc: any) => ({
-    url: `${BASE_URL}/products?subcategory=${sc.key}`,
+    url: sanitizeUrl(`${BASE_URL}/products?subcategory=${sc.key}`),
     lastModified: sc.modifiedDate || new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.6,
@@ -95,7 +100,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .lean();
 
   const brandPages: MetadataRoute.Sitemap = brands.map((brand: any) => ({
-    url: `${BASE_URL}/products?brand=${brand.href}`,
+    url: sanitizeUrl(`${BASE_URL}/products?brand=${brand.href}`),
     lastModified: brand.modifiedDate || new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.6,

@@ -1,11 +1,11 @@
 import { connectDB } from "@/lib/db";
-import { Product, ProductBrand, ProductCategory, ProductSubCategory, Order, AppUser, Location, MenuItem, Promo } from "@/models";
+import { Product, ProductBrand, ProductCategory, ProductSubCategory, Order, AppUser, Location, MenuItem, Promo, Page } from "@/models";
 import { getSession } from "@/lib/admin/auth";
 import AdminShell from "./AdminShell";
 
 async function getCounts() {
   await connectDB();
-  const [products, brands, categories, subcategories, orders, users, locations, menuItems, promos] = await Promise.all([
+  const [products, brands, categories, subcategories, orders, users, locations, menuItems, promos, pages] = await Promise.all([
     Product.countDocuments(),
     ProductBrand.countDocuments(),
     ProductCategory.countDocuments(),
@@ -15,8 +15,9 @@ async function getCounts() {
     Location.countDocuments(),
     MenuItem.countDocuments(),
     Promo.countDocuments(),
+    Page.countDocuments(),
   ]);
-  return { products, brands, categories, subcategories, orders, users, locations, menuItems, promos };
+  return { products, brands, categories, subcategories, orders, users, locations, menuItems, promos, pages };
 }
 
 export default async function AdminLayout({

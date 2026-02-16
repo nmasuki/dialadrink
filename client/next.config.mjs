@@ -1,5 +1,6 @@
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  poweredByHeader: false,
   serverExternalPackages: ["mongoose"],
   images: {
     remotePatterns: [
@@ -21,6 +22,15 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ["react-icons"],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/product/:slug",
+        destination: "/products/:slug",
+        permanent: true,
+      },
+    ];
   },
 };
 

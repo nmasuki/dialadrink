@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHome, FiPackage, FiTag, FiGrid, FiList, FiShoppingBag, FiUsers, FiExternalLink, FiCode, FiMapPin, FiMenu, FiPercent } from "react-icons/fi";
+import { FiHome, FiPackage, FiTag, FiGrid, FiList, FiShoppingBag, FiUsers, FiExternalLink, FiCode, FiMapPin, FiMenu, FiPercent, FiFileText } from "react-icons/fi";
 
 interface NavItem {
   label: string;
@@ -22,6 +22,7 @@ const navItems: NavItem[] = [
   { label: "Locations", href: "/admin/locations", icon: FiMapPin, countKey: "locations" },
   { label: "Menu Items", href: "/admin/menu-items", icon: FiMenu, countKey: "menuItems" },
   { label: "Promos", href: "/admin/promos", icon: FiPercent, countKey: "promos" },
+  { label: "Pages", href: "/admin/pages", icon: FiFileText, countKey: "pages" },
   { label: "API Docs", href: "/admin/api-docs", icon: FiCode },
 ];
 

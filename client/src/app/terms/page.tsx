@@ -1,9 +1,13 @@
 import { Metadata } from "next";
+import { getPageData } from "@/lib/getPageData";
 
-export const metadata: Metadata = {
-  title: "Terms & Conditions",
-  description: "Read our terms and conditions for using Dial A Drink Kenya services.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getPageData("/terms-and-conditions");
+  return {
+    title: pageData?.title || "Terms & Conditions",
+    description: pageData?.meta || "Read our terms and conditions for using Dial A Drink Kenya services.",
+  };
+}
 
 export default function TermsPage() {
   return (

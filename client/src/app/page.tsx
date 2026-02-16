@@ -4,9 +4,24 @@ import ProductCard from "@/components/product/ProductCard";
 import { connectDB } from "@/lib/db";
 import { Product } from "@/models";
 import { IProduct } from "@/types";
+import { getPageData } from "@/lib/getPageData";
+import PageContent from "@/components/PageContent";
+import HeroBanner from "@/components/HeroBanner";
+import { Metadata } from "next";
 
 // Force dynamic rendering - fetch fresh data on each request
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getPageData("/");
+  const title = pageData?.title
+    ? pageData.title.length > 60 ? pageData.title.slice(0, 57) + "..." : pageData.title
+    : "Alcohol Delivery Nairobi | Dial A Drink Kenya";
+  return {
+    title,
+    description: pageData?.meta || "Order alcohol online in Nairobi. Whisky, beer, wine and spirits delivered fast. Call 0723688108. Dial A Drink Kenya.",
+  };
+}
 
 async function getFeaturedProducts(): Promise<IProduct[]> {
   try {
@@ -76,43 +91,82 @@ async function getOfferProducts(): Promise<IProduct[]> {
 }
 
 export default async function HomePage() {
-  const [featuredProducts, offerProducts, brandFocusProducts] = await Promise.all([
+  const [featuredProducts, offerProducts, brandFocusProducts, pageData] = await Promise.all([
     getFeaturedProducts(),
     getOfferProducts(),
     getBrandFocusProducts(),
+    getPageData("/"),
   ]);
 
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-teal to-teal-700 text-white py-16 md:py-24">
-        <div className="container">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Kenya&apos;s #1 Alcohol Delivery Service
-            </h1>
-            <p className="text-lg md:text-xl text-teal-100 mb-8">
-              Order your favorite drinks online and get them delivered fast across Nairobi.
-              Quality spirits, wine, beer & more at your doorstep.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/products"
-                className="btn bg-white text-teal hover:bg-gray-100 px-6 py-3 text-lg"
-              >
-                Shop Now
-                <FiArrowRight className="ml-2" />
-              </Link>
-              <Link
-                href="/products?onOffer=true"
-                className="btn border-2 border-white text-white hover:bg-white hover:text-teal px-6 py-3 text-lg"
-              >
-                View Offers
-              </Link>
+      {(pageData?.bannerImages?.[0]?.secure_url || pageData?.mobileBannerImages?.[0]?.secure_url) ? (
+        <section className="relative">
+          <HeroBanner
+            desktopImages={pageData?.bannerImages || []}
+            mobileImages={pageData?.mobileBannerImages || []}
+            alt={pageData.h1 || "Dial A Drink Kenya"}
+          />
+          {/* Overlay with CTA */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-end pb-8 md:pb-12">
+            <div className="container">
+              <div className="max-w-3xl text-white">
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 drop-shadow-lg">
+                  {pageData.h1 || "Alcohol Delivery in Nairobi — Order Drinks Online"}
+                </h1>
+                <p className="text-base md:text-xl text-white/90 mb-6 md:mb-8 drop-shadow">
+                  Order your favorite drinks online and get them delivered fast across Nairobi.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <Link
+                    href="/products"
+                    className="btn bg-white text-teal hover:bg-gray-100 px-6 py-3 text-lg"
+                  >
+                    Shop Now
+                    <FiArrowRight className="ml-2" />
+                  </Link>
+                  <Link
+                    href="/products?onOffer=true"
+                    className="btn border-2 border-white text-white hover:bg-white hover:text-teal px-6 py-3 text-lg"
+                  >
+                    View Offers
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="bg-gradient-to-r from-teal to-teal-700 text-white py-16 md:py-24">
+          <div className="container">
+            <div className="max-w-3xl">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                Alcohol Delivery in Nairobi &mdash; Order Drinks Online
+              </h1>
+              <p className="text-lg md:text-xl text-teal-100 mb-8">
+                Order your favorite drinks online and get them delivered fast across Nairobi.
+                Quality spirits, wine, beer & more at your doorstep.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/products"
+                  className="btn bg-white text-teal hover:bg-gray-100 px-6 py-3 text-lg"
+                >
+                  Shop Now
+                  <FiArrowRight className="ml-2" />
+                </Link>
+                <Link
+                  href="/products?onOffer=true"
+                  className="btn border-2 border-white text-white hover:bg-white hover:text-teal px-6 py-3 text-lg"
+                >
+                  View Offers
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Features */}
       <section className="py-12 bg-gray-50">
@@ -123,9 +177,9 @@ export default async function HomePage() {
                 <FiTruck className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg mb-1">Fast Delivery</h3>
+                <p className="font-semibold text-lg mb-1">Fast Delivery</p>
                 <p className="text-gray-600 text-sm">
-                  Quick delivery across Nairobi. Free delivery on orders over KES 3,000.
+                  Quick delivery across Nairobi. Reliable same-day delivery to your doorstep.
                 </p>
               </div>
             </div>
@@ -134,7 +188,7 @@ export default async function HomePage() {
                 <FiAward className="w-6 h-6 text-teal" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg mb-1">Premium Quality</h3>
+                <p className="font-semibold text-lg mb-1">Premium Quality</p>
                 <p className="text-gray-600 text-sm">
                   100% authentic products from trusted brands and suppliers.
                 </p>
@@ -145,7 +199,7 @@ export default async function HomePage() {
                 <FiShield className="w-6 h-6 text-success" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg mb-1">Secure Payments</h3>
+                <p className="font-semibold text-lg mb-1">Secure Payments</p>
                 <p className="text-gray-600 text-sm">
                   Multiple payment options including M-Pesa, card, and cash on delivery.
                 </p>
@@ -165,7 +219,7 @@ export default async function HomePage() {
                 href="/products?onOffer=true"
                 className="text-primary hover:underline flex items-center gap-1"
               >
-                View All <FiArrowRight />
+                View All Offers <FiArrowRight />
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -186,7 +240,7 @@ export default async function HomePage() {
               href="/products"
               className="text-primary hover:underline flex items-center gap-1"
             >
-              View All <FiArrowRight />
+              View All Products <FiArrowRight />
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -207,7 +261,7 @@ export default async function HomePage() {
                 href="/products"
                 className="text-primary hover:underline flex items-center gap-1"
               >
-                View All <FiArrowRight />
+                View All Brands <FiArrowRight />
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -239,12 +293,21 @@ export default async function HomePage() {
                 href={`/products?category=${category.key}`}
                 className={`${category.color} rounded-lg p-6 text-center hover:shadow-lg transition-shadow`}
               >
-                <h3 className="font-semibold text-lg">{category.name}</h3>
+                <p className="font-semibold text-lg">{category.name}</p>
               </Link>
             ))}
           </div>
         </div>
       </section>
+
+      {/* SEO Content from pages collection */}
+      {pageData && (
+        <section className="py-12">
+          <div className="container">
+            <PageContent page={pageData} />
+          </div>
+        </section>
+      )}
 
       {/* CTA */}
       <section className="py-16 bg-dark text-white">

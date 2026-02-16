@@ -26,7 +26,7 @@ interface CartActions {
 type CartStore = CartState & CartActions;
 
 const DEFAULT_DELIVERY_FEE = 200;
-const FREE_DELIVERY_THRESHOLD = 3000;
+const FREE_DELIVERY_THRESHOLD = 0; // Set to e.g. 3000 to re-enable free delivery
 
 const safeNumber = (val: unknown, fallback = 0): number => {
   const num = Number(val);
@@ -147,7 +147,7 @@ export const useCartStore = create<CartStore>()(
 
       getDeliveryFee: () => {
         const subtotal = get().getSubtotal();
-        return subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DEFAULT_DELIVERY_FEE;
+        return FREE_DELIVERY_THRESHOLD > 0 && subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DEFAULT_DELIVERY_FEE;
       },
 
       getDiscount: () => {
@@ -155,7 +155,7 @@ export const useCartStore = create<CartStore>()(
         if (!promo) return 0;
 
         const subtotal = get().getSubtotal();
-        if (promo.discountType === "percentage") {
+        if (promo.discountType === "percent" || promo.discountType === "percentage") {
           return Math.round((subtotal * safeNumber(promo.discount, 0)) / 100);
         }
         return safeNumber(promo.discount, 0);

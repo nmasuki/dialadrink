@@ -269,12 +269,12 @@ export default async function ProductsPage({
           {/* Sidebar */}
           <aside className="lg:w-64 flex-shrink-0">
             <div className="bg-white rounded-xl shadow-sm p-5 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
-              {/* Free Delivery Banner */}
+              {/* Delivery Banner */}
               <div className="bg-teal/10 rounded-lg p-3 mb-5 flex items-center gap-3">
                 <FiTruck className="w-8 h-8 text-teal" />
                 <div>
-                  <p className="text-sm font-semibold text-teal">Free Delivery</p>
-                  <p className="text-xs text-gray-500">Orders above KES 3,000</p>
+                  <p className="text-sm font-semibold text-teal">Fast Delivery</p>
+                  <p className="text-xs text-gray-500">Same-day across Nairobi</p>
                 </div>
               </div>
 

@@ -6,31 +6,29 @@ import MenuItemsList from "./MenuItemsList";
 
 export const dynamic = "force-dynamic";
 
-interface Props {
-  searchParams: Promise<{ page?: string; q?: string; sort?: string; order?: string }>;
-}
-
-export default async function MenuItemsPage({ searchParams }: Props) {
-  const params = await searchParams;
+export default async function MenuItemsPage() {
   await connectDB();
 
-  const page = parseInt(params.page || "1");
-  const pageSize = 20;
-  const q = params.q || "";
-  const sort = params.sort || "index";
-  const order = params.order === "desc" ? -1 : 1;
+  // Fetch top-level items (level 1 or no parent) with populated submenus
+  const topLevel = await MenuItem.find({ $or: [{ level: 1 }, { level: { $exists: false } }, { parent: { $exists: false } }] })
+    .populate({
+      path: "submenus",
+      options: { sort: { index: 1 } },
+    })
+    .sort({ type: 1, index: 1 })
+    .lean();
 
-  const query: Record<string, unknown> = {};
-  if (q) query.label = { $regex: q, $options: "i" };
+  // Find orphan items (level > 1 but no parent points to them)
+  const topLevelIds = topLevel.map((item) => item._id.toString());
+  const childIds = topLevel.flatMap((item) =>
+    (item.submenus || []).map((sub: { _id: { toString(): string } }) => sub._id.toString())
+  );
+  const knownIds = new Set([...topLevelIds, ...childIds]);
 
-  const [menuItems, count] = await Promise.all([
-    MenuItem.find(query)
-      .sort({ [sort]: order })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .lean(),
-    MenuItem.countDocuments(query),
-  ]);
+  const allItems = await MenuItem.find().lean();
+  const orphans = allItems.filter((item) => !knownIds.has(item._id.toString()));
+
+  const menuTree = JSON.parse(JSON.stringify([...topLevel, ...orphans]));
 
   return (
     <div>
@@ -45,12 +43,7 @@ export default async function MenuItemsPage({ searchParams }: Props) {
         </Link>
       </div>
 
-      <MenuItemsList
-        menuItems={JSON.parse(JSON.stringify(menuItems))}
-        totalCount={count}
-        page={page}
-        pageSize={pageSize}
-      />
+      <MenuItemsList menuItems={menuTree} />
     </div>
   );
 }

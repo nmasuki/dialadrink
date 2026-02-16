@@ -1,10 +1,14 @@
 import { Metadata } from "next";
 import { FiTruck, FiClock, FiMapPin, FiDollarSign, FiCheckCircle } from "react-icons/fi";
+import { getPageData } from "@/lib/getPageData";
 
-export const metadata: Metadata = {
-  title: "Delivery Information",
-  description: "Learn about our fast alcohol delivery service across Nairobi and Kenya. Free delivery on orders above KES 3,000.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getPageData("/delivery-locations");
+  return {
+    title: pageData?.title || "Delivery Information",
+    description: pageData?.meta || "Learn about our fast alcohol delivery service across Nairobi and Kenya. Free delivery on orders above KES 3,000.",
+  };
+}
 
 const deliveryAreas = [
   { area: "Nairobi CBD & Surroundings", time: "45 min - 1.5 hours", fee: "KES 200" },
@@ -90,15 +94,15 @@ export default function DeliveryPage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Delivery Hours</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-gray-800 mb-3">Regular Hours</h3>
+              <h3 className="font-semibold text-gray-800 mb-3">We Are Open 24/7</h3>
               <ul className="space-y-2 text-gray-600">
                 <li className="flex items-center gap-2">
                   <FiCheckCircle className="w-5 h-5 text-green-500" />
-                  Monday - Sunday: 10:00 AM - 10:00 PM
+                  Monday - Sunday: 24 Hours
                 </li>
                 <li className="flex items-center gap-2">
                   <FiCheckCircle className="w-5 h-5 text-green-500" />
-                  Public Holidays: 10:00 AM - 10:00 PM
+                  Public Holidays: 24 Hours
                 </li>
               </ul>
             </div>
@@ -106,7 +110,6 @@ export default function DeliveryPage() {
               <h3 className="font-semibold text-gray-800 mb-3">Important Notes</h3>
               <ul className="space-y-2 text-gray-600 text-sm">
                 <li>• Delivery times may vary during peak hours and bad weather</li>
-                <li>• Last orders accepted at 9:30 PM for same-day delivery</li>
                 <li>• We may call to confirm your order and delivery details</li>
               </ul>
             </div>

@@ -39,6 +39,24 @@ export async function GET(request: NextRequest) {
   }
 }
 
+export async function PATCH(request: NextRequest) {
+  try {
+    await connectDB();
+    const { items } = await request.json();
+    if (!Array.isArray(items)) {
+      return NextResponse.json({ response: "error", message: "items array required" }, { status: 400 });
+    }
+    const ops = items.map((item: { _id: string; index: number }) =>
+      MenuItem.findByIdAndUpdate(item._id, { index: item.index })
+    );
+    await Promise.all(ops);
+    return NextResponse.json({ response: "success" });
+  } catch (error) {
+    console.error("Admin menu-items PATCH error:", error);
+    return NextResponse.json({ response: "error", message: "Failed to reorder menu items" }, { status: 500 });
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     await connectDB();

@@ -8,6 +8,7 @@ import Order from "./Order";
 import MenuItem from "./MenuItem";
 import AppUser from "./AppUser";
 import Promo from "./Promo";
+import Page from "./Page";
 
 export {
   Product,
@@ -22,4 +23,5 @@ export {
   MenuItem,
   AppUser,
   Promo,
+  Page,
 };

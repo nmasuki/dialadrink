@@ -4,6 +4,8 @@ import { connectDB } from "@/lib/db";
 import { Product, Category, Brand } from "@/models";
 import { IProduct, ICategory } from "@/types";
 import Link from "next/link";
+import { getPageData } from "@/lib/getPageData";
+import PageContent from "@/components/PageContent";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string[] }>;
@@ -186,6 +188,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const totalPages = Math.ceil(total / pageSize);
   const currentUrl = subSlug ? `/${mainSlug}/${subSlug}` : `/${mainSlug}`;
 
+  // Fetch SEO page content from pages collection
+  const pageHref = categoryKey ? `category/${categoryKey}` : mainSlug;
+  const pageData = await getPageData(pageHref);
+
+  // Use page data for H1 if available
+  const displayTitle = pageData?.h1 || pageTitle;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -214,7 +223,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-heading font-bold text-gray-800">{pageTitle}</h1>
+          <h1 className="text-3xl font-heading font-bold text-gray-800">{displayTitle}</h1>
           <p className="text-gray-600 mt-2">{total} products found</p>
         </div>
 
@@ -309,6 +318,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             )}
           </div>
         )}
+        {/* SEO Content from pages collection */}
+        {pageData && <PageContent page={pageData} />}
       </div>
     </div>
   );
@@ -347,6 +358,23 @@ export async function generateMetadata({ params }: CategoryPageProps) {
 
   const categoryKey = categoryMap[mainSlug];
   const subcatInfo = directSubcategoryMap[mainSlug];
+
+  // Try pages collection for SEO metadata
+  const pageHref = categoryKey ? `category/${categoryKey}` : mainSlug;
+  const pageData = await getPageData(pageHref);
+
+  if (pageData?.title) {
+    const ogImage = pageData.bannerImages?.[0]?.secure_url;
+    return {
+      title: pageData.title,
+      description: pageData.meta || `Order online with fast delivery across Nairobi.`,
+      ...(ogImage && {
+        openGraph: {
+          images: [{ url: ogImage }],
+        },
+      }),
+    };
+  }
 
   let title = "Products - Dial A Drink Kenya";
 
