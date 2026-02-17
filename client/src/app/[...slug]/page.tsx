@@ -33,8 +33,20 @@ async function resolveSlug(mainSlug: string): ReturnType<typeof _resolveSlug> {
   if (result.type !== "not_found") return result;
 
   // Strip trailing -\d+ suffix (e.g. whisky-1 → whisky) and retry
-  const base = mainSlug.replace(/-\d+$/, "");
-  if (base !== mainSlug) return _resolveSlug(base);
+  const numBase = mainSlug.replace(/-\d+$/, "");
+  if (numBase !== mainSlug) {
+    const r = await _resolveSlug(numBase);
+    if (r.type !== "not_found") return r;
+  }
+
+  // Progressively strip trailing segments
+  // e.g. single-malt-whiskies → single-malt → single
+  let shortened = mainSlug;
+  while (shortened.includes("-")) {
+    shortened = shortened.replace(/-[^-]+$/, "");
+    const r = await _resolveSlug(shortened);
+    if (r.type !== "not_found") return r;
+  }
 
   return result;
 }
@@ -56,10 +68,12 @@ async function _resolveSlug(mainSlug: string) {
   if (category) return { type: "category" as const, category };
 
   // Subcategory
+  const slugAsName = resolved.replace(/-/g, " ");
   const subcategory = await ProductSubCategory.findOne({
     $or: [
       { key: resolved },
       { key: { $regex: new RegExp(`^${resolved}$`, "i") } },
+      { name: { $regex: new RegExp(`^${slugAsName}$`, "i") } },
     ],
   })
     .populate("category")
