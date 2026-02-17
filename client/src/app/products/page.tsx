@@ -196,7 +196,7 @@ export default async function ProductsPage({
                 <FiTag className="w-5 h-5" />
                 Hot Deals
               </h2>
-              <Link href="/products?onOffer=true" className="text-white/80 hover:text-white text-sm flex items-center gap-1">
+              <Link href="/offers" className="text-white/80 hover:text-white text-sm flex items-center gap-1">
                 View All <FiChevronRight className="w-4 h-4" />
               </Link>
             </div>
@@ -300,7 +300,7 @@ export default async function ProductsPage({
                   {categories.map((category) => (
                     <li key={category._id}>
                       <Link
-                        href={`/products?category=${category.key}`}
+                        href={`/${category.key}`}
                         className={`block py-2 px-3 rounded-lg text-sm transition-colors ${
                           params.category === category.key
                             ? "bg-teal text-white font-medium"
@@ -320,7 +320,7 @@ export default async function ProductsPage({
                 <ul className="space-y-1">
                   <li>
                     <Link
-                      href="/products?onOffer=true"
+                      href="/offers"
                       className={`block py-2 px-3 rounded-lg text-sm transition-colors ${
                         params.onOffer === "true"
                           ? "bg-primary text-white font-medium"

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import dynamic from "next/dynamic";
 import { Montserrat, Open_Sans } from "next/font/google";
-import { Toaster } from "react-hot-toast";
 import { Header, Footer } from "@/components/layout";
-import StickyCartBar from "@/components/cart/StickyCartBar";
-import ScrollToTop from "@/components/common/ScrollToTop";
 import "./globals.css";
+
+const StickyCartBar = dynamic(() => import("@/components/cart/StickyCartBar"));
+const ScrollToTop = dynamic(() => import("@/components/common/ScrollToTop"));
+const Toaster = dynamic(() => import("react-hot-toast").then((m) => m.Toaster));
 
 const montserrat = Montserrat({
   subsets: ["latin"],

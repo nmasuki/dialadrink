@@ -154,7 +154,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
       { "@type": "ListItem", position: 2, name: "Products", item: `${siteUrl}/products` },
       ...(category
-        ? [{ "@type": "ListItem", position: 3, name: category.name, item: `${siteUrl}/products?category=${category.key}` }]
+        ? [{ "@type": "ListItem", position: 3, name: category.name, item: `${siteUrl}/${category.key}` }]
         : []),
       { "@type": "ListItem", position: category ? 4 : 3, name: product.name },
     ],
@@ -181,7 +181,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               <>
                 <li><FiChevronRight className="w-3 h-3" /></li>
                 <li>
-                  <Link href={`/products?category=${category.key}`} className="hover:text-teal">
+                  <Link href={`/${category.key}`} className="hover:text-teal">
                     {category.name}
                   </Link>
                 </li>
@@ -227,7 +227,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               <div className="flex items-center gap-3 mb-3">
                 {category && (
                   <Link
-                    href={`/products?category=${category.key}`}
+                    href={`/${category.key}`}
                     className="text-sm text-teal font-medium uppercase tracking-wide hover:underline"
                   >
                     {category.name}

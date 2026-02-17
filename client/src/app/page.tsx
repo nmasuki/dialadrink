@@ -9,8 +9,8 @@ import PageContent from "@/components/PageContent";
 import HeroBanner from "@/components/HeroBanner";
 import { Metadata } from "next";
 
-// Force dynamic rendering - fetch fresh data on each request
-export const dynamic = "force-dynamic";
+// Revalidate every 5 minutes for fresh data while still allowing caching
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPageData("/");
@@ -127,7 +127,7 @@ export default async function HomePage() {
                     <FiArrowRight className="ml-2" />
                   </Link>
                   <Link
-                    href="/products?onOffer=true"
+                    href="/offers"
                     className="btn border-2 border-white text-white hover:bg-white hover:text-teal px-6 py-3 text-lg"
                   >
                     View Offers
@@ -157,7 +157,7 @@ export default async function HomePage() {
                   <FiArrowRight className="ml-2" />
                 </Link>
                 <Link
-                  href="/products?onOffer=true"
+                  href="/offers"
                   className="btn border-2 border-white text-white hover:bg-white hover:text-teal px-6 py-3 text-lg"
                 >
                   View Offers
@@ -214,12 +214,12 @@ export default async function HomePage() {
         <section className="py-12">
           <div className="container">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold">Special Offers</h2>
+              <h2 className="text-2xl md:text-3xl font-bold">Today&apos;s Deals</h2>
               <Link
-                href="/products?onOffer=true"
+                href="/offers"
                 className="text-primary hover:underline flex items-center gap-1"
               >
-                View All Offers <FiArrowRight />
+                View All Deals <FiArrowRight />
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -290,7 +290,7 @@ export default async function HomePage() {
             ].map((category) => (
               <Link
                 key={category.key}
-                href={`/products?category=${category.key}`}
+                href={`/${category.key}`}
                 className={`${category.color} rounded-lg p-6 text-center hover:shadow-lg transition-shadow`}
               >
                 <p className="font-semibold text-lg">{category.name}</p>

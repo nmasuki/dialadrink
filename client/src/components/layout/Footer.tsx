@@ -70,22 +70,22 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=whisky" className="hover:text-primary transition-colors">
+                <Link href="/whisky" className="hover:text-primary transition-colors">
                   Whisky
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=wine" className="hover:text-primary transition-colors">
+                <Link href="/wine" className="hover:text-primary transition-colors">
                   Wine
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=beer" className="hover:text-primary transition-colors">
+                <Link href="/beers" className="hover:text-primary transition-colors">
                   Beer
                 </Link>
               </li>
               <li>
-                <Link href="/products?onOffer=true" className="hover:text-primary transition-colors">
+                <Link href="/offers" className="hover:text-primary transition-colors">
                   Special Offers
                 </Link>
               </li>

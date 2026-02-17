@@ -189,7 +189,7 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
               <h2 className="text-xl font-heading font-bold text-gray-800 mb-4">
-                Order Summary
+                Cart Summary
               </h2>
 
               <div className="space-y-3 mb-6">

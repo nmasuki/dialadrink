@@ -40,7 +40,9 @@
       "Bash(tar:*)",
       "Bash(node -e:*)",
       "Bash(mongosh:*)",
-      "Bash(mongo:*)"
+      "Bash(mongo:*)",
+      "Bash(wc:*)",
+      "Bash(git diff:*)"
     ],
     "deny": [],
     "ask": []

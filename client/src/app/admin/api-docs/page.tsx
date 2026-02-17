@@ -1,9 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SwaggerUI from "swagger-ui-react";
-import "swagger-ui-react/swagger-ui.css";
+import dynamic from "next/dynamic";
 import { spec } from "./spec";
+
+const SwaggerUI = dynamic(() => import("swagger-ui-react"), {
+  ssr: false,
+  loading: () => <div className="p-8 text-center text-gray-500">Loading API docs...</div>,
+});
+import "swagger-ui-react/swagger-ui.css";
 
 function AuthInfo() {
   const [token, setToken] = useState("");

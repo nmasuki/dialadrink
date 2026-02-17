@@ -124,7 +124,7 @@ export default function Header() {
         { _id: "3", label: "Whisky", href: "/whisky" },
         { _id: "4", label: "Wine", href: "/wine" },
         { _id: "5", label: "Beer", href: "/beers" },
-        { _id: "6", label: "Offers", href: "/products?onOffer=true" },
+        { _id: "6", label: "Offers", href: "/offers" },
       ]);
     });
   }, []);
@@ -227,7 +227,7 @@ export default function Header() {
                       {searchResults.brands.map((brand) => (
                         <Link
                           key={brand._id}
-                          href={`/products?brand=${brand.href}`}
+                          href={`/${brand.href}`}
                           onClick={() => setShowResults(false)}
                           className="flex items-center gap-3 px-2 py-2 hover:bg-gray-50 rounded-lg"
                         >
@@ -294,7 +294,7 @@ export default function Header() {
           </form>
 
           {/* Cart */}
-          <Link href="/cart" className="relative p-2 text-gray-600 hover:text-primary">
+          <Link href="/cart" className="relative p-2 text-gray-600 hover:text-primary" aria-label="Shopping cart">
             <FiShoppingCart className={`transition-all duration-300 ${isMinified ? 'w-5 h-5' : 'w-6 h-6'}`} />
             {itemCount > 0 && (
               <span className={`absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full flex items-center justify-center transition-all duration-300 ${
