@@ -28,7 +28,18 @@ const categoryAliases: Record<string, string> = {
  * 5. Product (by href) — redirects to /products/[slug]
  * 6. Page (by href or key)
  */
-async function resolveSlug(mainSlug: string) {
+async function resolveSlug(mainSlug: string): ReturnType<typeof _resolveSlug> {
+  const result = await _resolveSlug(mainSlug);
+  if (result.type !== "not_found") return result;
+
+  // Strip trailing -\d+ suffix (e.g. whisky-1 → whisky) and retry
+  const base = mainSlug.replace(/-\d+$/, "");
+  if (base !== mainSlug) return _resolveSlug(base);
+
+  return result;
+}
+
+async function _resolveSlug(mainSlug: string) {
   if (mainSlug === "offers") return { type: "offers" as const };
 
   const resolved = categoryAliases[mainSlug] || mainSlug;
