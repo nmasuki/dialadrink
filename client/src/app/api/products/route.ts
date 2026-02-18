@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { Product } from "@/models";
+import { parseSort } from "@/lib/parseSort";
 
 /**
  * @swagger
@@ -73,34 +74,70 @@ export async function GET(request: NextRequest) {
     }
 
     // Build sort
-    let sortQuery: Record<string, 1 | -1> = {};
-    switch (sort) {
-      case "price_asc":
-        sortQuery = { price: 1 };
-        break;
-      case "price_desc":
-        sortQuery = { price: -1 };
-        break;
-      case "newest":
-        sortQuery = { publishedDate: -1 };
-        break;
-      default:
-        sortQuery = { popularity: -1, popularityRatio: -1 };
-    }
+    const sortQuery = parseSort(sort, { popularity: -1, popularityRatio: -1 });
+    const isPriceSort = sortQuery.price !== undefined;
 
     const skip = (page - 1) * pageSize;
 
-    const [products, total] = await Promise.all([
-      Product.find(query)
-        .populate("category", "name key")
-        .populate("brand", "name href")
-        .populate("priceOptions")
-        .sort(sortQuery)
-        .skip(skip)
-        .limit(pageSize)
-        .lean(),
-      Product.countDocuments(query),
-    ]);
+    let products;
+    let total: number;
+
+    if (isPriceSort) {
+      const dir = sortQuery.price as 1 | -1;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pipeline: any[] = [
+        { $match: query },
+        {
+          $lookup: {
+            from: "productpriceoptions",
+            localField: "priceOptions",
+            foreignField: "_id",
+            as: "_opts",
+          },
+        },
+        {
+          $addFields: {
+            _sortPrice: {
+              $cond: {
+                if: { $gt: [{ $size: "$_opts" }, 0] },
+                then: { $min: "$_opts.price" },
+                else: "$price",
+              },
+            },
+          },
+        },
+        { $sort: { _sortPrice: dir } },
+        { $skip: skip },
+        { $limit: pageSize },
+        { $project: { _opts: 0, _sortPrice: 0 } },
+      ];
+
+      const [rawProducts, count] = await Promise.all([
+        Product.aggregate(pipeline),
+        Product.countDocuments(query),
+      ]);
+
+      products = await Product.populate(rawProducts, [
+        { path: "category", select: "name key" },
+        { path: "brand", select: "name href" },
+        { path: "priceOptions" },
+      ]);
+      total = count;
+    } else {
+      const [found, count] = await Promise.all([
+        Product.find(query)
+          .populate("category", "name key")
+          .populate("brand", "name href")
+          .populate("priceOptions")
+          .sort(sortQuery)
+          .skip(skip)
+          .limit(pageSize)
+          .lean(),
+        Product.countDocuments(query),
+      ]);
+      products = found;
+      total = count;
+    }
 
     return NextResponse.json({
       response: "success",

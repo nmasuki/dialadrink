@@ -42,7 +42,10 @@
       "Bash(mongosh:*)",
       "Bash(mongo:*)",
       "Bash(wc:*)",
-      "Bash(git diff:*)"
+      "Bash(git diff:*)",
+      "Bash(git mv:*)",
+      "Bash(npx tsc:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

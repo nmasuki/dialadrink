@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { FiMenu, FiX, FiSearch, FiShoppingCart, FiPhone, FiChevronDown } from "react-icons/fi";
 import { useCartStore } from "@/store";
+import NavigationProgress from "@/components/common/NavigationProgress";
 import axios from "axios";
 
 interface MenuItem {
@@ -354,6 +355,9 @@ export default function Header() {
           </ul>
         </div>
       </nav>
+
+      {/* Navigation Progress Bar */}
+      <NavigationProgress />
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (

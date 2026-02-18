@@ -62,7 +62,7 @@ export default function CartPage() {
     .map((item) => {
       const product = typeof item.product === "object" ? item.product : null;
       const category = product?.category;
-      return typeof category === "object" ? category._id : category;
+      return category && typeof category === "object" ? category._id : category;
     })
     .filter(Boolean) as string[];
 
@@ -105,9 +105,7 @@ export default function CartPage() {
             <div className="bg-white rounded-lg shadow-md">
               {items.map((item) => {
                 const product = typeof item.product === "object" ? item.product : null;
-                const imageUrl =
-                  product?.image?.secure_url ||
-                  "https://res.cloudinary.com/nmasuki/image/upload/c_fill,w_100,h_100/placeholder.png";
+                const imageUrl = product?.image?.secure_url || "https://res.cloudinary.com/nmasuki/image/upload/c_fill,w_100,h_100/placeholder.png";
                 const itemPrice = typeof item.price === "number" && !isNaN(item.price) ? item.price : 0;
                 const itemPieces = typeof item.pieces === "number" && !isNaN(item.pieces) ? item.pieces : 0;
 

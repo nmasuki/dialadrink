@@ -5,7 +5,8 @@ import { connectDB } from "@/lib/db";
 import { Product, Category, Brand } from "@/models";
 import { IProduct, ICategory, IBrand } from "@/types";
 import ProductGrid from "@/components/product/ProductGrid";
-import { FiGrid, FiList, FiFilter, FiChevronRight, FiTag, FiTruck, FiPercent } from "react-icons/fi";
+import { parseSort, parseSortParam, SORT_OPTIONS } from "@/lib/parseSort";
+import { FiGrid, FiList, FiFilter, FiChevronRight, FiTag, FiTruck, FiPercent, FiArrowUp, FiArrowDown } from "react-icons/fi";
 
 interface SearchParams {
   page?: string;
@@ -74,58 +75,109 @@ async function getProducts(searchParams: SearchParams) {
       ];
     }
 
-    let sortQuery: Record<string, 1 | -1> = { popularity: -1 };
-    switch (searchParams.sort) {
-      case "price_asc":
-        sortQuery = { price: 1 };
-        break;
-      case "price_desc":
-        sortQuery = { price: -1 };
-        break;
-      case "newest":
-        sortQuery = { publishedDate: -1 };
-        break;
-      case "name":
-        sortQuery = { name: 1 };
-        break;
+    const sortQuery = parseSort(searchParams.sort);
+    const isPriceSort = sortQuery.price !== undefined;
+
+    // Shared queries for popular & offer products
+    const popularQuery = !searchParams.category && !search && page === 1
+      ? Product.find({ state: "published", inStock: true, isPopular: true })
+          .populate("category", "name key")
+          .populate("brand", "name href")
+          .populate("priceOptions")
+          .sort({ popularity: -1 })
+          .limit(8)
+          .lean()
+      : Promise.resolve([]);
+
+    const offerQuery = !searchParams.onOffer && page === 1
+      ? Product.find({ state: "published", inStock: true, onOffer: true })
+          .populate("category", "name key")
+          .populate("brand", "name href")
+          .populate("priceOptions")
+          .sort({ popularity: -1 })
+          .limit(4)
+          .lean()
+      : Promise.resolve([]);
+
+    let products: IProduct[];
+    let total: number;
+    let popularProducts: IProduct[];
+    let offerProducts: IProduct[];
+
+    if (isPriceSort) {
+      // Use aggregation to sort by the effective price from priceOptions
+      const dir = sortQuery.price as 1 | -1;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pipeline: any[] = [
+        { $match: query },
+        {
+          $lookup: {
+            from: "productpriceoptions",
+            localField: "priceOptions",
+            foreignField: "_id",
+            as: "_opts",
+          },
+        },
+        {
+          $addFields: {
+            _sortPrice: {
+              $cond: {
+                if: { $gt: [{ $size: "$_opts" }, 0] },
+                then: { $min: "$_opts.price" },
+                else: "$price",
+              },
+            },
+          },
+        },
+        { $sort: { _sortPrice: dir } },
+        { $skip: skip },
+        { $limit: pageSize },
+        { $project: { _opts: 0, _sortPrice: 0 } },
+      ];
+
+      const [rawProducts, count, popular, offers] = await Promise.all([
+        Product.aggregate(pipeline),
+        Product.countDocuments(query),
+        popularQuery,
+        offerQuery,
+      ]);
+
+      // Re-populate references on aggregated plain objects
+      const populated = await Product.populate(rawProducts, [
+        { path: "category", select: "name key" },
+        { path: "brand", select: "name href" },
+        { path: "priceOptions" },
+      ]);
+
+      products = JSON.parse(JSON.stringify(populated)) as IProduct[];
+      total = count;
+      popularProducts = JSON.parse(JSON.stringify(popular)) as IProduct[];
+      offerProducts = JSON.parse(JSON.stringify(offers)) as IProduct[];
+    } else {
+      const [found, count, popular, offers] = await Promise.all([
+        Product.find(query)
+          .populate("category", "name key")
+          .populate("brand", "name href")
+          .populate("priceOptions")
+          .sort(sortQuery)
+          .skip(skip)
+          .limit(pageSize)
+          .lean(),
+        Product.countDocuments(query),
+        popularQuery,
+        offerQuery,
+      ]);
+
+      products = JSON.parse(JSON.stringify(found)) as IProduct[];
+      total = count;
+      popularProducts = JSON.parse(JSON.stringify(popular)) as IProduct[];
+      offerProducts = JSON.parse(JSON.stringify(offers)) as IProduct[];
     }
 
-    const [products, total, popularProducts, offerProducts] = await Promise.all([
-      Product.find(query)
-        .populate("category", "name key")
-        .populate("brand", "name href")
-        .populate("priceOptions")
-        .sort(sortQuery)
-        .skip(skip)
-        .limit(pageSize)
-        .lean(),
-      Product.countDocuments(query),
-      // Get popular products for sidebar/featured
-      !searchParams.category && !search && page === 1
-        ? Product.find({ state: "published", inStock: true, isPopular: true })
-            .populate("category", "name key")
-            .populate("brand", "name href")
-            .populate("priceOptions")
-            .sort({ popularity: -1 })
-            .limit(8)
-            .lean()
-        : Promise.resolve([]),
-      // Get offers for banner
-      !searchParams.onOffer && page === 1
-        ? Product.find({ state: "published", inStock: true, onOffer: true })
-            .populate("category", "name key")
-            .populate("brand", "name href")
-            .populate("priceOptions")
-            .sort({ popularity: -1 })
-            .limit(4)
-            .lean()
-        : Promise.resolve([]),
-    ]);
-
     return {
-      products: JSON.parse(JSON.stringify(products)) as IProduct[],
-      popularProducts: JSON.parse(JSON.stringify(popularProducts)) as IProduct[],
-      offerProducts: JSON.parse(JSON.stringify(offerProducts)) as IProduct[],
+      products,
+      popularProducts,
+      offerProducts,
       currentBrand,
       total,
       page,
@@ -351,30 +403,32 @@ export default async function ProductsPage({
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-500">Sort by:</span>
                 <div className="flex flex-wrap gap-2">
-                  {[
-                    { value: "", label: "Popular" },
-                    { value: "price_asc", label: "Price: Low" },
-                    { value: "price_desc", label: "Price: High" },
-                    { value: "newest", label: "Newest" },
-                  ].map((option) => (
-                    <Link
-                      key={option.value}
-                      href={`/products?${new URLSearchParams({
-                        ...(params.category ? { category: params.category } : {}),
-                        ...(params.brand ? { brand: params.brand } : {}),
-                        ...(params.onOffer ? { onOffer: params.onOffer } : {}),
-                        ...(search ? { search } : {}),
-                        ...(option.value ? { sort: option.value } : {}),
-                      }).toString()}`}
-                      className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                        (params.sort || "") === option.value
-                          ? "bg-teal text-white"
-                          : "bg-white text-gray-600 hover:bg-gray-100 border"
-                      }`}
-                    >
-                      {option.label}
-                    </Link>
-                  ))}
+                  {SORT_OPTIONS.map((opt) => {
+                    const { field: activeField, dir: activeDir } = parseSortParam(params.sort);
+                    const isActive = activeField === opt.field;
+                    const nextDir = isActive ? (activeDir === "asc" ? "desc" : "asc") : opt.defaultDir;
+                    const sortValue = `${opt.field}_${nextDir}`;
+                    return (
+                      <Link
+                        key={opt.field}
+                        href={`/products?${new URLSearchParams({
+                          ...(params.category ? { category: params.category } : {}),
+                          ...(params.brand ? { brand: params.brand } : {}),
+                          ...(params.onOffer ? { onOffer: params.onOffer } : {}),
+                          ...(search ? { search } : {}),
+                          sort: sortValue,
+                        }).toString()}`}
+                        className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm transition-colors ${
+                          isActive
+                            ? "bg-teal text-white"
+                            : "bg-white text-gray-600 hover:bg-gray-100 border"
+                        }`}
+                      >
+                        {opt.label}
+                        {isActive && (activeDir === "asc" ? <FiArrowUp className="w-3.5 h-3.5" /> : <FiArrowDown className="w-3.5 h-3.5" />)}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>

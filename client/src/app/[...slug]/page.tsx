@@ -4,8 +4,9 @@ import { connectDB } from "@/lib/db";
 import { Product, Category, Brand, ProductSubCategory } from "@/models";
 import { IProduct, ICategory, IBrand } from "@/types";
 import Link from "next/link";
-import { FiPercent } from "react-icons/fi";
+import { FiPercent, FiArrowUp, FiArrowDown } from "react-icons/fi";
 import { getPageData } from "@/lib/getPageData";
+import { parseSort, parseSortParam, SORT_OPTIONS } from "@/lib/parseSort";
 import PageContent from "@/components/PageContent";
 
 interface SlugPageProps {
@@ -120,11 +121,7 @@ async function fetchProducts(
   const pageSize = 20;
   const skip = (page - 1) * pageSize;
   const sort = (search.sort as string) || "popularity";
-
-  let sortQuery: Record<string, 1 | -1> = { popularity: -1 };
-  if (sort === "price_asc") sortQuery = { price: 1 };
-  if (sort === "price_desc") sortQuery = { price: -1 };
-  if (sort === "newest") sortQuery = { publishedDate: -1 };
+  const sortQuery = parseSort(sort);
 
   const [rawProducts, total] = await Promise.all([
     Product.find(query)
@@ -214,24 +211,22 @@ function ProductListing({
         {/* Sort Options */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex gap-2">
-            <Link
-              href={currentUrl}
-              className={`px-3 py-1 rounded text-sm ${!sort || sort === "popularity" ? "bg-teal text-white" : "bg-gray-200"}`}
-            >
-              Popular
-            </Link>
-            <Link
-              href={`${currentUrl}?sort=price_asc`}
-              className={`px-3 py-1 rounded text-sm ${sort === "price_asc" ? "bg-teal text-white" : "bg-gray-200"}`}
-            >
-              Price: Low
-            </Link>
-            <Link
-              href={`${currentUrl}?sort=price_desc`}
-              className={`px-3 py-1 rounded text-sm ${sort === "price_desc" ? "bg-teal text-white" : "bg-gray-200"}`}
-            >
-              Price: High
-            </Link>
+            {SORT_OPTIONS.map((opt) => {
+              const { field: activeField, dir: activeDir } = parseSortParam(sort);
+              const isActive = activeField === opt.field;
+              const nextDir = isActive ? (activeDir === "asc" ? "desc" : "asc") : opt.defaultDir;
+              const href = `${currentUrl}?sort=${opt.field}_${nextDir}`;
+              return (
+                <Link
+                  key={opt.field}
+                  href={href}
+                  className={`inline-flex items-center gap-1 px-3 py-1 rounded text-sm ${isActive ? "bg-teal text-white" : "bg-gray-200"}`}
+                >
+                  {opt.label}
+                  {isActive && (activeDir === "asc" ? <FiArrowUp className="w-3.5 h-3.5" /> : <FiArrowDown className="w-3.5 h-3.5" />)}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
