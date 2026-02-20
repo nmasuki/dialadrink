@@ -6,7 +6,7 @@ import { connectDB } from "@/lib/db";
 import { Product } from "@/models";
 import { IProduct } from "@/types";
 import ProductOptions from "@/components/product/ProductOptions";
-import { FiTruck, FiShield, FiClock, FiChevronRight } from "react-icons/fi";
+import { FiTruck, FiShield, FiClock, FiChevronRight, FiStar } from "react-icons/fi";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -135,6 +135,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     ...(brand && { brand: { "@type": "Brand", name: brand.name } }),
     ...(category && { category: category.name }),
     ...(product.countryOfOrigin && { countryOfOrigin: product.countryOfOrigin }),
+    ...((product.averageRatings ?? 0) > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: product.averageRatings,
+        ratingCount: product.ratingCount || 1,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
     offers: {
       "@type": "Offer",
       price: hasOffer ? offerPrice : price,
@@ -239,9 +248,35 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </div>
 
               {/* Name */}
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-2">
                 {product.name}
               </h1>
+
+              {/* Rating */}
+              {(product.averageRatings ?? 0) > 0 && (
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <FiStar
+                        key={star}
+                        className={`w-4 h-4 ${
+                          star <= Math.round(product.averageRatings || 0)
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    {(product.averageRatings || 0).toFixed(1)}
+                  </span>
+                  {(product.ratingCount ?? 0) > 0 && (
+                    <span className="text-sm text-gray-400">
+                      ({product.ratingCount} {product.ratingCount === 1 ? "review" : "reviews"})
+                    </span>
+                  )}
+                </div>
+              )}
 
               {/* ABV & Origin */}
               {(product.alcoholContent || product.countryOfOrigin) && (

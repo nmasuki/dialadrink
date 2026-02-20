@@ -45,8 +45,14 @@ export default function TodaysOrders() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const phone = localStorage.getItem("diala-customer-phone");
+    if (!phone) {
+      setLoading(false);
+      return;
+    }
+
     axios
-      .get("/api/orders?today=true")
+      .get(`/api/orders?today=true&phone=${encodeURIComponent(phone)}`)
       .then((res) => {
         if (res.data.response === "success") {
           setOrders(res.data.data);

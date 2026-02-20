@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FiShoppingCart, FiCheck, FiEye } from "react-icons/fi";
 import { IProduct, IPriceOption } from "@/types";
 import { useCartStore } from "@/store";
+import { flyToCart } from "@/lib/flyToCart";
 import toast from "react-hot-toast";
 
 interface ProductCardProps {
@@ -44,8 +45,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     ? Math.round(((originalPrice - displayPrice) / originalPrice) * 100)
     : null;
 
-  const doAdd = (optText: string) => {
+  const doAdd = (optText: string, sourceEl?: HTMLElement | null) => {
     addItem(product, optText, 1);
+    if (sourceEl) flyToCart(imageUrl, sourceEl);
     toast.success(
       <div className="flex items-center gap-2">
         <Image src={imageUrl} alt="" width={40} height={40} className="rounded" />
@@ -61,7 +63,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     setTimeout(() => setJustAdded(false), 1500);
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -70,14 +72,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       return;
     }
 
-    doAdd(optionText);
+    doAdd(optionText, e.currentTarget);
   };
 
-  const handleOptionSelect = (idx: number, e: React.MouseEvent) => {
+  const handleOptionSelect = (idx: number, e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setSelectedIdx(idx);
-    doAdd(priceOptions[idx]?.optionText || "");
+    doAdd(priceOptions[idx]?.optionText || "", e.currentTarget);
   };
 
   const handleCloseOptions = (e: React.MouseEvent) => {

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FiShoppingCart, FiMinus, FiPlus, FiCheck } from "react-icons/fi";
 import { useCartStore } from "@/store/cartStore";
+import { flyToCart } from "@/lib/flyToCart";
 import { IProduct } from "@/types";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -21,11 +22,12 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
   const currentOption = priceOptions[selectedOption];
   const optionText = currentOption?.optionText || "";
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     addItem(product, optionText, quantity);
     setIsAdded(true);
 
     const imageUrl = product.image?.secure_url || product.image?.url || "";
+    flyToCart(imageUrl, e.currentTarget);
 
     toast.success(
       <div className="flex items-center gap-3">

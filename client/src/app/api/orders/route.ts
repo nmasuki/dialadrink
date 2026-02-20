@@ -157,7 +157,11 @@ export async function GET(request: NextRequest) {
     if (today === "true") {
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
-      const orders = await Order.find({ orderDate: { $gte: startOfDay } })
+      const filter: Record<string, unknown> = { orderDate: { $gte: startOfDay } };
+      if (phone) {
+        filter["delivery.phoneNumber"] = phone;
+      }
+      const orders = await Order.find(filter)
         .sort({ orderDate: -1 })
         .lean();
       return NextResponse.json({ response: "success", data: JSON.parse(JSON.stringify(orders)), count: orders.length });

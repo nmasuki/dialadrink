@@ -89,6 +89,29 @@ export default function CheckoutPage() {
     location: "",
   });
 
+  // Preload saved checkout details
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("diala-checkout-info");
+      if (saved) {
+        const info = JSON.parse(saved);
+        setForm((prev) => ({
+          firstName: info.firstName || prev.firstName,
+          lastName: info.lastName || prev.lastName,
+          phoneNumber: info.phoneNumber || prev.phoneNumber,
+          email: info.email || prev.email,
+          address: info.address || prev.address,
+          building: info.building || prev.building,
+          houseNumber: info.houseNumber || prev.houseNumber,
+          location: info.location || prev.location,
+        }));
+        if (info.paymentMethod) {
+          setPaymentMethod(info.paymentMethod);
+        }
+      }
+    } catch {}
+  }, []);
+
   useEffect(() => {
     // Don't redirect if order was just completed
     if (isOrderCompleteRef.current) {
@@ -182,6 +205,12 @@ export default function CheckoutPage() {
 
       if (response.data.response === "success") {
         const orderKey = response.data.data.key;
+
+        // Save checkout details for next visit + "Today's Orders"
+        try {
+          localStorage.setItem("diala-checkout-info", JSON.stringify({ ...form, paymentMethod }));
+          localStorage.setItem("diala-customer-phone", form.phoneNumber);
+        } catch {}
 
         // Mark order as complete before clearing cart
         isOrderCompleteRef.current = true;

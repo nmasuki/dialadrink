@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiShoppingCart, FiMinus, FiPlus, FiCheck } from "react-icons/fi";
 import { useCartStore } from "@/store/cartStore";
+import { flyToCart } from "@/lib/flyToCart";
 import { IProduct, IPriceOption } from "@/types";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -16,7 +17,7 @@ interface ProductOptionsProps {
 
 export default function ProductOptions({ product, priceOptions: rawPriceOptions, currency }: ProductOptionsProps) {
   const priceOptions = rawPriceOptions.filter(
-    (opt, idx, arr) => arr.findIndex((o) => o.optionText === opt.optionText) === idx
+    (opt, idx, arr) => opt && arr.findIndex((o) => o?.optionText === opt.optionText) === idx
   );
   const [selectedOption, setSelectedOption] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -34,20 +35,22 @@ export default function ProductOptions({ product, priceOptions: rawPriceOptions,
     }).format(p);
   };
 
-  const getOptionPrice = (opt: IPriceOption) => {
+  const getOptionPrice = (opt: IPriceOption | undefined) => {
+    if (!opt) return 0;
     return opt.offerPrice && opt.price > opt.offerPrice ? opt.offerPrice : opt.price;
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     addItem(product, optionText, quantity);
     setIsAdded(true);
 
     const imageUrl = product.image?.secure_url || product.image?.url || "";
+    flyToCart(imageUrl, e.currentTarget);
 
     toast.success(
       <div className="flex items-center gap-3">
         {imageUrl && (
-          <Image src={imageUrl} alt="" width={50} height={50} className="rounded" />
+          <Image src={imageUrl} alt={product.name} width={50} height={50} className="rounded" />
         )}
         <div>
           <p className="font-medium">{product.name}</p>

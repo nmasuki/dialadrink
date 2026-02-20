@@ -45,7 +45,11 @@
       "Bash(git diff:*)",
       "Bash(git mv:*)",
       "Bash(npx tsc:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(test:*)",
+      "Bash(echo:*)",
+      "Bash(curl:*)",
+      "Bash(gzip:*)"
     ],
     "deny": [],
     "ask": []
