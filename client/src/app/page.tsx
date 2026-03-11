@@ -8,6 +8,7 @@ import { getPageData } from "@/lib/getPageData";
 import PageContent from "@/components/PageContent";
 import HeroBanner from "@/components/HeroBanner";
 import { Metadata } from "next";
+import { buildMetadata } from "@/lib/metadata";
 
 // Revalidate every 5 minutes for fresh data while still allowing caching
 export const revalidate = 300;
@@ -17,10 +18,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = pageData?.title
     ? pageData.title.length > 60 ? pageData.title.slice(0, 57) + "..." : pageData.title
     : "Alcohol Delivery Nairobi | Dial A Drink Kenya";
-  return {
+  return buildMetadata({
     title,
     description: pageData?.meta || "Order alcohol online in Nairobi. Whisky, beer, wine and spirits delivered fast. Call 0723688108. Dial A Drink Kenya.",
-  };
+    url: "/",
+  });
 }
 
 async function getFeaturedProducts(): Promise<IProduct[]> {

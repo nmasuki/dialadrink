@@ -6,6 +6,7 @@ import { Product, Category, Brand } from "@/models";
 import { IProduct, ICategory, IBrand } from "@/types";
 import ProductGrid from "@/components/product/ProductGrid";
 import { parseSort, parseSortParam, SORT_OPTIONS } from "@/lib/parseSort";
+import { buildMetadata } from "@/lib/metadata";
 import { FiGrid, FiList, FiFilter, FiChevronRight, FiTag, FiTruck, FiPercent, FiArrowUp, FiArrowDown } from "react-icons/fi";
 
 interface SearchParams {
@@ -18,10 +19,12 @@ interface SearchParams {
   brand?: string;
 }
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Shop Drinks Online | Dial A Drink Kenya",
   description: "Browse our wide selection of premium wines, spirits, beers and more. Fast delivery across Nairobi.",
-};
+  url: "/products",
+  canonical: "/products",
+});
 
 async function getProducts(searchParams: SearchParams) {
   try {

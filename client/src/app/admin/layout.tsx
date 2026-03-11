@@ -1,7 +1,13 @@
+import { Metadata } from "next";
 import { connectDB } from "@/lib/db";
 import { Product, ProductBrand, ProductCategory, ProductSubCategory, Order, AppUser, Location, MenuItem, Promo, Page } from "@/models";
 import { getSession } from "@/lib/admin/auth";
 import AdminShell from "./AdminShell";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  robots: { index: false, follow: false },
+};
 
 async function getCounts() {
   await connectDB();

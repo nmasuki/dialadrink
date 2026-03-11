@@ -1,12 +1,15 @@
 import { Metadata } from "next";
 import { getPageData } from "@/lib/getPageData";
+import { buildMetadata } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPageData("/privacy-policy");
-  return {
+  return buildMetadata({
     title: pageData?.title || "Privacy Policy",
     description: pageData?.meta || "Learn how Dial A Drink Kenya collects, uses, and protects your personal information.",
-  };
+    url: "/privacy",
+    canonical: "/privacy",
+  });
 }
 
 export default function PrivacyPage() {

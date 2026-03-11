@@ -6,6 +6,7 @@ import { connectDB } from "@/lib/db";
 import { Product } from "@/models";
 import { IProduct } from "@/types";
 import ProductOptions from "@/components/product/ProductOptions";
+import { buildMetadata } from "@/lib/metadata";
 import { FiTruck, FiShield, FiClock, FiChevronRight, FiStar } from "react-icons/fi";
 
 interface ProductPageProps {
@@ -69,25 +70,13 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const description =
     plainDescription || `Order ${product.name} online with fast delivery across Nairobi.`;
 
-  return {
+  return buildMetadata({
     title: `${product.name} | Buy Online | Dial A Drink Kenya`,
     description,
-    alternates: {
-      canonical: `/products/${slug}`,
-    },
-    openGraph: {
-      type: "website",
-      title: `${product.name}${brand ? ` by ${brand.name}` : ""} | Buy Online`,
-      description,
-      images: product.image?.secure_url ? [product.image.secure_url] : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: product.name,
-      description,
-      images: product.image?.secure_url ? [product.image.secure_url] : [],
-    },
-  };
+    url: `/products/${slug}`,
+    canonical: `/products/${slug}`,
+    images: product.image?.secure_url ? [product.image.secure_url] : undefined,
+  });
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {

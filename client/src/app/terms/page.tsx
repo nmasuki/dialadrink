@@ -1,12 +1,15 @@
 import { Metadata } from "next";
 import { getPageData } from "@/lib/getPageData";
+import { buildMetadata } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPageData("/terms-and-conditions");
-  return {
+  return buildMetadata({
     title: pageData?.title || "Terms & Conditions",
     description: pageData?.meta || "Read our terms and conditions for using Dial A Drink Kenya services.",
-  };
+    url: "/terms",
+    canonical: "/terms",
+  });
 }
 
 export default function TermsPage() {

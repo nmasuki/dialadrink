@@ -3,15 +3,17 @@ import { FiPhone, FiMail, FiMapPin, FiClock } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import ContactForm from "./ContactForm";
 import { getPageData } from "@/lib/getPageData";
+import { buildMetadata } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPageData("/contact-us");
-  return {
+  return buildMetadata({
     title: pageData?.title || "Contact Us",
     description: pageData?.meta ||
       "Get in touch with Dial A Drink Kenya. Call +254 723 688 108, WhatsApp us, or send a message. We deliver alcohol across Nairobi 24 hours, 7 days a week.",
-    alternates: { canonical: "/contact" },
-  };
+    url: "/contact",
+    canonical: "/contact",
+  });
 }
 
 const contactJsonLd = {

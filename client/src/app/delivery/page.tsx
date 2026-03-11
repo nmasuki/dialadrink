@@ -1,13 +1,16 @@
 import { Metadata } from "next";
 import { FiTruck, FiClock, FiMapPin, FiDollarSign, FiCheckCircle } from "react-icons/fi";
 import { getPageData } from "@/lib/getPageData";
+import { buildMetadata } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPageData("/delivery-locations");
-  return {
+  return buildMetadata({
     title: pageData?.title || "Delivery Information",
     description: pageData?.meta || "Learn about our fast alcohol delivery service across Nairobi and Kenya. Free delivery on orders above KES 3,000.",
-  };
+    url: "/delivery",
+    canonical: "/delivery",
+  });
 }
 
 const deliveryAreas = [

@@ -8,6 +8,7 @@ import { FiPercent, FiArrowUp, FiArrowDown } from "react-icons/fi";
 import { getPageData } from "@/lib/getPageData";
 import { parseSort, parseSortParam, SORT_OPTIONS } from "@/lib/parseSort";
 import PageContent from "@/components/PageContent";
+import { buildMetadata } from "@/lib/metadata";
 
 interface SlugPageProps {
   params: Promise<{ slug: string[] }>;
@@ -472,19 +473,21 @@ export async function generateMetadata({ params }: SlugPageProps) {
   const resolution = await resolveSlug(mainSlug);
 
   if (resolution.type === "offers") {
-    return {
+    return buildMetadata({
       title: "Special Offers | Dial A Drink Kenya",
       description:
         "Amazing deals on your favorite drinks. Order online with fast delivery across Nairobi.",
-    };
+      url: "/offers",
+    });
   }
 
   if (resolution.type === "brand") {
     const brand = resolution.brand;
-    return {
+    return buildMetadata({
       title: `${brand.name} Delivery Nairobi | Dial A Drink Kenya`,
       description: `Order ${brand.name} online with fast delivery across Nairobi. Best prices on ${brand.name} products.`,
-    };
+      url: `/${mainSlug}`,
+    });
   }
 
   if (resolution.type === "product") {
@@ -493,12 +496,14 @@ export async function generateMetadata({ params }: SlugPageProps) {
       state: "published",
     }).lean()) as IProduct | null;
     if (product) {
-      return {
+      return buildMetadata({
         title: `${product.name} | Dial A Drink Kenya`,
         description:
           (product.description || "").replace(/<[^>]*>/g, "").slice(0, 160) ||
           `Order ${product.name} online with fast delivery.`,
-      };
+        url: `/${mainSlug}`,
+        images: product.image?.secure_url ? [product.image.secure_url] : undefined,
+      });
     }
   }
 
@@ -510,11 +515,12 @@ export async function generateMetadata({ params }: SlugPageProps) {
 
     if (pageData?.title) {
       const ogImage = pageData.bannerImages?.[0]?.secure_url;
-      return {
+      return buildMetadata({
         title: pageData.title,
         description: pageData.meta || `Order online with fast delivery across Nairobi.`,
-        ...(ogImage && { openGraph: { images: [{ url: ogImage }] } }),
-      };
+        url: `/${mainSlug}`,
+        images: ogImage ? [ogImage] : undefined,
+      });
     }
 
     const title =
@@ -522,14 +528,16 @@ export async function generateMetadata({ params }: SlugPageProps) {
         ? `${resolution.filterLabel} - Dial A Drink Kenya`
         : `${resolution.category.name} Delivery Nairobi - Dial A Drink Kenya`;
 
-    return {
+    return buildMetadata({
       title,
-      description: `Order online with fast delivery across Nairobi. Best prices and wide selection.`,
-    };
+      description: `Order ${resolution.category.name} online with fast delivery across Nairobi. Best prices and wide selection.`,
+      url: `/${mainSlug}`,
+    });
   }
 
-  return {
+  return buildMetadata({
     title: "Products - Dial A Drink Kenya",
-    description: `Order online with fast delivery across Nairobi.`,
-  };
+    description: `Order drinks online with fast delivery across Nairobi. Premium wines, spirits, beers and more.`,
+    url: `/${mainSlug}`,
+  });
 }

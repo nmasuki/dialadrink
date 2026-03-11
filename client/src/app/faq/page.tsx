@@ -1,11 +1,14 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { FiChevronDown, FiPhone, FiMail } from "react-icons/fi";
+import { buildMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Frequently Asked Questions",
   description: "Find answers to common questions about ordering, delivery, and payments at Dial A Drink Kenya.",
-};
+  url: "/faq",
+  canonical: "/faq",
+});
 
 const faqs = [
   {
